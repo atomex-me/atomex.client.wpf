@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="Atomix.Client.Wpf.Views.NavigationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:controls="clr-namespace:Atomix.Client.Wpf.Controls"
+             xmlns:views="clr-namespace:Atomix.Client.Wpf.Views"
+             xmlns:viewModels="clr-namespace:Atomix.Client.Wpf.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <FrameworkElement x:Key="ProxyElement" DataContext="{Binding}"/>
+    </UserControl.Resources>
+    <Grid>
+        <ContentControl Visibility="Collapsed" Content="{StaticResource ProxyElement}"/>
+        <mah:HamburgerMenu Style="{StaticResource HamburgerMenuStyle}"
+                           SelectedIndex="{Binding SelectedMenuIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           IsPaneOpen="True">
+            <mah:HamburgerMenu.ItemsSource>
+                <controls:NavigationMenuItemCollection>
+                    <controls:NavigationMenuItem Header="Portfolio">
+                        <controls:NavigationMenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="ChartPie" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </controls:NavigationMenuItem.Icon>
+                        <controls:NavigationMenuItem.Content>
+                            <views:PortfolioView DataContext="{Binding Path=DataContext.PortfolioViewModel, Source={StaticResource ProxyElement}}"/>
+                        </controls:NavigationMenuItem.Content>
+                    </controls:NavigationMenuItem>
+
+                    <controls:NavigationMenuItem Header="Wallets">
+                        <controls:NavigationMenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="Wallet" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </controls:NavigationMenuItem.Icon>
+                        <controls:NavigationMenuItem.Content>
+                            <views:WalletsView DataContext="{Binding Path=DataContext.WalletsViewModel, Source={StaticResource ProxyElement}}"/>
+                        </controls:NavigationMenuItem.Content>
+                    </controls:NavigationMenuItem>
+
+                    <controls:NavigationMenuItem Header="Conversion">
+                        <controls:NavigationMenuItem.Icon>
+                            <!--<iconPacks:PackIconOcticons Kind="Sync" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
+                            <Image Width="24" Height="24" Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/exchanged.png"/>
+                        </controls:NavigationMenuItem.Icon>
+                        <controls:NavigationMenuItem.Content>
+                            <views:ConversionView DataContext="{Binding Path=DataContext.ConversionViewModel, Source={StaticResource ProxyElement}}"/>
+                        </controls:NavigationMenuItem.Content>
+                    </controls:NavigationMenuItem>
+
+                    <controls:NavigationMenuItem Header="Exchange">
+                        <controls:NavigationMenuItem.Icon>
+                            <iconPacks:PackIconEntypo Kind="LineGraph" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </controls:NavigationMenuItem.Icon>
+                        <controls:NavigationMenuItem.Content>
+                            <!--<Grid>
+                                <Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/under_construction.png"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Width="200"
+                                       Height="200"/>
+                            </Grid>-->
+                            <views:ExchangeView DataContext="{Binding Path=DataContext.ExchangeViewModel, Source={StaticResource ProxyElement}}"/>
+                        </controls:NavigationMenuItem.Content>
+                    </controls:NavigationMenuItem>
+
+                </controls:NavigationMenuItemCollection>
+            </mah:HamburgerMenu.ItemsSource>
+
+            <mah:HamburgerMenu.OptionsItemsSource>
+                <controls:NavigationMenuItemCollection>
+
+                    <controls:NavigationMenuItem Header="Settings">
+                        <controls:NavigationMenuItem.Icon>
+                            <iconPacks:PackIconOcticons Kind="Gear" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </controls:NavigationMenuItem.Icon>
+                        <controls:NavigationMenuItem.Content>
+                            <!--<Grid>
+                                <Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/under_construction.png"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Width="200"
+                                       Height="200"/>
+                            </Grid>-->
+                            <views:SettingsView DataContext="{Binding Path=DataContext.SettingsViewModel, Source={StaticResource ProxyElement}}"/>
+                        </controls:NavigationMenuItem.Content>
+                    </controls:NavigationMenuItem>
+
+                    <!--<controls:NavigationMenuItem Header="Help">
+                        <controls:NavigationMenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="HelpCircle" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </controls:NavigationMenuItem.Icon>
+                    </controls:NavigationMenuItem>-->
+
+                </controls:NavigationMenuItemCollection>
+            </mah:HamburgerMenu.OptionsItemsSource>
+        </mah:HamburgerMenu>
+    </Grid>
+</UserControl>

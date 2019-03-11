@@ -1,0 +1,44 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="DefaultBackgroundColor">#122d4f</Color>
+
+    <Color x:Key="DefaultForegroundColor">White</Color>
+    <Color x:Key="DefaultButtonBackgroundColor">#122d4f</Color>
+    <Color x:Key="DefaultButtonMouseOverColor">#265590</Color>
+    <Color x:Key="DefaultButtonPressedColor">#1c3f6b</Color>
+    <Color x:Key="DefaultButtonBackgroundLightColor">#92aec7</Color>
+    <Color x:Key="DefaultButtonMouseOverLightColor">#b6cadc</Color>
+    <Color x:Key="DefaultButtonPressedLightColor">#122d4f</Color>
+    <Color x:Key="DefaultTextBoxBackgroundColor">#b6cadc</Color>
+    <Color x:Key="DefaultTextBoxForegroundColor">#2e5185</Color>
+    <Color x:Key="DefaultSubstrateColor">#2f000000</Color>
+
+    <SolidColorBrush x:Key="DefaultBackgroundBrush" Color="{StaticResource DefaultBackgroundColor}"/>
+    <SolidColorBrush x:Key="DefaultForegroundBrush" Color="{StaticResource DefaultForegroundColor}"/>
+    <SolidColorBrush x:Key="DefaultButtonBackgroundBrush" Color="{StaticResource DefaultBackgroundColor}"/>
+    <SolidColorBrush x:Key="DefaultTextBoxBackgroundBrush" Color="{StaticResource DefaultTextBoxBackgroundColor}"/>
+    <SolidColorBrush x:Key="DefaultTextBoxForegroundBrush" Color="{StaticResource DefaultTextBoxForegroundColor}"/>
+    <SolidColorBrush x:Key="DefaultSubstrateBrush" Color="{StaticResource DefaultSubstrateColor}"/>
+    <SolidColorBrush x:Key="WarningForegroundBrush" Color="Gold"/>
+    <SolidColorBrush x:Key="FieldHeaderBackgroundBrush" Color="#214174"/>
+
+    <Style x:Key="BaseDisabledStyle" TargetType="FrameworkElement">
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.5"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseDisabledStyle}"/>
+    <Style x:Key="BaseImageStyle" TargetType="Image" BasedOn="{StaticResource BaseDisabledStyle}"/>
+
+    <Style x:Key="FieldHeader" TargetType="{x:Type Border}">
+        <Setter Property="Width" Value="100"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Background" Value="{StaticResource FieldHeaderBackgroundBrush}"/>
+        <Setter Property="CornerRadius" Value="20 0 0 20"/>
+    </Style>
+
+</ResourceDictionary>

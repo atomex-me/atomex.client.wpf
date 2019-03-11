@@ -1,0 +1,192 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Atomix.Client.Wpf.Controls"
+                    xmlns:viewModels="clr-namespace:Atomix.Client.Wpf.ViewModels">
+
+    <Color x:Key="ConfirmedColor">#4b79bb</Color>
+    <!--<Color x:Key="UnconfirmedColor">#505050</Color>-->
+    <Color x:Key="UnconfirmedColor">#29456d</Color>
+
+    <SolidColorBrush x:Key="ConfirmedBrush" Color="{StaticResource ConfirmedColor}"/>
+    <SolidColorBrush x:Key="UnconfirmedBrush" Color="{StaticResource UnconfirmedColor}"/>
+
+    <LinearGradientBrush x:Key="BalancePillowBackgroundBrush" StartPoint="1,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#1a4274"/>
+        <GradientStop Offset="1" Color="#1a2e4c"/>
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="BalanceBackgroundBrush" Color="White"/>
+    <SolidColorBrush x:Key="UsdBalanceBackgroundBrush" Color="Gray"/>
+    <SolidColorBrush x:Key="WalletMenuButtonBackgroundBrush" Color="#40000000"/>
+
+    <DataTemplate x:Key="SentTemplate">
+        <Image Width="24"
+               Height="24"
+               Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/sent.png"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ReceivedTemplate">
+        <Image Width="24"
+               Height="24"
+               Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/received.png"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="InternalTemplate">
+        <Image Width="24"
+               Height="24"
+               Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/exchanged.png"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ExchangedTemplate">
+        <Image Width="24"
+               Height="24"
+               Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/exchanged.png"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RefundedTemplate">
+        <Image Width="24"
+               Height="24"
+               Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/refunded.png"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="UnknownTemplate">
+        <Image Width="24"
+               Height="24"
+               Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/unknown.png"/>
+    </DataTemplate>
+
+    <controls:TransactionTypeDataTemplateSelector x:Key="TransactionTypeDataTemplateSelector"
+                                                  SentTemplate="{StaticResource SentTemplate}"
+                                                  ReceivedTemplate="{StaticResource ReceivedTemplate}"
+                                                  InternalTemplate="{StaticResource InternalTemplate}"
+                                                  ExchangedTemplate="{StaticResource ExchangedTemplate}"
+                                                  RefundedTemplate="{StaticResource RefundedTemplate}"
+                                                  UnknownTemplate="{StaticResource UnknownTemplate}"/>
+
+    <SolidColorBrush x:Key="TransactionDetailsBackgroundBrush" Color="Transparent"/>
+
+    <DataTemplate x:Key="TransactionDetailsTemplate"
+                  DataType="viewModels:TransactionViewModel">
+        <Grid Background="{StaticResource TransactionDetailsBackgroundBrush}">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Transaction Id:"
+                           Foreground="LightGray"
+                           Margin="0 1 0 1"
+                           HorizontalAlignment="Right"
+                           Grid.Column="0"
+                           Grid.Row="0"/>
+
+                <TextBox Background="Transparent"
+                         BorderThickness="0"           
+                         Text="{Binding Id}"
+                         TextWrapping="Wrap"
+                         Padding="0"
+                         Margin="4 -4 0 -4"                        
+                         FontFamily="{StaticResource Roboto}"
+                         FontSize="13"
+                         IsReadOnly="True"
+                         VerticalAlignment="Center"
+                         VerticalContentAlignment="Center"
+                         Grid.Column="1"
+                         Grid.Row="0" />
+
+                <TextBlock Text="Date:"
+                           FontFamily="{StaticResource Roboto}"
+                           Foreground="LightGray"
+                           Margin="0 1 0 1"
+                           HorizontalAlignment="Right"
+                           Grid.Column="0"
+                           Grid.Row="1"/>
+                <TextBlock Text="{Binding LocalTime, StringFormat=dd MMM yyyy\, HH:mm:ss.fff}"
+                           Margin="10 1 0 1"
+                           Grid.Column="1"
+                           Grid.Row="1"/>
+
+                <TextBlock Text="Fee:"
+                           FontFamily="{StaticResource Roboto}"
+                           Foreground="LightGray"
+                           Margin="0 1 0 1"
+                           HorizontalAlignment="Right"
+                           Grid.Column="0"
+                           Grid.Row="2"/>
+                <TextBlock Margin="10 1 0 1"
+                           FontFamily="{StaticResource Roboto}"
+                           Grid.Column="1"
+                           Grid.Row="2">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="Fee" Mode="OneWay"/>
+                            <Binding Path="AmountFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+
+    <!--<DataTemplate x:Key="SentDetailsTemplate">
+        <Grid Background="{StaticResource TransactionDetailsBakcgroundBrush}" >
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ReceivedDetailsTemplate">
+        <Image Width="24" Height="24" Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/received.png"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ExchangedDetailsTemplate">
+        <Image Width="24" Height="24" Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/exchanged.png"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RefundedDetailsTemplate">
+        <Image Width="24" Height="24" Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/refunded.png"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="UnknownDetailsTemplate">
+        <Image Width="24" Height="24" Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/unknown.png"/>
+    </DataTemplate>-->
+
+    <controls:TransactionTypeDataTemplateSelector x:Key="TransactionDetailsDataTemplateSelector"
+                                                  SentTemplate="{StaticResource TransactionDetailsTemplate}"
+                                                  ReceivedTemplate="{StaticResource TransactionDetailsTemplate}"
+                                                  InternalTemplate="{StaticResource TransactionDetailsTemplate}"
+                                                  ExchangedTemplate="{StaticResource TransactionDetailsTemplate}"
+                                                  RefundedTemplate="{StaticResource TransactionDetailsTemplate}"
+                                                  UnknownTemplate="{StaticResource TransactionDetailsTemplate}"/>
+
+    <DataTemplate x:Key="ConfirmedTemplate" DataType="viewModels:TransactionViewModel">
+        <Border Background="{StaticResource ConfirmedBrush}" CornerRadius="5" Margin="3 0 3 0" HorizontalAlignment="Center">
+            <TextBlock Foreground="White" Text="{Binding State}" FontSize="11" Margin="5 3 5 3" HorizontalAlignment="Center"/>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="UnconfirmedTemplate" DataType="viewModels:TransactionViewModel">
+        <Border Background="{StaticResource UnconfirmedBrush}" CornerRadius="5" Margin="3 0 3 0" HorizontalAlignment="Center">
+            <TextBlock Foreground="White" Text="{Binding State}" FontSize="11" Margin="5 3 5 3" HorizontalAlignment="Center"/>
+        </Border>
+    </DataTemplate>
+
+    <controls:TransactionStateDataTemplateSelector x:Key="TransactionStateDataTemplateSelector"
+                                                   ConfirmedTemplate="{StaticResource ConfirmedTemplate}"
+                                                   UnconfirmedTemplate="{StaticResource UnconfirmedTemplate}"/>
+    <Style x:Key="WalletMenuButton" BasedOn="{StaticResource DefaultRoundedButtonStyle}" TargetType="{x:Type controls:RoundedButton}">
+        <!--<Setter Property="Background" Value="{StaticResource WalletMenuButtonBackgroundBrush}"/>-->
+        <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Width" Value="90"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Margin" Value="2"/>
+        <Setter Property="CornerRadius" Value="5"/>
+    </Style>
+
+</ResourceDictionary>

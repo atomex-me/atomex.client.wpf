@@ -1,0 +1,87 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks">
+
+    <Color x:Key="ChildViewShadowColor">Black</Color>
+    <SolidColorBrush x:Key="ChildViewHeaderForegroundBrush" Color="{StaticResource DefaultForegroundColor}"/>
+    <SolidColorBrush x:Key="ChildViewHeaderBackgroundBrush" Color="{StaticResource DefaultBackgroundColor}"/>
+
+    <LinearGradientBrush x:Key="ChildViewBackgroundBrush" StartPoint="1,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#1a4274"/>
+        <GradientStop Offset="1" Color="#1a2e4c"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="ChildViewBackgroundBrushLight" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Offset="0" Color="AliceBlue"/>
+        <GradientStop Offset="1" Color="#c9dae9"/>
+    </LinearGradientBrush>
+
+    <Style x:Key="ChildViewBorder" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource ChildViewBackgroundBrush}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="5" Color="{StaticResource ChildViewShadowColor}" Opacity="1" BlurRadius="20"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Style x:Key="ChildViewBorderLight" TargetType="Border" BasedOn="{StaticResource ChildViewBorder}">
+        <Setter Property="Background" Value="{StaticResource ChildViewBackgroundBrushLight}"/>
+    </Style>
+
+    <SolidColorBrush x:Key="ChildViewCloseButtonBrush" Color="{StaticResource DefaultButtonBackgroundColor}"/>
+    <SolidColorBrush x:Key="ChildViewCloseButtonMouseOverBrush" Color="{StaticResource DefaultButtonMouseOverColor}"/>
+    <SolidColorBrush x:Key="ChildViewCloseButtonPressedBrush" Color="{StaticResource DefaultButtonPressedColor}"/>
+
+    <Style x:Key="ChildViewCloseButton" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <iconPacks:PackIconMaterial x:Name="icon" Kind="CloseCircle" Width="20" Height="20" Foreground="{StaticResource ChildViewCloseButtonBrush}" Background="Transparent"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonMouseOverBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsDefaulted" Value="True">
+                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonPressedBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <SolidColorBrush x:Key="ChildViewCloseButtonLightBrush" Color="{StaticResource DefaultButtonBackgroundLightColor}"/>
+    <SolidColorBrush x:Key="ChildViewCloseButtonMouseOverLightBrush" Color="{StaticResource DefaultButtonMouseOverLightColor}"/>
+    <SolidColorBrush x:Key="ChildViewCloseButtonPressedLightBrush" Color="{StaticResource DefaultButtonPressedLightColor}"/>
+
+    <Style x:Key="ChildViewCloseButtonLight" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <iconPacks:PackIconMaterial x:Name="icon" Kind="CloseCircle" Width="20" Height="20" Foreground="{StaticResource ChildViewCloseButtonLightBrush}" Background="Transparent"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonMouseOverLightBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsDefaulted" Value="True">
+                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonLightBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonPressedLightBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="Atomix.Client.Wpf.Views.HdWalletViews.WriteMnemonicView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="clr-namespace:Atomix.Client.Wpf.Helpers"
+             xmlns:hdWalletViewModels="clr-namespace:Atomix.Client.Wpf.ViewModels.HdWalletViewModels"
+             mc:Ignorable="d" 
+             d:DesignWidth="600"
+             d:DesignHeight="460"
+             d:DataContext="{d:DesignInstance Type=hdWalletViewModels:WriteMnemonicViewModel, IsDesignTimeCreatable=True}"
+             UseLayoutRounding="True">
+
+    <StackPanel Orientation="Vertical">
+        <TextBlock Text="Step 2: Mnemonic phrase"
+                   Foreground="{StaticResource DefaultForegroundBrush}"
+                   FontFamily="{StaticResource RobotoLight}"
+                   FontSize="25"
+                   Margin="10 30 10 20"
+                   HorizontalAlignment="Center"/>
+
+        <TextBlock Text="Please enter a mnemonic phrase for your wallet."
+                   Foreground="{StaticResource DefaultForegroundBrush}"
+                   FontFamily="{StaticResource RobotoLight}"
+                   FontSize="15"
+                   Margin="40 0 40 20"
+                   TextWrapping="Wrap"
+                   HorizontalAlignment="Center"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Border Width="90"
+                    Height="40"
+                    Background="{StaticResource DefaultBackgroundBrush}"
+                    CornerRadius="20 0 0 20">
+                <TextBlock Text="Language:"
+                           Margin="0 0 7 0"
+                           Foreground="{StaticResource DefaultForegroundBrush}"
+                           FontFamily="{StaticResource RobotoMedium}"
+                           FontSize="13"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"/>
+            </Border>
+            <ComboBox Width="390"
+                      Height="40"
+                      Margin="0 5 0 5"
+                      ItemsSource="{Binding Languages}"
+                      DisplayMemberPath="Key"
+                      SelectedValuePath="Value"
+                      SelectedValue="{Binding Language}"
+                      Style="{StaticResource CustomComboBox}"
+                      helpers:ComboBoxHelper.CornerRadius="0 20 20 0"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBox Width="480"
+                     Height="Auto"
+                     MinHeight="40"
+                     Margin="0 5 0 5"
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"
+                     HorizontalAlignment="Center"                       
+                     VerticalAlignment="Top"  
+                     Text="{Binding Mnemonic}"
+                     helpers:TextBoxHelper.CornerRadius="20 20 20 20"    
+                     helpers:TextBoxHelper.PlaceHolder="mnemonic phrase..."
+                     Style="{StaticResource CustomTextBox}"/>
+            
+        </StackPanel>
+
+        <TextBlock Text="{Binding Warning}"
+                   Foreground="{StaticResource WarningForegroundBrush}"
+                   FontFamily="{StaticResource RobotoLight}"
+                   FontSize="13"
+                   Margin="20 5 20 0"
+                   TextWrapping="Wrap"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"/>
+    </StackPanel>
+</UserControl>

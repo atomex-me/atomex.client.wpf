@@ -1,0 +1,29 @@
+﻿{
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.Console" ],
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": { "path": "logs/log.txt" }
+      }
+    ],
+    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId" ]
+  },
+  "Exchange": {
+    "Url": "ws://localhost:56303/exchange"
+  },
+  "MarketData": {
+    "Url": "ws://localhost:56303/marketdata"
+  },
+  "Swap": {
+    "Url": "ws://localhost:56303/swap"
+  }
+}

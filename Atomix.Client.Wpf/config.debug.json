@@ -1,0 +1,37 @@
+﻿{
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.Console", "Atomix.Client.Core" ],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "restrictedToMinimumLevel": "Debug" 
+        } 
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "logs/log.txt",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff K} [{Level:u3}] [{Class}] {Message:lj} (at {Caller}){NewLine}{Exception}"
+        }
+      }
+    ],
+    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId", "WithCaller" ]
+  },
+  "Exchange": {
+    "Url": "ws://localhost:56303/exchange"
+  },
+  "MarketData": {
+    "Url": "ws://localhost:56303/marketdata"
+  },
+  "Swap": {
+    "Url": "ws://localhost:56303/swap"
+  }
+}

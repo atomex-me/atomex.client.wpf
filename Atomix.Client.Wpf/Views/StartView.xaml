@@ -1,0 +1,154 @@
+﻿<controls:ChildView x:Class="Atomix.Client.Wpf.Views.StartView"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:controls="clr-namespace:Atomix.Client.Wpf.Controls"
+                    xmlns:converters="clr-namespace:Atomix.Client.Wpf.Converters"
+                    xmlns:viewModels="clr-namespace:Atomix.Client.Wpf.ViewModels"
+                    mc:Ignorable="d" 
+                    Width="600"
+                    Height="320"
+                    UseLayoutRounding="True"
+                    Focusable="False"
+                    d:DataContext="{d:DesignInstance Type=viewModels:StartViewModel, IsDesignTimeCreatable=True}">
+
+    <controls:ChildView.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" OppositeBoolValue="False" FalseEquivalent="Collapsed" />
+        <SolidColorBrush x:Key="AvailableWalletListBackgroundBrush" Color="#B0000000"/>
+        <SolidColorBrush x:Key="AvailableWalletListTitleBackgroundBrush" Color="#F0000000"/>
+        <SolidColorBrush x:Key="CopyrightForegroundBrush" Color="#122d4f"/>
+    </controls:ChildView.Resources>
+
+    <Border Style="{StaticResource ChildViewBorderLight}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" CornerRadius="8 0 0 10" BorderThickness="0">
+                <Border.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/logo_pillow.png"/>
+                </Border.Background>
+
+                <Grid>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0 30 0 0"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Center">
+
+                        <Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/logo_white.png"
+                               Width="50"
+                               Height="52"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+
+                        <Glyphs UnicodeString="atomix"
+                                Indices=",60;,30;,58;,85;,20;,50"
+                                FontUri="/Resources/Fonts/Comfortaa-Regular.ttf"
+                                Fill="White"
+                                FontRenderingEmSize="40"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="10 0 0 0"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10 100 10 0"
+                                VerticalAlignment="Center"
+                                Visibility="{Binding HasAvailableWallets, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="Available wallets"
+                                   Foreground="{StaticResource DefaultForegroundBrush}"
+                                   Background="{StaticResource AvailableWalletListTitleBackgroundBrush}"
+                                   Padding="0 5 0 3"
+                                   FontSize="13"
+                                   FontFamily="{StaticResource RobotoLight}"
+                                   TextAlignment="Center"
+                                   HorizontalAlignment="Stretch"/>
+                        <ListBox x:Name="WalletListBox"
+                                 Background="{StaticResource AvailableWalletListBackgroundBrush}"
+                                 MaxHeight="180"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                 ItemsSource="{Binding Wallets}"
+                                 SelectionMode="Single">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Wallet"
+                                                                    Width="24"
+                                                                    Height="24"
+                                                                    Margin="6"
+                                                                    VerticalAlignment="Center"
+                                                                    HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Name}"
+                                                   Margin="3 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="13"
+                                                   FontFamily="{StaticResource RobotoLight}"
+                                                   Foreground="{StaticResource DefaultForegroundBrush}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <i:InvokeCommandAction Command="{Binding SelectWalletCommand}" CommandParameter="{Binding ElementName=WalletListBox, Path=SelectedItem}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListBox>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Column="1">
+                <StackPanel Orientation="Vertical">
+                    <Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/login_window_logo.png"
+                           Width="80"
+                           Margin="0 28 0 0"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Top"/>
+
+                    <controls:RoundedButton Width="240"
+                                            Height="40"
+                                            Margin="0 50 0 0"
+                                            CornerRadius="20 20 0 0"
+                                            Content="Create new wallet"
+                                            FontSize="13"
+                                            Command="{Binding CreateNewCommand}"/>
+
+                    <controls:RoundedButton Width="240"
+                                            Height="40"
+                                            Margin="0 1 0 0"
+                                            CornerRadius="0 0 20 20"
+                                            Content="Restore using mnemonic phrase"
+                                            FontSize="13"
+                                            Command="{Binding RestoreByMnemonicCommand}"/>
+
+                    <!--<controls:RoundedButton Width="240"
+                                            Height="40"
+                                            Margin="0 1 0 0"
+                                            CornerRadius="0 0 20 20"
+                                            Content="Restore using an existing wallet file"
+                                            FontSize="13"
+                                            IsEnabled="True"
+                                            Command="{Binding RestoreByFileCommand}"/>-->
+                </StackPanel>
+
+                <TextBlock Foreground="{StaticResource CopyrightForegroundBrush}"
+                           Text="© 2018 Atomix LTD, All rights reserved"
+                           Margin="0 0 0 7"
+                           FontSize="11"
+                           FontFamily="{StaticResource RobotoLight}"
+                           VerticalAlignment="Bottom"
+                           HorizontalAlignment="Center"/>
+            </Grid>
+        </Grid>
+    </Border>
+</controls:ChildView>

@@ -1,0 +1,86 @@
+﻿<controls:ChildView x:Class="Atomix.Client.Wpf.Views.CreateWalletView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:controls="clr-namespace:Atomix.Client.Wpf.Controls"
+             xmlns:hdWalletViews="clr-namespace:Atomix.Client.Wpf.Views.HdWalletViews"
+             xmlns:viewModels="clr-namespace:Atomix.Client.Wpf.ViewModels"
+             HorizontalContentAlignment="Center"
+             VerticalContentAlignment="Center"
+             UseLayoutRounding="True"
+             Width="600"
+             Height="460"
+             Focusable="False"
+             mc:Ignorable="d" 
+             d:DesignWidth="600"
+             d:DesignHeight="460"
+             d:DataContext="{d:DesignInstance Type=viewModels:CreateWalletViewModel, IsDesignTimeCreatable=True}">
+
+    <Border Style="{StaticResource ChildViewBorder}">
+        <Grid>
+            <mah:FlipView SelectedIndex="{Binding Stage}"
+                          IsNavigationEnabled="False"
+                          IsBannerEnabled="False"
+                          MouseHoverBorderEnabled="False">
+                <mah:FlipView.Items>
+                    <hdWalletViews:WalletNameView DataContext="{Binding Stages[0]}"/>
+                    <hdWalletViews:CreateMnemonicView DataContext="{Binding Stages[1]}"/>
+                    <hdWalletViews:WriteMnemonicView DataContext="{Binding Stages[2]}"/>
+                    <hdWalletViews:CreateDerivedKeyPasswordView DataContext="{Binding Stages[3]}"/>
+                    <hdWalletViews:WriteDerivedKeyPasswordView DataContext="{Binding Stages[4]}"/>
+                    <hdWalletViews:CreateStoragePasswordView DataContext="{Binding Stages[5]}"/>
+                    <!--<hdWalletViews:DeviceSynchronizationView DataContext="{Binding Stages[5]}"/>-->
+                    <hdWalletViews:BlockchainScanView DataContext="{Binding Stages[6]}"/>
+                </mah:FlipView.Items>
+            </mah:FlipView>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0 0 0 80">
+                <controls:RoundedButton Width="120"
+                                        Height="40"
+                                        Margin="0 5 0 5"
+                                        CornerRadius="20 0 0 20"
+                                        Content="{Binding BackText}"
+                                        FontSize="13"
+                                        Command="{Binding BackCommand}"
+                                        Visibility="{Binding CanBack, Converter={StaticResource bool2VisibilityConverter}}"/>
+                <controls:RoundedButton Width="120"
+                                        Height="40"
+                                        Margin="3 5 0 5"
+                                        Content="{Binding NextText}"
+                                        FontSize="13"
+                                        Command="{Binding NextCommand}"
+                                        Visibility="{Binding CanNext, Converter={StaticResource bool2VisibilityConverter}}">
+                    <controls:RoundedButton.Style>
+                        <Style BasedOn="{StaticResource DefaultRoundedButtonStyle}" TargetType="{x:Type controls:RoundedButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanBack}" Value="false">
+                                    <Setter Property="CornerRadius" Value="20 20 20 20"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding CanBack}" Value="true">
+                                    <Setter Property="CornerRadius" Value="0 20 20 0"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls:RoundedButton.Style>
+                </controls:RoundedButton>
+            </StackPanel>
+
+            <controls:StepIndicatorPanel Margin="0 0 0 30"
+                                         Height="40"
+                                         Width="450"
+                                         VerticalAlignment="Bottom"
+                                         StepsCount="{Binding StepsCount}"
+                                         CurrentStep="{Binding Step}"
+                                         StepBackground="{StaticResource StepBackgroundBrush}"
+                                         CompletedStepBackground="{StaticResource CompletedStepBackgroundBrush}"
+                                         Foreground="{StaticResource StepForegroundBrush}"/>
+
+            <Border Background="{StaticResource DefaultSubstrateBrush}"
+                  Visibility="{Binding InProgress, Converter={StaticResource bool2VisibilityConverter}}">
+                <mah:ProgressRing IsActive="{Binding InProgress}"/>
+            </Border>
+        </Grid>
+    </Border>
+</controls:ChildView>
