@@ -1,0 +1,31 @@
+variables:
+  NUGET_PATH: 'C:\nuget\nuget.exe'
+  MSBUILD_PATH: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe'
+  XUNIT_PATH: packages\xunit.runner.console.2.4.1\tools\net461
+  UNITTEST_FOLDER: '.\Atomix.Client.Wpf.Tests\bin\Release\'
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  only:
+    - branches
+  script:
+    - '& "$env:NUGET_PATH" restore'
+    - '& "$env:MSBUILD_PATH" /p:Configuration=Release /clp:ErrorsOnly'
+  artifacts:
+    expire_in: 2 days
+    paths:
+      - '$env:UNITTEST_FOLDER'
+      - '.\$env:XUNIT_PATH\*.*'
+
+test:
+  stage: test
+  only:
+    - branches
+  script:
+    - '& "$env:XUNIT_PATH\xunit.console.exe" "$env:UNITTEST_FOLDER\Atomix.Client.Wpf.Tests.dll"'
+  dependencies:
+    - build 

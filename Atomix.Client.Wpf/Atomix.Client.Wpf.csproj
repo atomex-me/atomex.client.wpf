@@ -700,7 +700,7 @@
     <Resource Include="Resources\Images\dash_mask.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Atomix.Client.Core\Atomix.Client.Core.csproj">
+    <ProjectReference Include="..\Atomix.Client.Core\Atomix.Client.Core\Atomix.Client.Core.csproj">
       <Project>{FE561137-2416-42F2-88AF-86CBD578F6F0}</Project>
       <Name>Atomix.Client.Core</Name>
     </ProjectReference>
