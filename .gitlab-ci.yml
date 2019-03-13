@@ -1,6 +1,6 @@
 variables:
-  NUGET_PATH: 'C:\nuget\nuget.exe'
-  MSBUILD_PATH: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe'
+  NUGET_PATH: 'C:\Tools\Nuget\nuget.exe'
+  MSBUILD_PATH: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\msbuild.exe'
   XUNIT_PATH: packages\xunit.runner.console.2.4.1\tools\net461
   UNITTEST_FOLDER: '.\Atomix.Client.Wpf.Tests\bin\Release\'
   GIT_SUBMODULE_STRATEGY: normal
