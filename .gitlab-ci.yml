@@ -1,5 +1,6 @@
 variables:
   NUGET_PATH: 'C:\Tools\Nuget\nuget.exe'
+  NUGET_PACKAGES: 'C:\Tools\Nuget\packages'
   MSBUILD_PATH: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\msbuild.exe'
   XUNIT_PATH: packages\xunit.runner.console.2.4.1\tools\net461
   UNITTEST_FOLDER: '.\Atomix.Client.Wpf.Tests\bin\Release\'
@@ -14,7 +15,7 @@ build:
   only:
     - branches
   script:
-    - 'dotnet restore'
+    - 'dotnet restore --packages "$env:NUGET_PACKAGES"'
     - '& "$env:NUGET_PATH" restore'
     - '& "$env:MSBUILD_PATH" /p:Configuration=Release /clp:ErrorsOnly'
   artifacts:
