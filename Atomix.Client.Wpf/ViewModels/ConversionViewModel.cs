@@ -591,7 +591,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
             var swapViewModels = new List<SwapViewModel>
             {
-                SwapViewModelFactory.CreateSwapViewModel(new Swap
+                SwapViewModelFactory.CreateSwapViewModel(new SwapState
                 {
                     Order = new Order
                     {
@@ -603,7 +603,7 @@ namespace Atomix.Client.Wpf.ViewModels
                         SwapId = Guid.NewGuid() 
                     }
                 }),
-                SwapViewModelFactory.CreateSwapViewModel(new Swap
+                SwapViewModelFactory.CreateSwapViewModel(new SwapState
                 {
                     Order = new Order
                     {

@@ -20,9 +20,9 @@ namespace Atomix.Client.Wpf.ViewModels
             };
         }
 
-        public static SwapViewModel CreateSwapViewModel(ISwap s)
+        public static SwapViewModel CreateSwapViewModel(ISwapState s)
         {
-            if (s is Swap swap)
+            if (s is SwapState swap)
             {
                 var order = swap.Order;
 
@@ -62,14 +62,14 @@ namespace Atomix.Client.Wpf.ViewModels
             throw new NotSupportedException("Swap not supported");
         }
 
-        private static SwapMode ModeBySwap(Swap swap)
+        private static SwapMode ModeBySwap(SwapState swap)
         {
             return swap.IsInitiator
                 ? SwapMode.Initiator
                 : SwapMode.CounterParty;
         }
 
-        private static SwapCompactState CompactStateBySwap(Swap swap)
+        private static SwapCompactState CompactStateBySwap(SwapState swap)
         {
             if (swap.IsComplete)
                 return SwapCompactState.Completed;
