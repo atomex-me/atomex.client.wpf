@@ -512,10 +512,10 @@ namespace Atomix.Client.Wpf.ViewModels
                         requiredAmount: requiredAmount); 
 
                 var refundWallet = await account
-                    .GetFreeInternalAddressAsync(FromCurrency);
+                    .GetRefundAddressAsync(FromCurrency, fromWallets);
 
                 var toWallet = await account
-                    .GetFreeInternalAddressAsync(ToCurrency);
+                    .GetRedeemAddressAsync(ToCurrency);
 
                 var side = symbol.OrderSideForBuyCurrency(ToCurrency);
                 var orderBook = terminal.GetOrderBook(symbol);
