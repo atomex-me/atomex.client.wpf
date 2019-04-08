@@ -3,7 +3,7 @@
 <?define Name = "Atomix Wallet" ?>
 <?define Manufacturer = "Atomix.me" ?>
 <?define Description = "Multicurrency HD wallet with built-in hybrid exchange." ?>
-<?define Version = "1.0.0.0" ?>
+<?define Version = "1.0.0" ?>
 <?define UpgradeCode = "0779aaaa-2411-4948-b5bc-48f81b8c6143" ?>
 <?define ExeName = "Atomix.Client.Wpf.exe" ?>
 
