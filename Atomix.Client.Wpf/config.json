@@ -1,8 +1,8 @@
 ﻿{
   "Serilog": {
-    "Using": [ "Serilog.Sinks.Console" ],
+    "Using": [ "Serilog.Sinks.Console", "Atomix.Client.Core" ],
     "MinimumLevel": {
-      "Default": "Information",
+      "Default": "Debug",
       "Override": {
         "Microsoft": "Warning",
         "System": "Warning"
@@ -12,10 +12,13 @@
       { "Name": "Console" },
       {
         "Name": "File",
-        "Args": { "path": "logs/log.txt" }
+        "Args": {
+          "path": "logs/log.txt",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff K} [{Level:u3}] [{Class}] {Message:lj} (at {Caller}){NewLine}{Exception}"
+        }
       }
     ],
-    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId" ]
+    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId", "WithCaller" ]
   },
   "Exchange": {
     "Url": "ws://localhost:56303/exchange"

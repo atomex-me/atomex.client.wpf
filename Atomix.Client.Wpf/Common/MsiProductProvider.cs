@@ -29,13 +29,13 @@ namespace Atomix.Client.Wpf.Common
             if (products.Count == 0)
             {
                 // is it possible and should we worry?
-                return new Version();
+                return new Version("0.0.0");
             }
             // can the products count be > 1 and how should we get the right one?
             else if (!Version.TryParse(products[0].Version, out var version))
             {
                 // is it possible and what should we do?
-                return new Version();
+                return new Version("0.0.0");
             }
             else
             {
@@ -78,7 +78,7 @@ namespace Atomix.Client.Wpf.Common
             Process.Start(new ProcessStartInfo
             {
                 // wait for 2 sec, kill the process and run the installer
-                Arguments = $"/C ping 127.0.0.1 -n 2 > nul & taskkill /F /IM Atomix.Client.Wpf.exe & msiexec /i {packagePath}",
+                Arguments = $"/C ping 127.0.0.1 -n 2 > nul & taskkill /F /IM Atomix.Client.Wpf.exe & msiexec /i {packagePath} /q",
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 FileName = "cmd",

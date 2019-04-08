@@ -198,6 +198,16 @@
     <DockPanel>
         <StatusBar DockPanel.Dock="Bottom"
                    Background="{StaticResource MainWindowTitleBrush}">
+            <StatusBarItem DockPanel.Dock="Left">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Version:" Margin="2px 0 4px 0"
+                               FontSize="11"
+                               Foreground="{StaticResource StatusBarDisconnectedForeground}"/>
+                    <TextBlock Text="{Binding Path=InstalledVersion}"
+                               FontSize="11"
+                               Foreground="{StaticResource StatusBarDisconnectedForeground}" />
+                </StackPanel>
+            </StatusBarItem>
             <StatusBarItem DockPanel.Dock="Right">
                 <TextBlock Text="Exchange"
                            FontSize="11">

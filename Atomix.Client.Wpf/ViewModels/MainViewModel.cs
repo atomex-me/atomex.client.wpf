@@ -32,6 +32,13 @@ namespace Atomix.Client.Wpf.ViewModels
             set { _selectedMenuIndex = value; OnPropertyChanged(nameof(SelectedMenuIndex)); }
         }
 
+        private string _installedVersion;
+        public string InstalledVersion
+        {
+            get => _installedVersion;
+            set { _installedVersion = value; OnPropertyChanged(nameof(InstalledVersion)); }
+        }
+
         private bool _updatesReady;
         public bool UpdatesReady
         {
@@ -120,6 +127,8 @@ namespace Atomix.Client.Wpf.ViewModels
             WalletsViewModel = new WalletsViewModel(DialogViewer, this, ConversionViewModel);
             ExchangeViewModel = new ExchangeViewModel();
             SettingsViewModel = new SettingsViewModel();
+
+            InstalledVersion = App.Updater.InstalledVersion.ToString();
 
             SubscribeToServices(App.AtomixApp);
             SubscribeToUpdates(App.Updater);
