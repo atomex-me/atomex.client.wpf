@@ -14,8 +14,78 @@
         Icon="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/logo.png"
         Style="{StaticResource MainWindowStyle}"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel, IsDesignTimeCreatable=True}">
+
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
+            <Button x:Name="btnUpdate" Command="{Binding UpdateCommand}" Foreground="Gold"
+                    Visibility="{Binding UpdatesReady, Converter={StaticResource bool2VisibilityConverter}}">
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <controls:ContentControlEx x:Name="PART_ContentControlEx"
+                                       Padding="{TemplateBinding Padding}"
+                                       HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       Content="{TemplateBinding Content}"
+                                       ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                       ContentTemplate="{TemplateBinding ContentTemplate}"
+                                       ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                       RecognizesAccessKey="True"
+                                       Opacity="1"
+                                       SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Button.Template>
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="{DynamicResource TransparentWhiteBrush}" />
+                        <Setter Property="Foreground" Value="{Binding Foreground, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type controls:WindowCommands}}}" />
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="8 0 8 0" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="{DynamicResource GrayBrush4}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard x:Name="opacityPulse">
+                                        <Storyboard TargetProperty="Opacity">
+                                            <DoubleAnimationUsingKeyFrames Duration="0:0:2" RepeatBehavior="Forever">
+                                                <EasingDoubleKeyFrame KeyTime="85%" Value="0.35">
+                                                    <EasingDoubleKeyFrame.EasingFunction>
+                                                        <ExponentialEase EasingMode="EaseOut"></ExponentialEase>
+                                                    </EasingDoubleKeyFrame.EasingFunction>
+                                                </EasingDoubleKeyFrame>
+                                                <EasingDoubleKeyFrame KeyTime="100%" Value="1">
+                                                    <EasingDoubleKeyFrame.EasingFunction>
+                                                        <ExponentialEase EasingMode="EaseOut"></ExponentialEase>
+                                                    </EasingDoubleKeyFrame.EasingFunction>
+                                                </EasingDoubleKeyFrame>
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <StopStoryboard BeginStoryboardName="opacityPulse" />
+                                </Trigger.EnterActions>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconModern Margin="0 0 3 0"
+                                              Width="16"
+                                              Height="16"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center"
+                                              Kind="Refresh" />
+                    <TextBlock VerticalAlignment="Center"
+                               Text="Update Atomix" />
+                </StackPanel>
+            </Button>
             <Button Command="{Binding LockCommand}"
                     Visibility="{Binding HasAccount, Converter={StaticResource bool2VisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">

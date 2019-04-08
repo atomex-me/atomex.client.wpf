@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Atomix.MarketData;
 using Atomix.MarketData.Abstract;
@@ -9,6 +10,7 @@ using Atomix.Wallet.Abstract;
 using Atomix.Client.Wpf.Common;
 using Atomix.Client.Wpf.Controls;
 using Atomix.Client.Wpf.ViewModels.Abstract;
+using Atomix.Updates;
 
 namespace Atomix.Client.Wpf.ViewModels
 {
@@ -28,6 +30,13 @@ namespace Atomix.Client.Wpf.ViewModels
         {
             get => _selectedMenuIndex;
             set { _selectedMenuIndex = value; OnPropertyChanged(nameof(SelectedMenuIndex)); }
+        }
+
+        private bool _updatesReady;
+        public bool UpdatesReady
+        {
+            get => _updatesReady;
+            set { _updatesReady = value; OnPropertyChanged(nameof(UpdatesReady)); }
         }
 
         private bool _hasAccount;
@@ -113,11 +122,22 @@ namespace Atomix.Client.Wpf.ViewModels
             SettingsViewModel = new SettingsViewModel();
 
             SubscribeToServices(App.AtomixApp);
+            SubscribeToUpdates(App.Updater);
         }
 
         public void SelectMenu(int index)
         {
             SelectedMenuIndex = index;
+        }
+
+        private void SubscribeToUpdates(Updater updater)
+        {
+            updater.UpdatesReady += OnUpdatesReadyEventHandler;
+        }
+
+        private void OnUpdatesReadyEventHandler(object sender, ReadyEventArgs e)
+        {
+            UpdatesReady = true;
         }
 
         private void SubscribeToServices(AtomixApp app)
@@ -183,6 +203,14 @@ namespace Atomix.Client.Wpf.ViewModels
                 return;
 
             IsLocked = account.IsLocked;
+        }
+
+        private ICommand _updateCommand;
+        public ICommand UpdateCommand => _updateCommand ?? (_updateCommand = new Command(OnUpdateClick));
+
+        private void OnUpdateClick()
+        {
+            Application.Current.Shutdown(101);
         }
 
         private ICommand _lockCommand;

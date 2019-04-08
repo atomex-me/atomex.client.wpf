@@ -283,6 +283,11 @@
     <Compile Include="Common\DecimalExtensions.cs" />
     <Compile Include="Common\Environment.cs" />
     <Compile Include="Common\IPageResolver.cs" />
+    <Compile Include="Common\Msi\MsiApi.cs" />
+    <Compile Include="Common\Msi\MsiPackage.cs" />
+    <Compile Include="Common\Msi\MsiProduct.cs" />
+    <Compile Include="Common\Msi\PropsCollection.cs" />
+    <Compile Include="Common\MsiProductProvider.cs" />
     <Compile Include="Common\Navigation.cs" />
     <Compile Include="Common\PageResolver.cs" />
     <Compile Include="Common\RelayCommand.cs" />
