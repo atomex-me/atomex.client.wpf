@@ -33,7 +33,7 @@
 
                         <TextBlock x:Name="HeaderTextBlock" Text="{Binding Header}"
                                    Foreground="{StaticResource DefaultForegroundBrush}"
-                                   FontFamily="Agency FB"
+                                   FontFamily="{StaticResource AgencyFb}"
                                    FontSize="20"
                                    TextAlignment="Center"
                                    TextWrapping="Wrap"

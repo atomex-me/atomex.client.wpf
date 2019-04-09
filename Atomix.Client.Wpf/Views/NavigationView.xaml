@@ -54,14 +54,14 @@
                             <iconPacks:PackIconEntypo Kind="LineGraph" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
                         </controls:NavigationMenuItem.Icon>
                         <controls:NavigationMenuItem.Content>
-                            <!--<Grid>
+                            <Grid>
                                 <Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/under_construction.png"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        Width="200"
                                        Height="200"/>
-                            </Grid>-->
-                            <views:ExchangeView DataContext="{Binding Path=DataContext.ExchangeViewModel, Source={StaticResource ProxyElement}}"/>
+                            </Grid>
+                            <!--<views:ExchangeView DataContext="{Binding Path=DataContext.ExchangeViewModel, Source={StaticResource ProxyElement}}"/>-->
                         </controls:NavigationMenuItem.Content>
                     </controls:NavigationMenuItem>
 
@@ -76,14 +76,14 @@
                             <iconPacks:PackIconOcticons Kind="Gear" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
                         </controls:NavigationMenuItem.Icon>
                         <controls:NavigationMenuItem.Content>
-                            <!--<Grid>
+                            <Grid>
                                 <Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/under_construction.png"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        Width="200"
                                        Height="200"/>
-                            </Grid>-->
-                            <views:SettingsView DataContext="{Binding Path=DataContext.SettingsViewModel, Source={StaticResource ProxyElement}}"/>
+                            </Grid>
+                            <!--<views:SettingsView DataContext="{Binding Path=DataContext.SettingsViewModel, Source={StaticResource ProxyElement}}"/>-->
                         </controls:NavigationMenuItem.Content>
                     </controls:NavigationMenuItem>
 

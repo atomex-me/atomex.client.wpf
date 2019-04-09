@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using Atomix.Blockchain.Tezos;
 using Atomix.Client.Wpf.Properties;
 using Atomix.Client.Wpf.ViewModels.Abstract;
 
@@ -20,12 +24,43 @@ namespace Atomix.Client.Wpf.ViewModels.CurrencyViewModels
             UnselectedIconBrush = Brushes.White;
             IconPath = PathToImage("tezos.png");
             LargeIconPath = PathToImage("tezos_90x90.png");
-            FeeName = Resources.SvGasLimit;
+            FeeName = Resources.SvMiningFee;
         }
 
-        public override Task UpdateAsync()
+        public override async Task UpdateAsync()
         {
-            return Task.CompletedTask;
+            var transactions = (await Account
+                .GetTransactionsAsync(Currency))
+                .Cast<TezosTransaction>()
+                .ToList();
+
+            var confirmed = transactions
+                .Where(t => t.IsConfirmed())
+                .ToList();
+
+            var confirmedBalance = confirmed.Aggregate(0m, (s, t) => s + t.AmountInXtz());
+
+            var unconfirmed = transactions
+                .Where(t => !t.IsConfirmed())
+                .ToList();
+
+            var unconfirmedBalance = unconfirmed.Aggregate(0m, (s, t) => s + t.AmountInXtz());
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                TotalAmount = confirmedBalance + unconfirmedBalance;
+                OnPropertyChanged(nameof(TotalAmount));
+
+                AvailableAmount = confirmedBalance;
+                OnPropertyChanged(nameof(AvailableAmount));
+
+                UnconfirmedAmount = unconfirmedBalance;
+                OnPropertyChanged(nameof(UnconfirmedAmount));
+                OnPropertyChanged(nameof(HasUnconfirmedAmount));
+
+                UpdateQuotesInBaseCurrency(QuotesProvider);
+
+            }, DispatcherPriority.Background);
         }
     }
 }

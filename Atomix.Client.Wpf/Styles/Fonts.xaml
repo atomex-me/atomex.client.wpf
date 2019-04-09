@@ -5,4 +5,5 @@
     <FontFamily x:Key="RobotoLight">pack://application:,,,/Resources/Fonts/#Roboto Light</FontFamily>
     <FontFamily x:Key="RobotoMedium">pack://application:,,,/Resources/Fonts/#Roboto Medium</FontFamily>
     <FontFamily x:Key="RobotoBold">pack://application:,,,/Resources/Fonts/#Roboto Bold</FontFamily>
+    <FontFamily x:Key="AgencyFb">pack://application:,,,/Resources/Fonts/#Agency FB</FontFamily>
 </ResourceDictionary>

@@ -341,8 +341,8 @@
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="16"/>
-                            <RowDefinition Height="16"/>
-                            <RowDefinition Height="16"/>
+                            <!--<RowDefinition Height="16"/>
+                            <RowDefinition Height="16"/>-->
                         </Grid.RowDefinitions>
 
                         <TextBlock Text="Estimated price:"
@@ -364,7 +364,7 @@
                             </TextBlock.Text>
                         </TextBlock>
 
-                        <TextBlock Text="Estimated fee:"
+                        <!--<TextBlock Text="Estimated fee:"
                                    Foreground="{StaticResource AmountInBaseForegroundBrush}"
                                    HorizontalAlignment="Right"
                                    FontFamily="{StaticResource Roboto}"
@@ -400,7 +400,7 @@
                                     <Binding Path="PriceFormat" Mode="OneWay"/>
                                 </MultiBinding>
                             </TextBlock.Text>
-                        </TextBlock>
+                        </TextBlock>-->
                     </Grid>
 
                     <!--<StackPanel Orientation="Horizontal"

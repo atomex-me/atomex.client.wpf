@@ -5,6 +5,7 @@ using System.Linq;
 using Atomix.Blockchain;
 using Atomix.Blockchain.Abstract;
 using Atomix.Blockchain.Ethereum;
+using Atomix.Blockchain.Tezos;
 using Atomix.Core.Entities;
 using Atomix.Client.Wpf.ViewModels.Abstract;
 
@@ -127,48 +128,54 @@ namespace Atomix.Client.Wpf.ViewModels
 
         public TransactionViewModel CreateViewModel(IAddressBasedTransaction tx)
         {
+            var amount = 0m;
+            var type = TransactionType.Unknown;
+
             if (tx is EthereumTransaction ethTx)
             {
-                var amount = EthereumAmountByType(ethTx);
-
-                var type = EthereumTransactionType(ethTx);
-
-                string description;
-
-                switch (type)
-                {
-                    case TransactionType.Unknown:
-                        description = "Unknown transaction";
-                        break;
-                    case TransactionType.Sent:
-                        description = $"Sent {amount.ToString(CultureInfo.InvariantCulture)} {Currency.Name}";
-                        break;
-                    case TransactionType.Received:
-                        description = $"Received {amount.ToString(CultureInfo.InvariantCulture)} {Currency.Name}";
-                        break;
-                    case TransactionType.Self:
-                        description = $"Self transfer {amount.ToString(CultureInfo.InvariantCulture)} {Currency.Name}";
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-
-                return new TransactionViewModel
-                {
-                    Id = tx.Id,
-                    Amount = amount,
-                    AmountFormat = CurrencyViewModel.CurrencyFormat,
-                    CurrencyCode = CurrencyViewModel.CurrencyCode,
-                    Type = type,
-                    Description = description,
-                    State = tx.IsConfirmed()
-                        ? TransactionState.Confirmed
-                        : TransactionState.Unconfirmed,
-                    Time = tx.BlockInfo.FirstSeen,
-                    Fee = tx.BlockInfo.Fees
-                };
+                amount = EthereumAmountByType(ethTx);
+                type = EthereumTransactionType(ethTx);
             }
+            else if (tx is TezosTransaction xtzTx)
+            {
+                amount = TezosAmountByType(xtzTx);
+                type = TezosTransactionType(xtzTx);
+            }
+
+            string description;
+
+            switch (type)
+            {
+                case TransactionType.Unknown:
+                    description = "Unknown transaction";
+                    break;
+                case TransactionType.Sent:
+                    description = $"Sent {amount.ToString(CultureInfo.InvariantCulture)} {Currency.Name}";
+                    break;
+                case TransactionType.Received:
+                    description = $"Received {amount.ToString(CultureInfo.InvariantCulture)} {Currency.Name}";
+                    break;
+                case TransactionType.Self:
+                    description = $"Self transfer {amount.ToString(CultureInfo.InvariantCulture)} {Currency.Name}";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return new TransactionViewModel
+            {
+                Id = tx.Id,
+                Amount = amount,
+                AmountFormat = CurrencyViewModel.CurrencyFormat,
+                CurrencyCode = CurrencyViewModel.CurrencyCode,
+                Type = type,
+                Description = description,
+                State = tx.IsConfirmed()
+                    ? TransactionState.Confirmed
+                    : TransactionState.Unconfirmed,
+                Time = tx.BlockInfo.FirstSeen,
+                Fee = tx.BlockInfo.Fees
+            };
 
             throw new NotSupportedException();
         }
@@ -204,6 +211,39 @@ namespace Atomix.Client.Wpf.ViewModels
                     return Ethereum.WeiToEth(tx.Amount);
                 case EthereumTransaction.SelfTransaction:
                     return -Ethereum.WeiToEth(tx.GasPrice * gas);
+                default:
+                    return 0;
+            }
+        }
+
+        public TransactionType TezosTransactionType(TezosTransaction tx)
+        {
+            switch (tx.Type)
+            {
+                //case TezosTransaction.UnknownTransaction:
+                //    return TransactionType.Unknown;
+                case TezosTransaction.OutputTransaction:
+                    return TransactionType.Sent;
+                case TezosTransaction.InputTransaction:
+                    return TransactionType.Received;
+                case TezosTransaction.SelfTransaction:
+                    return TransactionType.Self;
+                default:
+                    return TransactionType.Unknown;
+            }
+        }
+
+        public decimal TezosAmountByType(TezosTransaction tx)
+        {
+            switch (tx.Type)
+            {
+                //case TezosTransaction.UnknownTransaction:
+                case TezosTransaction.OutputTransaction:
+                    return -Tezos.MtzToTz(tx.Amount + tx.Fee);
+                case TezosTransaction.InputTransaction:
+                    return Tezos.MtzToTz(tx.Amount);
+                case TezosTransaction.SelfTransaction:
+                    return -Tezos.MtzToTz(tx.Fee);
                 default:
                     return 0;
             }
