@@ -17,7 +17,7 @@
                     Margin="0 5 0 0">
             <TabControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type viewModels:WalletViewModel}">
-                    <StackPanel Orientation="Vertical" Background="Transparent">
+                    <StackPanel x:Name="walletTabItem" Orientation="Vertical" Background="Transparent" >
                         <ContentControl x:Name="ContentControl"
                                         HorizontalAlignment="Center"
                                         VerticalContentAlignment="Center"
@@ -40,6 +40,10 @@
                                    Opacity="0.4"/>
                     </StackPanel>
                     <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=walletTabItem, Path=IsMouseOver}" Value="True">
+                            <Setter TargetName="ContentControl" Property="Opacity" Value="1"/>
+                            <Setter TargetName="HeaderTextBlock" Property="Opacity" Value="1"/>
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding IsSelected}" Value="True">
                             <Setter TargetName="ContentControl" Property="Opacity" Value="1"/>
                             <Setter TargetName="HeaderTextBlock" Property="Opacity" Value="1"/>
