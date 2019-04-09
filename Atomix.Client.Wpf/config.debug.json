@@ -26,12 +26,12 @@
     "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId", "WithCaller" ]
   },
   "Exchange": {
-    "Url": "ws://localhost:56303/exchange"
+    "Url": "wss://atomix.me/exchange"
   },
   "MarketData": {
-    "Url": "ws://localhost:56303/marketdata"
+    "Url": "wss://atomix.me/marketdata"
   },
   "Swap": {
-    "Url": "ws://localhost:56303/swap"
+    "Url": "wss://atomix.me/swap"
   }
 }
