@@ -53,6 +53,10 @@
                              Style="{StaticResource CustomSecurePasswordBox}"
                              IsEnabled="{Binding InProgress, Converter={StaticResource InverseBooleanConverter}}"/>
 
+                <StackPanel Width="328" Margin="0 5" Visibility="{Binding Path=InvalidPassword, Converter={converters:BoolToVisibilityCollapsedConverter}}">
+                    <TextBlock Text="Invalid password" Foreground="OrangeRed" />
+                </StackPanel>
+
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Center">
                     <controls:RoundedButton Width="120"

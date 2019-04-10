@@ -301,6 +301,7 @@
     <Compile Include="Controls\TransactionStateDataTemplateSelector.cs" />
     <Compile Include="Controls\TransactionTypeDataTemplateSelector.cs" />
     <Compile Include="Converters\AmountToStringConverter.cs" />
+    <Compile Include="Converters\BoolToVisibilityCollapsedConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\IsPositiveValueConverter.cs" />

@@ -23,6 +23,13 @@ namespace Atomix.Client.Wpf.ViewModels
             set { _inProgress = value; OnPropertyChanged(nameof(InProgress)); }
         }
 
+        private bool _invalidPassword;
+        public bool InvalidPassword
+        {
+            get => _invalidPassword;
+            set { _invalidPassword = value; OnPropertyChanged(nameof(InvalidPassword)); }
+        }
+
         private ICommand _unlockCommand;
         public ICommand UnlockCommand => _unlockCommand ?? (_unlockCommand = new Command(OnUnlockClick));
 
@@ -44,6 +51,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private async void OnUnlockClick()
         {
+            InvalidPassword = false;
             InProgress = true;
 
             try
@@ -54,6 +62,7 @@ namespace Atomix.Client.Wpf.ViewModels
             {
                 Log.Error(e, "Unlock error");
 
+                InvalidPassword = true;
                 InProgress = false;
 
                 Error?.Invoke(this, new ErrorEventArgs(e));
