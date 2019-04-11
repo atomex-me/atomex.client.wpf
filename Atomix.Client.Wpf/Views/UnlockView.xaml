@@ -54,7 +54,7 @@
                              IsEnabled="{Binding InProgress, Converter={StaticResource InverseBooleanConverter}}"/>
 
                 <StackPanel Width="328" Margin="0 5" Visibility="{Binding Path=InvalidPassword, Converter={converters:BoolToVisibilityCollapsedConverter}}">
-                    <TextBlock Text="Invalid password" Foreground="OrangeRed" />
+                    <TextBlock Text="Invalid password" Foreground="OrangeRed" HorizontalAlignment="Center"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal"

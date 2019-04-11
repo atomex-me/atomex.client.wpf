@@ -52,6 +52,29 @@ namespace Atomix.Client.Wpf.Common
             return ShowChildViewInternalAsync<TResult>(view, container);
         }
 
+        public static void CloseAllChildViews(this Window window)
+        {
+            window.Dispatcher.VerifyAccess();
+
+            var container = window.Template.FindName("PART_MetroActiveDialogContainer", window) as Grid;
+            container = container ?? window.Template.FindName("PART_MetroInactiveDialogsContainer", window) as Grid;
+
+            if (container == null)
+                throw new InvalidOperationException("There is no container defined.");
+
+            var children = container.Children
+                .Cast<UIElement>()
+                .ToList();
+
+            foreach (var child in children)
+            {
+                if (child is ChildView childView)
+                    childView.Close();
+            }
+
+            children.Clear();
+        }
+
         private static async Task<TResult> ShowChildViewInternalAsync<TResult>(ChildView view, Panel container)
         {
             await AddViewToContainerAsync(view, container);

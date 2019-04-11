@@ -16,6 +16,7 @@ namespace Atomix.Client.Wpf.ViewModels
 {
     public class MainViewModel : BaseViewModel, IMenuSelector
     {
+        public IAtomixApp AtomixApp { get; set; }
         public IDialogViewer DialogViewer { get; set; }
         public LoginViewModel LoginViewModel { get; set; }
         public RegisterViewModel RegisterViewModel { get; set; }
@@ -116,21 +117,24 @@ namespace Atomix.Client.Wpf.ViewModels
                 DesignerMode();
 #endif
         }
-        public MainViewModel(IDialogViewer dialogViewer)
+        public MainViewModel(
+            IAtomixApp app,
+            IDialogViewer dialogViewer)
         {
+            AtomixApp = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
             LoginViewModel = new LoginViewModel(DialogViewer) {RegisterViewModel = RegisterViewModel};
             RegisterViewModel = new RegisterViewModel(DialogViewer) {LoginViewModel = LoginViewModel};
             PortfolioViewModel = new PortfolioViewModel();
             ConversionViewModel = new ConversionViewModel(DialogViewer);
-            WalletsViewModel = new WalletsViewModel(DialogViewer, this, ConversionViewModel);
+            WalletsViewModel = new WalletsViewModel(AtomixApp, DialogViewer, this, ConversionViewModel);
             ExchangeViewModel = new ExchangeViewModel();
             SettingsViewModel = new SettingsViewModel();
 
             InstalledVersion = App.Updater.InstalledVersion.ToString();
 
-            SubscribeToServices(App.AtomixApp);
+            SubscribeToServices();
             SubscribeToUpdates(App.Updater);
         }
 
@@ -149,14 +153,14 @@ namespace Atomix.Client.Wpf.ViewModels
             UpdatesReady = true;
         }
 
-        private void SubscribeToServices(AtomixApp app)
+        private void SubscribeToServices()
         {
-            app.AccountChanged += OnAccountChangedEventHandler;
+            AtomixApp.AccountChanged += OnAccountChangedEventHandler;
 
-            app.Terminal.ServiceConnected += OnTerminalServiceStateChangedEventHandler;
-            app.Terminal.ServiceDisconnected += OnTerminalServiceStateChangedEventHandler;
+            AtomixApp.Terminal.ServiceConnected += OnTerminalServiceStateChangedEventHandler;
+            AtomixApp.Terminal.ServiceDisconnected += OnTerminalServiceStateChangedEventHandler;
 
-            app.QuotesProvider.AvailabilityChanged += OnQuotesProviderAvailabilityChangedEventHandler;
+            AtomixApp.QuotesProvider.AvailabilityChanged += OnQuotesProviderAvailabilityChangedEventHandler;
         }
 
         private void OnAccountChangedEventHandler(object sender, AccountChangedEventArgs args)
@@ -227,10 +231,10 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private async void OnLockClick()
         {
-            if (!App.AtomixApp.HasAccount)
+            if (!AtomixApp.HasAccount)
                 return;
 
-            var account = App.AtomixApp.Account;
+            var account = AtomixApp.Account;
 
             if (account.IsLocked) {
                 await UnlockAccountAsync(account);
@@ -244,11 +248,13 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private void SignOut()
         {
-            App.AtomixApp.UseAccount(
+            DialogViewer.HideAllDialogs();
+
+            AtomixApp.UseAccount(
                 account: null,
                 restartTerminal: true);
 
-            DialogViewer.ShowStartDialog(new StartViewModel(DialogViewer));
+            DialogViewer.ShowStartDialog(new StartViewModel(AtomixApp, DialogViewer));
         }
         private Task UnlockAccountAsync(IAccount account)
         {

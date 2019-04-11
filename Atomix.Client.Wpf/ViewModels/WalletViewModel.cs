@@ -38,6 +38,7 @@ namespace Atomix.Client.Wpf.ViewModels
             set { _currencyViewModel = value; OnPropertyChanged(nameof(CurrencyViewModel)); }
         }
 
+        public IAtomixApp App { get; set; }
         public IDialogViewer DialogViewer { get; set; }
         public IMenuSelector MenuSelector { get; set; }
         public IConversionViewModel ConversionViewModel { get; set; }
@@ -83,31 +84,50 @@ namespace Atomix.Client.Wpf.ViewModels
 #endif
         }
 
-        public WalletViewModel(IDialogViewer dialogViewer, IMenuSelector menuSelector, IConversionViewModel conversionViewModel, Currency currency)
+        public WalletViewModel(
+            IAtomixApp app,
+            IDialogViewer dialogViewer,
+            IMenuSelector menuSelector,
+            IConversionViewModel conversionViewModel,
+            Currency currency)
         {
+            App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
             MenuSelector = menuSelector ?? throw new ArgumentNullException(nameof(menuSelector));
             ConversionViewModel = conversionViewModel ?? throw new ArgumentNullException(nameof(conversionViewModel));
 
             CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currency);
 
-            SubscribeToServices(App.AtomixApp);
+            SubscribeToServices();
 
             LoadTransactionsAsync().FireAndForget();
         }
 
-        private void SubscribeToServices(AtomixApp app)
+        private void SubscribeToServices()
         {
-            app.Account.BalanceUpdated += async (sender, args) => { await LoadTransactionsAsync(); };
+            App.Account.BalanceUpdated += async (sender, args) =>
+            {
+                try
+                {
+                    await LoadTransactionsAsync();
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Account balance updated event handler error");
+                }
+            };
         }
 
         private async Task LoadTransactionsAsync()
         {
-            var transactions = (await App.AtomixApp.Account
+            if (App.Account == null)
+                return;
+
+            var transactions = (await App.Account
                 .GetTransactionsAsync(Currency))
                 .ToList();
 
-            var outputs = await App.AtomixApp.Account
+            var outputs = await App.Account
                 .GetOutputsAsync(Currency);
 
             var factory = new TransactionViewModelFactory(Currency, transactions, outputs);
@@ -116,7 +136,7 @@ namespace Atomix.Client.Wpf.ViewModels
             {
                 Transactions = new ObservableCollection<TransactionViewModel>(
                     transactions.Select(t => factory
-                            .CreateViewModel(t))
+                        .CreateViewModel(t))
                         .ToList()
                         .SortList((t1, t2) => t2.Time.CompareTo(t1.Time)));
 
@@ -170,7 +190,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
             try
             {
-                var scanner = new HdWalletScanner(App.AtomixApp.Account);
+                var scanner = new HdWalletScanner(App.Account);
 
                 await scanner.ScanAsync(
                     currency: Currency,

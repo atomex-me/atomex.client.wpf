@@ -56,9 +56,9 @@ namespace Atomix.Client.Wpf
 
             // init & show main view
             var mainView = new MainWindow();
-            mainView.DataContext = new MainViewModel(mainView);
+            mainView.DataContext = new MainViewModel(AtomixApp, mainView);
             mainView.Show();        
-            mainView.ShowStartDialog(new StartViewModel(mainView));
+            mainView.ShowStartDialog(new StartViewModel(AtomixApp, mainView));
 
             MainWindow = mainView;
 

@@ -10,6 +10,7 @@ namespace Atomix.Client.Wpf.ViewModels
 {
     public class WalletsViewModel : BaseViewModel
     {
+        public IAtomixApp App { get; set; }
         public IDialogViewer DialogViewer { get; set; }
         public IMenuSelector MenuSelector { get; set; }
         public IConversionViewModel ConversionViewModel { get; set; }
@@ -45,18 +46,23 @@ namespace Atomix.Client.Wpf.ViewModels
 #endif
         }
 
-        public WalletsViewModel(IDialogViewer dialogViewer, IMenuSelector menuSelector, IConversionViewModel conversionViewModel)
+        public WalletsViewModel(
+            IAtomixApp app,
+            IDialogViewer dialogViewer,
+            IMenuSelector menuSelector,
+            IConversionViewModel conversionViewModel)
         {
+            App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
             MenuSelector = menuSelector ?? throw new ArgumentNullException(nameof(menuSelector));
             ConversionViewModel = conversionViewModel ?? throw new ArgumentNullException(nameof(conversionViewModel));
 
-            SubscribeToServices(App.AtomixApp);
+            SubscribeToServices();
         }
 
-        private void SubscribeToServices(AtomixApp app)
+        private void SubscribeToServices()
         {
-            app.AccountChanged += OnAccountChangedEventHandler;
+            App.AccountChanged += OnAccountChangedEventHandler;
         }
 
         private void OnAccountChangedEventHandler(object sender, AccountChangedEventArgs e)
@@ -64,6 +70,7 @@ namespace Atomix.Client.Wpf.ViewModels
             Wallets = e.NewAccount != null
                 ? new ObservableCollection<WalletViewModel>(
                     e.NewAccount.Wallet.Currencies.Select(currency => new WalletViewModel(
+                        app: App,
                         dialogViewer: DialogViewer,
                         menuSelector: MenuSelector,
                         conversionViewModel: ConversionViewModel,

@@ -13,6 +13,7 @@ namespace Atomix.Client.Wpf.ViewModels
 {
     public class StartViewModel : BaseViewModel
     {
+        public IAtomixApp App { get; set; }
         public IDialogViewer DialogViewer { get; set; }
         public IEnumerable<WalletInfo> Wallets { get; set; }
         public bool HasAvailableWallets => Wallets != null && Wallets.Any();
@@ -25,8 +26,11 @@ namespace Atomix.Client.Wpf.ViewModels
 #endif
         }
 
-        public StartViewModel(IDialogViewer dialogViewer)
+        public StartViewModel(
+            IAtomixApp app,
+            IDialogViewer dialogViewer)
         {
+            App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
             Wallets = WalletInfo.AvailableWallets();
@@ -64,7 +68,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private void OnAccountCreated(IAccount account)
         {
-            App.AtomixApp.UseAccount(account, restartTerminal: true);
+            App.UseAccount(account, restartTerminal: true);
 
             DialogViewer?.HideCreateWalletDialog(false);
             DialogViewer?.HideStartDialog();
@@ -79,7 +83,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
                 await Task.Factory.StartNew(() => { account = new Account(info.Path, password); });
 
-                App.AtomixApp.UseAccount(account, restartTerminal: true);
+                App.UseAccount(account, restartTerminal: true);
 
                 DialogViewer?.HideStartDialog();
             });

@@ -5,6 +5,8 @@ namespace Atomix.Client.Wpf.Controls
 {
     public interface IDialogViewer
     {
+        void HideAllDialogs();
+
         void ShowLoginDialog(object dataContext);
         void HideLoginDialog(bool hideOverlay = true);
 

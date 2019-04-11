@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Atomix.Client.Wpf.Common;
@@ -58,11 +59,20 @@ namespace Atomix.Client.Wpf.ViewModels
             {
                 await _unlockAction(Password);
             }
-            catch (Exception e)
+            catch (CryptographicException e)
             {
-                Log.Error(e, "Unlock error");
+                Log.Error(e, "Invalid password error");
 
                 InvalidPassword = true;
+                InProgress = false;
+
+                Error?.Invoke(this, new ErrorEventArgs(e));
+                return;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Unlocking error");
+
                 InProgress = false;
 
                 Error?.Invoke(this, new ErrorEventArgs(e));

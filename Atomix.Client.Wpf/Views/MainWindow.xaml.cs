@@ -21,6 +21,13 @@ namespace Atomix.Client.Wpf.Views
             InitializeComponent();
         }
 
+        public void HideAllDialogs()
+        {
+            this.CloseAllChildViews();
+
+            HideOverlay();
+        }
+
         public void ShowLoginDialog(object dataContext)
         {
             if (_loginView != null && _loginView.IsOpen)
