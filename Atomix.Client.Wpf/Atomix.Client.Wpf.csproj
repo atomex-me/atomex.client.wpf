@@ -294,6 +294,7 @@
     <Compile Include="Common\Navigation.cs" />
     <Compile Include="Common\PageResolver.cs" />
     <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Common\SingleApp.cs" />
     <Compile Include="Controls\IClosable.cs" />
     <Compile Include="Controls\IDialogViewer.cs" />
     <Compile Include="Controls\NavigationMenuItem.cs" />

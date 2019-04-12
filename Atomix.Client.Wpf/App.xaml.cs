@@ -35,6 +35,13 @@ namespace Atomix.Client.Wpf
         {
             base.OnStartup(e);
 
+            // ensure there are no other instances of the app
+            if (!SingleApp.TryStart("AtomixApp"))
+            {
+                Current.Shutdown(300);
+                return;
+            }
+
             // init logger
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
@@ -69,11 +76,20 @@ namespace Atomix.Client.Wpf
 
         protected override void OnExit(ExitEventArgs e)
         {
+            // the app is already running
+            if (e.ApplicationExitCode == 300)
+            {
+                SingleApp.CloseAndSwitch();
+                base.OnExit(e);
+                return;
+            }
+
             AtomixApp.Stop();
             try { Updater.Stop(); }
             catch (TimeoutException) { Log.Error("Failed to stop the updater due to timeout"); }
 
-            if (e.ApplicationExitCode == 101) // update has been requested
+            // update has been requested
+            if (e.ApplicationExitCode == 101)
             {
                 try
                 {
@@ -88,6 +104,7 @@ namespace Atomix.Client.Wpf
 
             Log.Information("Application shutdown");
 
+            SingleApp.Close();
             base.OnExit(e);
         }
     }
