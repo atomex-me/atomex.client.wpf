@@ -33,7 +33,7 @@ namespace Atomix.Client.Wpf.Common
             var current = Process.GetCurrentProcess();
             var target = Process.GetProcessesByName(current.ProcessName).FirstOrDefault(x => x.Id != current.Id);
             if (target != null)
-                SwitchToThisWindow(target.MainWindowHandle, false);
+                SwitchToThisWindow(target.MainWindowHandle, true);
         }
     }
 }
