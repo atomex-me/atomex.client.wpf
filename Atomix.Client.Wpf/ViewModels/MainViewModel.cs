@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Atomix.MarketData;
@@ -129,7 +128,7 @@ namespace Atomix.Client.Wpf.ViewModels
             PortfolioViewModel = new PortfolioViewModel(AtomixApp);
             ConversionViewModel = new ConversionViewModel(AtomixApp, DialogViewer);
             WalletsViewModel = new WalletsViewModel(AtomixApp, DialogViewer, this, ConversionViewModel);
-            ExchangeViewModel = new ExchangeViewModel();
+            ExchangeViewModel = new ExchangeViewModel(AtomixApp);
             SettingsViewModel = new SettingsViewModel();
 
             InstalledVersion = App.Updater.InstalledVersion.ToString();
@@ -250,24 +249,25 @@ namespace Atomix.Client.Wpf.ViewModels
         {
             DialogViewer.HideAllDialogs();
 
+            AtomixApp.Account.Lock();
+
             AtomixApp.UseAccount(
                 account: null,
                 restartTerminal: true);
 
             DialogViewer.ShowStartDialog(new StartViewModel(AtomixApp, DialogViewer));
         }
-        private Task UnlockAccountAsync(IAccount account)
-        {
-            var viewModel = new UnlockViewModel(
-                walletName: "wallet",
-                unlockAction: password => {
-                    account.Unlock(password);
-                });
 
-            viewModel.Unlocked += (sender, args) => DialogViewer?.HideUnlockDialog();
+        //private Task UnlockAccountAsync(IAccount account)
+        //{
+        //    var viewModel = new UnlockViewModel(
+        //        walletName: "wallet",
+        //        unlockAction: account.Unlock);
 
-            return DialogViewer?.ShowUnlockDialogAsync(viewModel);
-        }
+        //    viewModel.Unlocked += (sender, args) => DialogViewer?.HideUnlockDialog();
+
+        //    return DialogViewer?.ShowUnlockDialogAsync(viewModel);
+        //}
 
         private void DesignerMode()
         {

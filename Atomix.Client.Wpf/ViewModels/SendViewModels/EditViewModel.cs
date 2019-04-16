@@ -15,7 +15,8 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 {
     public class EditViewModel : BaseViewModel
     {
-        public IDialogViewer DialogViewer { get; set; }
+        public IAtomixApp App { get; }
+        public IDialogViewer DialogViewer { get; }
 
         private List<CurrencyViewModel> _fromCurrencies;
         public List<CurrencyViewModel> FromCurrencies
@@ -125,7 +126,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 
                 if (UseDefaultFee)
                 {
-                    var estimatedFee = App.AtomixApp.Account
+                    var estimatedFee = App.Account
                         .EstimateFeeAsync(Currency, _amount)
                         .WaitForResult();
 
@@ -163,7 +164,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
                     Warning = string.Empty;
                 }
 
-                OnQuotesUpdatedEventHandler(App.AtomixApp.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
             }
         }
 
@@ -200,7 +201,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
                     Warning = string.Empty;
                 }
 
-                OnQuotesUpdatedEventHandler(App.AtomixApp.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
             }
         }
 
@@ -237,7 +238,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
                     Warning = string.Empty;
                 }
 
-                OnQuotesUpdatedEventHandler(App.AtomixApp.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
             }
         }
 
@@ -392,8 +393,9 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 #endif
         }
 
-        public EditViewModel(IDialogViewer dialogViewer, Currency currency)
+        public EditViewModel(IAtomixApp app, IDialogViewer dialogViewer, Currency currency)
         {
+            App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
             FromCurrencies = Currencies.Available
@@ -403,13 +405,13 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 
             Currency = currency;
 
-            SubscribeToServices(App.AtomixApp);
+            SubscribeToServices();
         }
 
-        private void SubscribeToServices(AtomixApp app)
+        private void SubscribeToServices()
         {
-            if (app.HasQuotesProvider)
-                app.QuotesProvider.QuotesUpdated += OnQuotesUpdatedEventHandler;
+            if (App.HasQuotesProvider)
+                App.QuotesProvider.QuotesUpdated += OnQuotesUpdatedEventHandler;
         }
 
         private void OnQuotesUpdatedEventHandler(object sender, EventArgs args)

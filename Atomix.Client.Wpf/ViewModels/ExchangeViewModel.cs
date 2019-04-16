@@ -212,27 +212,31 @@ namespace Atomix.Client.Wpf.ViewModels
 
     public class ExchangeViewModel : BaseViewModel
     {
+        public IAtomixApp App { get; private set; }
         public IList<SymbolTabItem> Tabs { get; set; }
 
         public ExchangeViewModel()
         {
 #if DEBUG
-            if (Env.IsInDesignerMode()) {
+            if (Env.IsInDesignerMode())
                 DesignerMode();
-                return;
-            }
 #endif
+        }
+
+        public ExchangeViewModel(IAtomixApp app)
+        {
+            App = app ?? throw new ArgumentNullException(nameof(app));
 
             Tabs = Symbols.Available
                 .Select(s => new SymbolTabItem(s))
                 .ToList();
 
-            SubscribeToServices(App.AtomixApp);
+            SubscribeToServices();
         }
 
-        private void SubscribeToServices(AtomixApp app)
+        private void SubscribeToServices()
         {
-            app.Terminal.QuotesUpdated += OnQuotesUpdatedEventHandler;
+            App.Terminal.QuotesUpdated += OnQuotesUpdatedEventHandler;
         }
 
         private void OnQuotesUpdatedEventHandler(object sender, MarketData.MarketDataEventArgs e)

@@ -17,7 +17,7 @@ namespace Atomix.Client.Wpf
         public const string DebugConfigFileName = "config.debug.json";
         public const string ProductionConfigFileName = "config.json";
 
-        public static AtomixApp AtomixApp { get; private set; }
+        public static IAtomixApp AtomixApp { get; private set; }
         public static Updater Updater { get; private set; }
 
         public static IConfiguration Configuration { get; } = new ConfigurationBuilder()

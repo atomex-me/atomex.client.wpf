@@ -167,7 +167,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private void OnSendClick()
         {
-            var viewModel = new SendViewModel(DialogViewer, Currency);
+            var viewModel = new SendViewModel(App, DialogViewer, Currency);
 
             DialogViewer?.ShowSendDialog(viewModel, dialogLoaded: () =>
             {

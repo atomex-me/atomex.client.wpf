@@ -7,11 +7,13 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 {
     public class SendViewModel : BaseViewModel
     {
+        public IAtomixApp App { get; }
         public IDialogViewer DialogViewer { get; }
         public Currency Currency { get; }
 
-        public SendViewModel(IDialogViewer dialogViewer, Currency currency)
+        public SendViewModel(IAtomixApp app, IDialogViewer dialogViewer, Currency currency)
         {
+            App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
             Currency = currency ?? throw new ArgumentNullException(nameof(currency));
         }
@@ -20,7 +22,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
         {
             Navigation.Navigate(
                 uri: Navigation.EditAlias,
-                context: new EditViewModel(DialogViewer, Currency));
+                context: new EditViewModel(App, DialogViewer, Currency));
         }
     }
 }
