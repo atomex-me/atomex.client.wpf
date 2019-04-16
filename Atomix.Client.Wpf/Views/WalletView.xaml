@@ -6,6 +6,7 @@
              xmlns:converters="clr-namespace:Atomix.Client.Wpf.Converters"
              xmlns:controls="clr-namespace:Atomix.Client.Wpf.Controls"
              xmlns:viewModels="clr-namespace:Atomix.Client.Wpf.ViewModels"
+             xmlns:txViewModels="clr-namespace:Atomix.Client.Wpf.ViewModels.TransactionViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="600"
              d:DesignWidth="800"
@@ -54,7 +55,7 @@
                                            Style="{StaticResource BaseTextBlockStyle}">
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="CurrencyViewModel.TotalAmount" Mode="OneWay"/>
+                                            <Binding Path="CurrencyViewModel.AvailableAmount" Mode="OneWay"/>
                                             <Binding Path="CurrencyViewModel.CurrencyFormat" Mode="OneWay"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
@@ -79,7 +80,7 @@
                                            Style="{StaticResource BaseTextBlockStyle}">
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="CurrencyViewModel.TotalAmountInBase" Mode="OneWay"/>
+                                            <Binding Path="CurrencyViewModel.AvailableAmountInBase" Mode="OneWay"/>
                                             <Binding Path="CurrencyViewModel.BaseCurrencyFormat" Mode="OneWay"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
@@ -102,12 +103,12 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
+                                    <!--<RowDefinition Height="27"/>-->
                                     <RowDefinition Height="27"/>
-                                    <RowDefinition Height="27"/>
-                                    <RowDefinition Height="27"/>
+                                    <!--<RowDefinition Height="27"/>-->
                                 </Grid.RowDefinitions>
 
-                                <Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/available.png"
+                                <!--<Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/available.png"
                                        Width="21"
                                        Height="21"
                                        Grid.Column="0"
@@ -158,20 +159,20 @@
                                             <Binding Path="CurrencyViewModel.BaseCurrencyFormat" Mode="OneWay"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
-                                </TextBlock>
+                                </TextBlock>-->
 
                                 <Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/warning.png"
                                        Width="21"
                                        Height="21"
                                        Grid.Column="0"
-                                       Grid.Row="1"
+                                       Grid.Row="0"
                                        ToolTip="Unconfirmed"
                                        Style="{StaticResource BaseImageStyle}"/>
                                 <TextBlock FontFamily="{StaticResource Roboto}"
                                            FontSize="14"
                                            Foreground="{StaticResource UnconfirmedAmountBrush}"
                                            Grid.Column="1"
-                                           Grid.Row="1"
+                                           Grid.Row="0"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Right"
                                            Margin="7 0 0 0"
@@ -189,7 +190,7 @@
                                            FontSize="8"
                                            Foreground="{StaticResource UnconfirmedAmountBrush}"
                                            Grid.Column="2"
-                                           Grid.Row="1"
+                                           Grid.Row="0"
                                            VerticalAlignment="Center"
                                            Margin="4 0 0 0"
                                            Padding="0 3 0 0"
@@ -199,7 +200,7 @@
                                            FontSize="11"
                                            Foreground="DarkGray"
                                            Grid.Column="3"
-                                           Grid.Row="1"
+                                           Grid.Row="0"
                                            VerticalAlignment="Center"
                                            Margin="7 0 0 0" 
                                            Padding="0 2 0 0" 
@@ -213,7 +214,7 @@
                                     </TextBlock.Text>
                                 </TextBlock>
 
-                                <Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/locked.png" 
+                                <!--<Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/locked.png" 
                                        Width="21" 
                                        Height="21" 
                                        Grid.Column="0" 
@@ -264,7 +265,7 @@
                                             <Binding Path="CurrencyViewModel.BaseCurrencyFormat" Mode="OneWay"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
-                                </TextBlock>
+                                </TextBlock>-->
                             </Grid>
                         </StackPanel>
                     </StackPanel>
@@ -385,6 +386,8 @@
                   SelectionMode="Single"
                   SelectionUnit="FullRow"
                   RowDetailsVisibilityMode="VisibleWhenSelected"
+                  EnableRowVirtualization="True"
+                  EnableColumnVirtualization="True"
                   RowDetailsTemplateSelector="{StaticResource TransactionDetailsDataTemplateSelector}"
                   ItemsSource="{Binding Transactions, UpdateSourceTrigger=PropertyChanged}"
                   SelectionChanged="OnSelectionChanged"
@@ -401,7 +404,7 @@
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
                 <DataGridTemplateColumn Header="Amount" >
                     <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:TransactionViewModel}">
+                        <DataTemplate DataType="{x:Type txViewModels:TransactionViewModel}">
                             <StackPanel Orientation="Horizontal" Margin="3 0 3 0">
                                 <TextBlock FontFamily="{StaticResource Roboto}"
                                            FontSize="13">

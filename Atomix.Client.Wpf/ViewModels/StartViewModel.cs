@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Atomix.Wallet;
 using Atomix.Wallet.Abstract;
@@ -56,10 +54,10 @@ namespace Atomix.Client.Wpf.ViewModels
                     onCanceled: OnCanceled));
         }));
 
-        private ICommand _restoreByFileCommand;
-        public ICommand RestoreByFileCommand => _restoreByFileCommand ?? (_restoreByFileCommand = new Command(() =>
-        {
-        }));
+        //private ICommand _restoreByFileCommand;
+        //public ICommand RestoreByFileCommand => _restoreByFileCommand ?? (_restoreByFileCommand = new Command(() =>
+        //{
+        //}));
 
         private void OnCanceled()
         {
@@ -77,31 +75,21 @@ namespace Atomix.Client.Wpf.ViewModels
         private ICommand _selectWalletCommand;
         public ICommand SelectWalletCommand => _selectWalletCommand ?? (_selectWalletCommand = new RelayCommand<WalletInfo>(info =>
         {
-            ShowUnlockDialogAsync(info.Name, async password =>
-            {
-                IAccount account = null;
+            IAccount account = null;
 
-                await Task.Factory.StartNew(() => { account = new Account(info.Path, password); });
+            var unlockViewModel = new UnlockViewModel(info.Name, password => {
+                account = new Account(info.Path, password);          
+            });
 
+            unlockViewModel.Unlocked += (sender, args) => {
                 App.UseAccount(account, restartTerminal: true);
 
                 DialogViewer?.HideStartDialog();
-            });
+                DialogViewer?.HideUnlockDialog();
+            };
+
+            DialogViewer?.ShowUnlockDialogAsync(unlockViewModel);
         }));
-
-        private Task ShowUnlockDialogAsync(string walletName, Func<SecureString, Task> unlockAction)
-        {
-            return DialogViewer?.ShowUnlockDialogAsync(CreateUnlockViewModel(walletName, unlockAction));
-        }
-
-        private UnlockViewModel CreateUnlockViewModel(string walletName, Func<SecureString, Task> unlockAction)
-        {
-            var viewModel = new UnlockViewModel(walletName, unlockAction);
-
-            viewModel.Unlocked += (sender, args) => DialogViewer?.HideUnlockDialog();
-
-            return viewModel;
-        }
 
         private void DesignerMode()
         {

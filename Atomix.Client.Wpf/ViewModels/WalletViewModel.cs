@@ -16,6 +16,7 @@ using Atomix.Client.Wpf.Common;
 using Atomix.Client.Wpf.Controls;
 using Atomix.Client.Wpf.ViewModels.Abstract;
 using Atomix.Client.Wpf.ViewModels.SendViewModels;
+using Atomix.Client.Wpf.ViewModels.TransactionViewModels;
 using Serilog;
 
 namespace Atomix.Client.Wpf.ViewModels
@@ -109,7 +110,8 @@ namespace Atomix.Client.Wpf.ViewModels
             {
                 try
                 {
-                    await LoadTransactionsAsync();
+                    if (Currency.Name.Equals(args.Currency.Name))
+                        await LoadTransactionsAsync();
                 }
                 catch (Exception e)
                 {
@@ -120,6 +122,8 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private async Task LoadTransactionsAsync()
         {
+            Log.Debug("LoadTransactionsAsync for {@currency}", Currency.Name);
+
             if (App.Account == null)
                 return;
 
@@ -130,9 +134,9 @@ namespace Atomix.Client.Wpf.ViewModels
             var outputs = await App.Account
                 .GetOutputsAsync(Currency);
 
-            var factory = new TransactionViewModelFactory(Currency, transactions, outputs);
+            var factory = new TransactionViewModelCreator(transactions, outputs);
 
-            Application.Current.Dispatcher.Invoke(() =>
+            await Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 Transactions = new ObservableCollection<TransactionViewModel>(
                     transactions.Select(t => factory

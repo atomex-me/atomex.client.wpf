@@ -34,7 +34,7 @@ namespace Atomix.Client.Wpf.ViewModels
         private ICommand _unlockCommand;
         public ICommand UnlockCommand => _unlockCommand ?? (_unlockCommand = new Command(OnUnlockClick));
 
-        private readonly Func<SecureString, Task> _unlockAction;
+        private readonly Action<SecureString> _unlockAction;
 
         public UnlockViewModel()
         {
@@ -44,7 +44,7 @@ namespace Atomix.Client.Wpf.ViewModels
 #endif
         }
 
-        public UnlockViewModel(string walletName, Func<SecureString, Task> unlockAction)
+        public UnlockViewModel(string walletName, Action<SecureString> unlockAction)
         {
             WalletName = $"\"{walletName}\"";
             _unlockAction = unlockAction;
@@ -57,7 +57,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
             try
             {
-                await _unlockAction(Password);
+                await Task.Run(() => { _unlockAction(Password); });
             }
             catch (CryptographicException e)
             {
@@ -79,7 +79,6 @@ namespace Atomix.Client.Wpf.ViewModels
                 return;
             }
 
-            InProgress = false;
             Password = null;
 
             Unlocked?.Invoke(this, EventArgs.Empty);

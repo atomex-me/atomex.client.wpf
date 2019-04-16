@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Atomix.Blockchain.Abstract;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Atomix.Client.Wpf.ViewModels.TransactionViewModels
 {
-    public class BitcoinBasedTransactionViewModel : TransactionViewModel
+    public class BitcoinBasedTransactionViewModel : InOutTransactionViewModel
     {
+        public BitcoinBasedTransactionViewModel(
+            IInOutTransaction tx,
+            IDictionary<string, ITxOutput> indexedOutputs)
+            : base(tx, indexedOutputs)
+        {
+        }
     }
 }

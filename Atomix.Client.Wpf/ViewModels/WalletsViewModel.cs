@@ -35,6 +35,8 @@ namespace Atomix.Client.Wpf.ViewModels
 
                 if (_selected != null)
                     _selected.IsSelected = true;
+
+                OnPropertyChanged(nameof(Selected));
             }
         }
 
@@ -76,6 +78,8 @@ namespace Atomix.Client.Wpf.ViewModels
                         conversionViewModel: ConversionViewModel,
                         currency: currency)))
                 : new ObservableCollection<WalletViewModel>();
+
+            Selected = Wallets.FirstOrDefault();
         }
 
         private void DesignerMode()

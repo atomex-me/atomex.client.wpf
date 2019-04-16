@@ -110,10 +110,14 @@
                             <Setter TargetName="BaseCurrencyInfo" Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(helpers:TextBoxHelper.MouseOverBorderBrush)}"/>
+                            <Setter TargetName="PART_Border"
+                                    Property="BorderBrush"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(helpers:TextBoxHelper.MouseOverBorderBrush)}"/>
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(helpers:TextBoxHelper.FocusBorderBrush)}" />
+                            <Setter TargetName="PART_Border"
+                                    Property="BorderBrush"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(helpers:TextBoxHelper.FocusBorderBrush)}" />
                             <Trigger.EnterActions>
                                 <BeginStoryboard Storyboard="{StaticResource EnterGotFocus}" />
                             </Trigger.EnterActions>

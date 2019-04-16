@@ -100,9 +100,11 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 
         private Task UnlockAccountAsync(IAccount account)
         {
-            var viewModel = new UnlockViewModel("wallet", password => Task.Run(() => {
-                account.Unlock(password);
-            }));
+            var viewModel = new UnlockViewModel(
+                walletName: "wallet",
+                unlockAction: password => {
+                    account.Unlock(password);
+                });
 
             viewModel.Unlocked += (sender, args) => DialogViewer?.HideUnlockDialog();
 

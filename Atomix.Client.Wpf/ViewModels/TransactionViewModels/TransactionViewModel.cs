@@ -2,7 +2,7 @@
 using Atomix.Blockchain;
 using Atomix.Client.Wpf.ViewModels.Abstract;
 
-namespace Atomix.Client.Wpf.ViewModels
+namespace Atomix.Client.Wpf.ViewModels.TransactionViewModels
 {
     public class TransactionViewModel : BaseViewModel, IExpandable
     {

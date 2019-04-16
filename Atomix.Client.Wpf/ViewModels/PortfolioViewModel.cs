@@ -18,6 +18,7 @@ namespace Atomix.Client.Wpf.ViewModels
     {
         public const string Nothing = "Nothing";
 
+        public IAtomixApp App { get; set; }
         public PlotModel PlotModel { get; set; }
         public IList<CurrencyViewModel> AllCurrencies { get; set; }
         public Color NothingColor { get; set; } = Color.FromArgb(50, 0, 0, 0);
@@ -37,13 +38,18 @@ namespace Atomix.Client.Wpf.ViewModels
                 return;
             }
 #endif
-
-            SubscribeToServices(App.AtomixApp);
         }
 
-        private void SubscribeToServices(AtomixApp app)
+        public PortfolioViewModel(IAtomixApp app)
         {
-            app.AccountChanged += OnAccountChangedEventHandler;
+            App = app ?? throw new ArgumentNullException(nameof(app));
+
+            SubscribeToServices();
+        }
+
+        private void SubscribeToServices()
+        {
+            App.AccountChanged += OnAccountChangedEventHandler;
         }
 
         private void OnAccountChangedEventHandler(object sender, AccountChangedEventArgs e)

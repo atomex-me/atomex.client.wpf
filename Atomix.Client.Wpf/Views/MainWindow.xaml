@@ -86,7 +86,7 @@
                                Text="Update Atomix" />
                 </StackPanel>
             </Button>
-            <Button Command="{Binding LockCommand}"
+            <!--<Button Command="{Binding LockCommand}"
                     Visibility="{Binding HasAccount, Converter={StaticResource bool2VisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">
                     <iconPacks:PackIconModern Margin="0 0 3 0"
@@ -122,7 +122,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </StackPanel>
-            </Button>
+            </Button>-->
             <Button Command="{Binding SignOutCommand}"
                     Visibility="{Binding HasAccount, Converter={StaticResource bool2VisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">

@@ -28,7 +28,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:RoundedButton}">
-                    <Border Name="border" BorderThickness="0" CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}">
+                    <Border Name="border"
+                            BorderThickness="0"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}">
                         <Grid>
                             <ContentPresenter Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
                                               HorizontalAlignment="Center" VerticalAlignment="Center">

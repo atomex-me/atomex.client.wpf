@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Atomix.Blockchain;
-using Atomix.Client.Wpf.ViewModels;
+using Atomix.Client.Wpf.ViewModels.TransactionViewModels;
 
 namespace Atomix.Client.Wpf.Controls
 {

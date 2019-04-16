@@ -17,7 +17,7 @@
 
     <controls:ChildView.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" OppositeBoolValue="False" FalseEquivalent="Collapsed" />
-        <SolidColorBrush x:Key="AvailableWalletListBackgroundBrush" Color="#B0000000"/>
+        <SolidColorBrush x:Key="AvailableWalletListBackgroundBrush" Color="#E0000000"/>
         <SolidColorBrush x:Key="AvailableWalletListTitleBackgroundBrush" Color="#F0000000"/>
         <SolidColorBrush x:Key="CopyrightForegroundBrush" Color="#122d4f"/>
     </controls:ChildView.Resources>

@@ -84,14 +84,13 @@ namespace Atomix.Client.Wpf.ViewModels
                     qrCodeBitmap = qrCode.GetGraphic(PixelsPerModule);
             });
 
-            Application.Current.Dispatcher.Invoke(() =>
+            await Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 QrCode = qrCodeBitmap.ToBitmapSource();
                 OnPropertyChanged(nameof(QrCode));
 
                 qrCodeBitmap.Dispose();
             });
-
         }
 
         private void DesignerMode()

@@ -43,7 +43,10 @@ namespace Atomix.Client.Wpf.ViewModels
 
     public class ConversionViewModel : BaseViewModel, IConversionViewModel
     {
+        public IAtomixApp App { get; set; }
         public IDialogViewer DialogViewer { get; set; }
+
+        private List<CurrencyViewModel> _currencyViewModels;
 
         private List<CurrencyViewModel> _fromCurrencies;
         public List<CurrencyViewModel> FromCurrencies
@@ -77,10 +80,26 @@ namespace Atomix.Client.Wpf.ViewModels
                 if (_fromCurrency == null)
                     return;
 
-                if (_fromCurrency == _toCurrency)
-                    ToCurrency = ToCurrencies.First(c => c.Currency != _fromCurrency).Currency;
+                var oldToCurrency = ToCurrency;
 
-                FromCurrencyViewModel = FromCurrencies.First(c => c.Currency.Equals(_fromCurrency));
+                ToCurrencies = _currencyViewModels
+                    .Where(c => Symbols.SymbolByCurrencies(c.Currency, _fromCurrency) != null)
+                    .ToList();
+
+                if (oldToCurrency != null &&
+                    oldToCurrency != _fromCurrency &&
+                    ToCurrencies.FirstOrDefault(c => c.Currency.Equals(oldToCurrency)) != null)
+                {
+                    ToCurrency = oldToCurrency;
+                }
+                else
+                {
+                    ToCurrency = ToCurrencies.First().Currency;
+                }
+
+                FromCurrencyViewModel = _currencyViewModels
+                    .First(c => c.Currency.Equals(_fromCurrency));
+
                 Amount = 0;
                 Fee = 0;
             }
@@ -98,10 +117,17 @@ namespace Atomix.Client.Wpf.ViewModels
                 if (_toCurrency == null)
                     return;
 
-                if (_toCurrency == _fromCurrency)
-                    FromCurrency = FromCurrencies.First(c => c.Currency != _toCurrency).Currency;
+                ToCurrencyViewModel = _currencyViewModels.First(c => c.Currency.Equals(_toCurrency));
 
-                ToCurrencyViewModel = ToCurrencies.First(c => c.Currency.Equals(_toCurrency));
+#if DEBUG
+                if (!Env.IsInDesignerMode())
+                {
+#endif
+                    OnQuotesUpdatedEventHandler(App.Terminal, null);
+                    OnBaseQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+#if DEBUG
+                }
+#endif
             }
         }
 
@@ -195,8 +221,8 @@ namespace Atomix.Client.Wpf.ViewModels
 #if DEBUG
                 if (!Env.IsInDesignerMode()) {
 #endif
-                    OnQuotesUpdatedEventHandler(App.AtomixApp.Terminal, null);
-                    OnBaseQuotesUpdatedEventHandler(App.AtomixApp.QuotesProvider, EventArgs.Empty);
+                    OnQuotesUpdatedEventHandler(App.Terminal, null);
+                    OnBaseQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
 #if DEBUG
                 }
 #endif
@@ -219,7 +245,7 @@ namespace Atomix.Client.Wpf.ViewModels
 #if DEBUG
                 if (!Env.IsInDesignerMode()) {
 #endif
-                    OnBaseQuotesUpdatedEventHandler(App.AtomixApp.QuotesProvider, EventArgs.Empty);
+                    OnBaseQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
 #if DEBUG
                 }
 #endif
@@ -282,6 +308,13 @@ namespace Atomix.Client.Wpf.ViewModels
             set { _estimatedPrice = value; OnPropertyChanged(nameof(EstimatedPrice)); }
         }
 
+        private decimal _estimatedMaxAmount;
+        public decimal EstimatedMaxAmount
+        {
+            get => _estimatedMaxAmount;
+            set { _estimatedMaxAmount = value; OnPropertyChanged(nameof(EstimatedMaxAmount)); }
+        }
+
         private decimal _estimatedFee;
         public decimal EstimatedFee
         {
@@ -310,6 +343,13 @@ namespace Atomix.Client.Wpf.ViewModels
             set { _swaps = value; OnPropertyChanged(nameof(Swaps)); }
         }
 
+        private bool _isNoLiquidity;
+        public bool IsNoLiquidity
+        {
+            get => _isNoLiquidity;
+            set { _isNoLiquidity = value; OnPropertyChanged(nameof(IsNoLiquidity)); }
+        }
+
         public ConversionViewModel()
         {
 #if DEBUG
@@ -318,23 +358,26 @@ namespace Atomix.Client.Wpf.ViewModels
 #endif
         }
 
-        public ConversionViewModel(IDialogViewer dialogViewer)
+        public ConversionViewModel(
+            IAtomixApp app,
+            IDialogViewer dialogViewer)
         {
+            App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
-            SubscribeToServices(App.AtomixApp);
+            SubscribeToServices();
         }
 
-        private void SubscribeToServices(AtomixApp app)
+        private void SubscribeToServices()
         {
-            app.AccountChanged += OnAccountChangedEventHandler;
+            App.AccountChanged += OnAccountChangedEventHandler;
 
-            if (app.HasQuotesProvider)
-                app.QuotesProvider.QuotesUpdated += OnBaseQuotesUpdatedEventHandler;
+            if (App.HasQuotesProvider)
+                App.QuotesProvider.QuotesUpdated += OnBaseQuotesUpdatedEventHandler;
 
-            app.Terminal.QuotesUpdated += OnQuotesUpdatedEventHandler;
-            app.Terminal.ExecutionReportReceived += OnExecutionReportEventHandler;
-            app.Terminal.SwapUpdated += OnSwapEventHandler;
+            App.Terminal.QuotesUpdated += OnQuotesUpdatedEventHandler;
+            App.Terminal.ExecutionReportReceived += OnExecutionReportEventHandler;
+            App.Terminal.SwapUpdated += OnSwapEventHandler;
         }
 
         private void OnAccountChangedEventHandler(object sender, AccountChangedEventArgs args)
@@ -348,15 +391,12 @@ namespace Atomix.Client.Wpf.ViewModels
             var account = args.NewAccount;
             account.SwapsLoaded += (o, eventArgs) => OnSwapEventHandler(o, new SwapEventArgs());
 
-            FromCurrencies = account.Wallet.Currencies
+            _currencyViewModels = account.Wallet.Currencies
                 .Where(c => c.IsSwapAvailable)
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
 
-            ToCurrencies = account.Wallet.Currencies
-                .Where(c => c.IsSwapAvailable)
-                .Select(CurrencyViewModelCreator.CreateViewModel)
-                .ToList();
+            FromCurrencies = _currencyViewModels.ToList();
 
             OrderType = OrderType.FillOrKill;
             FromCurrency = Currencies.Btc;
@@ -397,45 +437,57 @@ namespace Atomix.Client.Wpf.ViewModels
             TargetAmountInBase = _targetAmount * (quote?.Bid ?? 0m);
         }
 
-        private void OnQuotesUpdatedEventHandler(object sender, MarketDataEventArgs args)
+        private async void OnQuotesUpdatedEventHandler(object sender, MarketDataEventArgs args)
         {
-            if (!(sender is ITerminal terminal))
-                return;
-
-            if (ToCurrency == null)
-                return;
-
-            var symbol = Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
-            if (symbol == null)
-                return;  
-
-            var side = symbol.OrderSideForBuyCurrency(ToCurrency);
-            var orderBook = terminal.GetOrderBook(symbol);
-
-            _estimatedPrice = orderBook.EstimatedDealPrice(side, Amount);
-
-            if (symbol.IsBaseCurrency(ToCurrency))
+            try
             {
-                _targetAmount = _estimatedPrice != 0
-                    ? Amount / _estimatedPrice
-                    : 0m;
+                if (!(sender is ITerminal terminal))
+                    return;
+
+                if (ToCurrency == null)
+                    return;
+
+                var symbol = Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
+                if (symbol == null)
+                    return;  
+
+                var side = symbol.OrderSideForBuyCurrency(ToCurrency);
+                var orderBook = terminal.GetOrderBook(symbol);
+
+                _estimatedPrice = orderBook.EstimatedDealPrice(side, Amount);
+                _estimatedMaxAmount = orderBook.EstimateMaxAmount(side);
+
+                _isNoLiquidity = Amount != 0 && _estimatedPrice == 0;
+
+                if (symbol.IsBaseCurrency(ToCurrency))
+                {
+                    _targetAmount = _estimatedPrice != 0
+                        ? Amount / _estimatedPrice
+                        : 0m;
+                }
+                else if (symbol.IsQuoteCurrency(ToCurrency))
+                {
+                    _targetAmount = Amount * _estimatedPrice;
+                }
+
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    OnPropertyChanged(nameof(EstimatedPrice));
+                    OnPropertyChanged(nameof(EstimatedMaxAmount));
+                    OnPropertyChanged(nameof(PriceFormat));
+                    OnPropertyChanged(nameof(IsNoLiquidity));
+
+                    OnPropertyChanged(nameof(TargetCurrencyFormat));
+                    OnPropertyChanged(nameof(TargetAmount));
+
+                    UpdateTargetAmountInBase(App.QuotesProvider);
+
+                }, DispatcherPriority.Background);
             }
-            else if (symbol.IsQuoteCurrency(ToCurrency))
+            catch (Exception e)
             {
-                _targetAmount = Amount * _estimatedPrice;
+                Log.Error(e, "Quotes updated event handler error");
             }
-
-            //Application.Current.Dispatcher.Invoke(() =>
-            //{
-                OnPropertyChanged(nameof(EstimatedPrice));
-                OnPropertyChanged(nameof(PriceFormat));
-
-                OnPropertyChanged(nameof(TargetCurrencyFormat));
-                OnPropertyChanged(nameof(TargetAmount));
-
-                UpdateTargetAmountInBase(App.AtomixApp.QuotesProvider);
-
-            //}, DispatcherPriority.Background);
         }
 
         private void OnExecutionReportEventHandler(object sender, ExecutionReportEventArgs args)
@@ -447,7 +499,7 @@ namespace Atomix.Client.Wpf.ViewModels
         {
             try
             {
-                var swaps = await App.AtomixApp.Account
+                var swaps = await App.Account
                     .GetSwapsAsync();
 
                 await Application.Current.Dispatcher.InvokeAsync(() =>
@@ -470,6 +522,18 @@ namespace Atomix.Client.Wpf.ViewModels
         private ICommand _convertCommand;
         public ICommand ConvertCommand => _convertCommand ?? (_convertCommand = new Command(OnConvertClick));
 
+        private ICommand _maxAmountCommand;
+        public ICommand MaxAmountCommand => _maxAmountCommand ?? (_maxAmountCommand = new Command(() =>
+        {
+            Amount = EstimatedMaxAmount;
+        }));
+
+        private ICommand _allInCommand;
+        public ICommand AllInCommand => _allInCommand ?? (_allInCommand = new Command(() =>
+        {
+            Amount = FromCurrencyViewModel.AvailableAmount;
+        }));
+
         private async void OnConvertClick()
         {
             if (Amount == 0) {
@@ -477,14 +541,14 @@ namespace Atomix.Client.Wpf.ViewModels
                 return;
             }
 
-            var terminal = App.AtomixApp.Terminal;
+            var terminal = App.Terminal;
 
             if (!terminal.IsServiceConnected(TerminalService.All)) {
                 DialogViewer.ShowMessage(Resources.CvWarning, Resources.CvServicesUnavailable);
                 return;
             }
 
-            var account = App.AtomixApp.Account;
+            var account = App.Account;
 
             try
             {
@@ -558,9 +622,9 @@ namespace Atomix.Client.Wpf.ViewModels
         {
             var viewModel = new UnlockViewModel(
                 walletName: "wallet",
-                unlockAction: password => Task.Factory.StartNew(() => {
+                unlockAction: password => {
                     account.Unlock(password);
-                }));
+                });
 
             viewModel.Unlocked += (sender, args) => DialogViewer?.HideUnlockDialog();
 
@@ -569,7 +633,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            FromCurrencies = new List<CurrencyViewModel>
+            _currencyViewModels = new List<CurrencyViewModel>
             {
                 CurrencyViewModelCreator.CreateViewModel(Currencies.Btc, subscribeToUpdates: false),
                 CurrencyViewModelCreator.CreateViewModel(Currencies.Ltc, subscribeToUpdates: false),
@@ -577,13 +641,7 @@ namespace Atomix.Client.Wpf.ViewModels
                 CurrencyViewModelCreator.CreateViewModel(Currencies.Xtz, subscribeToUpdates: false)
             };
 
-            ToCurrencies = new List<CurrencyViewModel>
-            {
-                CurrencyViewModelCreator.CreateViewModel(Currencies.Btc, subscribeToUpdates: false),
-                CurrencyViewModelCreator.CreateViewModel(Currencies.Ltc, subscribeToUpdates: false),
-                CurrencyViewModelCreator.CreateViewModel(Currencies.Eth, subscribeToUpdates: false),
-                CurrencyViewModelCreator.CreateViewModel(Currencies.Xtz, subscribeToUpdates: false)
-            };
+            FromCurrencies = _currencyViewModels.ToList();
 
             OrderType = OrderType.FillOrKill;
             FromCurrency = Currencies.Btc;

@@ -126,8 +126,8 @@ namespace Atomix.Client.Wpf.ViewModels
 
             LoginViewModel = new LoginViewModel(DialogViewer) {RegisterViewModel = RegisterViewModel};
             RegisterViewModel = new RegisterViewModel(DialogViewer) {LoginViewModel = LoginViewModel};
-            PortfolioViewModel = new PortfolioViewModel();
-            ConversionViewModel = new ConversionViewModel(DialogViewer);
+            PortfolioViewModel = new PortfolioViewModel(AtomixApp);
+            ConversionViewModel = new ConversionViewModel(AtomixApp, DialogViewer);
             WalletsViewModel = new WalletsViewModel(AtomixApp, DialogViewer, this, ConversionViewModel);
             ExchangeViewModel = new ExchangeViewModel();
             SettingsViewModel = new SettingsViewModel();
@@ -226,22 +226,22 @@ namespace Atomix.Client.Wpf.ViewModels
             Application.Current.Shutdown(101);
         }
 
-        private ICommand _lockCommand;
-        public ICommand LockCommand => _lockCommand ?? (_lockCommand = new Command(OnLockClick));
+        //private ICommand _lockCommand;
+        //public ICommand LockCommand => _lockCommand ?? (_lockCommand = new Command(OnLockClick));
 
-        private async void OnLockClick()
-        {
-            if (!AtomixApp.HasAccount)
-                return;
+        //private async void OnLockClick()
+        //{
+        //    if (!AtomixApp.HasAccount)
+        //        return;
 
-            var account = AtomixApp.Account;
+        //    var account = AtomixApp.Account;
 
-            if (account.IsLocked) {
-                await UnlockAccountAsync(account);
-            } else {
-                account.Lock();
-            }
-        }
+        //    if (account.IsLocked) {
+        //        await UnlockAccountAsync(account);
+        //    } else {
+        //        account.Lock();
+        //    }
+        //}
 
         private ICommand _signOutCommand;
         public ICommand SignOutCommand => _signOutCommand ?? (_signOutCommand = new Command(SignOut));
@@ -258,9 +258,11 @@ namespace Atomix.Client.Wpf.ViewModels
         }
         private Task UnlockAccountAsync(IAccount account)
         {
-            var viewModel = new UnlockViewModel("wallet", password => Task.Run(() => {
-                account.Unlock(password);
-            }));
+            var viewModel = new UnlockViewModel(
+                walletName: "wallet",
+                unlockAction: password => {
+                    account.Unlock(password);
+                });
 
             viewModel.Unlocked += (sender, args) => DialogViewer?.HideUnlockDialog();
 

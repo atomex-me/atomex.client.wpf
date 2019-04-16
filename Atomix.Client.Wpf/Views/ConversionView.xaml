@@ -9,12 +9,15 @@
              xmlns:behaviors="clr-namespace:Atomix.Client.Wpf.Behaviors"
              xmlns:controls="clr-namespace:Atomix.Client.Wpf.Controls"
              xmlns:viewModels="clr-namespace:Atomix.Client.Wpf.ViewModels"
+             xmlns:converters="clr-namespace:Atomix.Client.Wpf.Converters"
              UseLayoutRounding="True"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=viewModels:ConversionViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <SolidColorBrush x:Key="ArrowBrush" Color="#a5a5a5"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed"/>
+        <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" FalseEquivalent="Collapsed" OppositeBoolValue="True"/>
     </UserControl.Resources>
 
     <Grid>
@@ -131,6 +134,38 @@
                                                         JustPositiveDecimalInput="True"/>
                     </i:Interaction.Behaviors>
                 </TextBox>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <controls:RoundedButton Height="30"
+                                        Margin="0 5 0 5"
+                                        Padding="15 0 15 0"
+                                        CornerRadius="15 0 0 15"
+                                        Command="{Binding MaxAmountCommand}">
+                    
+                    <controls:RoundedButton.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="{StaticResource DefaultForegroundBrush}"
+                                       Text="Max: "/>
+                            <TextBlock Foreground="{StaticResource DefaultForegroundBrush}"
+                                       FontFamily="{StaticResource RobotoMedium}">
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding Path="EstimatedMaxAmount" Mode="OneWay"/>
+                                        <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                    </controls:RoundedButton.Content>
+                </controls:RoundedButton>
+                <controls:RoundedButton Width="75"
+                                    Height="30"
+                                    Margin="3 5 0 5"
+                                    CornerRadius="0 15 15 0"
+                                    Content="100%"
+                                    Command="{Binding AllInCommand}"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal"
@@ -282,10 +317,17 @@
                                 Margin="0 0 0 0"
                                 Grid.Column="4"
                                 Grid.Row="1">
+                        <TextBlock Foreground="#e25b5b"
+                                   FontSize="18"
+                                   FontFamily="{StaticResource Roboto}"
+                                   VerticalAlignment="Bottom"
+                                   Text="No liquidity"
+                                   Visibility="{Binding IsNoLiquidity, Converter={StaticResource BoolToVisibilityConverter}}"/>
                         <TextBlock Foreground="{StaticResource DefaultForegroundBrush}"
                                    FontSize="18"
                                    FontFamily="{StaticResource Roboto}"
-                                   VerticalAlignment="Bottom">
+                                   VerticalAlignment="Bottom"
+                                   Visibility="{Binding IsNoLiquidity, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                             <TextBlock.Text>
                                 <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
                                     <Binding Path="TargetAmount" Mode="TwoWay"/>
@@ -297,7 +339,8 @@
                                    Foreground="{StaticResource DefaultForegroundBrush}"
                                    Text="{Binding TargetCurrencyCode}"
                                    FontFamily="{StaticResource Roboto}"
-                                   VerticalAlignment="Bottom"/>
+                                   VerticalAlignment="Bottom"
+                                   Visibility="{Binding IsNoLiquidity, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal"
@@ -442,6 +485,8 @@
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   RowDetailsVisibilityMode="VisibleWhenSelected"
+                  EnableRowVirtualization="True"
+                  EnableColumnVirtualization="True"
                   ItemsSource="{Binding Swaps}"
                   Grid.Row="1"
                   Style="{StaticResource CustomDataGrid}">

@@ -76,7 +76,7 @@ namespace Atomix.Client.Wpf.ViewModels.Abstract
         {
             try
             {
-                if (Currency == args.Currency)
+                if (Currency.Name.Equals(args.Currency.Name))
                     await UpdateAsync();
             }
             catch (Exception e)

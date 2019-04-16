@@ -313,6 +313,7 @@
     <Compile Include="Converters\PasswordBoxConverter.cs" />
     <Compile Include="Helpers\AmountTextBoxHelper.cs" />
     <Compile Include="Helpers\ComboBoxHelper.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\AddressBasedTransactionViewModel.cs" />
     <Compile Include="ViewModels\Abstract\IExpandable.cs" />
     <Compile Include="ViewModels\CreateWalletViewModel.cs" />
     <Compile Include="ViewModels\Abstract\IMenuSelector.cs" />
@@ -340,7 +341,8 @@
     <Compile Include="ViewModels\HdWalletViewModels\WriteDerivedKeyPasswordViewModel.cs" />
     <Compile Include="ViewModels\HdWalletViewModels\WriteMnemonicViewModel.cs" />
     <Compile Include="ViewModels\ReceiveViewModel.cs" />
-    <Compile Include="ViewModels\TransactionViewModelFactory.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\InOutTransactionViewModel.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\TransactionViewModelCreator.cs" />
     <Compile Include="ViewModels\TransactionViewModels\BitcoinBasedTransactionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\EthereumTransactionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\TezosTransactionViewModel.cs" />
@@ -410,7 +412,7 @@
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\TransactionViewModel.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\TransactionViewModel.cs" />
     <Compile Include="ViewModels\WalletsViewModel.cs" />
     <Compile Include="ViewModels\WalletViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModelCreator.cs" />
