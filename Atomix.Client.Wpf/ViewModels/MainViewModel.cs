@@ -88,13 +88,6 @@ namespace Atomix.Client.Wpf.ViewModels
             set { _isMarketDataConnected = value; OnPropertyChanged(nameof(IsMarketDataConnected)); }
         }
 
-        private bool _isSwapConnected;
-        public bool IsSwapConnected
-        {
-            get => _isSwapConnected;
-            set { _isSwapConnected = value; OnPropertyChanged(nameof(IsSwapConnected)); }
-        }
-
         private bool _isQuotesProviderAvailable;
         public bool IsQuotesProviderAvailable
         {
@@ -191,7 +184,6 @@ namespace Atomix.Client.Wpf.ViewModels
 
             IsExchangeConnected = terminal.IsServiceConnected(TerminalService.Exchange);
             IsMarketDataConnected = terminal.IsServiceConnected(TerminalService.MarketData);
-            IsSwapConnected = terminal.IsServiceConnected(TerminalService.Swap);
 
             // subscribe to symbols updates
             if (args.Service == TerminalService.MarketData && IsMarketDataConnected)

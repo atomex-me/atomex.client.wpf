@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Atomix.Client.Wpf.Common;
 using Atomix.Client.Wpf.Controls;
 using Atomix.Core.Entities;
-using Atomix.Wallet.Abstract;
 using Serilog;
 
 namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 {
-    public class ConfirmationViewModel : BaseViewModel
+    public class SendConfirmationViewModel : BaseViewModel
     {
         public IDialogViewer DialogViewer { get; }
         public Currency Currency { get; set; }
@@ -32,13 +30,13 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
         public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(Send));
 
 #if DEBUG
-        public ConfirmationViewModel()
+        public SendConfirmationViewModel()
         {
             if (Env.IsInDesignerMode())
                 DesignerMode();
         }
 #endif
-        public ConfirmationViewModel(IDialogViewer dialogViewer)
+        public SendConfirmationViewModel(IDialogViewer dialogViewer)
         {
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
         }
@@ -50,22 +48,6 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
             try
             {
                 Navigation.Navigate(uri: Navigation.SendingAlias);
-
-                if (account.IsLocked)
-                {
-                    await UnlockAccountAsync(account);
-
-                    if (account.IsLocked)
-                    {
-                        Navigation.Navigate(
-                            uri: Navigation.MessageAlias,
-                            context: MessageViewModel.Error(
-                                text: "Wallet must be unlocked before sending.",
-                                goBackPages: 2));
-
-                        return;
-                    }
-                }
 
                 var error = await account
                     .SendAsync(Currency, To, Amount, Fee, FeePrice);
@@ -96,19 +78,6 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 
                 Log.Error(e, "Transaction send error.");
             }
-        }
-
-        private Task UnlockAccountAsync(IAccount account)
-        {
-            var viewModel = new UnlockViewModel(
-                walletName: "wallet",
-                unlockAction: password => {
-                    account.Unlock(password);
-                });
-
-            viewModel.Unlocked += (sender, args) => DialogViewer?.HideUnlockDialog();
-
-            return DialogViewer?.ShowUnlockDialogAsync(viewModel);
         }
 
         private void DesignerMode()

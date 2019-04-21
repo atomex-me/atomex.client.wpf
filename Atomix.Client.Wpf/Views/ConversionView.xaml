@@ -521,8 +521,6 @@
                                     Margin="0 5 0 5"
                                     CornerRadius="20"
                                     Content="Convert"
-                                    FontFamily="{StaticResource RobotoMedium}"
-                                    FontSize="13"
                                     Command="{Binding ConvertCommand}"
                                     Style="{StaticResource ConvertButtonStyle}"/>
         </StackPanel>

@@ -63,6 +63,9 @@
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
     </Reference>
+    <Reference Include="Info.Blockchain.API.Standart, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Info.Blockchain.API.Standart.1.0.4\lib\netstandard2.0\Info.Blockchain.API.Standart.dll</HintPath>
+    </Reference>
     <Reference Include="LiteDB, Version=4.1.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
       <HintPath>..\packages\LiteDB.4.1.4\lib\net40\LiteDB.dll</HintPath>
     </Reference>
@@ -313,6 +316,7 @@
     <Compile Include="Converters\PasswordBoxConverter.cs" />
     <Compile Include="Helpers\AmountTextBoxHelper.cs" />
     <Compile Include="Helpers\ComboBoxHelper.cs" />
+    <Compile Include="ViewModels\ConversionConfirmationViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\AddressBasedTransactionViewModel.cs" />
     <Compile Include="ViewModels\Abstract\IExpandable.cs" />
     <Compile Include="ViewModels\CreateWalletViewModel.cs" />
@@ -324,9 +328,8 @@
     <Compile Include="ViewModels\CurrencyViewModels\LitecoinCurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\TezosCurrencyViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\SendConfirmationViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModel.cs" />
-    <Compile Include="ViewModels\SendViewModels\ConfirmationViewModel.cs" />
-    <Compile Include="ViewModels\SendViewModels\EditViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModelFactory.cs" />
@@ -361,13 +364,16 @@
     <Compile Include="Views\MessagePage.xaml.cs">
       <DependentUpon>MessagePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SendViews\ConfirmationPage.xaml.cs">
-      <DependentUpon>ConfirmationPage.xaml</DependentUpon>
+    <Compile Include="Views\ConversionConfirmationPage.xaml.cs">
+      <DependentUpon>ConversionConfirmationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SendViews\EditPage.xaml.cs">
-      <DependentUpon>EditPage.xaml</DependentUpon>
+    <Compile Include="Views\SendViews\SendConfirmationPage.xaml.cs">
+      <DependentUpon>SendConfirmationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SendViews\SendingPage.xaml.cs">
+    <Compile Include="Views\SendViews\SendPage.xaml.cs">
+      <DependentUpon>SendPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SendingPage.xaml.cs">
       <DependentUpon>SendingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
@@ -468,15 +474,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SendViews\ConfirmationPage.xaml">
+    <Page Include="Views\ConversionConfirmationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SendViews\SendConfirmationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SendViews\EditPage.xaml">
+    <Page Include="Views\SendViews\SendPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SendViews\SendingPage.xaml">
+    <Page Include="Views\SendingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -13,6 +13,7 @@ namespace Atomix.Client.Wpf.Views
         private ChildView _startView;
         private ChildView _createWalletView;
         private ChildView _sendView;
+        private ChildView _conversionConfirmationView;
         private ChildView _receiveView;
         private ChildView _unlockView;
 
@@ -97,6 +98,25 @@ namespace Atomix.Client.Wpf.Views
         {
             CloseChildView(_sendView, hideOverlay);
         }
+
+        public void ShowConversionConfirmationDialog(object dataContext, Action dialogLoaded = null)
+        {
+            if (_conversionConfirmationView != null && _conversionConfirmationView.IsOpen)
+                return;
+
+            _conversionConfirmationView = new FrameView { DataContext = dataContext };
+
+            if (dialogLoaded != null)
+                _conversionConfirmationView.Loaded += (sender, args) => { dialogLoaded(); };
+
+            this.ShowChildViewAsync(_conversionConfirmationView);
+        }
+
+        public void HideConversionConfirmationDialog(bool hideOverlay = true)
+        {
+            CloseChildView(_conversionConfirmationView, hideOverlay);
+        }
+
 
         public void ShowReceiveDialog(object dataContext)
         {

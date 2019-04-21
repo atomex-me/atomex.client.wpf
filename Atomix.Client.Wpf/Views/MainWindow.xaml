@@ -248,26 +248,6 @@
                 </TextBlock>
             </StatusBarItem>
             <Separator DockPanel.Dock="Right"/>
-            <StatusBarItem DockPanel.Dock="Right">
-                <TextBlock Text="Swap"
-                           FontSize="11">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsSwapConnected}" Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource StatusBarConnectedForeground}"/>
-                                    <Setter Property="ToolTip" Value="Connected"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsSwapConnected}" Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource StatusBarDisconnectedForeground}"/>
-                                    <Setter Property="ToolTip" Value="Disconnected"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-            </StatusBarItem>
-            <Separator DockPanel.Dock="Right"/>
             <StatusBarItem HorizontalAlignment="Right">
                 <TextBlock Text="Rates Provider"
                            FontSize="11">

@@ -6,8 +6,9 @@ namespace Atomix.Client.Wpf.Common
     public class Navigation
     {
         public const string NotFoundAlias = "NotFoundPage";
-        public const string EditAlias = "EditPage";
-        public const string ConfirmationAlias = "ConfirmationPage";
+        public const string SendAlias = "SendPage";
+        public const string SendConfirmationAlias = "SendConfirmationPage";
+        public const string ConversionConfirmationAlias = "ConversionConfirmationPage";
         public const string SendingAlias = "SendingPage";
         public const string MessageAlias = "MessagePage";
 

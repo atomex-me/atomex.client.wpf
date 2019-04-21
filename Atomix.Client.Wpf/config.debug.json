@@ -12,8 +12,8 @@
       {
         "Name": "Console",
         "Args": {
-          "restrictedToMinimumLevel": "Debug" 
-        } 
+          "restrictedToMinimumLevel": "Debug"
+        }
       },
       {
         "Name": "RollingFile",
@@ -30,8 +30,5 @@
   },
   "MarketData": {
     "Url": "wss://atomix.me/marketdata"
-  },
-  "Swap": {
-    "Url": "wss://atomix.me/swap"
   }
 }

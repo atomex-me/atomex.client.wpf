@@ -22,6 +22,9 @@ namespace Atomix.Client.Wpf.Controls
         void ShowSendDialog(object dataContext, Action dialogLoaded = null);
         void HideSendDialog(bool hideOverlay = true);
 
+        void ShowConversionConfirmationDialog(object dataContext, Action dialogLoaded = null);
+        void HideConversionConfirmationDialog(bool hideOverlay = true);
+
         void ShowReceiveDialog(object dataContext);
         void HideReceiveDialog(bool hideOverlay = true);
 

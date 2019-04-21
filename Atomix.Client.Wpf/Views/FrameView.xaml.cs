@@ -16,8 +16,9 @@ namespace Atomix.Client.Wpf.Views
         {
             var resolver = new PageResolver();
             resolver.AddResolver(Navigation.MessageAlias, () => new MessagePage());
-            resolver.AddResolver(Navigation.EditAlias, () => new EditPage());
-            resolver.AddResolver(Navigation.ConfirmationAlias, () => new ConfirmationPage());
+            resolver.AddResolver(Navigation.SendAlias, () => new SendPage());
+            resolver.AddResolver(Navigation.SendConfirmationAlias, () => new SendConfirmationPage());
+            resolver.AddResolver(Navigation.ConversionConfirmationAlias, () => new ConversionConfirmationPage());
             resolver.AddResolver(Navigation.SendingAlias, () => new SendingPage());
 
             Navigation.UseResolver(resolver);

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -14,7 +13,6 @@ using Atomix.MarketData.Abstract;
 using Atomix.Subsystems;
 using Atomix.Subsystems.Abstract;
 using Atomix.Swaps;
-using Atomix.Wallet.Abstract;
 using Atomix.Client.Wpf.Common;
 using Atomix.Client.Wpf.Controls;
 using Atomix.Client.Wpf.Properties;
@@ -23,23 +21,23 @@ using Serilog;
 
 namespace Atomix.Client.Wpf.ViewModels
 {
-    public class ConversionOrderType
-    {
-        public string Description { get; set; }
-        public OrderType OrderType { get; set; }
+    //public class ConversionOrderType
+    //{
+    //    public string Description { get; set; }
+    //    public OrderType OrderType { get; set; }
 
-        public static ConversionOrderType Standard => new ConversionOrderType
-        {
-            OrderType = OrderType.FillOrKill,
-            Description = Resources.CvOrderTypeStandard
-        };
+    //    public static ConversionOrderType Standard => new ConversionOrderType
+    //    {
+    //        OrderType = OrderType.FillOrKill,
+    //        Description = Resources.CvOrderTypeStandard
+    //    };
 
-        //public static ConversionOrderType StandardWithFixedFee => new ConversionOrderType
-        //{
-        //    OrderType = OrderType.DirectFillOrKill,
-        //    Description = Resources.CvOrderTypeStandardWithFixedFee
-        //};
-    }
+    //    //public static ConversionOrderType StandardWithFixedFee => new ConversionOrderType
+    //    //{
+    //    //    OrderType = OrderType.DirectFillOrKill,
+    //    //    Description = Resources.CvOrderTypeStandardWithFixedFee
+    //    //};
+    //}
 
     public class ConversionViewModel : BaseViewModel, IConversionViewModel
     {
@@ -62,11 +60,11 @@ namespace Atomix.Client.Wpf.ViewModels
             private set { _toCurrencies = value; OnPropertyChanged(nameof(ToCurrencies)); }
         }
 
-        public List<ConversionOrderType> OrderTypes => new List<ConversionOrderType>
-        {
-            ConversionOrderType.Standard,
-            //ConversionOrderType.StandardWithFixedFee
-        };
+        //public List<ConversionOrderType> OrderTypes => new List<ConversionOrderType>
+        //{
+        //    ConversionOrderType.Standard,
+        //    //ConversionOrderType.StandardWithFixedFee
+        //};
 
         private Currency _fromCurrency;
         public Currency FromCurrency
@@ -534,101 +532,50 @@ namespace Atomix.Client.Wpf.ViewModels
             Amount = FromCurrencyViewModel.AvailableAmount;
         }));
 
-        private async void OnConvertClick()
+        private void OnConvertClick()
         {
             if (Amount == 0) {
                 DialogViewer.ShowMessage(Resources.CvWarning, Resources.CvWrongAmount);
                 return;
             }
 
-            var terminal = App.Terminal;
-
-            if (!terminal.IsServiceConnected(TerminalService.All)) {
+            if (!App.Terminal.IsServiceConnected(TerminalService.All)) {
                 DialogViewer.ShowMessage(Resources.CvWarning, Resources.CvServicesUnavailable);
                 return;
             }
 
-            var account = App.Account;
-
-            try
-            {
-                if (account.IsLocked)
-                {
-                    await UnlockAccountAsync(account);
-
-                    if (account.IsLocked) {
-                        DialogViewer.ShowMessage(Resources.CvError, Resources.CvWalletLocked);
-                        return;
-                    }
-                }
-
-                var symbol = Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
-                if (symbol == null) {
-                    DialogViewer.ShowMessage(Resources.CvError, Resources.CvNotSupportedSymbol);
-                    return;
-                }
-
-                var requiredAmount = Amount + Fee;
-
-                var fromWallets = await account
-                    .GetUnspentAddressesAsync(
-                        currency: FromCurrency,
-                        requiredAmount: requiredAmount); 
-
-                var refundWallet = await account
-                    .GetRefundAddressAsync(FromCurrency, fromWallets);
-
-                var toWallet = await account
-                    .GetRedeemAddressAsync(ToCurrency);
-
-                var side = symbol.OrderSideForBuyCurrency(ToCurrency);
-                var orderBook = terminal.GetOrderBook(symbol);
-                var price = orderBook.EstimatedDealPrice(side, Amount);
-
-                if (price == 0) {
-                    DialogViewer.ShowMessage(Resources.CvWarning, Resources.CvNoLiquidity);
-                    return;
-                }
-
-                var qty = Math.Round(AmountHelper.AmountToQty(side, Amount, price), symbol.QtyDigits);
-
-                var order = new Order
-                {
-                    Symbol       = symbol,
-                    TimeStamp    = DateTime.UtcNow,
-                    Price        = price,
-                    Qty          = qty,
-                    Fee          = Fee,
-                    Side         = side,
-                    Type         = OrderType,
-                    FromWallets  = fromWallets.ToList(),
-                    ToWallet     = toWallet,
-                    RefundWallet = refundWallet
-                };
-
-                await order.CreateProofOfPossessionAsync(account);
-
-                terminal.OrderSendAsync(order);
+            var symbol = Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
+            if (symbol == null) {
+                DialogViewer.ShowMessage(Resources.CvError, Resources.CvNotSupportedSymbol);
+                return;
             }
-            catch (Exception e)
+
+            var viewModel = new ConversionConfirmationViewModel(App, DialogViewer)
             {
-                Log.Error(e, "Conversion error");
+                FromCurrency = FromCurrency,
+                ToCurrency = ToCurrency,
+                FromCurrencyViewModel = FromCurrencyViewModel,
+                ToCurrencyViewModel = ToCurrencyViewModel,
+                CurrencyCode = CurrencyCode,
+                CurrencyFormat = CurrencyFormat,
+                TargetCurrencyCode = TargetCurrencyCode,
+                TargetCurrencyFormat = TargetCurrencyFormat,
+                BaseCurrencyCode = BaseCurrencyCode,
+                BaseCurrencyFormat = BaseCurrencyFormat,
+                Amount = Amount,
+                AmountInBase = AmountInBase,
+                Fee = Fee,
+                FeeInBase = FeeInBase,
+                TargetAmount = TargetAmount,
+                TargetAmountInBase = TargetAmountInBase,
 
-                DialogViewer.ShowMessage(Resources.CvError, Resources.CvConversionError);
-            }
-        }
+                EstimatedPrice = EstimatedPrice,
+                PriceFormat = PriceFormat
+            };
 
-        private Task UnlockAccountAsync(IAccount account)
-        {
-            var viewModel = new UnlockViewModel(
-                walletName: "wallet",
-                unlockAction: password => {
-                    account.Unlock(password);
-                });
-
-            viewModel.Unlocked += (sender, args) => DialogViewer?.HideUnlockDialog();
-
-            return DialogViewer?.ShowUnlockDialogAsync(viewModel);
+            DialogViewer?.ShowConversionConfirmationDialog(viewModel, dialogLoaded: () => {
+                viewModel.Show();
+            });
         }
 
         private void DesignerMode()
