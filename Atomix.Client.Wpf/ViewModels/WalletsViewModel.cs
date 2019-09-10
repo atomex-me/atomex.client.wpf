@@ -10,10 +10,10 @@ namespace Atomix.Client.Wpf.ViewModels
 {
     public class WalletsViewModel : BaseViewModel
     {
-        public IAtomixApp App { get; set; }
-        public IDialogViewer DialogViewer { get; set; }
-        public IMenuSelector MenuSelector { get; set; }
-        public IConversionViewModel ConversionViewModel { get; set; }
+        private IAtomixApp App { get; }
+        private IDialogViewer DialogViewer { get; }
+        private IMenuSelector MenuSelector { get; }
+        private IConversionViewModel ConversionViewModel { get; }
 
         private ObservableCollection<WalletViewModel> _wallets;
         public ObservableCollection<WalletViewModel> Wallets
@@ -71,7 +71,7 @@ namespace Atomix.Client.Wpf.ViewModels
         {
             Wallets = e.NewAccount != null
                 ? new ObservableCollection<WalletViewModel>(
-                    e.NewAccount.Wallet.Currencies.Select(currency => new WalletViewModel(
+                    e.NewAccount.Currencies.Select(currency => new WalletViewModel(
                         app: App,
                         dialogViewer: DialogViewer,
                         menuSelector: MenuSelector,
@@ -84,10 +84,12 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
+            var currencies = DesignTime.Currencies;
+
             Wallets = new ObservableCollection<WalletViewModel>
             {
-                new WalletViewModel {CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(Currencies.Btc, subscribeToUpdates: false)},
-                new WalletViewModel {CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(Currencies.Ltc, subscribeToUpdates: false)}
+                new WalletViewModel {CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currencies[0], subscribeToUpdates: false)},
+                new WalletViewModel {CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currencies[1], subscribeToUpdates: false)}
             };
         }
     }

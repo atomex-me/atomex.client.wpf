@@ -2,7 +2,7 @@
 
 namespace Atomix.Client.Wpf.Views
 {
-    public partial class RegisterView : ChildView
+    public partial class RegisterView : ChildWindow
     {
         public RegisterView()
         {

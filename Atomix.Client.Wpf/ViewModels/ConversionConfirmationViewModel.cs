@@ -15,26 +15,29 @@ namespace Atomix.Client.Wpf.ViewModels
 {
     public class ConversionConfirmationViewModel : BaseViewModel
     {
-        public IAtomixApp App { get; }
-        public IDialogViewer DialogViewer { get; }
+        private IAtomixApp App { get; }
+        private IDialogViewer DialogViewer { get; }
         public Currency FromCurrency { get; set; }
         public Currency ToCurrency { get; set; }
         public CurrencyViewModel FromCurrencyViewModel { get; set; }
         public CurrencyViewModel ToCurrencyViewModel { get; set; }
+        public string PriceFormat { get; set; }
         public string CurrencyFormat { get; set; }
         public string TargetCurrencyFormat { get; set; }
         public string BaseCurrencyFormat { get; set; }
         public decimal Amount { get; set; }
-        public decimal Fee { get; set; }
         public decimal AmountInBase { get; set; }
-        public decimal FeeInBase { get; set; }
         public decimal TargetAmount { get; set; }
         public decimal TargetAmountInBase { get; set; }
         public string CurrencyCode { get; set; }
         public string TargetCurrencyCode { get; set; }
         public string BaseCurrencyCode { get; set; }
         public decimal EstimatedPrice { get; set; }
-        public string PriceFormat { get; set; }
+        public decimal EstimatedPaymentFee { get; set; }
+        public decimal EstimatedPaymentFeeInBase { get; set; }
+        public decimal EstimatedRedeemFee { get; set; }
+        public decimal EstimatedRedeemFeeInBase { get; set; }
+        public bool UseRewardForRedeem { get; set; }
 
         private ICommand _backCommand;
         public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
@@ -52,7 +55,9 @@ namespace Atomix.Client.Wpf.ViewModels
                 DesignerMode();
         }
 #endif
-        public ConversionConfirmationViewModel(IAtomixApp app, IDialogViewer dialogViewer)
+        public ConversionConfirmationViewModel(
+            IAtomixApp app,
+            IDialogViewer dialogViewer)
         {
             App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
@@ -107,30 +112,31 @@ namespace Atomix.Client.Wpf.ViewModels
             {
                 var account = App.Account;
 
-                var requiredAmount = Amount + Fee;
+                var requiredAmount = Amount + EstimatedPaymentFee;
 
                 var fromWallets = (await account
                     .GetUnspentAddressesAsync(
                         currency: FromCurrency,
-                        requiredAmount: requiredAmount))
+                        amount: requiredAmount,
+                        fee: 0,
+                        feePrice: 0,
+                        isFeePerTransaction: false,
+                        addressUsagePolicy: AddressUsagePolicy.UseMinimalBalanceFirst))
                     .ToList();
 
-                var refundWallet = await account
-                    .GetRefundAddressAsync(FromCurrency, fromWallets);
+                if (requiredAmount > 0 && !fromWallets.Any())
+                    return new Error(Errors.SwapError, Resources.CvInsufficientFunds);
 
-                var toWallet = await account
-                    .GetRedeemAddressAsync(ToCurrency);
-
-                var symbol = Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
-                var side = symbol.OrderSideForBuyCurrency(ToCurrency);
-                var terminal = App.Terminal;
+                var symbol    = App.Account.Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
+                var side      = symbol.OrderSideForBuyCurrency(ToCurrency);
+                var terminal  = App.Terminal;
                 var orderBook = terminal.GetOrderBook(symbol);
-                var price = orderBook.EstimatedDealPrice(side, Amount);
+                var price     = orderBook.EstimatedDealPrice(side, Amount);
 
                 if (price == 0)
                     return new Error(Errors.NoLiquidity, Resources.CvNoLiquidity);
 
-                var qty = Math.Round(AmountHelper.AmountToQty(side, Amount, price), symbol.QtyDigits);
+                var qty = Math.Round(AmountHelper.AmountToQty(side, Amount, price), symbol.Base.Digits);
 
                 var order = new Order
                 {
@@ -138,12 +144,9 @@ namespace Atomix.Client.Wpf.ViewModels
                     TimeStamp = DateTime.UtcNow,
                     Price = price,
                     Qty = qty,
-                    Fee = Fee,
                     Side = side,
                     Type = OrderType.FillOrKill,
                     FromWallets = fromWallets.ToList(),
-                    ToWallet = toWallet,
-                    RefundWallet = refundWallet
                 };
 
                 await order.CreateProofOfPossessionAsync(account);
@@ -162,10 +165,14 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            FromCurrency = Currencies.Btc;
-            ToCurrency = Currencies.Eth;
+            var currencies = DesignTime.Currencies;
+
+            FromCurrency = currencies[0];
+            ToCurrency = currencies[1];
             FromCurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(FromCurrency, false);
             ToCurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(ToCurrency, false);
+
+            PriceFormat = $"F{FromCurrency.Digits}";
             CurrencyCode = FromCurrencyViewModel.CurrencyCode;
             CurrencyFormat = FromCurrencyViewModel.CurrencyFormat;
             TargetCurrencyCode = ToCurrencyViewModel.CurrencyCode;
@@ -173,7 +180,6 @@ namespace Atomix.Client.Wpf.ViewModels
             BaseCurrencyCode = FromCurrencyViewModel.BaseCurrencyCode;
             BaseCurrencyFormat = FromCurrencyViewModel.BaseCurrencyFormat;
 
-            PriceFormat = $"F{Symbols.EthBtc.Quote.Digits}";
             EstimatedPrice = 0.003m;
 
             Amount = 0.00001234m;
@@ -182,8 +188,11 @@ namespace Atomix.Client.Wpf.ViewModels
             TargetAmount = Amount / EstimatedPrice;
             TargetAmountInBase = AmountInBase;
 
-            Fee = 0.0001m;
-            FeeInBase = 8.43m;
+            EstimatedPaymentFee = 0.0001904m;
+            EstimatedPaymentFeeInBase = 0.22m;
+
+            EstimatedRedeemFee = 0.001m;
+            EstimatedRedeemFeeInBase = 0.11m;
         }
     }
 }

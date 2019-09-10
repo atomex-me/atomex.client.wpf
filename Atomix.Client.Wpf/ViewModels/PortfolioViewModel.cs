@@ -16,12 +16,10 @@ namespace Atomix.Client.Wpf.ViewModels
 {
     public class PortfolioViewModel : BaseViewModel
     {
-        public const string Nothing = "Nothing";
-
-        public IAtomixApp App { get; set; }
+        private IAtomixApp App { get; }
         public PlotModel PlotModel { get; set; }
         public IList<CurrencyViewModel> AllCurrencies { get; set; }
-        public Color NothingColor { get; set; } = Color.FromArgb(50, 0, 0, 0);
+        private Color NoTokensColor { get; } = Color.FromArgb(50, 0, 0, 0);
 
         private decimal _portfolioValue;
         public decimal PortfolioValue
@@ -33,10 +31,8 @@ namespace Atomix.Client.Wpf.ViewModels
         public PortfolioViewModel()
         {
 #if DEBUG
-            if (Env.IsInDesignerMode()) {
+            if (Env.IsInDesignerMode())
                 DesignerMode();
-                return;
-            }
 #endif
         }
 
@@ -54,7 +50,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private void OnAccountChangedEventHandler(object sender, AccountChangedEventArgs e)
         {
-            AllCurrencies = e.NewAccount?.Wallet.Currencies
+            AllCurrencies = e.NewAccount?.Currencies
                 .Select(c =>
                 {
                     var vm = CurrencyViewModelCreator.CreateViewModel(c);
@@ -105,18 +101,27 @@ namespace Atomix.Client.Wpf.ViewModels
             }
 
             if (PortfolioValue == 0)
-                series.Slices.Add(new PieSlice(Nothing, 100) {Fill = NothingColor.ToOxyColor()});
+            {
+                series.Slices.Add(new PieSlice(Properties.Resources.PwNoTokens, 1) {Fill = NoTokensColor.ToOxyColor()});
+                series.TrackerFormatString = "{1}";
+            }
 
-            PlotModel = new PlotModel() {Culture = CultureInfo.InvariantCulture};
+            PlotModel = new PlotModel {Culture = CultureInfo.InvariantCulture};
             PlotModel.Series.Add(series);
+
             OnPropertyChanged(nameof(PlotModel));
+
+            if (PlotModel.PlotView != null) {
+                PlotModel.PlotView.ActualController.UnbindMouseDown(OxyMouseButton.Left);
+                PlotModel.PlotView.ActualController.BindMouseEnter(OxyPlot.PlotCommands.HoverSnapTrack);
+            }
         }
 
         private void DesignerMode()
         {
             var random = new Random();
 
-            AllCurrencies = Currencies.Available
+            AllCurrencies = DesignTime.Currencies
                 .Select(c =>
                 {
                     var vm = CurrencyViewModelCreator.CreateViewModel(c, subscribeToUpdates: false);

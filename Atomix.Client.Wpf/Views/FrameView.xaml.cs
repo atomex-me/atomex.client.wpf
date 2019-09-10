@@ -5,14 +5,16 @@ using Atomix.Client.Wpf.Views.SendViews;
 
 namespace Atomix.Client.Wpf.Views
 {
-    public partial class FrameView : ChildView
+    public partial class FrameView : ChildWindow
     {
         public FrameView()
         {
             InitializeComponent();
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(
+            object sender,
+            RoutedEventArgs e)
         {
             var resolver = new PageResolver();
             resolver.AddResolver(Navigation.MessageAlias, () => new MessagePage());

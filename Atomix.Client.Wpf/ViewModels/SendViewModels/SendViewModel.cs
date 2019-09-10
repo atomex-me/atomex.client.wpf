@@ -15,8 +15,8 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 {
     public class SendViewModel : BaseViewModel
     {
-        public IAtomixApp App { get; }
-        public IDialogViewer DialogViewer { get; }
+        private IAtomixApp App { get; }
+        private IDialogViewer DialogViewer { get; }
 
         private List<CurrencyViewModel> _fromCurrencies;
         public List<CurrencyViewModel> FromCurrencies
@@ -34,7 +34,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
                 _currency = value;
                 OnPropertyChanged(propertyName: nameof(Currency));
 
-                CurrencyViewModel = FromCurrencies.FirstOrDefault(c => c.Currency.Equals(Currency));
+                CurrencyViewModel = FromCurrencies.FirstOrDefault(c => c.Currency.Name == Currency.Name);
 
                 _amount = 0;
                 OnPropertyChanged(propertyName: nameof(AmountString));
@@ -59,7 +59,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
         }
 
         private CurrencyViewModel _currencyViewModel;
-        public CurrencyViewModel CurrencyViewModel
+        private CurrencyViewModel CurrencyViewModel
         {
             get => _currencyViewModel;
             set
@@ -88,26 +88,9 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
             }
         }
 
-        private string _currencyFormat;
-        public string CurrencyFormat
-        {
-            get => _currencyFormat;
-            set { _currencyFormat = value; OnPropertyChanged(CurrencyFormat); }
-        }
-
-        private string _feeCurrencyFormat;
-        public string FeeCurrencyFormat
-        {
-            get => _feeCurrencyFormat;
-            set { _feeCurrencyFormat = value; OnPropertyChanged(FeeCurrencyFormat); }
-        }
-
-        private string _feePriceFormat;
-        public string FeePriceFormat
-        {
-            get => _feePriceFormat;
-            set { _feePriceFormat = value; OnPropertyChanged(FeePriceFormat); }
-        }
+        private string CurrencyFormat { get; set; }
+        private string FeeCurrencyFormat { get; set; }
+        private string FeePriceFormat { get; set; }
 
         private string _baseCurrencyFormat;
         public string BaseCurrencyFormat
@@ -117,7 +100,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
         }
 
         private decimal _amount;
-        public decimal Amount
+        private decimal Amount
         {
             get => _amount;
             set
@@ -126,31 +109,28 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 
                 if (UseDefaultFee)
                 {
-                    var estimatedFee = App.Account
-                        .EstimateFeeAsync(Currency, _amount)
-                        .WaitForResult();
+                    var estimatedFee = _amount != 0
+                        ? App.Account
+                            .EstimateFeeAsync(Currency, To, _amount)
+                            .WaitForResult()
+                        : 0;
 
-                    var defaultFeePrice = Currency.GetDefaultFeePrice();
+                    if (_amount + estimatedFee > CurrencyViewModel.AvailableAmount)
+                        _amount = Math.Max(CurrencyViewModel.AvailableAmount - estimatedFee, 0);
 
-                    var estimatedFeeAmount = Currency.GetFeeAmount(estimatedFee, defaultFeePrice);
+                    if (_amount == 0)
+                        estimatedFee = 0;
 
-                    if (_amount + estimatedFeeAmount > CurrencyViewModel.AvailableAmount)
-                        _amount = Math.Max(CurrencyViewModel.AvailableAmount - estimatedFeeAmount, 0);
- 
-                    OnPropertyChanged(propertyName: nameof(AmountString));
+                    OnPropertyChanged(nameof(AmountString));
 
-                    _fee = estimatedFee;
-                    OnPropertyChanged(propertyName: nameof(FeeString));
+                    _fee = Currency.GetFeeFromFeeAmount(estimatedFee, Currency.GetDefaultFeePrice());
+                    OnPropertyChanged(nameof(FeeString));
 
                     if (UseFeePrice)
                     {
-                        _feePrice = defaultFeePrice;
-                        OnPropertyChanged(propertyName: nameof(FeePriceString));
+                        _feePrice = Currency.GetDefaultFeePrice();
+                        OnPropertyChanged( nameof(FeePriceString));
                     }
-
-                    Warning = estimatedFee == 0
-                        ? string.Format(Resources.SvInsufficientFundsForDefaultFeeError)
-                        : string.Empty;
                 }
                 else
                 {
@@ -159,7 +139,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
                     if (_amount + feeAmount > CurrencyViewModel.AvailableAmount)
                         _amount = Math.Max(CurrencyViewModel.AvailableAmount - feeAmount, 0);
 
-                    OnPropertyChanged(propertyName: nameof(AmountString));
+                    OnPropertyChanged(nameof(AmountString));
 
                     Warning = string.Empty;
                 }
@@ -181,7 +161,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
         }
 
         private decimal _fee;
-        public decimal Fee
+        private decimal Fee
         {
             get => _fee;
             set
@@ -218,7 +198,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
         }
 
         private decimal _feePrice;
-        public decimal FeePrice
+        private decimal FeePrice
         {
             get => _feePrice;
             set
@@ -234,7 +214,7 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 
                     _feePrice = Currency.GetFeePriceFromFeeAmount(feeAmount, _fee);
 
-                    OnPropertyChanged(propertyName: nameof(FeePriceString));
+                    OnPropertyChanged(nameof(FeePriceString));
                     Warning = string.Empty;
                 }
 
@@ -393,12 +373,15 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 #endif
         }
 
-        public SendViewModel(IAtomixApp app, IDialogViewer dialogViewer, Currency currency)
+        public SendViewModel(
+            IAtomixApp app,
+            IDialogViewer dialogViewer,
+            Currency currency)
         {
             App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
-            FromCurrencies = Currencies.Available
+            FromCurrencies = App.Account.Currencies
                 .Where(c => c.IsTransactionsAvailable)
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
@@ -434,11 +417,11 @@ namespace Atomix.Client.Wpf.ViewModels.SendViewModels
 
         private void DesignerMode()
         {
-            FromCurrencies = Currencies.Available
+            FromCurrencies = DesignTime.Currencies
                 .Select(c => CurrencyViewModelCreator.CreateViewModel(c, subscribeToUpdates: false))
                 .ToList();
 
-            _currency = Currencies.Btc;
+            _currency = FromCurrencies[0].Currency;
             _to = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
             _amount = 0.00001234m;
             _amountInBase = 10.23m;

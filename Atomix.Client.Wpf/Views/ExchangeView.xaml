@@ -4,14 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:oxy="http://oxyplot.org/wpf"
-             xmlns:series="clr-namespace:OxyPlot.Series;assembly=OxyPlot"
-             xmlns:oxyPlot="clr-namespace:OxyPlot;assembly=OxyPlot"
              xmlns:viewModels="clr-namespace:Atomix.Client.Wpf.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800"
+             d:DesignHeight="600"
+             d:DesignWidth="800"
+             Background="{StaticResource MainBackgroundBrush}"
              d:DataContext="{d:DesignInstance Type=viewModels:ExchangeViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="UnselectedSymbolTabItemBackgroundBrush" Color="#8f000000"/>
+        <SolidColorBrush x:Key="UnselectedSymbolTabItemBackgroundBrush" Color="#1f000000"/>
     </UserControl.Resources>
     <Grid>
         <TabControl Margin="10"
@@ -34,7 +34,7 @@
                                                 <Border Name="Border"
                                                         Background="{StaticResource UnselectedSymbolTabItemBackgroundBrush}"
                                                         BorderThickness="0">
-                                                    <ContentPresenter x:Name="ContentSite"
+                                                    <ContentPresenter x:Name="ContentSie"
                                                                       VerticalAlignment="Center"
                                                                       HorizontalAlignment="Center"
                                                                       ContentSource="Header"
@@ -87,19 +87,27 @@
                 </Style>
             </TabControl.Style>
             <TabControl.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate DataType="{x:Type TabItem}">
                     <Border Background="Transparent">
-                        <TextBlock Text="{Binding Header}"
-                                   FontSize="13"
-                                   FontFamily="{StaticResource Roboto}"
-                                   Foreground="White"/>
+                        <TextBlock x:Name="TabHeader"
+                                   Text="{Binding Header}"
+                                   FontSize="12"
+                                   FontFamily="{StaticResource Roboto}"/>
                     </Border>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                            <Setter TargetName="TabHeader" Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource TemplatedParent}}" Value="False">
+                            <Setter TargetName="TabHeader" Property="Foreground" Value="#FF586B89"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate DataType="{x:Type viewModels:SymbolTabItem}">
                     <Grid Background="{StaticResource DefaultSubstrateBrush}">
-                        <oxy:PlotView Background="Transparent" Model="{Binding Model}"/>
+                        <oxy:PlotView Background="Transparent" Model="{Binding Model}" />
                     </Grid>
                 </DataTemplate>
             </TabControl.ContentTemplate>

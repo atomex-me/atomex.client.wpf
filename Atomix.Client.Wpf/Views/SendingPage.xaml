@@ -6,14 +6,13 @@
       xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
       mc:Ignorable="d" 
       d:DesignHeight="200"
-      d:DesignWidth="400">
+      d:DesignWidth="560">
 
-    <StackPanel Orientation="Vertical"
-                Width="400">
-
+    <StackPanel Orientation="Vertical">
         <Border Margin="0 10 0 10"
                 Height="33"
                 VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
                 Background="{StaticResource ChildViewHeaderBackgroundBrush}">
             <TextBlock Text="Sending..."
                        Foreground="{StaticResource ChildViewHeaderForegroundBrush}"

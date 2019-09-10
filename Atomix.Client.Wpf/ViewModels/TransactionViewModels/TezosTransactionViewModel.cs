@@ -2,13 +2,13 @@
 using Atomix.Blockchain;
 using Atomix.Blockchain.Abstract;
 using Atomix.Blockchain.Tezos;
+using Atomix.Client.Wpf.Controls;
 
 namespace Atomix.Client.Wpf.ViewModels.TransactionViewModels
 {
     public class TezosTransactionViewModel : AddressBasedTransactionViewModel
     {
-        public TezosTransactionViewModel(
-            IAddressBasedTransaction tx)
+        public TezosTransactionViewModel(IAddressBasedTransaction tx)
             : base(tx)
         {
         }

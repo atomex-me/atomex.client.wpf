@@ -1,84 +1,106 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
-using Atomix.Client.Wpf.Common;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 using Atomix.Client.Wpf.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
 namespace Atomix.Client.Wpf.Views
 {
-    public partial class MainWindow : IDialogViewer
+    public partial class MainWindow : IDialogViewer, IMainView
     {
-        private ChildView _loginView;
-        private ChildView _registerView;
-        private ChildView _startView;
-        private ChildView _createWalletView;
-        private ChildView _sendView;
-        private ChildView _conversionConfirmationView;
-        private ChildView _receiveView;
-        private ChildView _unlockView;
+        private ChildWindow _startView;
+        private ChildWindow _createWalletView;
+        private ChildWindow _sendView;
+        private ChildWindow _conversionConfirmationView;
+        private ChildWindow _receiveView;
+        private ChildWindow _unlockView;
+        private ChildWindow _myWalletsView;
+
+        private DispatcherTimer _activityTimer;
+        private bool _inactivityControlEnabled;
+        private Point _inactiveMousePosition = new Point(0, 0);
+
+        public event CancelEventHandler MainViewClosing;
+        public event EventHandler Inactivity;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            Closing += (sender, args) => MainViewClosing?.Invoke(sender, args);
+
+            InputManager.Current.PreProcessInput += (sender, args) =>
+            {
+                var inputEventArgs = args.StagingItem.Input;
+
+                if (inputEventArgs is MouseEventArgs || inputEventArgs is KeyboardEventArgs)
+                {
+                    if (args.StagingItem.Input is MouseEventArgs mouseEventArgs)
+                    {
+                        // no button is pressed and the position is still the same as the application became inactive
+                        if (mouseEventArgs.LeftButton == MouseButtonState.Released &&
+                            mouseEventArgs.RightButton == MouseButtonState.Released &&
+                            mouseEventArgs.MiddleButton == MouseButtonState.Released &&
+                            mouseEventArgs.XButton1 == MouseButtonState.Released &&
+                            mouseEventArgs.XButton2 == MouseButtonState.Released &&
+                            _inactiveMousePosition == mouseEventArgs.GetPosition(MainDockerPanel))
+                            return;
+                    }
+
+                    if (_inactivityControlEnabled && _activityTimer != null)
+                    {
+                        _activityTimer.Stop();
+                        _activityTimer.Start();
+                    }
+                }
+            };
+        }
+
+        public void StartInactivityControl(TimeSpan timeOut)
+        {
+            _activityTimer = new DispatcherTimer { Interval = timeOut, IsEnabled = true };
+            _activityTimer.Tick += (sender, args) =>
+            {
+                _inactiveMousePosition = Mouse.GetPosition(MainDockerPanel);
+
+                Inactivity?.Invoke(sender, args);
+            };
+
+            _inactivityControlEnabled = true;
+        }
+
+        public void StopInactivityControl()
+        {
+            _inactivityControlEnabled = false;
+            _activityTimer?.Stop();
         }
 
         public void HideAllDialogs()
         {
-            this.CloseAllChildViews();
-
-            HideOverlay();
-        }
-
-        public void ShowLoginDialog(object dataContext)
-        {
-            if (_loginView != null && _loginView.IsOpen)
-                return;
-
-            this.ShowChildViewAsync(_loginView = new LoginView {DataContext = dataContext});
-        }
-
-        public void HideLoginDialog(bool hideOverlay = true)
-        {
-            CloseChildView(_loginView, hideOverlay);
-        }
-
-        public void ShowRegisterDialog(object dataContext)
-        {
-            if (_registerView != null && _registerView.IsOpen)
-                return;
-
-            this.ShowChildViewAsync(_registerView = new RegisterView {DataContext = dataContext});
-        }
-
-        public void HideRegisterDialog(bool hideOverlay = true)
-        {
-            CloseChildView(_registerView, hideOverlay);
+            this.CloseAllChildWindows();
         }
 
         public void ShowStartDialog(object dataContext)
         {
-            if (_startView != null && _startView.IsOpen)
-                return;
-
-            this.ShowChildViewAsync(_startView = new StartView {DataContext = dataContext});
+            ShowDialogAsync<StartView>(dataContext, ref _startView);
         }
 
-        public void HideStartDialog(bool hideOverlay = true)
+        public void HideStartDialog()
         {
-            CloseChildView(_startView, hideOverlay);
+            _startView.Close();
         }
 
         public void ShowCreateWalletDialog(object dataContext)
         {
-            if (_createWalletView != null && _createWalletView.IsOpen)
-                return;
-
-            this.ShowChildViewAsync(_createWalletView = new CreateWalletView {DataContext = dataContext});
+            ShowDialogAsync<CreateWalletView>(dataContext, ref _createWalletView);
         }
 
-        public void HideCreateWalletDialog(bool hideOverlay = true)
+        public void HideCreateWalletDialog()
         {
-            CloseChildView(_createWalletView, hideOverlay);
+            _createWalletView.Close();
         }
 
         public void ShowSendDialog(object dataContext, Action dialogLoaded = null)
@@ -91,12 +113,14 @@ namespace Atomix.Client.Wpf.Views
             if (dialogLoaded != null)
                 _sendView.Loaded += (sender, args) => { dialogLoaded(); };
 
-            this.ShowChildViewAsync(_sendView);
+            this.ShowChildWindowAsync(
+                dialog: _sendView,
+                overlayFillBehavior: ChildWindowManager.OverlayFillBehavior.FullWindow);
         }
 
-        public void HideSendDialog(bool hideOverlay = true)
+        public void HideSendDialog()
         {
-            CloseChildView(_sendView, hideOverlay);
+            _sendView.Close();
         }
 
         public void ShowConversionConfirmationDialog(object dataContext, Action dialogLoaded = null)
@@ -109,14 +133,13 @@ namespace Atomix.Client.Wpf.Views
             if (dialogLoaded != null)
                 _conversionConfirmationView.Loaded += (sender, args) => { dialogLoaded(); };
 
-            this.ShowChildViewAsync(_conversionConfirmationView);
+            this.ShowChildWindowAsync(_conversionConfirmationView);
         }
 
-        public void HideConversionConfirmationDialog(bool hideOverlay = true)
+        public void HideConversionConfirmationDialog()
         {
-            CloseChildView(_conversionConfirmationView, hideOverlay);
+            _conversionConfirmationView.Close();
         }
-
 
         public void ShowReceiveDialog(object dataContext)
         {
@@ -129,32 +152,22 @@ namespace Atomix.Client.Wpf.Views
                 _receiveView = new ReceiveView {DataContext = dataContext};
             }
 
-            this.ShowChildViewAsync(_receiveView);
+            this.ShowChildWindowAsync(
+                dialog: _receiveView,
+                overlayFillBehavior: ChildWindowManager.OverlayFillBehavior.FullWindow);
         }
 
-        public void HideReceiveDialog(bool hideOverlay = true)
+        public void HideReceiveDialog()
         {
-            CloseChildView(_receiveView, hideOverlay);
+            _receiveView.Close();
         }
 
-        private void CloseChildView(ChildView childView, bool hideOverlay)
+        public void ShowUnlockDialog(object dataContext, EventHandler canceled = null)
         {
-            if (childView != null) {
-                childView.HideOverlayWhenClose = hideOverlay;
-                childView.Close();
-            }
-        }
-
-        public Task ShowUnlockDialogAsync(object dataContext)
-        {
-            if (_unlockView != null && _unlockView.IsOpen)
-                return Task.CompletedTask;
-            
-            return this.ShowChildViewAsync(_unlockView = new UnlockView
-            {
-                HideOverlayWhenClose = !IsOverlayVisible(),
-                DataContext = dataContext
-            });
+            ShowDialogAsync<UnlockView>(
+                dataContext: dataContext,
+                childView: ref _unlockView,
+                canceled: canceled);
         }
 
         public void HideUnlockDialog()
@@ -162,9 +175,42 @@ namespace Atomix.Client.Wpf.Views
             _unlockView?.Close();
         }
 
+        public void ShowMyWalletsDialog(object dataContext)
+        {
+            ShowDialogAsync<MyWalletsView>(dataContext, ref _myWalletsView);
+        }
+
+        public void HideMyWalletsDialog()
+        {
+            _myWalletsView?.Close();
+        }
+
         public void ShowMessage(string title, string message)
         {
             this.ShowMessageAsync(title, message);
+        }
+
+        public Task<MessageDialogResult> ShowMessageAsync(string title, string message, MessageDialogStyle style)
+        {
+            return this.ShowMessageAsync(title, message, style, settings: null);
+        }
+
+        private void ShowDialogAsync<TView>(
+            object dataContext,
+            ref ChildWindow childView,
+            EventHandler canceled = null)
+            where TView : ChildWindow, new()
+        {
+            if (childView != null && childView.IsOpen)
+                return;
+
+            childView = new TView {DataContext = dataContext};
+            if (canceled != null)
+                childView.CloseButtonClicked += canceled;
+
+            this.ShowChildWindowAsync(
+                dialog: childView,
+                overlayFillBehavior: ChildWindowManager.OverlayFillBehavior.FullWindow);
         }
     }
 }

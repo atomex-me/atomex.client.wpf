@@ -25,10 +25,22 @@
     ],
     "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId", "WithCaller" ]
   },
-  "Exchange": {
-    "Url": "wss://atomix.me/exchange"
-  },
-  "MarketData": {
-    "Url": "wss://atomix.me/marketdata"
+  "Services": {
+    "MainNet": {
+      "Exchange": {
+        "Url": "wss://atomix.me/exchange"
+      },
+      "MarketData": {
+        "Url": "wss://atomix.me/marketdata"
+      }
+    },
+    "TestNet": {
+      "Exchange": {
+        "Url": "wss://test.atomix.me/exchange"
+      },
+      "MarketData": {
+        "Url": "wss://test.atomix.me/marketdata"
+      }
+    }
   }
 }

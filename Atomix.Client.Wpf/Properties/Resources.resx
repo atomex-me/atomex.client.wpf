@@ -252,4 +252,10 @@
   <data name="CvNotSupportedSymbol" xml:space="preserve">
     <value>This symbol does not support direct conversion.</value>
   </data>
+  <data name="PwNoTokens" xml:space="preserve">
+    <value>No tokens</value>
+  </data>
+  <data name="CvInsufficientFunds" xml:space="preserve">
+    <value>Insufficient funds</value>
+  </data>
 </root>

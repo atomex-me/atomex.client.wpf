@@ -2,7 +2,7 @@
 
 namespace Atomix.Client.Wpf.Views
 {
-    public partial class UnlockView : ChildView
+    public partial class UnlockView : ChildWindow
     {
         public UnlockView()
         {

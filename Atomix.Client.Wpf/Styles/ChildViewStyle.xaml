@@ -12,9 +12,14 @@
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="ChildViewBackgroundBrushLight" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Offset="0" Color="#c9dae9"/>
+        <GradientStop Offset="1" Color="#c2d8ea"/>
+    </LinearGradientBrush>
+
+    <!--<LinearGradientBrush x:Key="ChildViewBackgroundBrushLight" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Offset="0" Color="AliceBlue"/>
         <GradientStop Offset="1" Color="#c9dae9"/>
-    </LinearGradientBrush>
+    </LinearGradientBrush>-->
 
     <Style x:Key="ChildViewBorder" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource ChildViewBackgroundBrush}"/>

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewModels="clr-namespace:Atomix.Client.Wpf.ViewModels"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:controls="clr-namespace:Atomix.Client.Wpf.Controls"
              mc:Ignorable="d"
              d:DesignHeight="600"
              d:DesignWidth="800"
@@ -47,34 +48,117 @@
             <TabControl.Items>
                 <TabItem Header="Security"
                          Style="{StaticResource SettingsTabItemStyle}">
-                    <Grid Background="{StaticResource DefaultSubstrateBrush}" Margin="-2 0 0 0">
-                        <StackPanel Orientation="Vertical" Margin="20">
-                            <TextBlock Text="Use a new key for authentication every time you start the wallet"
+                    <Grid Background="{StaticResource DefaultSubstrateBrush}"
+                          Margin="-2 0 0 0">
+                        <StackPanel Orientation="Vertical"
+                                    Margin="20">
+                            <TextBlock Text="Show warning when closing if the there are active swaps"
                                        FontFamily="{StaticResource Roboto}"
                                        FontSize="13"/>
-                            <mah:ToggleSwitch HorizontalAlignment="Left" Margin="10" Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"/>
-                            <TextBlock Text="Automatically block the wallet during long inactivity"
+                            <mah:ToggleSwitch HorizontalAlignment="Left"
+                                              Margin="10"
+                                              IsChecked="{Binding Settings.ShowActiveSwapWarning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"/>
+                            <!--<TextBlock Text="Use a new key for authentication every time you start the wallet"
+                                       FontFamily="{StaticResource Roboto}"
+                                       FontSize="13"/>
+                            <mah:ToggleSwitch HorizontalAlignment="Left" Margin="10" Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"/>-->
+                            <TextBlock Text="Automatically sign out of the wallet during long inactivity"
                                        Margin="0 10 0 0"
                                        FontFamily="{StaticResource Roboto}"
                                        FontSize="13"/>
-                            <mah:ToggleSwitch HorizontalAlignment="Left" Margin="10" Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"/>
-                        </StackPanel>
+                            <mah:ToggleSwitch HorizontalAlignment="Left"
+                                              Margin="10"
+                                              IsChecked="{Binding AutoSignOut, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"/>
 
+                            <TextBlock Text="Period of inactivity:"
+                                       Margin="0 10 0 0"
+                                       FontFamily="{StaticResource Roboto}"
+                                       FontSize="13"
+                                       IsEnabled="{Binding AutoSignOut}"
+                                       Style="{StaticResource BaseDisabledStyle}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Left"
+                                               Margin="10"
+                                               Width="120"
+                                               StringFormat="0 min"
+                                               Value="{Binding Settings.PeriodOfInactivityInMin}"
+                                               Minimum="1"
+                                               Maximum="180"
+                                               Background="Transparent"
+                                               IsEnabled="{Binding AutoSignOut}"
+                                               Style="{StaticResource BaseDisabledStyle}"/>
+
+                            <TextBlock Text="Authentication key index:"
+                                       Margin="0 10 0 0"
+                                       FontFamily="{StaticResource Roboto}"
+                                       FontSize="13"
+                                       IsEnabled="false"
+                                       Style="{StaticResource BaseDisabledStyle}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Left"
+                                               Margin="10"
+                                               Width="120"
+                                               Value="{Binding Settings.AuthenticationKeyIndex}"
+                                               Minimum="0"
+                                               Maximum="4294967295"
+                                               Background="Transparent"
+                                               IsEnabled="False"
+                                               Style="{StaticResource BaseDisabledStyle}"/>
+                            <Separator/>
+
+                            <controls:RoundedButton
+                                Margin="10 10 10 10"
+                                Width="120"
+                                Height="30"
+                                Content="Apply"
+                                CornerRadius="15"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ApplyCommand}"
+                                Style="{StaticResource DefaultRoundedButtonStyle}"/>
+                        </StackPanel>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Blockchain"
                          Style="{StaticResource SettingsTabItemStyle}">
-                    <Grid Background="{StaticResource DefaultSubstrateBrush}" Margin="-2 0 0 0">
-
+                    <Grid Background="{StaticResource DefaultSubstrateBrush}"
+                          Margin="-2 0 0 0">
+                        <StackPanel Orientation="Vertical"
+                                    Margin="20">
+                            <TextBlock Text="Balance update interval:"
+                                       FontFamily="{StaticResource Roboto}"
+                                       FontSize="13"
+                                       Style="{StaticResource BaseDisabledStyle}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Left"
+                                               Margin="10"
+                                               Width="120"
+                                               StringFormat="0 sec"
+                                               Value="{Binding Settings.BalanceUpdateIntervalInSec}"
+                                               Minimum="30"
+                                               Maximum="600"
+                                               Background="Transparent"
+                                               Style="{StaticResource BaseDisabledStyle}"/>
+                            
+                            <Separator/>
+                            
+                            <controls:RoundedButton
+                                Margin="10 10 10 10"
+                                Width="120"
+                                Height="30"
+                                Content="Apply"
+                                CornerRadius="15"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ApplyCommand}"
+                                Style="{StaticResource DefaultRoundedButtonStyle}"/>
+                        </StackPanel>
                     </Grid>
                 </TabItem>
 
-                <TabItem Header="Restore"
+                <!--<TabItem Header="Restore"
                          Style="{StaticResource SettingsTabItemStyle}">
                     <Grid Background="{StaticResource DefaultSubstrateBrush}" Margin="-2 0 0 0">
 
                     </Grid>
-                </TabItem>
+                </TabItem>-->
             </TabControl.Items>
         </TabControl>
     </Grid>

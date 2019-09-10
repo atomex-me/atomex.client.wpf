@@ -30,6 +30,7 @@
                 <ResourceDictionary Source="Styles/WalletViewStyle.xaml"/>
                 <ResourceDictionary Source="Styles/CreateWalletViewStyle.xaml"/>
                 <ResourceDictionary Source="Styles/SwapViewStyle.xaml"/>
+                <ResourceDictionary Source="Styles/IconButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

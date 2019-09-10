@@ -7,7 +7,7 @@
       xmlns:converters="clr-namespace:Atomix.Client.Wpf.Converters"
       xmlns:viewModels="clr-namespace:Atomix.Client.Wpf.ViewModels"
       UseLayoutRounding="True"
-      HorizontalAlignment="Center"
+      HorizontalAlignment="Stretch"
       VerticalAlignment="Center"
       mc:Ignorable="d" 
       d:DesignHeight="200"
@@ -18,12 +18,11 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed"/>
     </Page.Resources>
 
-    <StackPanel Orientation="Vertical"
-                Width="560">
-
+    <StackPanel Orientation="Vertical">
         <Border Margin="0 10 0 10"
                 Height="33"
                 VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
                 Background="{StaticResource ChildViewHeaderBackgroundBrush}">
             <TextBlock Text="{Binding Title}"
                        Foreground="{StaticResource ChildViewHeaderForegroundBrush}"

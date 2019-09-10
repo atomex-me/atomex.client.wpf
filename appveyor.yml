@@ -18,21 +18,17 @@ build_script:
   - msbuild /p:Configuration="Release"  /clp:ErrorsOnly'
   - msbuild .\Atomix.Client.Wpf.Installer\Atomix.Client.Wpf.Installer.wixproj /p:Configuration="Release" /clp:ErrorsOnly'
 
-after_build:
-  - ps: .\InstallSelfSignedCert.ps1
-  - ps: Set-AuthenticodeSignature -FilePath .\Atomix.Client.Wpf.Installer\bin\Release\Atomix.Wallet.msi -Certificate @(gci Cert:\LocalMachine\Root -DnsName "atomix.me" -codesigning)[0]
-
 artifacts:
   - path: .\Atomix.Client.Wpf.Installer\bin\Release\Atomix.Wallet.msi
 
-deploy:
-  release: v$(appveyor_build_version)
-  description: 'Release description.'
-  provider: GitHub
-  auth_token:
-    secure: tu9uVOIo1aeDV/0cdsLYA7Dbs75q8ogSTe8y9vPACH8zb1G417/RVwpqq+ZwT4rV
-  artifact: /.*/
-  draft: true
-  prerelease: true
-  on:
-    branch: master
+#deploy:
+#  release: v$(appveyor_build_version)
+#  description: 'Release description.'
+#  provider: GitHub
+#  auth_token:
+#    secure: tu9uVOIo1aeDV/0cdsLYA7Dbs75q8ogSTe8y9vPACH8zb1G417/RVwpqq+ZwT4rV
+#  artifact: /.*/
+#  draft: true
+#  prerelease: true
+#  on:
+#    branch: master

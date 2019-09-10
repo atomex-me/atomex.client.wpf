@@ -5,32 +5,34 @@ using Atomix.Core.Entities;
 
 namespace Atomix.Client.Wpf.ViewModels
 {
-    public class CurrencyViewModelCreator
+    public static class CurrencyViewModelCreator
     {
         public static CurrencyViewModel CreateViewModel(Currency currency)
         {
             return CreateViewModel(currency, subscribeToUpdates: true);
         }
 
-        public static CurrencyViewModel CreateViewModel(Currency currency, bool subscribeToUpdates)
+        public static CurrencyViewModel CreateViewModel(
+            Currency currency,
+            bool subscribeToUpdates)
         {
             CurrencyViewModel result = null;
 
             if (currency is Bitcoin)
             {
-                result = new BitcoinCurrencyViewModel();
+                result = new BitcoinCurrencyViewModel(currency);
             }
             else if (currency is Litecoin)
             {
-                result = new LitecoinCurrencyViewModel();
+                result = new LitecoinCurrencyViewModel(currency);
             }
             else if (currency is Ethereum)
             {
-                result = new EthereumCurrencyViewModel();
+                result = new EthereumCurrencyViewModel(currency);
             }
             else if (currency is Tezos)
             {
-                result = new TezosCurrencyViewModel();
+                result = new TezosCurrencyViewModel(currency);
             }
 
             if (result == null)

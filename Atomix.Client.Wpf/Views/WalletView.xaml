@@ -17,10 +17,7 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Hidden"/>
         <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" FalseEquivalent="Hidden" OppositeBoolValue="True"/>
         <converters:IsPositiveValueConverter x:Key="IsPositiveValueConverter"/>
-        <SolidColorBrush x:Key="AvailableAmountBrush" Color="#73c975"/>
         <SolidColorBrush x:Key="UnconfirmedAmountBrush" Color="#ffa500"/>
-        <SolidColorBrush x:Key="LockedAmountBrush" Color="#e25b5b"/>
-        <!--<SolidColorBrush x:Key="NegativeAmountBrush" Color="#94aed6"/>-->
         <SolidColorBrush x:Key="NegativeAmountBrush" Color="#aec4e5"/>
         <SolidColorBrush x:Key="PositiveAmountBrush" Color="White"/>
     </UserControl.Resources>
@@ -31,8 +28,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Background="{StaticResource DefaultSubstrateBrush}" CornerRadius="10" Margin="10 20 10 10" Grid.Row="0" HorizontalAlignment="Center" MinWidth="380">
-        <!--<Border Background="{StaticResource BalancePillowBackgroundBrush}" CornerRadius="10" Margin="10 20 10 20" Grid.Row="0" HorizontalAlignment="Center" MinWidth="380">-->
+        <Border Background="{StaticResource DefaultSubstrateBrush}"
+                CornerRadius="10"
+                Margin="10 20 10 10"
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                MinWidth="380">
             <Grid>
                 <StackPanel Orientation="Vertical"
                             IsEnabled="True"
@@ -95,7 +96,9 @@
                                            Padding="0 0 0 2"
                                            Style="{StaticResource BaseTextBlockStyle}"/>
                             </StackPanel>
-                            <Grid HorizontalAlignment="Left" Visibility="{Binding CurrencyViewModel.HasUnconfirmedAmount, Converter={StaticResource bool2VisibilityConverter}}" Margin="0 15 0 0">
+                            <Grid HorizontalAlignment="Left"
+                                  Visibility="{Binding CurrencyViewModel.HasUnconfirmedAmount, Converter={StaticResource bool2VisibilityConverter}}"
+                                  Margin="0 15 0 0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
@@ -103,63 +106,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <!--<RowDefinition Height="27"/>-->
                                     <RowDefinition Height="27"/>
-                                    <!--<RowDefinition Height="27"/>-->
                                 </Grid.RowDefinitions>
-
-                                <!--<Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/available.png"
-                                       Width="21"
-                                       Height="21"
-                                       Grid.Column="0"
-                                       Grid.Row="0"
-                                       ToolTip="Available"
-                                       Style="{StaticResource BaseImageStyle}"/>
-                                <TextBlock FontFamily="{StaticResource Roboto}"
-                                           FontSize="14"
-                                           Foreground="{StaticResource AvailableAmountBrush}"
-                                           Grid.Column="1"
-                                           Grid.Row="0"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Right"
-                                           Margin="7 0 0 0"
-                                           ToolTip="Available"
-                                           Style="{StaticResource BaseTextBlockStyle}">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="CurrencyViewModel.AvailableAmount" Mode="OneWay"/>
-                                            <Binding Path="CurrencyViewModel.CurrencyFormat" Mode="OneWay"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                                <TextBlock Text="{Binding CurrencyViewModel.CurrencyCode}"
-                                           FontFamily="{StaticResource Roboto}"
-                                           FontSize="8"
-                                           Foreground="{StaticResource AvailableAmountBrush}"
-                                           Grid.Column="2"
-                                           Grid.Row="0"
-                                           VerticalAlignment="Center"
-                                           Margin="4 0 0 0"
-                                           Padding="0 4 0 0"
-                                           ToolTip="Available"
-                                           Style="{StaticResource BaseTextBlockStyle}"/>
-                                <TextBlock FontFamily="{StaticResource Roboto}"
-                                           FontSize="11"
-                                           Foreground="DarkGray"
-                                           Grid.Column="3"
-                                           Grid.Row="0"
-                                           VerticalAlignment="Center"
-                                           Margin="7 0 0 0"
-                                           Padding="0 2 0 0"
-                                           ToolTip="Available"
-                                           Style="{StaticResource BaseTextBlockStyle}">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="CurrencyViewModel.AvailableAmountInBase" Mode="OneWay"/>
-                                            <Binding Path="CurrencyViewModel.BaseCurrencyFormat" Mode="OneWay"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>-->
 
                                 <Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/warning.png"
                                        Width="21"
@@ -213,59 +161,6 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
-
-                                <!--<Image Source="pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images/locked.png" 
-                                       Width="21" 
-                                       Height="21" 
-                                       Grid.Column="0" 
-                                       Grid.Row="2" 
-                                       ToolTip="Locked" 
-                                       Style="{StaticResource BaseImageStyle}"/>
-                                <TextBlock FontFamily="{StaticResource Roboto}" 
-                                           FontSize="14" 
-                                           Foreground="{StaticResource LockedAmountBrush}" 
-                                           Grid.Column="1" 
-                                           Grid.Row="2" 
-                                           VerticalAlignment="Center" 
-                                           HorizontalAlignment="Right" 
-                                           Margin="7 0 0 0" 
-                                           ToolTip="Locked" 
-                                           Style="{StaticResource BaseTextBlockStyle}">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="CurrencyViewModel.LockedAmount" Mode="OneWay"/>
-                                            <Binding Path="CurrencyViewModel.CurrencyFormat" Mode="OneWay"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                                <TextBlock Text="{Binding CurrencyViewModel.CurrencyCode}" 
-                                           FontFamily="{StaticResource Roboto}" 
-                                           FontSize="8" 
-                                           Foreground="{StaticResource LockedAmountBrush}" 
-                                           Grid.Column="2" 
-                                           Grid.Row="2" 
-                                           VerticalAlignment="Center" 
-                                           Margin="4 0 0 0" 
-                                           Padding="0 3 0 0" 
-                                           ToolTip="Locked" 
-                                           Style="{StaticResource BaseTextBlockStyle}"/>
-                                <TextBlock FontFamily="{StaticResource Roboto}" 
-                                           FontSize="11" 
-                                           Foreground="DarkGray" 
-                                           Grid.Column="3" 
-                                           Grid.Row="2" 
-                                           VerticalAlignment="Center" 
-                                           Margin="7 0 0 0" 
-                                           Padding="0 2 0 0" 
-                                           ToolTip="Locked" 
-                                           Style="{StaticResource BaseTextBlockStyle}">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="CurrencyViewModel.LockedAmountInBase" Mode="OneWay"/>
-                                            <Binding Path="CurrencyViewModel.BaseCurrencyFormat" Mode="OneWay"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>-->
                             </Grid>
                         </StackPanel>
                     </StackPanel>
@@ -394,11 +289,6 @@
                   MouseLeftButtonDown="OnMouseLeftButtonDown"
                   Grid.Row="1"
                   Style="{StaticResource CustomDataGrid}">
-            <!--<DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                   <Setter Property="DetailsVisibility" Value="{Binding IsExpanded, Converter={StaticResource bool2VisibilityConverter}}"></Setter>
-                </Style>
-            </DataGrid.RowStyle>-->
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Type" CellTemplateSelector="{StaticResource TransactionTypeDataTemplateSelector}"/>
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>

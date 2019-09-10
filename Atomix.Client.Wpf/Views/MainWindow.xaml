@@ -17,7 +17,9 @@
 
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
-            <Button x:Name="btnUpdate" Command="{Binding UpdateCommand}" Foreground="Gold"
+            <Button x:Name="btnUpdate"
+                    Command="{Binding UpdateCommand}"
+                    Foreground="Gold"
                     Visibility="{Binding UpdatesReady, Converter={StaticResource bool2VisibilityConverter}}">
                 <Button.Template>
                     <ControlTemplate TargetType="{x:Type Button}">
@@ -195,7 +197,7 @@
             </Button>-->
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
-    <DockPanel>
+    <DockPanel x:Name="MainDockerPanel">
         <StatusBar DockPanel.Dock="Bottom"
                    Background="{StaticResource MainWindowTitleBrush}">
             <StatusBarItem DockPanel.Dock="Left">

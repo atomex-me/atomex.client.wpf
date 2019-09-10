@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Atomix.Abstract;
 using Atomix.Common;
 using Atomix.Core;
 using Atomix.Core.Entities;
@@ -17,32 +18,27 @@ using Atomix.Client.Wpf.Common;
 using Atomix.Client.Wpf.Controls;
 using Atomix.Client.Wpf.Properties;
 using Atomix.Client.Wpf.ViewModels.Abstract;
+using Helpers;
 using Serilog;
 
 namespace Atomix.Client.Wpf.ViewModels
 {
-    //public class ConversionOrderType
-    //{
-    //    public string Description { get; set; }
-    //    public OrderType OrderType { get; set; }
-
-    //    public static ConversionOrderType Standard => new ConversionOrderType
-    //    {
-    //        OrderType = OrderType.FillOrKill,
-    //        Description = Resources.CvOrderTypeStandard
-    //    };
-
-    //    //public static ConversionOrderType StandardWithFixedFee => new ConversionOrderType
-    //    //{
-    //    //    OrderType = OrderType.DirectFillOrKill,
-    //    //    Description = Resources.CvOrderTypeStandardWithFixedFee
-    //    //};
-    //}
-
     public class ConversionViewModel : BaseViewModel, IConversionViewModel
     {
-        public IAtomixApp App { get; set; }
-        public IDialogViewer DialogViewer { get; set; }
+        private IAtomixApp App { get; }
+        private IDialogViewer DialogViewer { get; }
+
+        private ISymbols Symbols
+        {
+            get
+            {
+#if DEBUG
+                if (Env.IsInDesignerMode())
+                    return DesignTime.Symbols;
+#endif
+                return App.Account.Symbols;
+            }
+        }
 
         private List<CurrencyViewModel> _currencyViewModels;
 
@@ -59,12 +55,6 @@ namespace Atomix.Client.Wpf.ViewModels
             get => _toCurrencies;
             private set { _toCurrencies = value; OnPropertyChanged(nameof(ToCurrencies)); }
         }
-
-        //public List<ConversionOrderType> OrderTypes => new List<ConversionOrderType>
-        //{
-        //    ConversionOrderType.Standard,
-        //    //ConversionOrderType.StandardWithFixedFee
-        //};
 
         private Currency _fromCurrency;
         public Currency FromCurrency
@@ -86,7 +76,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
                 if (oldToCurrency != null &&
                     oldToCurrency != _fromCurrency &&
-                    ToCurrencies.FirstOrDefault(c => c.Currency.Equals(oldToCurrency)) != null)
+                    ToCurrencies.FirstOrDefault(c => c.Currency.Name == oldToCurrency.Name) != null)
                 {
                     ToCurrency = oldToCurrency;
                 }
@@ -96,10 +86,9 @@ namespace Atomix.Client.Wpf.ViewModels
                 }
 
                 FromCurrencyViewModel = _currencyViewModels
-                    .First(c => c.Currency.Equals(_fromCurrency));
+                    .First(c => c.Currency.Name == _fromCurrency.Name);
 
                 Amount = 0;
-                Fee = 0;
             }
         }
 
@@ -115,7 +104,7 @@ namespace Atomix.Client.Wpf.ViewModels
                 if (_toCurrency == null)
                     return;
 
-                ToCurrencyViewModel = _currencyViewModels.First(c => c.Currency.Equals(_toCurrency));
+                ToCurrencyViewModel = _currencyViewModels.First(c => c.Currency.Name == _toCurrency.Name);
 
 #if DEBUG
                 if (!Env.IsInDesignerMode())
@@ -167,11 +156,11 @@ namespace Atomix.Client.Wpf.ViewModels
             }
         }
 
-        private OrderType _orderType;
-        public OrderType OrderType
+        private string _priceFormat;
+        public string PriceFormat
         {
-            get => _orderType;
-            set { _orderType = value; OnPropertyChanged(nameof(OrderType)); }
+            get => _priceFormat;
+            set { _priceFormat = value; OnPropertyChanged(nameof(PriceFormat)); }
         }
 
         private string _currencyFormat;
@@ -210,11 +199,29 @@ namespace Atomix.Client.Wpf.ViewModels
             {
                 _amount = value;
 
-                if (_amount + _fee > FromCurrencyViewModel.AvailableAmount)
-                    _amount = FromCurrencyViewModel.AvailableAmount - _fee;
+                _estimatedPaymentFee = _amount != 0
+                    ? App.Account
+                        .EstimateFeeAsync(FromCurrency, null, _amount)
+                        .WaitForResult()
+                    : 0;
+
+                _estimatedRedeemFee = ToCurrency.GetDefaultRedeemFee();
+                _useRewardForRedeem = false;
+
+                if (ToCurrencyViewModel.AvailableAmount == 0 && !(ToCurrency is BitcoinBasedCurrency))
+                {
+                    _estimatedRedeemFee *= 2; // todo: show hint or tool tip
+                    _useRewardForRedeem = true;
+                }
+
+                if (_amount + _estimatedPaymentFee > FromCurrencyViewModel.AvailableAmount)
+                    _amount = Math.Max(FromCurrencyViewModel.AvailableAmount - _estimatedPaymentFee, 0);
 
                 OnPropertyChanged(nameof(CurrencyFormat));
+                OnPropertyChanged(nameof(TargetCurrencyFormat));
                 OnPropertyChanged(nameof(Amount));
+                OnPropertyChanged(nameof(EstimatedPaymentFee));
+                OnPropertyChanged(nameof(EstimatedRedeemFee));
                 
 #if DEBUG
                 if (!Env.IsInDesignerMode()) {
@@ -227,41 +234,11 @@ namespace Atomix.Client.Wpf.ViewModels
             }
         }
 
-        private decimal _fee;
-        public decimal Fee
-        {
-            get => _fee;
-            set
-            {
-                _fee = value;
-
-                if (_fee + _amount > FromCurrencyViewModel.AvailableAmount)
-                    _fee = FromCurrencyViewModel.AvailableAmount - _amount;
-
-                OnPropertyChanged(nameof(CurrencyFormat));
-                OnPropertyChanged(nameof(Fee));
-#if DEBUG
-                if (!Env.IsInDesignerMode()) {
-#endif
-                    OnBaseQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
-#if DEBUG
-                }
-#endif
-            }
-        }
-
         private decimal _amountInBase;
         public decimal AmountInBase
         {
             get => _amountInBase;
             set { _amountInBase = value; OnPropertyChanged(nameof(AmountInBase)); }
-        }
-
-        private decimal _feeInBase;
-        public decimal FeeInBase
-        {
-            get => _feeInBase;
-            set { _feeInBase = value; OnPropertyChanged(nameof(FeeInBase)); }
         }
 
         private decimal _targetAmount;
@@ -313,25 +290,34 @@ namespace Atomix.Client.Wpf.ViewModels
             set { _estimatedMaxAmount = value; OnPropertyChanged(nameof(EstimatedMaxAmount)); }
         }
 
-        private decimal _estimatedFee;
-        public decimal EstimatedFee
+        private decimal _estimatedPaymentFee;
+        public decimal EstimatedPaymentFee
         {
-            get => _estimatedFee;
-            set { _estimatedFee = value; OnPropertyChanged(nameof(EstimatedFee)); }
+            get => _estimatedPaymentFee;
+            set { _estimatedPaymentFee = value; OnPropertyChanged(nameof(EstimatedPaymentFee)); }
         }
 
-        private decimal _serviceFee;
-        public decimal ServiceFee
+        private decimal _estimatedPaymentFeeInBase;
+        public decimal EstimatedPaymentFeeInBase
         {
-            get => _serviceFee;
-            set { _serviceFee = value; OnPropertyChanged(nameof(ServiceFee)); }
+            get => _estimatedPaymentFeeInBase;
+            set { _estimatedPaymentFeeInBase = value; OnPropertyChanged(nameof(EstimatedPaymentFeeInBase)); }
         }
 
-        private string _priceFormat;
-        public string PriceFormat
+        private decimal _estimatedRedeemFee;
+        public decimal EstimatedRedeemFee
         {
-            get => _priceFormat;
-            set { _priceFormat = value; OnPropertyChanged(nameof(PriceFormat)); }
+            get => _estimatedRedeemFee;
+            set { _estimatedRedeemFee = value; OnPropertyChanged(nameof(EstimatedRedeemFee)); }
+        }
+
+        private bool _useRewardForRedeem;
+
+        private decimal _estimatedRedeemFeeInBase;
+        public decimal EstimatedRedeemFeeInBase
+        {
+            get => _estimatedRedeemFeeInBase;
+            set { _estimatedRedeemFeeInBase = value; OnPropertyChanged(nameof(EstimatedRedeemFeeInBase)); }
         }
 
         private ObservableCollection<SwapViewModel> _swaps;
@@ -366,6 +352,15 @@ namespace Atomix.Client.Wpf.ViewModels
             SubscribeToServices();
         }
 
+        private ICommand _convertCommand;
+        public ICommand ConvertCommand => _convertCommand ?? (_convertCommand = new Command(OnConvertClick));
+
+        private ICommand _maxAmountCommand;
+        public ICommand MaxAmountCommand => _maxAmountCommand ?? (_maxAmountCommand = new Command(() =>
+        {
+            Amount = EstimatedMaxAmount;
+        }));
+
         private void SubscribeToServices()
         {
             App.AccountChanged += OnAccountChangedEventHandler;
@@ -374,7 +369,6 @@ namespace Atomix.Client.Wpf.ViewModels
                 App.QuotesProvider.QuotesUpdated += OnBaseQuotesUpdatedEventHandler;
 
             App.Terminal.QuotesUpdated += OnQuotesUpdatedEventHandler;
-            App.Terminal.ExecutionReportReceived += OnExecutionReportEventHandler;
             App.Terminal.SwapUpdated += OnSwapEventHandler;
         }
 
@@ -387,20 +381,17 @@ namespace Atomix.Client.Wpf.ViewModels
                 return;
 
             var account = args.NewAccount;
-            account.SwapsLoaded += (o, eventArgs) => OnSwapEventHandler(o, new SwapEventArgs());
 
-            _currencyViewModels = account.Wallet.Currencies
+            _currencyViewModels = account.Currencies
                 .Where(c => c.IsSwapAvailable)
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
 
             FromCurrencies = _currencyViewModels.ToList();
+            FromCurrency = account.Currencies.Get<Bitcoin>();
+            ToCurrency = account.Currencies.Get<Litecoin>();
 
-            OrderType = OrderType.FillOrKill;
-            FromCurrency = Currencies.Btc;
-            ToCurrency = Currencies.Ltc;
-
-            OnSwapEventHandler(this, new SwapEventArgs());
+            OnSwapEventHandler(this, null);
         }
 
         private void OnBaseQuotesUpdatedEventHandler(object sender, EventArgs args)
@@ -408,13 +399,15 @@ namespace Atomix.Client.Wpf.ViewModels
             if (!(sender is ICurrencyQuotesProvider provider))
                 return;
 
-            if (CurrencyCode == null || BaseCurrencyCode == null)
+            if (CurrencyCode == null || TargetCurrencyCode == null || BaseCurrencyCode == null)
                 return;
 
-            var quote = provider.GetQuote(CurrencyCode, BaseCurrencyCode);
+            var fromCurrencyPrice = provider.GetQuote(CurrencyCode, BaseCurrencyCode)?.Bid ?? 0m;
+            AmountInBase = _amount * fromCurrencyPrice;
+            EstimatedPaymentFeeInBase = _estimatedPaymentFee * fromCurrencyPrice;
 
-            AmountInBase = _amount * (quote?.Bid ?? 0m);
-            FeeInBase    = _fee * (quote?.Bid ?? 0m);
+            var toCurrencyPrice = provider.GetQuote(TargetCurrencyCode, BaseCurrencyCode)?.Bid ?? 0m;
+            EstimatedRedeemFeeInBase = _estimatedRedeemFee * toCurrencyPrice;
 
             UpdateTargetAmountInBase(provider);
         }
@@ -447,10 +440,13 @@ namespace Atomix.Client.Wpf.ViewModels
 
                 var symbol = Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
                 if (symbol == null)
-                    return;  
+                    return;
 
                 var side = symbol.OrderSideForBuyCurrency(ToCurrency);
                 var orderBook = terminal.GetOrderBook(symbol);
+
+                if (orderBook == null)
+                    return;
 
                 _estimatedPrice = orderBook.EstimatedDealPrice(side, Amount);
                 _estimatedMaxAmount = orderBook.EstimateMaxAmount(side);
@@ -488,11 +484,6 @@ namespace Atomix.Client.Wpf.ViewModels
             }
         }
 
-        private void OnExecutionReportEventHandler(object sender, ExecutionReportEventArgs args)
-        {
-
-        }
-
         private async void OnSwapEventHandler(object sender, SwapEventArgs args)
         {
             try
@@ -505,7 +496,8 @@ namespace Atomix.Client.Wpf.ViewModels
                     var swapViewModels = swaps
                         .Select(SwapViewModelFactory.CreateSwapViewModel)
                         .ToList()
-                        .SortList(((s1, s2) => s2.Time.CompareTo(s1.Time)));
+                        .SortList((s1, s2) => s2.Time.ToUniversalTime()
+                            .CompareTo(s1.Time.ToUniversalTime()));
 
                     Swaps = new ObservableCollection<SwapViewModel>(swapViewModels);
 
@@ -516,21 +508,6 @@ namespace Atomix.Client.Wpf.ViewModels
                 Log.Error(e, "Swaps update error");
             }
         }
-
-        private ICommand _convertCommand;
-        public ICommand ConvertCommand => _convertCommand ?? (_convertCommand = new Command(OnConvertClick));
-
-        private ICommand _maxAmountCommand;
-        public ICommand MaxAmountCommand => _maxAmountCommand ?? (_maxAmountCommand = new Command(() =>
-        {
-            Amount = EstimatedMaxAmount;
-        }));
-
-        private ICommand _allInCommand;
-        public ICommand AllInCommand => _allInCommand ?? (_allInCommand = new Command(() =>
-        {
-            Amount = FromCurrencyViewModel.AvailableAmount;
-        }));
 
         private void OnConvertClick()
         {
@@ -556,21 +533,27 @@ namespace Atomix.Client.Wpf.ViewModels
                 ToCurrency = ToCurrency,
                 FromCurrencyViewModel = FromCurrencyViewModel,
                 ToCurrencyViewModel = ToCurrencyViewModel,
+
+                PriceFormat = PriceFormat,
                 CurrencyCode = CurrencyCode,
                 CurrencyFormat = CurrencyFormat,
                 TargetCurrencyCode = TargetCurrencyCode,
                 TargetCurrencyFormat = TargetCurrencyFormat,
                 BaseCurrencyCode = BaseCurrencyCode,
                 BaseCurrencyFormat = BaseCurrencyFormat,
+
                 Amount = Amount,
                 AmountInBase = AmountInBase,
-                Fee = Fee,
-                FeeInBase = FeeInBase,
                 TargetAmount = TargetAmount,
                 TargetAmountInBase = TargetAmountInBase,
 
                 EstimatedPrice = EstimatedPrice,
-                PriceFormat = PriceFormat
+                EstimatedPaymentFee = EstimatedPaymentFee,
+                EstimatedRedeemFee = EstimatedRedeemFee,
+                EstimatedPaymentFeeInBase = EstimatedPaymentFeeInBase,
+                EstimatedRedeemFeeInBase = EstimatedRedeemFeeInBase,
+
+                UseRewardForRedeem = _useRewardForRedeem
             };
 
             DialogViewer?.ShowConversionConfirmationDialog(viewModel, dialogLoaded: () => {
@@ -580,45 +563,34 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            _currencyViewModels = new List<CurrencyViewModel>
-            {
-                CurrencyViewModelCreator.CreateViewModel(Currencies.Btc, subscribeToUpdates: false),
-                CurrencyViewModelCreator.CreateViewModel(Currencies.Ltc, subscribeToUpdates: false),
-                CurrencyViewModelCreator.CreateViewModel(Currencies.Eth, subscribeToUpdates: false),
-                CurrencyViewModelCreator.CreateViewModel(Currencies.Xtz, subscribeToUpdates: false)
-            };
+            _currencyViewModels = DesignTime.Currencies
+                .Select(c => CurrencyViewModelCreator.CreateViewModel(c, subscribeToUpdates: false))
+                .ToList();
 
             FromCurrencies = _currencyViewModels.ToList();
+            FromCurrency = DesignTime.Currencies.Get<Bitcoin>();
+            ToCurrency = DesignTime.Currencies.Get<Litecoin>();
 
-            OrderType = OrderType.FillOrKill;
-            FromCurrency = Currencies.Btc;
-            ToCurrency = Currencies.Ltc;
+            var symbol = DesignTime.Symbols.GetByName("LTC/BTC");
 
-            var swapViewModels = new List<SwapViewModel>
+            var swapViewModels = new List<SwapViewModel>()
             {
-                SwapViewModelFactory.CreateSwapViewModel(new SwapState
+                SwapViewModelFactory.CreateSwapViewModel(new ClientSwap
                 {
-                    Order = new Order
-                    {
-                        Symbol = Symbols.LtcBtc,
-                        LastPrice = 0.0000888m,
-                        LastQty = 0.001000m,
-                        Side = Side.Buy,
-                        TimeStamp = DateTime.UtcNow,
-                        SwapId = Guid.NewGuid() 
-                    }
+                    Symbol = symbol,
+                    Price = 0.0000888m,
+                    Qty = 0.001000m,
+                    Side = Side.Buy,
+                    TimeStamp = DateTime.UtcNow
                 }),
-                SwapViewModelFactory.CreateSwapViewModel(new SwapState
+                SwapViewModelFactory.CreateSwapViewModel(new ClientSwap
                 {
-                    Order = new Order
-                    {
-                        Symbol = Symbols.LtcBtc,
-                        LastPrice = 0.0100808m,
-                        LastQty = 0.0043000m,
-                        Side = Side.Sell,
-                        TimeStamp = DateTime.UtcNow,
-                        SwapId = Guid.NewGuid()
-                    }
+
+                    Symbol = symbol,
+                    Price = 0.0100808m,
+                    Qty = 0.0043000m,
+                    Side = Side.Sell,
+                    TimeStamp = DateTime.UtcNow
                 })
             };
 

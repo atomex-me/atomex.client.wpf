@@ -1,4 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Atomix.MarketData;
@@ -9,7 +12,12 @@ using Atomix.Wallet.Abstract;
 using Atomix.Client.Wpf.Common;
 using Atomix.Client.Wpf.Controls;
 using Atomix.Client.Wpf.ViewModels.Abstract;
+using Atomix.Core.Entities;
 using Atomix.Updates;
+using MahApps.Metro.Controls.Dialogs;
+using Serilog;
+using System.IO;
+using Atomix.Wallet;
 
 namespace Atomix.Client.Wpf.ViewModels
 {
@@ -17,8 +25,7 @@ namespace Atomix.Client.Wpf.ViewModels
     {
         public IAtomixApp AtomixApp { get; set; }
         public IDialogViewer DialogViewer { get; set; }
-        public LoginViewModel LoginViewModel { get; set; }
-        public RegisterViewModel RegisterViewModel { get; set; }
+        public IMainView MainView { get; set; }
         public PortfolioViewModel PortfolioViewModel { get; set; }
         public WalletsViewModel WalletsViewModel { get; set; }
         public ConversionViewModel ConversionViewModel { get; set; }
@@ -60,20 +67,6 @@ namespace Atomix.Client.Wpf.ViewModels
             set { _isLocked = value; OnPropertyChanged(nameof(IsLocked)); }
         }
 
-        //private bool _isAuthenticated;
-        //public bool IsAuthenticated
-        //{
-        //    get => _isAuthenticated;
-        //    set { _isAuthenticated = value; OnPropertyChanged(nameof(IsAuthenticated)); }
-        //}
-
-        //private bool _isConnected;
-        //public bool IsConnected
-        //{
-        //    get => _isConnected;
-        //    set { _isConnected = value; OnPropertyChanged(nameof(IsConnected)); }
-        //}
-
         private bool _isExchangeConnected;
         public bool IsExchangeConnected
         {
@@ -109,25 +102,29 @@ namespace Atomix.Client.Wpf.ViewModels
                 DesignerMode();
 #endif
         }
-        public MainViewModel(
-            IAtomixApp app,
-            IDialogViewer dialogViewer)
+
+        public MainViewModel(IAtomixApp app, IDialogViewer dialogViewer, IMainView mainView = null)
         {
             AtomixApp = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
-            LoginViewModel = new LoginViewModel(DialogViewer) {RegisterViewModel = RegisterViewModel};
-            RegisterViewModel = new RegisterViewModel(DialogViewer) {LoginViewModel = LoginViewModel};
             PortfolioViewModel = new PortfolioViewModel(AtomixApp);
             ConversionViewModel = new ConversionViewModel(AtomixApp, DialogViewer);
             WalletsViewModel = new WalletsViewModel(AtomixApp, DialogViewer, this, ConversionViewModel);
-            ExchangeViewModel = new ExchangeViewModel(AtomixApp);
-            SettingsViewModel = new SettingsViewModel();
+            //ExchangeViewModel = new ExchangeViewModel(AtomixApp);
+            SettingsViewModel = new SettingsViewModel(AtomixApp, DialogViewer);
 
             InstalledVersion = App.Updater.InstalledVersion.ToString();
 
             SubscribeToServices();
             SubscribeToUpdates(App.Updater);
+
+            if (mainView != null)
+            {
+                MainView = mainView;
+                MainView.MainViewClosing += (sender, args) => Closing(args);
+                MainView.Inactivity += InactivityHandler;
+            }
         }
 
         public void SelectMenu(int index)
@@ -167,6 +164,7 @@ namespace Atomix.Client.Wpf.ViewModels
 
             if (account == null) {
                 HasAccount = false;
+                MainView?.StopInactivityControl();
                 return;
             }
 
@@ -175,6 +173,10 @@ namespace Atomix.Client.Wpf.ViewModels
 
             IsLocked = account.IsLocked;
             HasAccount = true;
+
+            // auto sign out after timeout
+            if (MainView != null && account.UserSettings.AutoSignOut)
+                MainView.StartInactivityControl(TimeSpan.FromMinutes(account.UserSettings.PeriodOfInactivityInMin));
         }
 
         private void OnTerminalServiceStateChangedEventHandler(object sender, TerminalServiceEventArgs args)
@@ -217,61 +219,128 @@ namespace Atomix.Client.Wpf.ViewModels
             Application.Current.Shutdown(101);
         }
 
-        //private ICommand _lockCommand;
-        //public ICommand LockCommand => _lockCommand ?? (_lockCommand = new Command(OnLockClick));
-
-        //private async void OnLockClick()
-        //{
-        //    if (!AtomixApp.HasAccount)
-        //        return;
-
-        //    var account = AtomixApp.Account;
-
-        //    if (account.IsLocked) {
-        //        await UnlockAccountAsync(account);
-        //    } else {
-        //        account.Lock();
-        //    }
-        //}
-
         private ICommand _signOutCommand;
         public ICommand SignOutCommand => _signOutCommand ?? (_signOutCommand = new Command(SignOut));
 
-        private void SignOut()
+        private async void SignOut()
         {
-            DialogViewer.HideAllDialogs();
+            try
+            {
+                if (await WhetherToCancelClosingAsync())
+                    return;
 
-            AtomixApp.Account.Lock();
+                DialogViewer.HideAllDialogs();
 
-            AtomixApp.UseAccount(
-                account: null,
-                restartTerminal: true);
+                AtomixApp.Account.Lock();
 
-            DialogViewer.ShowStartDialog(new StartViewModel(AtomixApp, DialogViewer));
+                AtomixApp.UseAccount(
+                    account: null,
+                    restartTerminal: true);
+
+                DialogViewer.ShowStartDialog(new StartViewModel(AtomixApp, DialogViewer));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Sign Out error");
+            }
         }
 
-        //private Task UnlockAccountAsync(IAccount account)
-        //{
-        //    var viewModel = new UnlockViewModel(
-        //        walletName: "wallet",
-        //        unlockAction: account.Unlock);
+        private bool _forcedClose;
 
-        //    viewModel.Unlocked += (sender, args) => DialogViewer?.HideUnlockDialog();
+        private async void Closing(CancelEventArgs args)
+        {
+            if (AtomixApp.Account == null || _forcedClose)
+                return;
 
-        //    return DialogViewer?.ShowUnlockDialogAsync(viewModel);
-        //}
+            args.Cancel = true;
+
+            try
+            {
+                await Task.Yield();
+
+                var cancel = await WhetherToCancelClosingAsync();
+
+                if (!cancel)
+                {
+                    _forcedClose = true;
+                    MainView.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Closing error");
+            }
+        }
+
+        private async Task<bool> HasActiveSwapsAsync()
+        {
+            var swaps = await AtomixApp.Account
+                .GetSwapsAsync();
+
+            return swaps.Any(swap =>
+                !swap.IsComplete &&
+                !swap.IsRefunded &&
+                !swap.IsCanceled &&
+                swap.StateFlags.HasFlag(SwapStateFlags.IsPaymentBroadcast));
+        }
+
+        private async Task<bool> WhetherToCancelClosingAsync()
+        {
+            if (!AtomixApp.Account.UserSettings.ShowActiveSwapWarning)
+                return false;
+
+            var hasActiveSwaps = await HasActiveSwapsAsync();
+
+            if (!hasActiveSwaps)
+                return false;
+
+            var result = await DialogViewer
+                .ShowMessageAsync(
+                    title: "Warning",
+                    message: "You have active swaps. Closing the application or sign out may " +
+                             "result in loss of funds as a result of the failore of the " +
+                             "refund operation. Are you sure you want to close the application?",
+                    style: MessageDialogStyle.AffirmativeAndNegative);
+
+            return result == MessageDialogResult.Negative;
+        }
+
+        private void InactivityHandler(object sender, EventArgs args)
+        {
+            if (AtomixApp?.Account == null)
+                return;
+
+            var pathToAccount = AtomixApp.Account.Wallet.PathToWallet;
+            var accountDirectory = Path.GetDirectoryName(pathToAccount);
+
+            if (accountDirectory == null)
+                return;
+
+            var accountName = new DirectoryInfo(accountDirectory).Name;
+
+            var unlockViewModel = new UnlockViewModel(accountName, password =>
+            {
+                var _ = Account.LoadFromFile(
+                    pathToAccount: pathToAccount,
+                    password: password,
+                    currenciesProvider: AtomixApp.CurrenciesProvider,
+                    symbolsProvider: AtomixApp.SymbolsProvider);
+            });
+
+            unlockViewModel.Unlocked += (s, a) =>
+            {
+                DialogViewer?.HideUnlockDialog();
+            };
+
+            DialogViewer?.ShowUnlockDialog(unlockViewModel, (s, a) =>
+            {
+                SignOut();
+            });
+        }
 
         private void DesignerMode()
         {
             HasAccount = true;
         }
-
-        //private ICommand _authCommand;
-        //public ICommand AuthCommand => _authCommand ?? (_authCommand = new Command(OnAuthClick));
-
-        //private void OnAuthClick()
-        //{
-        //    DialogViewer?.ShowLoginDialog(LoginViewModel);
-        //}
     }
 }

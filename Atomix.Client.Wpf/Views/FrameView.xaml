@@ -1,18 +1,26 @@
-﻿<controls:ChildView x:Class="Atomix.Client.Wpf.Views.FrameView"
+﻿<controls:ChildWindow x:Class="Atomix.Client.Wpf.Views.FrameView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:controls="clr-namespace:Atomix.Client.Wpf.Controls"
-             mc:Ignorable="d" 
-             UseLayoutRounding="True"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center"
-             Loaded="OnLoaded"
-             d:DesignHeight="450"
-             d:DesignWidth="560">
+             xmlns:common="clr-namespace:Atomix.Client.Wpf.Common"
+             mc:Ignorable="d"
 
-    <Border Style="{StaticResource ChildViewBorder}">
+             ShowTitleBar="False"
+             Background="Transparent"
+             OverlayBrush="#2F000000"
+             CloseByEscape="True"
+             CloseOnOverlay="False"
+
+             Loaded="OnLoaded"
+             UseLayoutRounding="True"   
+             common:ChildWindowHelper.IsOpen="True"
+             d:DesignWidth="560"
+             d:DesignHeight="450">
+
+    <Border Style="{StaticResource ChildViewBorder}"
+            Width="560">
         <Grid>
             <Frame x:Name="Frame"
                    NavigationUIVisibility="Hidden"/>
@@ -22,9 +30,9 @@
                     Margin="0 -10 -14 0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
-                    Command="{Binding CloseButtonCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type controls:ChildView}}}"
+                    Command="{Binding CloseButtonCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type controls:ChildWindow}}}"
                     Style="{DynamicResource ChildViewCloseButtonLight}"
                     Visibility="Visible"/>
         </Grid>
     </Border>
-</controls:ChildView>
+</controls:ChildWindow>

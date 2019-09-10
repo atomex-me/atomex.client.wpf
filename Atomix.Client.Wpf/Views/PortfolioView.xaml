@@ -28,9 +28,8 @@
                         <oxy:TrackerControl Position="{Binding Position}"
                                             HorizontalLineVisibility="Collapsed"
                                             VerticalLineVisibility="Collapsed"
-                                            Background="#40000000"
+                                            Background="#80000000"
                                             BorderEdgeMode="Aliased"
-                                            
                                             BorderThickness="0">
                             <oxy:TrackerControl.Content>
                                 <Grid>

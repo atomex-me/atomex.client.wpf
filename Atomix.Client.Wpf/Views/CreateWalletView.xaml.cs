@@ -2,7 +2,7 @@
 
 namespace Atomix.Client.Wpf.Views
 {
-    public partial class CreateWalletView : ChildView
+    public partial class CreateWalletView : ChildWindow
     {
         public CreateWalletView()
         {

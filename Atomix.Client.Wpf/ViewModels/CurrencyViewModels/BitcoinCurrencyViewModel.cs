@@ -2,14 +2,16 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Atomix.Client.Wpf.Properties;
+using Atomix.Client.Wpf.ViewModels.Abstract;
+using Atomix.Core.Entities;
 
 namespace Atomix.Client.Wpf.ViewModels.CurrencyViewModels
 {
-    public class BitcoinCurrencyViewModel : BitcoinBasedCurrencyViewModel
+    public class BitcoinCurrencyViewModel : CurrencyViewModel
     {
-        public BitcoinCurrencyViewModel()
+        public BitcoinCurrencyViewModel(Currency currency)
+            : base(currency)
         {
-            Currency = Currencies.Btc;
             Header = Currency.Description;
             IconBrush = new ImageBrush(new BitmapImage(new Uri(PathToImage("bitcoin.png"))));
             IconMaskBrush = new ImageBrush(new BitmapImage(new Uri(PathToImage("bitcoin_mask.png"))));

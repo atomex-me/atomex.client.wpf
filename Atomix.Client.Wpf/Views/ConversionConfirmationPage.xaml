@@ -22,6 +22,10 @@
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="Foreground" Value="{StaticResource AmountForegroundBrush}"/>
         </Style>
+
+        <Style x:Key="AmountInBaseTextBlock" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource AmountTextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource AmountInBaseForegroundBrush}"/>
+        </Style>
     </Page.Resources>
 
     <StackPanel Orientation="Vertical"
@@ -30,6 +34,7 @@
         <Border Margin="0 10 0 10"
                 Height="33"
                 VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
                 Background="{StaticResource ChildViewHeaderBackgroundBrush}">
             <TextBlock Text="Send confirmation"
                        Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
@@ -216,21 +221,21 @@
                 </TextBlock>
             </StackPanel>
 
-            <!--<TextBlock Text="with commission:"
+            <TextBlock Text="with payment fee:"
                        FontSize="15"
                        FontFamily="{StaticResource RobotoLight}"
                        Foreground="{StaticResource DefaultForegroundBrush}"
                        HorizontalAlignment="Right"
                        Grid.Column="0"
-                       Grid.Row="2"/>
+                       Grid.Row="1"/>
             <StackPanel Orientation="Horizontal"
                         Grid.Column="1"
-                        Grid.Row="2">
+                        Grid.Row="1">
                 <TextBlock Margin="5 0 0 0"
                            Style="{StaticResource AmountTextBlock}">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="FeeAmount" Mode="OneWay"/>
+                            <Binding Path="EstimatedPaymentFee" Mode="OneWay"/>
                             <Binding Path="CurrencyFormat" Mode="OneWay"/>
                         </MultiBinding>
                     </TextBlock.Text>
@@ -246,19 +251,53 @@
                 <TextBlock Style="{StaticResource AmountInBaseTextBlock}">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="FeeInBase" Mode="OneWay"/>
+                            <Binding Path="EstimatedPaymentFeeInBase" Mode="OneWay"/>
                             <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <TextBlock Text="{Binding BaseCurrencyCode}"
+                <TextBlock Text=")"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+            </StackPanel>
+
+            <TextBlock Text="with redeem fee:"
+                       FontSize="15"
+                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       HorizontalAlignment="Right"
+                       Grid.Column="0"
+                       Grid.Row="2"/>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="1"
+                        Grid.Row="2">
+                <TextBlock Margin="5 0 0 0"
+                           Style="{StaticResource AmountTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="EstimatedRedeemFee" Mode="OneWay"/>
+                            <Binding Path="TargetCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text="{Binding TargetCurrencyCode}"
                            Margin="3 0 0 1"
                            FontSize="11"
                            VerticalAlignment="Bottom"
+                           Style="{StaticResource AmountTextBlock}"/>
+                <TextBlock Text="("
+                           Margin="5 0 0 0"
                            Style="{StaticResource AmountInBaseTextBlock}"/>
+                <TextBlock Style="{StaticResource AmountInBaseTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="EstimatedRedeemFeeInBase" Mode="OneWay"/>
+                            <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
                 <TextBlock Text=")"
                            Style="{StaticResource AmountInBaseTextBlock}"/>
-            </StackPanel>-->
+            </StackPanel>
         </Grid>
 
         <StackPanel Orientation="Horizontal"

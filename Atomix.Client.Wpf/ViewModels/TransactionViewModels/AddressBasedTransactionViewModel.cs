@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Globalization;
-using Atomix.Blockchain;
 using Atomix.Blockchain.Abstract;
+using Atomix.Client.Wpf.Controls;
 
 namespace Atomix.Client.Wpf.ViewModels.TransactionViewModels
 {
     public abstract class AddressBasedTransactionViewModel : TransactionViewModel
     {
-        public AddressBasedTransactionViewModel(
-            IAddressBasedTransaction tx)
+        public AddressBasedTransactionViewModel(IAddressBasedTransaction tx)
         {
             var currencyViewModel = CurrencyViewModelCreator.CreateViewModel(tx.Currency, false);
             var amount = GetAmount(tx);
@@ -35,6 +34,7 @@ namespace Atomix.Client.Wpf.ViewModels.TransactionViewModels
             }
 
             Id = tx.Id;
+            Currency = tx.Currency;
             Amount = amount;
             AmountFormat = currencyViewModel.CurrencyFormat;
             CurrencyCode = currencyViewModel.CurrencyCode;

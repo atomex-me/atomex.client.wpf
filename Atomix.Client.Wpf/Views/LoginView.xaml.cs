@@ -2,7 +2,7 @@
 
 namespace Atomix.Client.Wpf.Views
 {
-    public partial class LoginView : ChildView
+    public partial class LoginView : ChildWindow
     {
         public LoginView()
         {

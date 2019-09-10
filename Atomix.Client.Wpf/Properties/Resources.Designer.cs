@@ -79,6 +79,15 @@ namespace Atomix.Client.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Insufficient funds.
+        /// </summary>
+        public static string CvInsufficientFunds {
+            get {
+                return ResourceManager.GetString("CvInsufficientFunds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Not enough liquidity to convert a specified amount..
         /// </summary>
         public static string CvNoLiquidity {
@@ -291,6 +300,15 @@ namespace Atomix.Client.Wpf.Properties {
         public static string CwvWalletAlreadyExists {
             get {
                 return ResourceManager.GetString("CwvWalletAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No tokens.
+        /// </summary>
+        public static string PwNoTokens {
+            get {
+                return ResourceManager.GetString("PwNoTokens", resourceCulture);
             }
         }
         

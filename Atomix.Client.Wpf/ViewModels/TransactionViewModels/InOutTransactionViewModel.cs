@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Atomix.Blockchain;
 using Atomix.Blockchain.Abstract;
+using Atomix.Client.Wpf.Controls;
 
 namespace Atomix.Client.Wpf.ViewModels.TransactionViewModels
 {
     public class InOutTransactionViewModel : TransactionViewModel
     {
+        public bool HasSelfInputs { get; }
+        public bool HasSelfOutputs { get; }
+        public IList<string> SelfInputAddresses { get; }
+        public IList<string> SelfOutputAddresses { get; }
+
         public InOutTransactionViewModel(
             IInOutTransaction tx,
             IDictionary<string, ITxOutput> indexedOutputs)
@@ -23,10 +28,25 @@ namespace Atomix.Client.Wpf.ViewModels.TransactionViewModels
                 .Select(i => indexedOutputs[$"{i.Hash}:{i.Index}"])
                 .ToList();
 
+            SelfInputAddresses = ownInputs.Count > 0
+                ? ownInputs
+                    .Select(o => o.DestinationAddress(tx.Currency))
+                    .Distinct()
+                    .ToList()
+                : new List<string>();
+
             var ownOutputs = txOutputs
                 .Where(o => indexedOutputs.ContainsKey($"{o.TxId}:{o.Index}"))
                 .ToList();
 
+            SelfOutputAddresses = ownOutputs.Count > 0
+                ? ownOutputs
+                    .Select(o => o.DestinationAddress(tx.Currency))
+                    .Distinct()
+                    .ToList()
+                : new List<string>();
+
+            Currency = tx.Currency;
             Id = tx.Id;
             AmountFormat = currencyViewModel.CurrencyFormat;
             CurrencyCode = currencyViewModel.CurrencyCode;

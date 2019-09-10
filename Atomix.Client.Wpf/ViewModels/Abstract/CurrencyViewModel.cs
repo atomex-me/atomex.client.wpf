@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Atomix.Core.Entities;
 using Atomix.MarketData.Abstract;
 using Atomix.Wallet;
@@ -11,10 +13,10 @@ namespace Atomix.Client.Wpf.ViewModels.Abstract
 {
     public abstract class CurrencyViewModel : BaseViewModel, IDisposable
     {
-        public const string PathToImages = "pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images";
+        private const string PathToImages = "pack://application:,,,/Atomix.Client.Wpf;component/Resources/Images";
 
-        protected IAccount Account { get; set; }
-        protected ICurrencyQuotesProvider QuotesProvider { get; set; }
+        private IAccount Account { get; set; }
+        private ICurrencyQuotesProvider QuotesProvider { get; set; }
 
         public event EventHandler AmountUpdated;
 
@@ -34,8 +36,8 @@ namespace Atomix.Client.Wpf.ViewModels.Abstract
         public decimal AvailableAmountInBase { get; set; }
         public decimal UnconfirmedAmount { get; set; }
         public decimal UnconfirmedAmountInBase { get; set; }
-        public decimal LockedAmount { get; set; }
-        public decimal LockedAmountInBase { get; set; }
+        //public decimal LockedAmount { get; set; }
+        //public decimal LockedAmountInBase { get; set; }
         public string CurrencyCode => Currency.Name;
         public string FeeCurrencyCode => Currency.FeeCode;
         public string BaseCurrencyCode => "USD"; // todo: use base currency from settings
@@ -53,7 +55,33 @@ namespace Atomix.Client.Wpf.ViewModels.Abstract
             set { _portfolioPercent = value; OnPropertyChanged(nameof(PortfolioPercent)); }
         }
 
-        public abstract Task UpdateAsync();
+        protected CurrencyViewModel(Currency currency)
+        {
+            Currency = currency ?? throw new ArgumentNullException(nameof(currency));
+        }
+
+        protected virtual async Task UpdateAsync()
+        {
+            var balance = await Account
+                .GetBalanceAsync(Currency)
+                .ConfigureAwait(false);
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                TotalAmount = balance.Confirmed;
+                OnPropertyChanged(nameof(TotalAmount));
+
+                AvailableAmount = balance.Available;
+                OnPropertyChanged(nameof(AvailableAmount));
+
+                UnconfirmedAmount = balance.UnconfirmedIncome + balance.UnconfirmedOutcome;
+                OnPropertyChanged(nameof(UnconfirmedAmount));
+                OnPropertyChanged(nameof(HasUnconfirmedAmount));
+
+                UpdateQuotesInBaseCurrency(QuotesProvider);
+
+            }, DispatcherPriority.Background);
+        }
 
         public Task UpdateInBackgroundAsync()
         {
@@ -77,7 +105,8 @@ namespace Atomix.Client.Wpf.ViewModels.Abstract
             try
             {
                 if (Currency.Name.Equals(args.Currency.Name))
-                    await UpdateAsync();
+                    await UpdateAsync()
+                        .ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -93,7 +122,7 @@ namespace Atomix.Client.Wpf.ViewModels.Abstract
             UpdateQuotesInBaseCurrency(quotesProvider);
         }
 
-        protected void UpdateQuotesInBaseCurrency(ICurrencyQuotesProvider quotesProvider)
+        private void UpdateQuotesInBaseCurrency(ICurrencyQuotesProvider quotesProvider)
         {
             var quote = quotesProvider.GetQuote(CurrencyCode, BaseCurrencyCode);
 
@@ -106,13 +135,13 @@ namespace Atomix.Client.Wpf.ViewModels.Abstract
             UnconfirmedAmountInBase = UnconfirmedAmount * (quote?.Bid ?? 0m);
             OnPropertyChanged(nameof(UnconfirmedAmountInBase));
 
-            LockedAmountInBase = LockedAmount * (quote?.Bid ?? 0m);
-            OnPropertyChanged(nameof(LockedAmountInBase));
+            //LockedAmountInBase = LockedAmount * (quote?.Bid ?? 0m);
+            //OnPropertyChanged(nameof(LockedAmountInBase));
 
             AmountUpdated?.Invoke(this, EventArgs.Empty);
         }
 
-        public static string PathToImage(string imageName)
+        protected static string PathToImage(string imageName)
         {
             return $"{PathToImages}/{imageName}";
         }

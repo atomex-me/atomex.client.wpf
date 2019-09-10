@@ -1,27 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Input;
-using Atomix.Wallet;
 using Atomix.Wallet.Abstract;
 using Atomix.Client.Wpf.Common;
 using Atomix.Client.Wpf.Controls;
+using System.Diagnostics;
 
 namespace Atomix.Client.Wpf.ViewModels
 {
     public class StartViewModel : BaseViewModel
     {
-        public IAtomixApp App { get; set; }
-        public IDialogViewer DialogViewer { get; set; }
-        public IEnumerable<WalletInfo> Wallets { get; set; }
-        public bool HasAvailableWallets => Wallets != null && Wallets.Any();
+        private IAtomixApp App { get; }
+        private IDialogViewer DialogViewer { get; }
 
         public StartViewModel()
         {
-#if DEBUG
-            if (Env.IsInDesignerMode())
-                DesignerMode();
-#endif
         }
 
         public StartViewModel(
@@ -30,16 +22,22 @@ namespace Atomix.Client.Wpf.ViewModels
         {
             App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
-
-            Wallets = WalletInfo.AvailableWallets();
         }
+
+        private ICommand _myWalletsCommand;
+        public ICommand MyWalletsCommand => _myWalletsCommand ?? (_myWalletsCommand = new Command(() =>
+        {
+            DialogViewer?.ShowMyWalletsDialog(
+                new MyWalletsViewModel(App, DialogViewer));
+        }));
 
         private ICommand _createNewCommand;
         public ICommand CreateNewCommand => _createNewCommand ?? (_createNewCommand = new Command(() =>
         {
             DialogViewer?.ShowCreateWalletDialog(
                 new CreateWalletViewModel(
-                    scenario: CreateWalletScenario.CreateNewStages,
+                    app: App,
+                    scenario: CreateWalletScenario.CreateNew,
                     onAccountCreated: OnAccountCreated,
                     onCanceled: OnCanceled));
         }));
@@ -49,58 +47,42 @@ namespace Atomix.Client.Wpf.ViewModels
         {
             DialogViewer?.ShowCreateWalletDialog(
                 new CreateWalletViewModel(
-                    scenario: CreateWalletScenario.UseMnemonicPhraseStages,
+                    app: App,
+                    scenario: CreateWalletScenario.Restore,
                     onAccountCreated: OnAccountCreated,
                     onCanceled: OnCanceled));
         }));
 
-        //private ICommand _restoreByFileCommand;
-        //public ICommand RestoreByFileCommand => _restoreByFileCommand ?? (_restoreByFileCommand = new Command(() =>
-        //{
-        //}));
+
+        private ICommand _twitterCommand;
+        public ICommand TwitterCommand => _twitterCommand ?? (_twitterCommand = new Command(() =>
+        {
+            Process.Start("https://twitter.com/atomix_official");
+        }));
+
+        private ICommand _telegramCommand;
+        public ICommand TelegramCommand => _telegramCommand ?? (_telegramCommand = new Command(() =>
+        {
+            Process.Start("tg://resolve?domain=atomix_official");
+        }));
+
+        private ICommand _githubCommand;
+        public ICommand GithubCommand => _githubCommand ?? (_githubCommand = new Command(() =>
+        {
+            Process.Start("https://github.com/atomix-me");
+        }));
 
         private void OnCanceled()
         {
-            DialogViewer?.HideCreateWalletDialog(false);
+            DialogViewer?.HideCreateWalletDialog();
         }
 
         private void OnAccountCreated(IAccount account)
         {
             App.UseAccount(account, restartTerminal: true);
 
-            DialogViewer?.HideCreateWalletDialog(false);
+            DialogViewer?.HideCreateWalletDialog();
             DialogViewer?.HideStartDialog();
-        }
-
-        private ICommand _selectWalletCommand;
-        public ICommand SelectWalletCommand => _selectWalletCommand ?? (_selectWalletCommand = new RelayCommand<WalletInfo>(info =>
-        {
-            IAccount account = null;
-
-            var unlockViewModel = new UnlockViewModel(info.Name, password => {
-                account = new Account(info.Path, password);          
-            });
-
-            unlockViewModel.Unlocked += (sender, args) => {
-                App.UseAccount(account, restartTerminal: true);
-
-                DialogViewer?.HideStartDialog();
-                DialogViewer?.HideUnlockDialog();
-            };
-
-            DialogViewer?.ShowUnlockDialogAsync(unlockViewModel);
-        }));
-
-        private void DesignerMode()
-        {
-            Wallets = new List<WalletInfo>
-            {
-                new WalletInfo {Name = "default", Path = "wallets/default/"},
-                new WalletInfo {Name = "market_maker", Path = "wallets/marketmaker/"},
-                new WalletInfo {Name = "wallet1", Path = "wallets/default/"},
-                new WalletInfo {Name = "my_first_wallet", Path = "wallets/marketmaker/"},
-                new WalletInfo {Name = "mega_wallet", Path = "wallets/marketmaker/"}
-            };
         }
     }
 }

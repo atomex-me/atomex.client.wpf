@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using Atomix.Blockchain;
 using Atomix.Client.Wpf.ViewModels.TransactionViewModels;
 
 namespace Atomix.Client.Wpf.Controls
 {
+    public enum TransactionState
+    {
+        Unconfirmed,
+        Confirmed
+    }
+
     public class TransactionStateDataTemplateSelector : DataTemplateSelector
     {
         public DataTemplate ConfirmedTemplate { get; set; }

@@ -91,7 +91,8 @@ namespace Atomix.Client.Wpf.Common
 
         public static void Back()
         {
-            Instance._service.GoBack();
+            if (Instance._service.CanGoBack)
+                Instance._service.GoBack();
         }
 
         public static void UseResolver(IPageResolver resolver)

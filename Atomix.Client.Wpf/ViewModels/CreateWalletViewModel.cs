@@ -2,85 +2,57 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using Atomix.Client.Wpf.Common;
-using Atomix.Client.Wpf.ViewModels.HdWalletViewModels;
+using Atomix.Client.Wpf.ViewModels.CreateWalletViewModels;
 using Atomix.Wallet.Abstract;
 
 namespace Atomix.Client.Wpf.ViewModels
 {
     public enum CreateWalletScenario
     {
-        CreateNewStages,
-        UseMnemonicPhraseStages,
+        CreateNew,
+        Restore
     }
 
     public class CreateWalletViewModel : BaseViewModel
     {
-        private static class CreateWalletStage
-        {
-            public const int WalletName = 0;
-            public const int CreateMnemonicPhrase = 1;
-            public const int WriteMnemonicPhrase = 2;
-            public const int CreateDerivedKeyPassword = 3;
-            public const int WriteDerivedKeyPassword = 4;
-            public const int CreateStoragePassword = 5;
-            //public const int UseOfMultipleDevices = 5;
-            public const int BlockchainScan = 6;
-        }
-
-        private int[] CreateNewStages { get; } =
-        {
-            CreateWalletStage.WalletName,
-            CreateWalletStage.CreateMnemonicPhrase,
-            CreateWalletStage.CreateDerivedKeyPassword,
-            CreateWalletStage.CreateStoragePassword,
-            //CreateWalletStage.UseOfMultipleDevices,
-
-        };
-
-        private int[] UseMnemonicPhraseStages { get; } =
-        {
-            CreateWalletStage.WalletName,
-            CreateWalletStage.WriteMnemonicPhrase,
-            CreateWalletStage.WriteDerivedKeyPassword,
-            CreateWalletStage.CreateStoragePassword,
-            //CreateWalletStage.UseOfMultipleDevices,
-            //CreateWalletStage.BlockchainScan
-        };
+        private const int WalletTypeViewIndex = 0;
+        private const int WalletNameViewIndex = 1;
+        private const int CreateMnemonicViewIIndex = 2;
+        private const int WriteMnemonicViewIIndex = 3;
+        private const int CreateDerivedKeyPasswordViewIIndex = 4;
+        private const int WriteDerivedKeyPasswordViewIIndex = 5;
+        private const int CreateStoragePasswordViewIIndex = 6;
 
         public event Action<IAccount> OnAccountCreated;
         public event Action OnCanceled;
 
-        public List<StageViewModel> Stages { get; set; } = new List<StageViewModel>
-        {
-            new WalletNameViewModel(),
-            new CreateMnemonicViewModel(),
-            new WriteMnemonicViewModel(),
-            new CreateDerivedKeyPasswordViewModel(),
-            new WriteDerivedKeyPasswordViewModel(),
-            new CreateStoragePasswordViewModel(),
-            //new UseOfMultipleDevicesViewModel(),
-            new BlockchainScanViewModel()
+        private IAtomixApp App { get; }
+
+        public List<StepViewModel> ViewModels { get; }
+
+        private int[] CreateNewWalletViewIndexes { get; } = {
+            WalletTypeViewIndex,
+            WalletNameViewIndex,
+            CreateMnemonicViewIIndex,
+            CreateDerivedKeyPasswordViewIIndex,
+            CreateStoragePasswordViewIIndex
         };
 
-        private int[] _scenario;
-        public int[] Scenario
-        {
-            get => _scenario;
-            set
-            {
-                _scenario = value;
-                StepsCount = _scenario?.Length ?? 0;
+        private int[] RestoreWalletViewIndexes { get; } = {
+            WalletTypeViewIndex,
+            WalletNameViewIndex,
+            WriteMnemonicViewIIndex,
+            WriteDerivedKeyPasswordViewIIndex,
+            CreateStoragePasswordViewIIndex
+        };
 
-                if (_scenario != null)
-                    Step = 0;
-            }
-        }
+        private int[] ViewIndexes { get; }
 
-        private int _stage;
-        public int Stage
+        private int _currentViewIndex;
+        public int CurrentViewIndex
         {
-            get => _stage;
-            set { _stage = value; OnPropertyChanged(nameof(Stage)); }
+            get => _currentViewIndex;
+            set { _currentViewIndex = value; OnPropertyChanged(nameof(CurrentViewIndex)); }
         }
 
         private bool _canBack;
@@ -120,18 +92,15 @@ namespace Atomix.Client.Wpf.ViewModels
                 _step = value;
                 OnPropertyChanged(nameof(Step));
 
-                Stage = Scenario[_step];
+                if (_step < 0 || _step >= ViewIndexes.Length)
+                    return;
+            
+                CurrentViewIndex = ViewIndexes[_step];
+                ViewModels[CurrentViewIndex].Step = _step + 1;               
 
-                if (_step < 0)
-                    Scenario = null;
-
-                CanBack = Scenario != null;
-                CanNext = Scenario != null && _step < Scenario.Length;
-
-                if (Scenario != null)
-                    NextText = _step < Scenario.Length - 1
-                        ? Properties.Resources.CwvNext
-                        : Properties.Resources.CwvFinish;
+                NextText = _step < ViewIndexes.Length - 1
+                    ? Properties.Resources.CwvNext
+                    : Properties.Resources.CwvFinish;
             }
         }
 
@@ -158,10 +127,24 @@ namespace Atomix.Client.Wpf.ViewModels
         }
 
         public CreateWalletViewModel(
+            IAtomixApp app,
             CreateWalletScenario scenario,
             Action<IAccount> onAccountCreated = null,
             Action onCanceled = null)
         {
+            App = app ?? throw new ArgumentNullException(nameof(app));
+
+            ViewModels = new List<StepViewModel>
+            {
+                new WalletTypeViewModel(),
+                new WalletNameViewModel(),
+                new CreateMnemonicViewModel(),
+                new WriteMnemonicViewModel(),
+                new CreateDerivedKeyPasswordViewModel(),
+                new WriteDerivedKeyPasswordViewModel(),
+                new CreateStoragePasswordViewModel(App)
+            };
+
             InProgress = false;
 
             if (onAccountCreated != null)
@@ -170,21 +153,13 @@ namespace Atomix.Client.Wpf.ViewModels
             if (onCanceled != null)
                 OnCanceled += onCanceled;
 
-            switch (scenario)
-            {
-                case CreateWalletScenario.CreateNewStages:
-                    Scenario = CreateNewStages;
-                    break;
-                case CreateWalletScenario.UseMnemonicPhraseStages:
-                    Scenario = UseMnemonicPhraseStages;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
-            }
+            ViewIndexes = ResolveViewIndexes(scenario);
 
-            foreach (var stage in Stages)
+            foreach (var viewIndex in ViewIndexes)
             {
-                stage.OnBack += o =>
+                var viewModel = ViewModels[viewIndex];
+
+                viewModel.OnBack += arg =>
                 {
                     if (Step == 0) {
                         OnCanceled?.Invoke();
@@ -193,32 +168,50 @@ namespace Atomix.Client.Wpf.ViewModels
 
                     Step--;
                 };
-                stage.OnProgressShow += () => { InProgress = true; };
-                stage.OnProgressHide += () => { InProgress = false; };
-                stage.OnNext += o =>
+                viewModel.OnNext += arg =>
                 {
-                    if (Step == Scenario.Length - 1) {
-                        OnAccountCreated?.Invoke((IAccount) o);
+                    if (Step == ViewIndexes.Length - 1)
+                    {
+                        OnAccountCreated?.Invoke((IAccount) arg);
                         return;
                     }
 
                     Step++;
-                    Stages[Scenario[Step]].Initialize(o);
+                    ViewModels[CurrentViewIndex].Initialize(arg);
                 };
+                viewModel.ProgressBarShow += () => { InProgress = true; };
+                viewModel.ProgressBarHide += () => { InProgress = false; };
             }
+
+            Step = 0;
+            StepsCount = ViewIndexes.Length;
+            CanBack = true;
+            CanNext = true;
         }
 
         private ICommand _backCommand;
         public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
         {
-            Stages[Stage].Back();
+            ViewModels[CurrentViewIndex].Back();
         }));
 
         private ICommand _nextCommand;
         public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(() =>
         {
-            Stages[Stage].Next();
+            ViewModels[CurrentViewIndex].Next();
         }));
+
+        private int[] ResolveViewIndexes(
+            CreateWalletScenario scenario)
+        {
+            if (scenario == CreateWalletScenario.CreateNew)
+                return CreateNewWalletViewIndexes;
+
+            if (scenario == CreateWalletScenario.Restore)
+                return RestoreWalletViewIndexes;
+
+            throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+        }
 
         private void DesignerMode()
         {

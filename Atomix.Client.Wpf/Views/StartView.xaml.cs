@@ -2,7 +2,7 @@
 
 namespace Atomix.Client.Wpf.Views
 {
-    public partial class StartView : ChildView
+    public partial class StartView : ChildWindow
     {
         public StartView()
         {

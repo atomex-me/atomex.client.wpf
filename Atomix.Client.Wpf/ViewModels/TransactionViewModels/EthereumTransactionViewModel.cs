@@ -2,13 +2,13 @@
 using Atomix.Blockchain;
 using Atomix.Blockchain.Abstract;
 using Atomix.Blockchain.Ethereum;
+using Atomix.Client.Wpf.Controls;
 
 namespace Atomix.Client.Wpf.ViewModels.TransactionViewModels
 {
     public class EthereumTransactionViewModel : AddressBasedTransactionViewModel
     {
-        public EthereumTransactionViewModel(
-            IAddressBasedTransaction tx)
+        public EthereumTransactionViewModel(IAddressBasedTransaction tx)
             : base(tx)
         {
         }

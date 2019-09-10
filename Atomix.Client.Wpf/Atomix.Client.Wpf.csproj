@@ -53,6 +53,13 @@
   <PropertyGroup>
     <ApplicationIcon>logo_dark_256x256.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
       <HintPath>..\packages\Portable.BouncyCastle.1.8.5\lib\net40\BouncyCastle.Crypto.dll</HintPath>
@@ -89,7 +96,7 @@
       <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.2.2.4\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration.FileExtensions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Configuration.FileExtensions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll</HintPath>
@@ -124,56 +131,62 @@
     <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="NBitcoin, Version=4.1.1.98, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NBitcoin.4.1.1.98\lib\net461\NBitcoin.dll</HintPath>
+    <Reference Include="NBitcoin, Version=4.2.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NBitcoin.4.2.6\lib\net461\NBitcoin.dll</HintPath>
     </Reference>
-    <Reference Include="NBitcoin.Altcoins, Version=1.0.1.42, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NBitcoin.Altcoins.1.0.1.42\lib\net461\NBitcoin.Altcoins.dll</HintPath>
+    <Reference Include="NBitcoin.Altcoins, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NBitcoin.Altcoins.1.0.3\lib\net452\NBitcoin.Altcoins.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.ABI, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.ABI.3.1.2\lib\net451\Nethereum.ABI.dll</HintPath>
+      <HintPath>..\packages\Nethereum.ABI.3.4.0\lib\net451\Nethereum.ABI.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.Accounts, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.Accounts.3.1.2\lib\net451\Nethereum.Accounts.dll</HintPath>
+      <HintPath>..\packages\Nethereum.Accounts.3.4.0\lib\net451\Nethereum.Accounts.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.BlockchainProcessing, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nethereum.BlockchainProcessing.3.4.0\lib\net451\Nethereum.BlockchainProcessing.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.Contracts, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.Contracts.3.1.2\lib\net451\Nethereum.Contracts.dll</HintPath>
+      <HintPath>..\packages\Nethereum.Contracts.3.4.0\lib\net451\Nethereum.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.HdWallet, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.HdWallet.3.1.2\lib\net452\Nethereum.HdWallet.dll</HintPath>
+      <HintPath>..\packages\Nethereum.HdWallet.3.4.0\lib\net452\Nethereum.HdWallet.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.Hex, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.Hex.3.1.2\lib\net451\Nethereum.Hex.dll</HintPath>
+      <HintPath>..\packages\Nethereum.Hex.3.4.0\lib\net451\Nethereum.Hex.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.JsonRpc.Client, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.JsonRpc.Client.3.1.2\lib\net451\Nethereum.JsonRpc.Client.dll</HintPath>
+      <HintPath>..\packages\Nethereum.JsonRpc.Client.3.4.0\lib\net451\Nethereum.JsonRpc.Client.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.JsonRpc.RpcClient, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.JsonRpc.RpcClient.3.1.2\lib\net451\Nethereum.JsonRpc.RpcClient.dll</HintPath>
+      <HintPath>..\packages\Nethereum.JsonRpc.RpcClient.3.4.0\lib\net451\Nethereum.JsonRpc.RpcClient.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.JsonRpc.WebSocketClient, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.JsonRpc.WebSocketClient.3.1.2\lib\net461\Nethereum.JsonRpc.WebSocketClient.dll</HintPath>
+      <HintPath>..\packages\Nethereum.JsonRpc.WebSocketClient.3.4.0\lib\net461\Nethereum.JsonRpc.WebSocketClient.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.KeyStore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.KeyStore.3.1.2\lib\net451\Nethereum.KeyStore.dll</HintPath>
+      <HintPath>..\packages\Nethereum.KeyStore.3.4.0\lib\net451\Nethereum.KeyStore.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Model, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nethereum.Model.3.4.0\lib\net451\Nethereum.Model.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.RLP, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.RLP.3.1.2\lib\net451\Nethereum.RLP.dll</HintPath>
+      <HintPath>..\packages\Nethereum.RLP.3.4.0\lib\net451\Nethereum.RLP.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.RPC, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.RPC.3.1.2\lib\net451\Nethereum.RPC.dll</HintPath>
+      <HintPath>..\packages\Nethereum.RPC.3.4.0\lib\net451\Nethereum.RPC.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.Signer, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.Signer.3.1.2\lib\net451\Nethereum.Signer.dll</HintPath>
+      <HintPath>..\packages\Nethereum.Signer.3.4.0\lib\net451\Nethereum.Signer.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.Util, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.Util.3.1.2\lib\net451\Nethereum.Util.dll</HintPath>
+      <HintPath>..\packages\Nethereum.Util.3.4.0\lib\net451\Nethereum.Util.dll</HintPath>
     </Reference>
     <Reference Include="Nethereum.Web3, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8768a594786aba4e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nethereum.Web3.3.1.2\lib\net451\Nethereum.Web3.dll</HintPath>
+      <HintPath>..\packages\Nethereum.Web3.3.4.0\lib\net451\Nethereum.Web3.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OxyPlot, Version=1.0.0.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9, processorArchitecture=MSIL">
       <HintPath>..\packages\OxyPlot.Core.1.0.0\lib\net45\OxyPlot.dll</HintPath>
@@ -184,14 +197,14 @@
     <Reference Include="protobuf-net, Version=2.4.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <HintPath>..\packages\protobuf-net.2.4.0\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
-    <Reference Include="QRCoder, Version=1.3.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QRCoder.1.3.5\lib\net40\QRCoder.dll</HintPath>
+    <Reference Include="QRCoder, Version=1.3.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QRCoder.1.3.6\lib\net40\QRCoder.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.2.8.0\lib\net46\Serilog.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Settings.Configuration, Version=3.0.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Settings.Configuration.3.0.1\lib\net461\Serilog.Settings.Configuration.dll</HintPath>
+    <Reference Include="Serilog.Settings.Configuration, Version=3.1.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Settings.Configuration.3.1.0\lib\net461\Serilog.Settings.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Serilog.Sinks.Console, Version=3.1.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.Sinks.Console.3.1.1\lib\net45\Serilog.Sinks.Console.dll</HintPath>
@@ -222,8 +235,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.2\lib\netstandard2.0\System.Memory.dll</HintPath>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Net.Sockets, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -287,6 +300,7 @@
     <Compile Include="Behaviors\TextBoxInputBehavior.cs" />
     <Compile Include="Common\BitmapExtensions.cs" />
     <Compile Include="Common\DecimalExtensions.cs" />
+    <Compile Include="Common\DesignTime.cs" />
     <Compile Include="Common\Environment.cs" />
     <Compile Include="Common\IPageResolver.cs" />
     <Compile Include="Common\Msi\MsiApi.cs" />
@@ -298,18 +312,23 @@
     <Compile Include="Common\PageResolver.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SingleApp.cs" />
-    <Compile Include="Controls\IClosable.cs" />
+    <Compile Include="Common\ChildWindowHelper.cs" />
+    <Compile Include="Controls\ChildWindowManager.cs" />
+    <Compile Include="Controls\ChildWindow.cs" />
+    <Compile Include="Controls\IconButton.cs" />
     <Compile Include="Controls\IDialogViewer.cs" />
+    <Compile Include="Controls\IMainView.cs" />
     <Compile Include="Controls\NavigationMenuItem.cs" />
     <Compile Include="Controls\NavigationMenuItemCollection.cs" />
     <Compile Include="Controls\PasswordStrengthMeter.cs" />
     <Compile Include="Controls\StepIndicatorPanel.cs" />
     <Compile Include="Controls\SwapStateDataTemplateSelector.cs" />
     <Compile Include="Controls\TransactionStateDataTemplateSelector.cs" />
-    <Compile Include="Controls\TransactionTypeDataTemplateSelector.cs" />
+    <Compile Include="Controls\TransactionDataTemplateSelector.cs" />
     <Compile Include="Converters\AmountToStringConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityCollapsedConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\EnumToVisibilityConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\IsPositiveValueConverter.cs" />
     <Compile Include="Converters\ValueNotEqualConverter.cs" />
@@ -317,12 +336,13 @@
     <Compile Include="Helpers\AmountTextBoxHelper.cs" />
     <Compile Include="Helpers\ComboBoxHelper.cs" />
     <Compile Include="ViewModels\ConversionConfirmationViewModel.cs" />
+    <Compile Include="ViewModels\CreateWalletViewModels\WalletTypeViewModel.cs" />
+    <Compile Include="ViewModels\MyWalletsViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\AddressBasedTransactionViewModel.cs" />
     <Compile Include="ViewModels\Abstract\IExpandable.cs" />
     <Compile Include="ViewModels\CreateWalletViewModel.cs" />
     <Compile Include="ViewModels\Abstract\IMenuSelector.cs" />
     <Compile Include="ViewModels\Abstract\IConversionViewModel.cs" />
-    <Compile Include="ViewModels\CurrencyViewModels\BitcoinBasedCurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\BitcoinCurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\EthereumCurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\LitecoinCurrencyViewModel.cs" />
@@ -334,15 +354,13 @@
     <Compile Include="ViewModels\SwapViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModelFactory.cs" />
     <Compile Include="ViewModels\StartViewModel.cs" />
-    <Compile Include="ViewModels\HdWalletViewModels\BlockchainScanViewModel.cs" />
-    <Compile Include="ViewModels\HdWalletViewModels\CreateDerivedKeyPasswordViewModel.cs" />
-    <Compile Include="ViewModels\HdWalletViewModels\CreateMnemonicViewModel.cs" />
-    <Compile Include="ViewModels\HdWalletViewModels\CreateStoragePasswordViewModel.cs" />
-    <Compile Include="ViewModels\HdWalletViewModels\UseOfMultipleDevicesViewModel.cs" />
-    <Compile Include="ViewModels\HdWalletViewModels\StageViewModel.cs" />
-    <Compile Include="ViewModels\HdWalletViewModels\WalletNameViewModel.cs" />
-    <Compile Include="ViewModels\HdWalletViewModels\WriteDerivedKeyPasswordViewModel.cs" />
-    <Compile Include="ViewModels\HdWalletViewModels\WriteMnemonicViewModel.cs" />
+    <Compile Include="ViewModels\CreateWalletViewModels\CreateDerivedKeyPasswordViewModel.cs" />
+    <Compile Include="ViewModels\CreateWalletViewModels\CreateMnemonicViewModel.cs" />
+    <Compile Include="ViewModels\CreateWalletViewModels\CreateStoragePasswordViewModel.cs" />
+    <Compile Include="ViewModels\CreateWalletViewModels\StepViewModel.cs" />
+    <Compile Include="ViewModels\CreateWalletViewModels\WalletNameViewModel.cs" />
+    <Compile Include="ViewModels\CreateWalletViewModels\WriteDerivedKeyPasswordViewModel.cs" />
+    <Compile Include="ViewModels\CreateWalletViewModels\WriteMnemonicViewModel.cs" />
     <Compile Include="ViewModels\ReceiveViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\InOutTransactionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\TransactionViewModelCreator.cs" />
@@ -357,6 +375,9 @@
     <Compile Include="Converters\StringToUpperCaseConverter.cs" />
     <Compile Include="Views\CreateWalletView.xaml.cs">
       <DependentUpon>CreateWalletView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateWalletViews\WalletTypeView.xaml.cs">
+      <DependentUpon>WalletTypeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FrameView.xaml.cs">
       <DependentUpon>FrameView.xaml</DependentUpon>
@@ -386,20 +407,14 @@
       <DependentUpon>ExchangeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\TabItemHelper.cs" />
-    <Compile Include="Views\HdWalletViews\WriteDerivedKeyPasswordView.xaml.cs">
+    <Compile Include="Views\CreateWalletViews\WriteDerivedKeyPasswordView.xaml.cs">
       <DependentUpon>WriteDerivedKeyPasswordView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HdWalletViews\WalletNameView.xaml.cs">
+    <Compile Include="Views\CreateWalletViews\WalletNameView.xaml.cs">
       <DependentUpon>WalletNameView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HdWalletViews\WriteMnemonicView.xaml.cs">
+    <Compile Include="Views\CreateWalletViews\WriteMnemonicView.xaml.cs">
       <DependentUpon>WriteMnemonicView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HdWalletViews\UseOfMultipleDevicesView.xaml.cs">
-      <DependentUpon>UseOfMultipleDevicesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HdWalletViews\WalletMenuView.xaml.cs">
-      <DependentUpon>WalletMenuView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PortfolioView.xaml.cs">
       <DependentUpon>PortfolioView.xaml</DependentUpon>
@@ -414,28 +429,23 @@
     <Compile Include="ViewModels\Abstract\CurrencyViewModel.cs" />
     <Compile Include="ViewModels\ExchangeViewModel.cs" />
     <Compile Include="ViewModels\PortfolioViewModel.cs" />
-    <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\TransactionViewModel.cs" />
     <Compile Include="ViewModels\WalletsViewModel.cs" />
     <Compile Include="ViewModels\WalletViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModelCreator.cs" />
-    <Compile Include="Views\HdWalletViews\BlockchainScanView.xaml.cs">
-      <DependentUpon>BlockchainScanView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HdWalletViews\CreateStoragePasswordView.xaml.cs">
+    <Compile Include="Views\CreateWalletViews\CreateStoragePasswordView.xaml.cs">
       <DependentUpon>CreateStoragePasswordView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HdWalletViews\CreateMnemonicView.xaml.cs">
+    <Compile Include="Views\CreateWalletViews\CreateMnemonicView.xaml.cs">
       <DependentUpon>CreateMnemonicView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HdWalletViews\CreateDerivedKeyPasswordView.xaml.cs">
+    <Compile Include="Views\CreateWalletViews\CreateDerivedKeyPasswordView.xaml.cs">
       <DependentUpon>CreateDerivedKeyPasswordView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ScanView.xaml.cs">
-      <DependentUpon>ScanView.xaml</DependentUpon>
+    <Compile Include="Views\MyWalletsView.xaml.cs">
+      <DependentUpon>MyWalletsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UnlockView.xaml.cs">
       <DependentUpon>UnlockView.xaml</DependentUpon>
@@ -450,6 +460,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\IconButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ChildWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -458,11 +476,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ConversionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CreateWalletView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateWalletViews\WalletTypeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -502,25 +528,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HdWalletViews\WriteDerivedKeyPasswordView.xaml">
+    <Page Include="Views\CreateWalletViews\WriteDerivedKeyPasswordView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\HdWalletViews\WalletNameView.xaml">
+    <Page Include="Views\CreateWalletViews\WalletNameView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\HdWalletViews\WriteMnemonicView.xaml">
+    <Page Include="Views\CreateWalletViews\WriteMnemonicView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\HdWalletViews\UseOfMultipleDevicesView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\HdWalletViews\WalletMenuView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LoginView.xaml">
       <SubType>Designer</SubType>
@@ -538,8 +556,6 @@
     <Compile Include="Behaviors\StylizedBehaviorCollection.cs" />
     <Compile Include="Behaviors\StylizedBehaviors.cs" />
     <Compile Include="Common\Command.cs" />
-    <Compile Include="Common\WindowExtensions.cs" />
-    <Compile Include="Controls\ChildView.cs" />
     <Compile Include="Controls\RoundedButton.cs" />
     <Compile Include="Controls\RoundedTextBox.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
@@ -624,25 +640,21 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HdWalletViews\BlockchainScanView.xaml">
+    <Page Include="Views\CreateWalletViews\CreateStoragePasswordView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\HdWalletViews\CreateStoragePasswordView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\HdWalletViews\CreateMnemonicView.xaml">
+    <Page Include="Views\CreateWalletViews\CreateMnemonicView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HdWalletViews\CreateDerivedKeyPasswordView.xaml">
+    <Page Include="Views\CreateWalletViews\CreateDerivedKeyPasswordView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ScanView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\MyWalletsView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\UnlockView.xaml">
       <SubType>Designer</SubType>
@@ -788,7 +800,13 @@
   <ItemGroup>
     <Resource Include="logo_dark_256x256.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Images\telegram.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\github.png" />
+    <Resource Include="Resources\Images\twitter.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -797,4 +815,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
   </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties config_1debug_1json__JSONSchema="http://json.schemastore.org/config" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

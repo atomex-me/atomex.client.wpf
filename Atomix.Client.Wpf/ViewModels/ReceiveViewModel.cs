@@ -15,7 +15,7 @@ namespace Atomix.Client.Wpf.ViewModels
 {
     public class ReceiveViewModel : BaseViewModel
     {
-        public const int PixelsPerModule = 20;
+        private const int PixelsPerModule = 20;
 
         private List<CurrencyViewModel> _fromCurrencies;
         public List<CurrencyViewModel> FromCurrencies
@@ -61,12 +61,14 @@ namespace Atomix.Client.Wpf.ViewModels
         public ReceiveViewModel()
         {
 #if DEBUG
-            if (Env.IsInDesignerMode()) {
-                DesignerMode();
-                return;
-            }
+            if (Env.IsInDesignerMode())
+                DesignerMode();         
 #endif
-            FromCurrencies = Currencies.Available
+        }
+
+        public ReceiveViewModel(IAtomixApp app)
+        {
+            FromCurrencies = app.Account.Currencies
                 .Where(c => c.IsTransactionsAvailable)
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
@@ -95,11 +97,11 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            FromCurrencies = Currencies.Available
+            FromCurrencies = DesignTime.Currencies
                 .Select(c => CurrencyViewModelCreator.CreateViewModel(c, subscribeToUpdates: false))
                 .ToList();
 
-            Currency = Currencies.Btc;
+            Currency = FromCurrencies.First().Currency;
             Address = "mzztP8VVJYxV93EUiiYrJUbL55MLx7KLoM";
         }
     }

@@ -23,7 +23,7 @@ namespace Atomix.Client.Wpf.ViewModels
 {
     public class WalletViewModel : BaseViewModel
     {
-        public const int ConversionViewIndex = 2;
+        private const int ConversionViewIndex = 2;
 
         private ObservableCollection<TransactionViewModel> _transactions;
         public ObservableCollection<TransactionViewModel> Transactions
@@ -39,10 +39,10 @@ namespace Atomix.Client.Wpf.ViewModels
             set { _currencyViewModel = value; OnPropertyChanged(nameof(CurrencyViewModel)); }
         }
 
-        public IAtomixApp App { get; set; }
-        public IDialogViewer DialogViewer { get; set; }
-        public IMenuSelector MenuSelector { get; set; }
-        public IConversionViewModel ConversionViewModel { get; set; }
+        private IAtomixApp App { get; }
+        private IDialogViewer DialogViewer { get; }
+        private IMenuSelector MenuSelector { get; }
+        private IConversionViewModel ConversionViewModel { get; }
 
         public string Header     => CurrencyViewModel.Header;
         public Currency Currency => CurrencyViewModel.Currency;
@@ -110,7 +110,7 @@ namespace Atomix.Client.Wpf.ViewModels
             {
                 try
                 {
-                    if (Currency.Name.Equals(args.Currency.Name))
+                    if (Currency.Name == args.Currency.Name)
                         await LoadTransactionsAsync();
                 }
                 catch (Exception e)
@@ -169,14 +169,18 @@ namespace Atomix.Client.Wpf.ViewModels
         {
             var viewModel = new SendViewModel(App, DialogViewer, Currency);
 
-            DialogViewer?.ShowSendDialog(viewModel, dialogLoaded: () => {
+            DialogViewer?.ShowSendDialog(viewModel, dialogLoaded: () =>
+            {
                 viewModel.Show();
             });
         }
 
         private void OnReceiveClick()
         {
-            DialogViewer?.ShowReceiveDialog(new ReceiveViewModel {Currency = Currency});
+            DialogViewer?.ShowReceiveDialog(new ReceiveViewModel(App)
+            {
+                Currency = Currency
+            });
         }
 
         private void OnConvertClick()
@@ -217,20 +221,21 @@ namespace Atomix.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(Currencies.Btc, subscribeToUpdates: false);
+            CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(DesignTime.Currencies[0], subscribeToUpdates: false);
             CurrencyViewModel.TotalAmount             = 0.01012345m;
             CurrencyViewModel.TotalAmountInBase       = 16.51m;
             CurrencyViewModel.AvailableAmount         = 0.01010005m;
             CurrencyViewModel.AvailableAmountInBase   = 16.00m;
             CurrencyViewModel.UnconfirmedAmount       = 0.00002m;
             CurrencyViewModel.UnconfirmedAmountInBase = 0.5m;
-            CurrencyViewModel.LockedAmount            = 0.00000340m;
-            CurrencyViewModel.LockedAmountInBase      = 0.01m;
+            //CurrencyViewModel.LockedAmount            = 0.00000340m;
+            //CurrencyViewModel.LockedAmountInBase      = 0.01m;
 
             var transactions = new List<TransactionViewModel>
             {
                 new TransactionViewModel
                 {
+                    Currency     = DesignTime.Currencies.Get<Bitcoin>(),
                     Id           = "064ca0c2d0b94d5ef42c0c01f583f7889f9a4cac04c7558ff16e834921d3e699",
                     Type         = TransactionType.Sent,
                     Description  = "Sent 0.00124 BTC",
@@ -242,6 +247,7 @@ namespace Atomix.Client.Wpf.ViewModels
                 },
                 new TransactionViewModel
                 {
+                    Currency     = DesignTime.Currencies.Get<Bitcoin>(),
                     Id           = "064ca0c2d0b94d5ef42c0c01f583f7889f9a4cac04c7558ff16e834921d3e699",
                     Type         = TransactionType.Received,
                     Description  = "Received 1.00666 BTC",

@@ -1,75 +1,54 @@
-﻿using System;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using Atomix.Common;
 using Atomix.Core.Entities;
-using Atomix.Swaps;
-using Atomix.Swaps.Abstract;
 
 namespace Atomix.Client.Wpf.ViewModels
 {
-    public class SwapViewModelFactory
+    public static class SwapViewModelFactory
     {
-        public static SwapViewModel CreateSwapViewModel(Order order)
+        public static SwapViewModel CreateSwapViewModel(ClientSwap swap)
         {
+            var fromCurrency = CurrencyViewModelCreator.CreateViewModel(
+                currency: swap.SoldCurrency,
+                subscribeToUpdates: false);
+
+            var toCurrency = CurrencyViewModelCreator.CreateViewModel(
+                currency: swap.PurchasedCurrency,
+                subscribeToUpdates:false);
+
+            var fromAmount = AmountHelper.QtyToAmount(swap.Side, swap.Qty, swap.Price);
+            var toAmount = AmountHelper.QtyToAmount(swap.Side.Opposite(), swap.Qty, swap.Price);
+
             return new SwapViewModel
             {
-                Id = "N/A",
-                CompactState = SwapCompactState.Canceled,
-                Mode = SwapMode.Initiator,
-                Time = order.TimeStamp,
+                Id = swap.Id.ToString(),
+                CompactState = CompactStateBySwap(swap),
+                Mode = ModeBySwap(swap),
+                Time = swap.TimeStamp,
+
+                FromBrush = new SolidColorBrush(fromCurrency.AmountColor),
+                FromAmount = fromAmount,
+                FromAmountFormat = fromCurrency.CurrencyFormat,
+                FromCurrencyCode = fromCurrency.CurrencyCode,
+
+                ToBrush = new SolidColorBrush(toCurrency.AmountColor),
+                ToAmount = toAmount,
+                ToAmountFormat = toCurrency.CurrencyFormat,
+                ToCurrencyCode = toCurrency.CurrencyCode,
+
+                Price = swap.Price,
+                PriceFormat = $"F{swap.Symbol.Quote.Digits}"
             };
         }
 
-        public static SwapViewModel CreateSwapViewModel(ISwapState s)
-        {
-            if (s is SwapState swap)
-            {
-                var order = swap.Order;
-
-                var fromCurrency = CurrencyViewModelCreator.CreateViewModel(
-                    currency: order.SoldCurrency(),
-                    subscribeToUpdates: false);
-
-                var toCurrency = CurrencyViewModelCreator.CreateViewModel(
-                    currency: order.PurchasedCurrency(),
-                    subscribeToUpdates:false);
-
-                var fromAmount = AmountHelper.QtyToAmount(order.Side, order.LastQty, order.LastPrice);
-                var toAmount = AmountHelper.QtyToAmount(order.Side.Opposite(), order.LastQty, order.LastPrice);
-
-                return new SwapViewModel
-                {
-                    Id = swap.Id.ToString(),
-                    CompactState = CompactStateBySwap(swap),
-                    Mode = ModeBySwap(swap),
-                    Time = order.TimeStamp,
-
-                    FromBrush = new SolidColorBrush(fromCurrency.AmountColor),
-                    FromAmount = fromAmount,
-                    FromAmountFormat = fromCurrency.CurrencyFormat,
-                    FromCurrencyCode = fromCurrency.CurrencyCode,
-
-                    ToBrush = new SolidColorBrush(toCurrency.AmountColor),
-                    ToAmount = toAmount,
-                    ToAmountFormat = toCurrency.CurrencyFormat,
-                    ToCurrencyCode = toCurrency.CurrencyCode,
-
-                    Price = order.LastPrice,
-                    PriceFormat = $"F{order.Symbol.PriceDigits}"
-                };
-            }
-
-            throw new NotSupportedException("Swap not supported");
-        }
-
-        private static SwapMode ModeBySwap(SwapState swap)
+        private static SwapMode ModeBySwap(ClientSwap swap)
         {
             return swap.IsInitiator
                 ? SwapMode.Initiator
                 : SwapMode.CounterParty;
         }
 
-        private static SwapCompactState CompactStateBySwap(SwapState swap)
+        private static SwapCompactState CompactStateBySwap(ClientSwap swap)
         {
             if (swap.IsComplete)
                 return SwapCompactState.Completed;
