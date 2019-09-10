@@ -1,0 +1,80 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                    xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters">
+
+    <SolidColorBrush x:Key="DefaultHamburgerMenuBackgroundBrush" Color="#2f000000"/>
+
+    <converters:ValueNotEqualConverter x:Key="ValueNotEqualConverter"/>
+    
+    <DataTemplate x:Key="HamburgerMenuImageItem" DataType="{x:Type controls:NavigationMenuItem}">
+        <Grid Height="48">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="48" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <ContentControl Content="{Binding Icon}"
+                            Grid.Column="0"                            
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"/>
+                       
+            <TextBlock Grid.Column="1"
+                       VerticalAlignment="Center"
+                       FontSize="14"
+                       FontFamily="{StaticResource RobotoMedium}"
+                       Text="{Binding Header}" />
+        </Grid>
+    </DataTemplate>
+    
+    <Style x:Key="HamburgerMenuStyle" TargetType="mah:HamburgerMenu">
+        <Style.Setters>
+            <Setter Property="ItemTemplate" Value="{StaticResource HamburgerMenuImageItem}"/>
+            <Setter Property="OptionsItemTemplate" Value="{StaticResource HamburgerMenuImageItem}"/>
+            <Setter Property="DisplayMode" Value="CompactInline"/>
+            <Setter Property="PaneBackground" Value="{StaticResource DefaultHamburgerMenuBackgroundBrush}"/>
+            <Setter Property="OpenPaneLength" Value="150"/>
+            <Setter Property="HamburgerWidth" Value="48"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <!--<mah:TransitioningContentControl Content="{Binding Content}"
+                                                         RestartTransitionOnContentChange="True"
+                                                         Transition="Default"/>-->
+                        <ContentControl Content="{Binding Content}"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+        <Style.Triggers>
+
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition>
+                        <Condition.Binding>
+                            <Binding Path="SelectedItem" RelativeSource="{RelativeSource Self}"
+                                     Converter="{StaticResource ValueNotEqualConverter}">
+                                <Binding.ConverterParameter>
+                                    <system:Int32>-1</system:Int32>
+                                </Binding.ConverterParameter>
+                            </Binding>
+                        </Condition.Binding>
+                        <Condition.Value>
+                            <system:Boolean>True</system:Boolean>
+                        </Condition.Value>
+                    </Condition>
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.Setters>
+                    <Setter Property="Content" Value="{Binding RelativeSource={RelativeSource Self}, Mode=OneWay, Path=SelectedItem}"/>
+                </MultiDataTrigger.Setters>
+            </MultiDataTrigger>
+            <Trigger Property="SelectedIndex" Value="-1">
+                <Setter Property="Content" Value="{Binding RelativeSource={RelativeSource Self}, Mode=OneWay, Path=SelectedOptionsItem}"/>
+            </Trigger>
+
+        </Style.Triggers>
+    </Style>
+    
+</ResourceDictionary>

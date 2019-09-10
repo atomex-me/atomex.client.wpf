@@ -1,0 +1,87 @@
+﻿<Page x:Class="Atomex.Client.Wpf.Views.MessagePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
+      xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
+      xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
+      UseLayoutRounding="True"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Center"
+      mc:Ignorable="d" 
+      d:DesignHeight="200"
+      d:DesignWidth="560"
+      d:DataContext="{d:DesignInstance Type=viewModels:MessageViewModel, IsDesignTimeCreatable=True}">
+
+    <Page.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed"/>
+    </Page.Resources>
+
+    <StackPanel Orientation="Vertical">
+        <Border Margin="0 10 0 10"
+                Height="33"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
+                Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+            <TextBlock Text="{Binding Title}"
+                       Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
+                       FontFamily="{StaticResource RobotoLight}"
+                       FontSize="25"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+        <TextBlock Text="{Binding Text}"
+                   Margin="20 20 20 0"
+                   FontSize="15"
+                   FontFamily="{StaticResource RobotoLight}"
+                   HorizontalAlignment="Center"
+                   Foreground="{StaticResource DefaultForegroundBrush}"/>
+
+        <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0 20 0 20">
+            <controls:RoundedButton Width="100"
+                                    Height="40"
+                                    Margin="0 0 3 0"
+                                    Content="{Binding BackText}"
+                                    Command="{Binding BackCommand}"
+                                    Visibility="{Binding IsBackVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                <controls:RoundedButton.Style>
+                    <Style BasedOn="{StaticResource DefaultRoundedButtonStyle}" TargetType="{x:Type controls:RoundedButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsNextVisible}" Value="False">
+                                <Setter Property="CornerRadius" Value="20 20 20 20"/>
+                                <Setter Property="Width" Value="150"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsNextVisible}" Value="True">
+                                <Setter Property="CornerRadius" Value="20 0 0 20"/>
+                                <Setter Property="Width" Value="100"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </controls:RoundedButton.Style>
+            </controls:RoundedButton>
+            <controls:RoundedButton Height="40"
+                                    Content="{Binding NextText}"
+                                    Command="{Binding NextCommand}"
+                                    Visibility="{Binding IsNextVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                <controls:RoundedButton.Style>
+                    <Style BasedOn="{StaticResource DefaultRoundedButtonStyle}" TargetType="{x:Type controls:RoundedButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsBackVisible}" Value="False">
+                                <Setter Property="CornerRadius" Value="20 20 20 20"/>
+                                <Setter Property="Width" Value="150"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsBackVisible}" Value="True">
+                                <Setter Property="CornerRadius" Value="0 20 20 0"/>
+                                <Setter Property="Width" Value="100"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </controls:RoundedButton.Style>
+            </controls:RoundedButton>
+        </StackPanel>
+    </StackPanel>
+</Page>

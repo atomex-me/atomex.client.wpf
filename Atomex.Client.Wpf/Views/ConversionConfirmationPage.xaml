@@ -1,0 +1,319 @@
+﻿<Page x:Class="Atomex.Client.Wpf.Views.ConversionConfirmationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
+      xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      mc:Ignorable="d" 
+      UseLayoutRounding="True"
+      Focusable="False"
+      d:DesignHeight="380"
+      d:DesignWidth="560"
+      d:DataContext="{d:DesignInstance Type=viewModels:ConversionConfirmationViewModel, IsDesignTimeCreatable=True}">
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="AmountForegroundBrush" Color="#eeff00"/>
+        <SolidColorBrush x:Key="AmountInBaseForegroundBrush" Color="DarkGray"/>
+
+        <Style x:Key="AmountTextBlock" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource RobotoMedium}"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="{StaticResource AmountForegroundBrush}"/>
+        </Style>
+
+        <Style x:Key="AmountInBaseTextBlock" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource AmountTextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource AmountInBaseForegroundBrush}"/>
+        </Style>
+    </Page.Resources>
+
+    <StackPanel Orientation="Vertical"
+                Width="560">
+
+        <Border Margin="0 10 0 10"
+                Height="33"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
+                Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+            <TextBlock Text="Send confirmation"
+                       Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
+                       FontFamily="{StaticResource RobotoLight}"
+                       FontSize="25"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+        <TextBlock Text="Do you really want to convert:"
+                   Margin="20 20 20 20"
+                   FontSize="15"
+                   FontFamily="{StaticResource RobotoLight}"
+                   HorizontalAlignment="Center"
+                   Foreground="{StaticResource DefaultForegroundBrush}"/>
+
+        <Border Height="Auto"
+                Margin="10 5 10 5"
+                Background="{StaticResource DefaultSubstrateBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition Height="15"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Margin="0 0 0 0"
+                            Grid.Column="0"
+                            Grid.Row="1">
+                    <TextBlock Foreground="{StaticResource DefaultForegroundBrush}"
+                               FontSize="18"
+                               FontFamily="{StaticResource Roboto}"
+                               VerticalAlignment="Bottom">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="Amount" Mode="TwoWay"/>
+                                <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Margin="4 0 0 2"
+                               Foreground="{StaticResource DefaultForegroundBrush}"
+                               Text="{Binding CurrencyCode}"
+                               FontFamily="{StaticResource Roboto}"
+                               VerticalAlignment="Bottom"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Margin="0 0 0 0"
+                            Grid.Column="0"
+                            Grid.Row="2">
+                    <TextBlock Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                               FontSize="18"
+                               FontFamily="{StaticResource Roboto}"
+                               VerticalAlignment="Top">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="AmountInBase" Mode="TwoWay"/>
+                                <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Margin="4 6 0 0"
+                               Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                               Text="{Binding BaseCurrencyCode}"
+                               FontFamily="{StaticResource Roboto}"
+                               VerticalAlignment="Top"/>
+                </StackPanel>
+
+                <Image Source="{Binding FromCurrencyViewModel.LargeIconPath}"
+                       Width="90"
+                       Height="90"
+                       Grid.Column="1"
+                       Grid.Row="1"
+                       Grid.RowSpan="2"/>
+
+                <iconPacks:PackIconFontAwesome Margin="0 0 0 0"
+                                               Kind="ArrowAltCircleRightRegular"
+                                               Width="24"
+                                               Height="24"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               Foreground="LightGray"
+                                               Grid.Column="2"
+                                               Grid.Row="1"
+                                               Grid.RowSpan="2"/>
+
+                <Image Source="{Binding ToCurrencyViewModel.LargeIconPath}"
+                       Width="90"
+                       Height="90"
+                       Grid.Column="3"
+                       Grid.Row="1"
+                       Grid.RowSpan="2"/>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Margin="0 0 0 0"
+                            Grid.Column="4"
+                            Grid.Row="1">
+                    <TextBlock Foreground="{StaticResource DefaultForegroundBrush}"
+                               FontSize="18"
+                               FontFamily="{StaticResource Roboto}"
+                               VerticalAlignment="Bottom">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="TargetAmount" Mode="TwoWay"/>
+                                <Binding Path="TargetCurrencyFormat" Mode="OneWay"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Margin="4 0 0 2"
+                               Foreground="{StaticResource DefaultForegroundBrush}"
+                               Text="{Binding TargetCurrencyCode}"
+                               FontFamily="{StaticResource Roboto}"
+                               VerticalAlignment="Bottom"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Margin="0 0 0 0"
+                            Grid.Column="4"
+                            Grid.Row="2">
+                    <TextBlock Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                               FontSize="18"
+                               FontFamily="{StaticResource Roboto}"
+                               VerticalAlignment="Top">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="TargetAmountInBase" Mode="TwoWay"/>
+                                <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Margin="4 6 0 0"
+                               Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                               Text="{Binding BaseCurrencyCode}"
+                               FontFamily="{StaticResource Roboto}"
+                               VerticalAlignment="Top"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Margin="20 10 20 0"
+              HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="with price:"
+                       FontSize="15"
+                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       HorizontalAlignment="Right"
+                       Grid.Column="0"
+                       Grid.Row="0"/>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="1"
+                        Grid.Row="0">
+                <TextBlock Margin="5 0 0 0"
+                           Style="{StaticResource AmountTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="EstimatedPrice" Mode="OneWay"/>
+                            <Binding Path="PriceFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StackPanel>
+
+            <TextBlock Text="with payment fee:"
+                       FontSize="15"
+                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       HorizontalAlignment="Right"
+                       Grid.Column="0"
+                       Grid.Row="1"/>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="1"
+                        Grid.Row="1">
+                <TextBlock Margin="5 0 0 0"
+                           Style="{StaticResource AmountTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="EstimatedPaymentFee" Mode="OneWay"/>
+                            <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text="{Binding CurrencyCode}"
+                           Margin="3 0 0 1"
+                           FontSize="11"
+                           VerticalAlignment="Bottom"
+                           Style="{StaticResource AmountTextBlock}"/>
+                <TextBlock Text="("
+                           Margin="5 0 0 0"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+                <TextBlock Style="{StaticResource AmountInBaseTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="EstimatedPaymentFeeInBase" Mode="OneWay"/>
+                            <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text=")"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+            </StackPanel>
+
+            <TextBlock Text="with redeem fee:"
+                       FontSize="15"
+                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       HorizontalAlignment="Right"
+                       Grid.Column="0"
+                       Grid.Row="2"/>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="1"
+                        Grid.Row="2">
+                <TextBlock Margin="5 0 0 0"
+                           Style="{StaticResource AmountTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="EstimatedRedeemFee" Mode="OneWay"/>
+                            <Binding Path="TargetCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text="{Binding TargetCurrencyCode}"
+                           Margin="3 0 0 1"
+                           FontSize="11"
+                           VerticalAlignment="Bottom"
+                           Style="{StaticResource AmountTextBlock}"/>
+                <TextBlock Text="("
+                           Margin="5 0 0 0"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+                <TextBlock Style="{StaticResource AmountInBaseTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="EstimatedRedeemFeeInBase" Mode="OneWay"/>
+                            <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text=")"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0 20 0 20">
+            <controls:RoundedButton Width="100"
+                                    Height="40"
+                                    Margin="0 0 3 0"
+                                    CornerRadius="20 0 0 20"
+                                    Content="No"
+                                    Command="{Binding BackCommand}"/>
+            <controls:RoundedButton Width="100"
+                                    Height="40"
+                                    CornerRadius="0 20 20 0"
+                                    Content="Yes"
+                                    Command="{Binding NextCommand}"/>
+        </StackPanel>
+    </StackPanel>
+</Page>

@@ -1,0 +1,46 @@
+﻿{
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.Console", "Atomex.Client.Core" ],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "restrictedToMinimumLevel": "Debug"
+        }
+      },
+      {
+        "Name": "RollingFile",
+        "Args": {
+          "pathFormat": "logs/log-{Date}.txt",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff K} [{Level:u3}] [{Class}] {Message:lj} (at {Caller}){NewLine}{Exception}"
+        }
+      }
+    ],
+    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId", "WithCaller" ]
+  },
+  "Services": {
+    "MainNet": {
+      "Exchange": {
+        "Url": "wss://atomex.me/exchange"
+      },
+      "MarketData": {
+        "Url": "wss://atomex.me/marketdata"
+      }
+    },
+    "TestNet": {
+      "Exchange": {
+        "Url": "wss://test.atomex.me/exchange"
+      },
+      "MarketData": {
+        "Url": "wss://test.atomex.me/marketdata"
+      }
+    }
+  }
+}

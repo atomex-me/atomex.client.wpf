@@ -1,0 +1,152 @@
+﻿<controls:ChildWindow x:Class="Atomex.Client.Wpf.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
+             xmlns:helpers="clr-namespace:Atomex.Client.Wpf.Helpers"
+             xmlns:common="clr-namespace:Atomex.Client.Wpf.Common"
+             mc:Ignorable="d" 
+
+             Focusable="False"
+             ShowTitleBar="False"
+             CloseOnOverlay="False"
+             Background="Transparent"
+             OverlayBrush="Transparent"   
+
+             UseLayoutRounding="True"
+             common:ChildWindowHelper.IsOpen="True"
+             d:DesignWidth="700"
+             d:DesignHeight="360">
+
+    <Border Style="{StaticResource ChildViewBorderLight}"
+            Width="600"
+            Height="320">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    CornerRadius="8 0 0 10"
+                    BorderThickness="0">
+                <Border.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/logo_pillow.png"/>
+                </Border.Background>
+
+                <StackPanel Orientation="Horizontal"
+                            Margin="0 30 0 0"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Center">
+                    <Image Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/logo_white.png"
+                           Width="50"
+                           Height="52"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+                    <Glyphs UnicodeString="atomex"
+                            Indices=",60;,30;,58;,85;,20;,50"
+                            FontUri="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Fonts/Comfortaa-Regular.ttf"
+                            Fill="White"
+                            FontRenderingEmSize="40"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="10 0 0 0"/>
+                </StackPanel>
+            </Border>
+
+            <Grid Grid.Column="1">
+                <StackPanel Orientation="Vertical">
+                    <Button Width="24"
+                            Height="24"
+                            Margin="0 4 0 0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding CloseButtonCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type controls:ChildWindow}}}"
+                            Style="{DynamicResource ChildViewCloseButton}"/>
+                    
+                    <!--<Label Content="SignIn"
+                           Margin="0,45,0,0"
+                           Height="50"
+                           FontFamily="Roboto Bold"
+                           FontSize="32"
+                           Foreground="{StaticResource LoginViewFontBrush}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Top"
+                           />-->
+
+                    <Image Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/login_window_logo.png"
+                           Width="80"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Top"/>
+
+                    <TextBox Width="240"
+                             Height="40"
+                             Margin="0 20 0 0"
+                             TextWrapping="NoWrap"
+                             HorizontalAlignment="Center"                       
+                             VerticalAlignment="Top"  
+                             Text="ivmatsak@gmail.com"
+                             helpers:TextBoxHelper.Icon="{iconPacks:Material Kind=Account}"
+                             helpers:TextBoxHelper.CornerRadius="20"    
+                             helpers:TextBoxHelper.PlaceHolder="Login..."
+                             Style="{StaticResource CustomTextBox}"/>
+
+                    <PasswordBox Width="240"
+                                 Height="40" 
+                                 Margin="0 5 0 0"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Top"
+                                 helpers:PasswordBoxHelper.Icon="{iconPacks:Material Kind=Lock}"
+                                 helpers:PasswordBoxHelper.CornerRadius="20"    
+                                 helpers:PasswordBoxHelper.PlaceHolder="Password..."
+                                 Style="{StaticResource CustomPasswordBox}"/>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Margin="0 5 0 0">
+                        <controls:RoundedButton Width="120"
+                                                Height="40"
+                                                Content="Log In"
+                                                VerticalAlignment="Bottom"
+                                                Margin="0 0 1 0"
+                                                CornerRadius="20 0 0 20"
+                                                FontSize="14"
+                                                Command="{Binding LogInCommand}"/>
+
+                        <controls:RoundedButton Width="120"
+                                                Height="40"
+                                                Content="Anonymous"
+                                                VerticalAlignment="Bottom"
+                                                CornerRadius="0 20 20 0"
+                                                FontSize="14"
+                                                Command="{Binding AnonymousCommand}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Margin="0 5 0 0"
+                                Height="15">
+                        <Button Content="Register"
+                                Margin="5 0 5 0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Command="{Binding RegisterCommand}"
+                                Style="{StaticResource LinkButton}"/>
+
+                        <Rectangle VerticalAlignment="Stretch"
+                                   Width="1"
+                                   Stroke="{StaticResource DefaultTextBoxForegroundBrush}" />
+
+                        <Button Content="Forgot your password?"
+                                Margin="5 0 5 0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Command="{Binding ForgotPasswordCommand}"
+                                Style="{StaticResource LinkButton}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</controls:ChildWindow>
