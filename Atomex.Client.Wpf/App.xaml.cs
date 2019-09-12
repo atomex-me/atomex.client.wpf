@@ -78,7 +78,7 @@ namespace Atomex.Client.Wpf
                 //.UseLocalBinariesProvider(@"Atomex.Client.Wpf.Installer.msi")
                 //.UseLocalVersionProvider(@"version.json")
                 .UseHttpMetadataProvider("https://atomex.me/versions.json", TargetPlatform.Windows)
-                .UseMsiProductProvider("0779aaaa-2411-4948-b5bc-48f81b8c6143");
+                .UseMsiProductProvider("DB7FCF8D-E0C6-4C99-A6B1-3FB6D703F97E");
 
             // init & show main view
             var mainView = new MainWindow();

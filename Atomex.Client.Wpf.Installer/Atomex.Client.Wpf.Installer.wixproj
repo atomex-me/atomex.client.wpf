@@ -6,7 +6,7 @@
     <ProductVersion>3.10</ProductVersion>
     <ProjectGuid>b799722d-701c-4fda-82b0-c2390f5816a0</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>Atomex.Wallet</OutputName>
+    <OutputName>Atomex.Client</OutputName>
     <OutputType>Package</OutputType>
     <DefineConstants>AppDir=..\Atomex.Client.Wpf\bin\$(Configuration)</DefineConstants>
     <DefineSolutionProperties>false</DefineSolutionProperties>
@@ -22,7 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
-    <HarvestDirectory Include="..\Atomex.Client.Wpf\bin\$(Configuration)">
+    <HarvestDirectory Include="..\Atomex.Client.Wpf\bin\Debug">
       <GenerateGuidsNow>true</GenerateGuidsNow>
       <DirectoryRefId>INSTALLDIR</DirectoryRefId>
       <ComponentGroupName>App</ComponentGroupName>
@@ -30,10 +30,20 @@
       <SuppressCom>true</SuppressCom>
       <SuppressRegistry>true</SuppressRegistry>
       <SuppressRootDirectory>true</SuppressRootDirectory>
+      <Link>$(Configuration)</Link>
     </HarvestDirectory>
-    <WixExtension Include="WixUIExtension" />
-    <WixExtension Include="WixNetFxExtension" />
-    <WixExtension Include="WixUtilExtension" />
+    <WixExtension Include="WixUIExtension">
+      <HintPath>WixUIExtension</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixNetFxExtension">
+      <HintPath>WixNetFxExtension</HintPath>
+      <Name>WixNetFxExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>WixUtilExtension</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Atomex.Client.Wpf\Atomex.Client.Wpf.csproj">
@@ -41,7 +51,8 @@
       <Project>{a2b4dc4c-e075-4a08-89a8-96e2fc38c747}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups></RefProjectOutputGroups>
+      <RefProjectOutputGroups>
+      </RefProjectOutputGroups>
       <RefTargetDir>INSTALLDIR</RefTargetDir>
     </ProjectReference>
   </ItemGroup>
