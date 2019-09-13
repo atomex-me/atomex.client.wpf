@@ -16,10 +16,10 @@ build_script:
   - dotnet restore
   - nuget restore
   - msbuild /p:Configuration="Release"  /clp:ErrorsOnly'
-  - msbuild .\Atomex.Client.Wpf.Installer\Atomex.Client.Wpf.Installer.wixproj /p:Configuration="Release" /clp:ErrorsOnly'
+#  - msbuild .\Atomex.Client.Wpf.Installer\Atomex.Client.Wpf.Installer.wixproj /p:Configuration="Release" /clp:ErrorsOnly'
 
-artifacts:
-  - path: .\Atomex.Client.Wpf.Installer\bin\Release\Atomex.Wallet.msi
+#artifacts:
+#  - path: .\Atomex.Client.Wpf.Installer\bin\Release\Atomex.Wallet.msi
 
 #deploy:
 #  release: v$(appveyor_build_version)
