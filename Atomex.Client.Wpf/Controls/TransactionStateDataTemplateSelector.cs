@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 
 namespace Atomex.Client.Wpf.Controls
 {
-    public enum TransactionState
-    {
-        Unconfirmed,
-        Confirmed
-    }
-
     public class TransactionStateDataTemplateSelector : DataTemplateSelector
     {
+        public DataTemplate UnknownTemplate { get; set; }
+        public DataTemplate PendingTemplate { get; set; }
         public DataTemplate ConfirmedTemplate { get; set; }
         public DataTemplate UnconfirmedTemplate { get; set; }
+        public DataTemplate FailedTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -23,10 +21,16 @@ namespace Atomex.Client.Wpf.Controls
 
             switch (transaction.State)
             {
-                case TransactionState.Confirmed:
+                case BlockchainTransactionState.Unknown:
+                    return UnknownTemplate;
+                case BlockchainTransactionState.Pending:
+                    return PendingTemplate;
+                case BlockchainTransactionState.Confirmed:
                     return ConfirmedTemplate;
-                case TransactionState.Unconfirmed:
+                case BlockchainTransactionState.Unconfirmed:
                     return UnconfirmedTemplate;
+                case BlockchainTransactionState.Failed:
+                    return FailedTemplate;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

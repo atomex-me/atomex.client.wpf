@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
+using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
@@ -111,7 +112,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 {
                     var estimatedFee = _amount != 0
                         ? App.Account
-                            .EstimateFeeAsync(Currency, To, _amount)
+                            .EstimateFeeAsync(Currency, To, _amount, BlockchainTransactionType.Output)
                             .WaitForResult()
                         : 0;
 

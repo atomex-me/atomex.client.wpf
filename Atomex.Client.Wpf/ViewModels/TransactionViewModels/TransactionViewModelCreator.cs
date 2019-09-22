@@ -1,30 +1,22 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Atomex.Blockchain.Abstract;
+﻿using Atomex.Blockchain.Abstract;
+using Atomex.Blockchain.BitcoinBased;
+using Atomex.Blockchain.Ethereum;
+using Atomex.Blockchain.Tezos;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {
     public class TransactionViewModelCreator
     {
-        private Dictionary<string, ITxOutput> IndexedOutputs { get; }
-
-        public TransactionViewModelCreator(
-            IEnumerable<IBlockchainTransaction> transactions,
-            IEnumerable<ITxOutput> outputs)
-        {
-            IndexedOutputs = outputs.ToDictionary(o => $"{o.TxId}:{o.Index}");
-        }
-
         public TransactionViewModel CreateViewModel(IBlockchainTransaction tx)
         {
             switch (tx.Currency)
             {
                 case BitcoinBasedCurrency _:
-                    return new BitcoinBasedTransactionViewModel((IInOutTransaction)tx, IndexedOutputs);
+                    return new BitcoinBasedTransactionViewModel((IBitcoinBasedTransaction)tx);
                 case Ethereum _:
-                    return new EthereumTransactionViewModel((IAddressBasedTransaction)tx);
+                    return new EthereumTransactionViewModel((EthereumTransaction)tx);
                 case Tezos _:
-                    return new TezosTransactionViewModel((IAddressBasedTransaction)tx);
+                    return new TezosTransactionViewModel((TezosTransaction)tx);
             }
 
             return null;

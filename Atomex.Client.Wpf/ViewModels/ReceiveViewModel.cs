@@ -86,13 +86,16 @@ namespace Atomex.Client.Wpf.ViewModels
                     qrCodeBitmap = qrCode.GetGraphic(PixelsPerModule);
             });
 
-            await Application.Current.Dispatcher.InvokeAsync(() =>
+            if (Application.Current.Dispatcher != null)
             {
-                QrCode = qrCodeBitmap.ToBitmapSource();
-                OnPropertyChanged(nameof(QrCode));
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    QrCode = qrCodeBitmap.ToBitmapSource();
+                    OnPropertyChanged(nameof(QrCode));
 
-                qrCodeBitmap.Dispose();
-            });
+                    qrCodeBitmap.Dispose();
+                });
+            }
         }
 
         private void DesignerMode()

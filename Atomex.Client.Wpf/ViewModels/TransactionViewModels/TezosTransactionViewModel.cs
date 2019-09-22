@@ -1,55 +1,58 @@
 ﻿using System;
-using Atomex.Blockchain;
 using Atomex.Blockchain.Abstract;
 using Atomex.Blockchain.Tezos;
-using Atomex.Client.Wpf.Controls;
+using Atomex.Client.Wpf.Common;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {
-    public class TezosTransactionViewModel : AddressBasedTransactionViewModel
+    public class TezosTransactionViewModel : TransactionViewModel
     {
-        public TezosTransactionViewModel(IAddressBasedTransaction tx)
-            : base(tx)
+        public string From { get; set; }
+        public string To { get; set; }
+        public decimal GasLimit { get; set; }
+        public bool IsInternal { get; set; }
+        public string FromExplorerUri => $"{Currency.AddressExplorerUri}{From}";
+        public string ToExplorerUri => $"{Currency.AddressExplorerUri}{To}";
+
+        public TezosTransactionViewModel()
         {
+#if DEBUG
+            if (Env.IsInDesignerMode())
+                DesignerMode();
+#endif
         }
 
-        public override decimal GetAmount(IAddressBasedTransaction tx)
+        public TezosTransactionViewModel(TezosTransaction tx)
+            : base(tx, GetAmount(tx))
         {
-            if (!(tx is TezosTransaction xtzTx))
-                throw new ArgumentException(nameof(tx));
-
-            switch (xtzTx.Type)
-            {
-                //case TezosTransaction.UnknownTransaction:
-                case TezosTransaction.OutputTransaction:
-                    return -Tezos.MtzToTz(xtzTx.Amount + xtzTx.Fee);
-                case TezosTransaction.InputTransaction:
-                    return Tezos.MtzToTz(xtzTx.Amount);
-                case TezosTransaction.SelfTransaction:
-                    return -Tezos.MtzToTz(xtzTx.Fee);
-                default:
-                    return 0;
-            }
+            From = tx.From;
+            To = tx.To;
+            GasLimit = tx.GasLimit;
+            Fee = tx.Fee;
+            IsInternal = tx.IsInternal;
         }
 
-        public override TransactionType GetType(IAddressBasedTransaction tx)
+        private static decimal GetAmount(TezosTransaction tx)
         {
-            if (!(tx is TezosTransaction xtzTx))
-                throw new ArgumentException(nameof(tx));
+            var result = 0m;
 
-            switch (xtzTx.Type)
-            {
-                //case TezosTransaction.UnknownTransaction:
-                //    return TransactionType.Unknown;
-                case TezosTransaction.OutputTransaction:
-                    return TransactionType.Sent;
-                case TezosTransaction.InputTransaction:
-                    return TransactionType.Received;
-                case TezosTransaction.SelfTransaction:
-                    return TransactionType.Self;
-                default:
-                    return TransactionType.Unknown;
-            }
+            if (tx.Type.HasFlag(BlockchainTransactionType.Input))
+                result += Tezos.MtzToTz(tx.Amount);
+
+            if (tx.Type.HasFlag(BlockchainTransactionType.Output))
+                result += -Tezos.MtzToTz(tx.Amount + tx.Fee);
+
+            tx.InternalTxs?.ForEach(t => result += GetAmount(t));
+
+            return result;
+        }
+
+        private void DesignerMode()
+        {
+            Id = "1234567890abcdefgh1234567890abcdefgh";
+            From = "1234567890abcdefgh1234567890abcdefgh";
+            To = "1234567890abcdefgh1234567890abcdefgh";
+            Time = DateTime.UtcNow;
         }
     }
 }

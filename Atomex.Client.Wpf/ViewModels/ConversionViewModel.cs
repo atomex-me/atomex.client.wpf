@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Atomex.Abstract;
+using Atomex.Blockchain.Abstract;
 using Atomex.Common;
 using Atomex.Core;
 using Atomex.Core.Entities;
@@ -201,7 +202,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 _estimatedPaymentFee = _amount != 0
                     ? App.Account
-                        .EstimateFeeAsync(FromCurrency, null, _amount)
+                        .EstimateFeeAsync(FromCurrency, null, _amount, BlockchainTransactionType.SwapPayment)
                         .WaitForResult()
                     : 0;
 
@@ -464,19 +465,21 @@ namespace Atomex.Client.Wpf.ViewModels
                     _targetAmount = Amount * _estimatedPrice;
                 }
 
-                await Application.Current.Dispatcher.InvokeAsync(() =>
+                if (Application.Current.Dispatcher != null)
                 {
-                    OnPropertyChanged(nameof(EstimatedPrice));
-                    OnPropertyChanged(nameof(EstimatedMaxAmount));
-                    OnPropertyChanged(nameof(PriceFormat));
-                    OnPropertyChanged(nameof(IsNoLiquidity));
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        OnPropertyChanged(nameof(EstimatedPrice));
+                        OnPropertyChanged(nameof(EstimatedMaxAmount));
+                        OnPropertyChanged(nameof(PriceFormat));
+                        OnPropertyChanged(nameof(IsNoLiquidity));
 
-                    OnPropertyChanged(nameof(TargetCurrencyFormat));
-                    OnPropertyChanged(nameof(TargetAmount));
+                        OnPropertyChanged(nameof(TargetCurrencyFormat));
+                        OnPropertyChanged(nameof(TargetAmount));
 
-                    UpdateTargetAmountInBase(App.QuotesProvider);
-
-                }, DispatcherPriority.Background);
+                        UpdateTargetAmountInBase(App.QuotesProvider);
+                    }, DispatcherPriority.Background);
+                }
             }
             catch (Exception e)
             {
@@ -491,17 +494,19 @@ namespace Atomex.Client.Wpf.ViewModels
                 var swaps = await App.Account
                     .GetSwapsAsync();
 
-                await Application.Current.Dispatcher.InvokeAsync(() =>
+                if (Application.Current.Dispatcher != null)
                 {
-                    var swapViewModels = swaps
-                        .Select(SwapViewModelFactory.CreateSwapViewModel)
-                        .ToList()
-                        .SortList((s1, s2) => s2.Time.ToUniversalTime()
-                            .CompareTo(s1.Time.ToUniversalTime()));
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        var swapViewModels = swaps
+                            .Select(SwapViewModelFactory.CreateSwapViewModel)
+                            .ToList()
+                            .SortList((s1, s2) => s2.Time.ToUniversalTime()
+                                .CompareTo(s1.Time.ToUniversalTime()));
 
-                    Swaps = new ObservableCollection<SwapViewModel>(swapViewModels);
-
-                }, DispatcherPriority.Background);
+                        Swaps = new ObservableCollection<SwapViewModel>(swapViewModels);
+                    }, DispatcherPriority.Background);
+                }
             }
             catch (Exception e)
             {

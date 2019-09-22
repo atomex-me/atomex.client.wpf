@@ -338,7 +338,6 @@
     <Compile Include="ViewModels\ConversionConfirmationViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WalletTypeViewModel.cs" />
     <Compile Include="ViewModels\MyWalletsViewModel.cs" />
-    <Compile Include="ViewModels\TransactionViewModels\AddressBasedTransactionViewModel.cs" />
     <Compile Include="ViewModels\Abstract\IExpandable.cs" />
     <Compile Include="ViewModels\CreateWalletViewModel.cs" />
     <Compile Include="ViewModels\Abstract\IMenuSelector.cs" />
@@ -362,7 +361,6 @@
     <Compile Include="ViewModels\CreateWalletViewModels\WriteDerivedKeyPasswordViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WriteMnemonicViewModel.cs" />
     <Compile Include="ViewModels\ReceiveViewModel.cs" />
-    <Compile Include="ViewModels\TransactionViewModels\InOutTransactionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\TransactionViewModelCreator.cs" />
     <Compile Include="ViewModels\TransactionViewModels\BitcoinBasedTransactionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\EthereumTransactionViewModel.cs" />
@@ -446,6 +444,15 @@
     </Compile>
     <Compile Include="Views\MyWalletsView.xaml.cs">
       <DependentUpon>MyWalletsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SubViews\TezosTransactionDetailsView.xaml.cs">
+      <DependentUpon>TezosTransactionDetailsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SubViews\EthereumTransactionDetailsView.xaml.cs">
+      <DependentUpon>EthereumTransactionDetailsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SubViews\TransactionDetailsView.xaml.cs">
+      <DependentUpon>TransactionDetailsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UnlockView.xaml.cs">
       <DependentUpon>UnlockView.xaml</DependentUpon>
@@ -655,6 +662,18 @@
     <Page Include="Views\MyWalletsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SubViews\TezosTransactionDetailsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SubViews\EthereumTransactionDetailsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SubViews\TransactionDetailsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UnlockView.xaml">
       <SubType>Designer</SubType>

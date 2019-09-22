@@ -1,58 +1,61 @@
 ﻿using System;
-using Atomex.Blockchain;
 using Atomex.Blockchain.Abstract;
 using Atomex.Blockchain.Ethereum;
-using Atomex.Client.Wpf.Controls;
+using Atomex.Client.Wpf.Common;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {
-    public class EthereumTransactionViewModel : AddressBasedTransactionViewModel
+    public class EthereumTransactionViewModel : TransactionViewModel
     {
-        public EthereumTransactionViewModel(IAddressBasedTransaction tx)
-            : base(tx)
+        public string From { get; set; }
+        public string To { get; set; }
+        public decimal GasPrice { get; set; }
+        public decimal GasLimit { get; set; }
+        public decimal GasUsed { get; set; }
+        public bool IsInternal { get; set; }
+        public string FromExplorerUri => $"{Currency.AddressExplorerUri}{From}";
+        public string ToExplorerUri => $"{Currency.AddressExplorerUri}{To}";
+
+        public EthereumTransactionViewModel()
         {
+#if DEBUG
+            if (Env.IsInDesignerMode())
+                DesignerMode();
+#endif
         }
 
-        public override decimal GetAmount(IAddressBasedTransaction tx)
+        public EthereumTransactionViewModel(EthereumTransaction tx)
+            : base(tx, GetAmount(tx))
         {
-            if (!(tx is EthereumTransaction ethTx))
-                throw new ArgumentException(nameof(tx));
-
-            var gas = ethTx.GasUsed != 0 ? ethTx.GasUsed : ethTx.GasLimit;
-
-            switch (ethTx.Type)
-            {
-                case EthereumTransaction.UnknownTransaction:
-                    return Ethereum.WeiToEth(ethTx.Amount + ethTx.GasPrice * gas);
-                case EthereumTransaction.OutputTransaction:
-                    return -Ethereum.WeiToEth(ethTx.Amount + ethTx.GasPrice * gas);
-                case EthereumTransaction.InputTransaction:
-                    return Ethereum.WeiToEth(ethTx.Amount);
-                case EthereumTransaction.SelfTransaction:
-                    return -Ethereum.WeiToEth(ethTx.GasPrice * gas);
-                default:
-                    return 0;
-            }
+            From = tx.From;
+            To = tx.To;
+            GasPrice = (decimal) tx.GasPrice;
+            GasLimit = (decimal) tx.GasLimit;
+            GasUsed = (decimal) tx.GasUsed;
+            IsInternal = tx.IsInternal;
         }
 
-        public override TransactionType GetType(IAddressBasedTransaction tx)
+        private static decimal GetAmount(EthereumTransaction tx)
         {
-            if (!(tx is EthereumTransaction ethTx))
-                throw new ArgumentException(nameof(tx));
+            var result = 0m;
 
-            switch (ethTx.Type)
-            {
-                case EthereumTransaction.UnknownTransaction:
-                    return TransactionType.Unknown;
-                case EthereumTransaction.OutputTransaction:
-                    return TransactionType.Sent;
-                case EthereumTransaction.InputTransaction:
-                    return TransactionType.Received;
-                case EthereumTransaction.SelfTransaction:
-                    return TransactionType.Self;
-                default:
-                    return TransactionType.Unknown;
-            }
+            if (tx.Type.HasFlag(BlockchainTransactionType.Input))
+                result += Ethereum.WeiToEth(tx.Amount);
+
+            if (tx.Type.HasFlag(BlockchainTransactionType.Output))
+                result += -Ethereum.WeiToEth(tx.Amount + tx.GasUsed * tx.GasPrice);
+
+            tx.InternalTxs?.ForEach(t => result += GetAmount(t));
+
+            return result;
+        }
+
+        private void DesignerMode()
+        {
+            Id = "0x1234567890abcdefgh1234567890abcdefgh";
+            From = "0x1234567890abcdefgh1234567890abcdefgh";
+            To = "0x1234567890abcdefgh1234567890abcdefgh";
+            Time = DateTime.UtcNow;
         }
     }
 }

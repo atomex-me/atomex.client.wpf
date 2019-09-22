@@ -3,56 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 
 namespace Atomex.Client.Wpf.Controls
 {
-    public enum TransactionType
-    {
-        Unknown,
-        Sent,
-        Received,
-        Self,
-        SwapPayment,
-        SwapRedeem,
-        SwapRefund
-    }
-
     public class TransactionDataTemplateSelector : DataTemplateSelector
     {
         public string Currency { get; set; }
         public DataTemplate UnknownTemplate { get; set; }
         public DataTemplate SentTemplate { get; set; }
         public DataTemplate ReceivedTemplate { get; set; }
-        public DataTemplate SelfTemplate { get; set; }
         public DataTemplate SwapPaymentTemplate { get; set; }
         public DataTemplate SwapRedeemTemplate { get; set; }
         public DataTemplate SwapRefundTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (!(item is TransactionViewModel transaction))
+            if (!(item is TransactionViewModel tx))
                 return null;
 
-            switch (transaction.Type)
-            {
-                case TransactionType.Unknown:
-                    return UnknownTemplate;
-                case TransactionType.Sent:
-                    return SentTemplate;
-                case TransactionType.Received:
-                    return ReceivedTemplate;
-                case TransactionType.Self:
-                    return SelfTemplate;
-                case TransactionType.SwapPayment:
-                    return SwapPaymentTemplate;
-                case TransactionType.SwapRedeem:
-                    return SwapRedeemTemplate;
-                case TransactionType.SwapRefund:
-                    return SwapRefundTemplate;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            if (tx.Type.HasFlag(BlockchainTransactionType.SwapPayment))
+                return SwapPaymentTemplate;
+
+            if (tx.Type.HasFlag(BlockchainTransactionType.SwapRefund))
+                return SwapRefundTemplate;
+
+            if (tx.Type.HasFlag(BlockchainTransactionType.SwapRedeem))
+                return SwapRedeemTemplate;
+
+            if (tx.Amount < 0) //tx.Type.HasFlag(BlockchainTransactionType.Output))
+                return SentTemplate;
+
+            if (tx.Amount >= 0) //tx.Type.HasFlag(BlockchainTransactionType.Input))
+                return ReceivedTemplate;
+
+            return UnknownTemplate;
         }
     }
 
@@ -69,14 +55,10 @@ namespace Atomex.Client.Wpf.Controls
 
             var selector = Selectors.FirstOrDefault(s => s.Currency == tx.Currency.Name);
 
-            if (selector != null)
-            {
+            if (selector != null)            
                 return selector.SelectTemplate(tx, container);
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException();
-            }
+            
+            throw new ArgumentOutOfRangeException();
         }
     }
 }
