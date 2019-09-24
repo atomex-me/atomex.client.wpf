@@ -130,8 +130,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 var symbol    = App.Account.Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
                 var side      = symbol.OrderSideForBuyCurrency(ToCurrency);
                 var terminal  = App.Terminal;
-                var orderBook = terminal.GetOrderBook(symbol);
-                var price     = orderBook.EstimatedDealPrice(side, Amount);
+                var price     = EstimatedPrice; // orderBook.EstimatedDealPrice(side, Amount);
 
                 if (price == 0)
                     return new Error(Errors.NoLiquidity, Resources.CvNoLiquidity);
@@ -146,7 +145,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     Qty = qty,
                     Side = side,
                     Type = OrderType.FillOrKill,
-                    FromWallets = fromWallets.ToList(),
+                    FromWallets = fromWallets.ToList()
                 };
 
                 await order.CreateProofOfPossessionAsync(account);

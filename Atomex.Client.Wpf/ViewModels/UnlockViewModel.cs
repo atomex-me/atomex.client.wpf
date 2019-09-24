@@ -61,7 +61,7 @@ namespace Atomex.Client.Wpf.ViewModels
             }
             catch (CryptographicException e)
             {
-                Log.Error(e, "Invalid password error");
+                Log.Error("Invalid password error");
 
                 InvalidPassword = true;
                 InProgress = false;

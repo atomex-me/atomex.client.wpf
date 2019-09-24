@@ -31,6 +31,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
         public DateTime Time { get; set; }
         public DateTime LocalTime => Time.ToLocalTime();
         public string TxExplorerUri => $"{Currency.TxExplorerUri}{Id}";
+        public bool CanBeRemoved { get; set; }
 
         private bool _isExpanded;
         public bool IsExpanded
@@ -60,6 +61,8 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
             AmountFormat = currencyViewModel.CurrencyFormat;
             CurrencyCode = currencyViewModel.CurrencyCode;
             Time = tx.CreationTime ?? DateTime.UtcNow;
+            CanBeRemoved = tx.State == BlockchainTransactionState.Failed ||
+                           tx.State == BlockchainTransactionState.Pending;
 
             if (tx.Type.HasFlag(BlockchainTransactionType.SwapPayment))
             {

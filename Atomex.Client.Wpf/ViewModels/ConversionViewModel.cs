@@ -198,14 +198,37 @@ namespace Atomex.Client.Wpf.ViewModels
             get => _amount;
             set
             {
+                var previousAmount = _amount;
                 _amount = value;
 
-                _estimatedPaymentFee = _amount != 0
-                    ? App.Account
-                        .EstimateFeeAsync(FromCurrency, null, _amount, BlockchainTransactionType.SwapPayment)
-                        .WaitForResult()
+                var estimatedPaymentFee = _amount != 0
+                    ? (_amount < FromCurrencyViewModel.AvailableAmount
+                        ? App.Account
+                            .EstimateFeeAsync(FromCurrency, null, _amount, BlockchainTransactionType.SwapPayment)
+                            .WaitForResult()
+                        : null)
                     : 0;
 
+                if (estimatedPaymentFee == null)
+                {
+                    var (maxAmount, maxFee) = App.Account
+                        .EstimateMaxAmountToSendAsync(FromCurrency, null, BlockchainTransactionType.SwapPayment)
+                        .WaitForResult();
+
+                    if (maxAmount > 0)
+                    {
+                        _amount = maxAmount;
+                        estimatedPaymentFee = maxFee;
+                    }
+                    else
+                    {
+                        _amount = previousAmount;
+                        // todo: insufficient funds warning
+                        return;
+                    }
+                }
+
+                _estimatedPaymentFee = estimatedPaymentFee.Value;
                 _estimatedRedeemFee = ToCurrency.GetDefaultRedeemFee();
                 _useRewardForRedeem = false;
 

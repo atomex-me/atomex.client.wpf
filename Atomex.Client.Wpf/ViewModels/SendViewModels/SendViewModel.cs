@@ -106,32 +106,56 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             get => _amount;
             set
             {
+                var previousAmount = _amount;
                 _amount = value;
 
                 if (UseDefaultFee)
                 {
                     var estimatedFee = _amount != 0
-                        ? App.Account
-                            .EstimateFeeAsync(Currency, To, _amount, BlockchainTransactionType.Output)
-                            .WaitForResult()
+                        ? (_amount < CurrencyViewModel.AvailableAmount
+                            ? App.Account
+                                .EstimateFeeAsync(Currency, To, _amount, BlockchainTransactionType.Output)
+                                .WaitForResult()
+                            : null)
                         : 0;
 
-                    if (_amount + estimatedFee > CurrencyViewModel.AvailableAmount)
-                        _amount = Math.Max(CurrencyViewModel.AvailableAmount - estimatedFee, 0);
+                    if (estimatedFee == null)
+                    {
+                        var (maxAmount, maxFee) = App.Account
+                            .EstimateMaxAmountToSendAsync(Currency, To, BlockchainTransactionType.Output)
+                            .WaitForResult();
+
+                        if (maxAmount > 0)
+                        {
+                            _amount = maxAmount;
+                            estimatedFee = maxFee;
+                        }
+                        else
+                        {
+                            _amount = previousAmount;
+                            Warning = Resources.CvInsufficientFunds;
+                            return;
+                        }
+                    } 
+
+                    if (_amount + estimatedFee.Value > CurrencyViewModel.AvailableAmount)
+                        _amount = Math.Max(CurrencyViewModel.AvailableAmount - estimatedFee.Value, 0);
 
                     if (_amount == 0)
                         estimatedFee = 0;
 
                     OnPropertyChanged(nameof(AmountString));
 
-                    _fee = Currency.GetFeeFromFeeAmount(estimatedFee, Currency.GetDefaultFeePrice());
+                    _fee = Currency.GetFeeFromFeeAmount(estimatedFee.Value, Currency.GetDefaultFeePrice());
                     OnPropertyChanged(nameof(FeeString));
 
                     if (UseFeePrice)
                     {
                         _feePrice = Currency.GetDefaultFeePrice();
-                        OnPropertyChanged( nameof(FeePriceString));
+                        OnPropertyChanged(nameof(FeePriceString));
                     }
+
+                    Warning = string.Empty;
                 }
                 else
                 {

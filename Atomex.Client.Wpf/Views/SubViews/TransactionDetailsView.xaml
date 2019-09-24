@@ -167,7 +167,8 @@
                                      PressedBrush="{StaticResource IconButtonPressedBrush}"
                                      Margin="10 0 0 0"
                                      ToolTip="Remove transaction from local storage"
-                                     Command="{Binding RemoveCommand}">
+                                     Command="{Binding RemoveCommand}"
+                                     Visibility="{Binding CanBeRemoved, Converter={StaticResource bool2VisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type controls:IconButton}">
                             <iconPacks:PackIconMaterial x:Name="removeIcon"
