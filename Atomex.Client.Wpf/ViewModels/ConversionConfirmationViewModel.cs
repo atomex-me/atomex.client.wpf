@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
@@ -112,25 +113,24 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 var account = App.Account;
 
-                var requiredAmount = Amount + EstimatedPaymentFee;
-
                 var fromWallets = (await account
                     .GetUnspentAddressesAsync(
                         currency: FromCurrency,
-                        amount: requiredAmount,
+                        amount: Amount,
                         fee: 0,
                         feePrice: 0,
-                        isFeePerTransaction: false,
-                        addressUsagePolicy: AddressUsagePolicy.UseMinimalBalanceFirst))
+                        feeUsagePolicy: FeeUsagePolicy.EstimatedFee,
+                        addressUsagePolicy: AddressUsagePolicy.UseMinimalBalanceFirst,
+                        transactionType: BlockchainTransactionType.SwapPayment))
                     .ToList();
 
-                if (requiredAmount > 0 && !fromWallets.Any())
+                if (Amount > 0 && !fromWallets.Any())
                     return new Error(Errors.SwapError, Resources.CvInsufficientFunds);
 
-                var symbol    = App.Account.Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
-                var side      = symbol.OrderSideForBuyCurrency(ToCurrency);
-                var terminal  = App.Terminal;
-                var price     = EstimatedPrice; // orderBook.EstimatedDealPrice(side, Amount);
+                var symbol   = App.Account.Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
+                var side     = symbol.OrderSideForBuyCurrency(ToCurrency);
+                var terminal = App.Terminal;
+                var price    = EstimatedPrice;
 
                 if (price == 0)
                     return new Error(Errors.NoLiquidity, Resources.CvNoLiquidity);
