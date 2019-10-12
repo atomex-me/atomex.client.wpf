@@ -10,7 +10,7 @@ using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
 using Atomex.MarketData.Abstract;
 using Atomex.Client.Wpf.ViewModels.Abstract;
-using Helpers;
+using Atomex.Common;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {

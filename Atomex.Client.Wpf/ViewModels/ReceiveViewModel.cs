@@ -8,7 +8,6 @@ using Atomex.Core.Entities;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Common;
-using Helpers;
 using QRCoder;
 
 namespace Atomex.Client.Wpf.ViewModels

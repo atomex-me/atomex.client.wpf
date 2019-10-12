@@ -19,7 +19,6 @@ using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
-using Helpers;
 using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels
