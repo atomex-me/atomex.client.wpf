@@ -36,10 +36,10 @@
     },
     "TestNet": {
       "Exchange": {
-        "Url": "ws://localhost:57148/exchange"
+        "Url": "wss://test.atomex.me/exchange"
       },
       "MarketData": {
-        "Url": "ws://localhost:57148/marketdata"
+        "Url": "wss://test.atomex.me/marketdata"
       }
     }
   }
