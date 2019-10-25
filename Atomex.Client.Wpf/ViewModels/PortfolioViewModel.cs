@@ -45,12 +45,12 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            App.AccountChanged += OnAccountChangedEventHandler;
+            App.TerminalChanged += OnTerminalChangedEventHandler;
         }
 
-        private void OnAccountChangedEventHandler(object sender, AccountChangedEventArgs e)
+        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs e)
         {
-            AllCurrencies = e.NewAccount?.Currencies
+            AllCurrencies = e.Terminal?.Account?.Currencies
                 .Select(c =>
                 {
                     var vm = CurrencyViewModelCreator.CreateViewModel(c);

@@ -4,12 +4,13 @@ using Atomex.Wallet.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using System.Diagnostics;
+using Atomex.Subsystems;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
     public class StartViewModel : BaseViewModel
     {
-        private IAtomexApp App { get; }
+        private IAtomexApp AtomexApp { get; }
         private IDialogViewer DialogViewer { get; }
 
         public StartViewModel()
@@ -20,7 +21,7 @@ namespace Atomex.Client.Wpf.ViewModels
             IAtomexApp app,
             IDialogViewer dialogViewer)
         {
-            App = app ?? throw new ArgumentNullException(nameof(app));
+            AtomexApp = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
         }
 
@@ -28,7 +29,7 @@ namespace Atomex.Client.Wpf.ViewModels
         public ICommand MyWalletsCommand => _myWalletsCommand ?? (_myWalletsCommand = new Command(() =>
         {
             DialogViewer?.ShowMyWalletsDialog(
-                new MyWalletsViewModel(App, DialogViewer));
+                new MyWalletsViewModel(AtomexApp, DialogViewer));
         }));
 
         private ICommand _createNewCommand;
@@ -36,7 +37,7 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             DialogViewer?.ShowCreateWalletDialog(
                 new CreateWalletViewModel(
-                    app: App,
+                    app: AtomexApp,
                     scenario: CreateWalletScenario.CreateNew,
                     onAccountCreated: OnAccountCreated,
                     onCanceled: OnCanceled));
@@ -47,7 +48,7 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             DialogViewer?.ShowCreateWalletDialog(
                 new CreateWalletViewModel(
-                    app: App,
+                    app: AtomexApp,
                     scenario: CreateWalletScenario.Restore,
                     onAccountCreated: OnAccountCreated,
                     onCanceled: OnCanceled));
@@ -79,7 +80,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void OnAccountCreated(IAccount account)
         {
-            App.UseAccount(account, restartTerminal: true);
+            AtomexApp.UseTerminal(new Terminal(App.Configuration, account), restart: true);
 
             DialogViewer?.HideCreateWalletDialog();
             DialogViewer?.HideStartDialog();

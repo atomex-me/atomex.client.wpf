@@ -264,14 +264,14 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            App.AccountChanged += OnAccountChangedEventHandler;
+            App.TerminalChanged += OnTerminalChangedEventHandler;
 
             App.Terminal.QuotesUpdated += OnQuotesUpdatedEventHandler;
         }
 
-        private void OnAccountChangedEventHandler(object sender, AccountChangedEventArgs args)
+        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs args)
         {
-            var account = args.NewAccount;
+            var account = args.Terminal?.Account;
 
             if (account == null)
                 return;

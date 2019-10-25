@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,10 +15,9 @@ using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Core.Entities;
 using Atomex.Updates;
+using Atomex.Wallet;
 using MahApps.Metro.Controls.Dialogs;
 using Serilog;
-using System.IO;
-using Atomex.Wallet;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -111,7 +111,6 @@ namespace Atomex.Client.Wpf.ViewModels
             PortfolioViewModel = new PortfolioViewModel(AtomexApp);
             ConversionViewModel = new ConversionViewModel(AtomexApp, DialogViewer);
             WalletsViewModel = new WalletsViewModel(AtomexApp, DialogViewer, this, ConversionViewModel);
-            //ExchangeViewModel = new ExchangeViewModel(AtomexApp);
             SettingsViewModel = new SettingsViewModel(AtomexApp, DialogViewer);
 
             InstalledVersion = App.Updater.InstalledVersion.ToString();
@@ -144,30 +143,25 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            AtomexApp.AccountChanged += OnAccountChangedEventHandler;
-
-            AtomexApp.Terminal.ServiceConnected += OnTerminalServiceStateChangedEventHandler;
-            AtomexApp.Terminal.ServiceDisconnected += OnTerminalServiceStateChangedEventHandler;
-
+            AtomexApp.TerminalChanged += OnTerminalChangedEventHandler;
             AtomexApp.QuotesProvider.AvailabilityChanged += OnQuotesProviderAvailabilityChangedEventHandler;
         }
 
-        private void OnAccountChangedEventHandler(object sender, AccountChangedEventArgs args)
+        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs args)
         {
-            if (args.OldAccount != null)
+            var terminal = args.Terminal;
+
+            if (terminal?.Account == null)
             {
-                args.OldAccount.Locked -= OnAccountLockChangedEventHandler;
-                args.OldAccount.Unlocked -= OnAccountLockChangedEventHandler;
-            }
-
-            var account = args.NewAccount;
-
-            if (account == null) {
                 HasAccount = false;
                 MainView?.StopInactivityControl();
                 return;
             }
 
+            terminal.ServiceConnected += OnTerminalServiceStateChangedEventHandler;
+            terminal.ServiceDisconnected += OnTerminalServiceStateChangedEventHandler;
+
+            var account = terminal.Account;
             account.Locked += OnAccountLockChangedEventHandler;
             account.Unlocked += OnAccountLockChangedEventHandler;
 
@@ -231,11 +225,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 DialogViewer.HideAllDialogs();
 
-                AtomexApp.Account.Lock();
-
-                AtomexApp.UseAccount(
-                    account: null,
-                    restartTerminal: true);
+                AtomexApp.UseTerminal(null);
 
                 DialogViewer.ShowStartDialog(new StartViewModel(AtomexApp, DialogViewer));
             }

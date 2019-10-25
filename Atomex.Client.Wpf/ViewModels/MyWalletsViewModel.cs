@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Core;
+using Atomex.Subsystems;
 using Atomex.Wallet;
 using Atomex.Wallet.Abstract;
 
@@ -11,7 +12,7 @@ namespace Atomex.Client.Wpf.ViewModels
 {
     public class MyWalletsViewModel : BaseViewModel
     {
-        private IAtomexApp App { get; }
+        private IAtomexApp AtomexApp { get; }
         private IDialogViewer DialogViewer { get; }
         public IEnumerable<WalletInfo> Wallets { get; set; }
         // public bool HasAvailableWallets => Wallets != null && Wallets.Any();
@@ -28,7 +29,7 @@ namespace Atomex.Client.Wpf.ViewModels
             IAtomexApp app,
             IDialogViewer dialogViewer)
         {
-            App = app ?? throw new ArgumentNullException(nameof(app));
+            AtomexApp = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
             Wallets = WalletInfo.AvailableWallets();
@@ -44,13 +45,13 @@ namespace Atomex.Client.Wpf.ViewModels
                 account = Account.LoadFromFile(
                     pathToAccount: info.Path,
                     password: password,
-                    currenciesProvider: App.CurrenciesProvider,
-                    symbolsProvider: App.SymbolsProvider);
+                    currenciesProvider: AtomexApp.CurrenciesProvider,
+                    symbolsProvider: AtomexApp.SymbolsProvider);
             });
 
             unlockViewModel.Unlocked += (sender, args) =>
             {
-                App.UseAccount(account, restartTerminal: true);
+                AtomexApp.UseTerminal(new Terminal(App.Configuration, account), restart: true);
 
                 DialogViewer?.HideMyWalletsDialog();
                 DialogViewer?.HideStartDialog();

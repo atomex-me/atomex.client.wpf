@@ -386,33 +386,30 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            App.AccountChanged += OnAccountChangedEventHandler;
+            App.TerminalChanged += OnTerminalChangedEventHandler;
 
             if (App.HasQuotesProvider)
                 App.QuotesProvider.QuotesUpdated += OnBaseQuotesUpdatedEventHandler;
-
-            App.Terminal.QuotesUpdated += OnQuotesUpdatedEventHandler;
-            App.Terminal.SwapUpdated += OnSwapEventHandler;
         }
 
-        private void OnAccountChangedEventHandler(object sender, AccountChangedEventArgs args)
+        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs args)
         {
-            if (!(sender is AtomexApp))
+            var terminal = args.Terminal;
+
+            if (terminal?.Account == null)
                 return;
 
-            if (args.NewAccount == null)
-                return;
+            terminal.QuotesUpdated += OnQuotesUpdatedEventHandler;
+            terminal.SwapUpdated += OnSwapEventHandler;
 
-            var account = args.NewAccount;
-
-            _currencyViewModels = account.Currencies
+            _currencyViewModels = terminal.Account.Currencies
                 .Where(c => c.IsSwapAvailable)
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
 
             FromCurrencies = _currencyViewModels.ToList();
-            FromCurrency = account.Currencies.Get<Bitcoin>();
-            ToCurrency = account.Currencies.Get<Litecoin>();
+            FromCurrency = terminal.Account.Currencies.Get<Bitcoin>();
+            ToCurrency = terminal.Account.Currencies.Get<Litecoin>();
 
             OnSwapEventHandler(this, null);
         }

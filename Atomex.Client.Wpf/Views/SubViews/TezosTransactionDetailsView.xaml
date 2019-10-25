@@ -229,7 +229,7 @@
                        HorizontalAlignment="Right"
                        Grid.Column="0"
                        Grid.Row="5"/>
-            <TextBlock Text="{Binding GasLimit}"
+            <TextBlock Text="{Binding Fee}"
                        FontFamily="{StaticResource Roboto}"
                        Margin="10 0 0 0"
                        Grid.Column="1"

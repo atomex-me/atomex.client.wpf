@@ -3,13 +3,13 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Atomex.MarketData.Bitfinex;
-using Atomex.Subsystems;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels;
 using Atomex.Client.Wpf.Views;
 using Atomex.Common.Configuration;
 using Atomex.Core;
 using Atomex.Updates;
+using Atomex.Subsystems;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
@@ -20,7 +20,7 @@ namespace Atomex.Client.Wpf
         public static IAtomexApp AtomexApp { get; private set; }
         public static Updater Updater { get; private set; }
 
-        private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+        public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
 #if DEBUG
             .AddEmbeddedJsonFile(ResourceAssembly, "config.debug.json")
@@ -71,8 +71,7 @@ namespace Atomex.Client.Wpf
                 .UseCurrenciesUpdater(new CurrenciesUpdater(currenciesProvider))
                 .UseQuotesProvider(new BitfinexQuotesProvider(
                     currencies: currenciesProvider.GetCurrencies(Network.MainNet),
-                    baseCurrency: BitfinexQuotesProvider.Usd))
-                .UseTerminal(new Terminal(Configuration));
+                    baseCurrency: BitfinexQuotesProvider.Usd));
 
             // init app updater
             Updater = new Updater()

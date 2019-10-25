@@ -64,14 +64,14 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            App.AccountChanged += OnAccountChangedEventHandler;
+            App.TerminalChanged += OnTerminalChangedEventHandler;
         }
 
-        private void OnAccountChangedEventHandler(object sender, AccountChangedEventArgs e)
+        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs e)
         {
-            Wallets = e.NewAccount != null
+            Wallets = e.Terminal?.Account != null
                 ? new ObservableCollection<WalletViewModel>(
-                    e.NewAccount.Currencies.Select(currency => new WalletViewModel(
+                    e.Terminal.Account.Currencies.Select(currency => new WalletViewModel(
                         app: App,
                         dialogViewer: DialogViewer,
                         menuSelector: MenuSelector,
