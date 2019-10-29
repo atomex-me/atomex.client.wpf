@@ -115,6 +115,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 var fromWallets = (await account
                     .GetUnspentAddressesAsync(
+                        toAddress: null,
                         currency: FromCurrency,
                         amount: Amount,
                         fee: 0,
