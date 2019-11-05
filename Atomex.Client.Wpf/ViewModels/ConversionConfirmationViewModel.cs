@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -125,6 +126,9 @@ namespace Atomex.Client.Wpf.ViewModels
                         transactionType: BlockchainTransactionType.SwapPayment))
                     .ToList();
 
+                if (Amount == 0)
+                    return new Error(Errors.SwapError, Resources.CvWrongAmount);
+
                 if (Amount > 0 && !fromWallets.Any())
                     return new Error(Errors.SwapError, Resources.CvInsufficientFunds);
 
@@ -137,6 +141,14 @@ namespace Atomex.Client.Wpf.ViewModels
                     return new Error(Errors.NoLiquidity, Resources.CvNoLiquidity);
 
                 var qty = Math.Round(AmountHelper.AmountToQty(side, Amount, price), symbol.Base.Digits);
+
+                if (qty < symbol.MinimumQty)
+                {
+                    var minimumAmount = Math.Round(AmountHelper.QtyToAmount(side, symbol.MinimumQty, price), FromCurrency.Digits);
+                    var message = string.Format(CultureInfo.InvariantCulture, Resources.CvMinimumAllowedQtyWarning, minimumAmount, FromCurrency.Name);
+
+                    return new Error(Errors.SwapError, message);
+                }
 
                 var order = new Order
                 {
