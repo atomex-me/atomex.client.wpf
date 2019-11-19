@@ -267,11 +267,7 @@ namespace Atomex.Client.Wpf.ViewModels
             var swaps = await AtomexApp.Account
                 .GetSwapsAsync();
 
-            return swaps.Any(swap =>
-                !swap.IsComplete &&
-                !swap.IsRefunded &&
-                !swap.IsCanceled &&
-                swap.StateFlags.HasFlag(SwapStateFlags.IsPaymentBroadcast));
+            return swaps.Any(swap => swap.IsActive);
         }
 
         private async Task<bool> WhetherToCancelClosingAsync()

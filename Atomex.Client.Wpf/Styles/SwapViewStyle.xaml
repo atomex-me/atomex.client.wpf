@@ -3,12 +3,12 @@
                     xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
                     xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls">
 
-
     <SolidColorBrush x:Key="SwapStateCanceledBackgroundBrush" Color="{StaticResource UnconfirmedColor}"/>
     <SolidColorBrush x:Key="SwapStateCompletedBackgroundBrush" Color="{StaticResource ConfirmedColor}"/>
     <SolidColorBrush x:Key="SwapStateInProgressBackgroundBrush" Color="{StaticResource UnconfirmedColor}"/>
     <SolidColorBrush x:Key="SwapStateUnconfirmedBackgroundBrush" Color="{StaticResource UnconfirmedColor}"/>
     <SolidColorBrush x:Key="SwapStateRefundedBackgroundBrush" Color="{StaticResource ConfirmedColor}"/>
+    <SolidColorBrush x:Key="SwapStateUnsettledBackgroundBrush" Color="{StaticResource UnknownColor}"/>
 
     <DataTemplate x:Key="SwapCanceledTemplate" DataType="viewModels:SwapViewModel">
         <Border Background="{StaticResource SwapStateCanceledBackgroundBrush}"
@@ -62,10 +62,24 @@
         </Border>
     </DataTemplate>
 
+    <DataTemplate x:Key="SwapUnsettledTemplate" DataType="viewModels:SwapViewModel">
+        <Border Background="{StaticResource SwapStateUnsettledBackgroundBrush}"
+                CornerRadius="5"
+                Margin="3 0 3 0"
+                HorizontalAlignment="Center">
+            <TextBlock Foreground="White"
+                       Text="{Binding State}"
+                       FontSize="11"
+                       Margin="5 3 5 3"
+                       HorizontalAlignment="Center"/>
+        </Border>
+    </DataTemplate>
+
     <controls:SwapStateDataTemplateSelector x:Key="SwapStateDataTemplateSelector"
                                             CanceledTemplate="{StaticResource SwapCanceledTemplate}"
                                             InProgressTemplate="{StaticResource SwapInProgressTemplate}"
                                             CompletedTemplate="{StaticResource SwapCompletedTemplate}"
-                                            RefundedTemplate="{StaticResource SwapRefundTemplate}"/>
+                                            RefundedTemplate="{StaticResource SwapRefundTemplate}"
+                                            UnsettledTemplate="{StaticResource SwapUnsettledTemplate}"/>
     
 </ResourceDictionary>

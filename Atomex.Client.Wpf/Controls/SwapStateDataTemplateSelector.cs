@@ -11,6 +11,7 @@ namespace Atomex.Client.Wpf.Controls
         public DataTemplate InProgressTemplate { get; set; }
         public DataTemplate CompletedTemplate { get; set; }
         public DataTemplate RefundedTemplate { get; set; }
+        public DataTemplate UnsettledTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -27,6 +28,8 @@ namespace Atomex.Client.Wpf.Controls
                     return CompletedTemplate;
                 case SwapCompactState.Refunded:
                     return RefundedTemplate;
+                case SwapCompactState.Unsettled:
+                    return UnsettledTemplate;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
