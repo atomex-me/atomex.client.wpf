@@ -8,7 +8,8 @@ namespace Atomex.Client.Wpf.ViewModels
         Canceled,
         InProgress,
         Completed,
-        Refunded
+        Refunded,
+        Unsettled
     }
 
     public enum SwapMode
@@ -53,6 +54,8 @@ namespace Atomex.Client.Wpf.ViewModels
                         return "Completed";
                     case SwapCompactState.Refunded:
                         return "Refunded";
+                    case SwapCompactState.Unsettled:
+                        return "Unsettled";
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

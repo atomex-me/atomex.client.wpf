@@ -20,6 +20,7 @@ using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Serilog;
+using System.Globalization;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -535,19 +536,41 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void OnConvertClick()
         {
-            if (Amount == 0) {
+            if (Amount == 0)
+            {
                 DialogViewer.ShowMessage(Resources.CvWarning, Resources.CvWrongAmount);
                 return;
             }
 
-            if (!App.Terminal.IsServiceConnected(TerminalService.All)) {
+            if (EstimatedPrice == 0)
+            {
+                DialogViewer.ShowMessage(Resources.CvWarning, Resources.CvNoLiquidity);
+                return;
+            }
+
+            if (!App.Terminal.IsServiceConnected(TerminalService.All))
+            {
                 DialogViewer.ShowMessage(Resources.CvWarning, Resources.CvServicesUnavailable);
                 return;
             }
 
             var symbol = Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
-            if (symbol == null) {
+            if (symbol == null)
+            {
                 DialogViewer.ShowMessage(Resources.CvError, Resources.CvNotSupportedSymbol);
+                return;
+            }
+
+            var side = symbol.OrderSideForBuyCurrency(ToCurrency);
+            var price = EstimatedPrice;
+            var qty = Math.Round(AmountHelper.AmountToQty(side, Amount, price), symbol.Base.Digits);
+
+            if (qty < symbol.MinimumQty)
+            {
+                var minimumAmount = Math.Round(AmountHelper.QtyToAmount(side, symbol.MinimumQty, price), FromCurrency.Digits);
+                var message = string.Format(CultureInfo.InvariantCulture, Resources.CvMinimumAllowedQtyWarning, minimumAmount, FromCurrency.Name);
+
+                DialogViewer.ShowMessage(Resources.CvWarning, message);
                 return;
             }
 

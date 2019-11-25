@@ -19,7 +19,7 @@ namespace Atomex.Client.Wpf.Properties {
     // с помощью такого средства, как ResGen или Visual Studio.
     // Чтобы добавить или удалить член, измените файл .ResX и снова запустите ResGen
     // с параметром /str или перестройте свой проект VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -84,6 +84,15 @@ namespace Atomex.Client.Wpf.Properties {
         public static string CvInsufficientFunds {
             get {
                 return ResourceManager.GetString("CvInsufficientFunds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на The amount must be greater than or equal to the minimum allowed amount {0} {1}..
+        /// </summary>
+        public static string CvMinimumAllowedQtyWarning {
+            get {
+                return ResourceManager.GetString("CvMinimumAllowedQtyWarning", resourceCulture);
             }
         }
         

@@ -56,9 +56,13 @@ namespace Atomex.Client.Wpf.ViewModels
             if (swap.IsCanceled)
                 return SwapCompactState.Canceled;
 
-            return swap.IsRefunded
-                ? SwapCompactState.Refunded
-                : SwapCompactState.InProgress;
-        }
+            if (swap.IsUnsettled)
+                return SwapCompactState.Unsettled;
+
+            if (swap.IsRefunded)
+                return SwapCompactState.Refunded;
+
+            return SwapCompactState.InProgress;
     }
+}
 }
