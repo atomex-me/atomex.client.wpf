@@ -168,6 +168,9 @@ namespace Atomex.Client.Wpf.ViewModels
         private ICommand _updateCommand;
         public ICommand UpdateCommand => _updateCommand ?? (_updateCommand = new Command(OnUpdateClick));
 
+        private ICommand _delegateCommand;
+        public ICommand DelegateCommand => _delegateCommand ?? (_delegateCommand = new Command(OnDelegateClick));
+
         private ICommand _cancelUpdateCommand;
         public ICommand CancelUpdateCommand => _cancelUpdateCommand ?? (_cancelUpdateCommand = new Command(() =>
         {
@@ -226,6 +229,16 @@ namespace Atomex.Client.Wpf.ViewModels
             }
 
             IsBalanceUpdating = false;
+        }
+
+        private void OnDelegateClick()
+        {
+            var viewModel = new DelegateViewModel(App, DialogViewer);
+
+            DialogViewer?.ShowDelegateDialog(viewModel, dialogLoaded: () =>
+            {
+                viewModel.Show();
+            });
         }
 
         private void UpdateTransactonEventHandler(object sender, TransactionEventArgs args)

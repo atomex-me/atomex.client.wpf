@@ -186,6 +186,10 @@
                             Style="{StaticResource WalletMenuButton}"
                             Command="{Binding UpdateCommand}"
                             IsEnabled="{Binding Currency.IsTransactionsAvailable}"/>
+                        <controls:RoundedButton
+                            Content="Delegate"
+                            Style="{StaticResource WalletMenuButton}"
+                            Command="{Binding DelegateCommand}"/>
                     </StackPanel>
                 </StackPanel>
 
