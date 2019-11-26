@@ -22,6 +22,7 @@
                 <ResourceDictionary Source="Styles/CustomPasswordBoxStyle.xaml"/>
                 <ResourceDictionary Source="Styles/CustomComboBoxStyle.xaml"/>
                 <ResourceDictionary Source="Styles/CurrencyComboBoxStyle.xaml"/>
+                <ResourceDictionary Source="Styles/BakersComboBoxStyle.xaml"/>
                 <ResourceDictionary Source="Styles/LinkButton.xaml"/>
                 <ResourceDictionary Source="Styles/MainWindowStyle.xaml"/>
                 <ResourceDictionary Source="Styles/HamburgerMenuStyle.xaml"/>

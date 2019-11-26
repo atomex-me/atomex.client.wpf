@@ -41,19 +41,15 @@
                 <TextBlock FontFamily="{StaticResource Roboto}"
                            FontSize="13"
                            Foreground="{StaticResource DefaultForegroundBrush}"
-                           Margin="7 0 0 0">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="Fee" Mode="OneWay"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
+                           Margin="7 0 0 0"
+                           Text="{Binding Fee, StringFormat=0.00%}">
                 </TextBlock>
             </StackPanel>
         </Grid>
     </DataTemplate>    
 
 
-    <Style x:Key="CurrencyComboBox" TargetType="ComboBox" BasedOn="{StaticResource CustomComboBox}">
+    <Style x:Key="BakersComboBox" TargetType="ComboBox" BasedOn="{StaticResource CustomComboBox}">
         <Setter Property="ItemTemplate" Value="{StaticResource BakerItemTemplate}"/>
         <Setter Property="Background" Value="{StaticResource DefaultSubstrateBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}"/>

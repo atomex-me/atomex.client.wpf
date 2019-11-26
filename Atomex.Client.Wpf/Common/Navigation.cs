@@ -11,6 +11,7 @@ namespace Atomex.Client.Wpf.Common
         public const string ConversionConfirmationAlias = "ConversionConfirmationPage";
         public const string SendingAlias = "SendingPage";
         public const string MessageAlias = "MessagePage";
+        public const string DelegateAlias = "DelegatePage";
 
         private static volatile Navigation _instance;
         private static readonly object SyncRoot = new object();
