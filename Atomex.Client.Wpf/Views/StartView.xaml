@@ -84,7 +84,8 @@
                                             VerticalAlignment="Bottom"
                                             FontSize="11"
                                             FontFamily="{StaticResource RobotoMedium}"
-                                            Command="{Binding MyWalletsCommand}"/>
+                                            Command="{Binding MyWalletsCommand}"
+                                            IsEnabled="{Binding HasWallets}"/>
 
                     <controls:RoundedButton Width="200"
                                             Height="40"

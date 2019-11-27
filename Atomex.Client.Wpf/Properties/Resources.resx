@@ -261,4 +261,21 @@
   <data name="CvMinimumAllowedQtyWarning" xml:space="preserve">
     <value>The amount must be greater than or equal to the minimum allowed amount {0} {1}.</value>
   </data>
+  <data name="SvFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="SvOrderMatched" xml:space="preserve">
+    <value>Swap successfully created.
+
+NOTE: Do not sign out or close the application until the swap is completed, otherwise it may result in a loss of funds.</value>
+  </data>
+  <data name="SvOrderRejected" xml:space="preserve">
+    <value>Order rejected.</value>
+  </data>
+  <data name="SvPriceHasChanged" xml:space="preserve">
+    <value>Oops, the price has changed during the order sending. Please try again.</value>
+  </data>
+  <data name="SvTimeoutReached" xml:space="preserve">
+    <value>Atomex is not responding for a long time.</value>
+  </data>
 </root>

@@ -17,6 +17,9 @@ namespace Atomex.Client.Wpf.ViewModels
 {
     public class ConversionConfirmationViewModel : BaseViewModel
     {
+        private static TimeSpan SwapTimeout = TimeSpan.FromSeconds(60);
+        private static TimeSpan SwapCheckInterval = TimeSpan.FromSeconds(3);
+
         private IAtomexApp App { get; }
         private IDialogViewer DialogViewer { get; }
         public Currency FromCurrency { get; set; }
@@ -82,18 +85,31 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 if (error != null)
                 {
-                    Navigation.Navigate(
-                        uri: Navigation.MessageAlias,
-                        context: MessageViewModel.Error(
-                            text: error.Description,
-                            goBackPages: 2));
+                    if (error.Code == Errors.PriceHasChanged)
+                    {
+                        Navigation.Navigate(
+                            uri: Navigation.MessageAlias,
+                            context: MessageViewModel.Message(
+                                title: Resources.SvFailed,
+                                text: error.Description,
+                                goBackPages: 2));
+                    }
+                    else
+                    {
+                        Navigation.Navigate(
+                            uri: Navigation.MessageAlias,
+                            context: MessageViewModel.Error(
+                                text: error.Description,
+                                goBackPages: 2));
+                    }
+
                     return;
                 }
 
                 Navigation.Navigate(
                     uri: Navigation.MessageAlias,
                     context: MessageViewModel.Success(
-                        text: "Sending was successful",
+                        text: Resources.SvOrderMatched,
                         nextAction: () => {DialogViewer?.HideConversionConfirmationDialog();}));
             }
             catch (Exception e)
@@ -164,6 +180,30 @@ namespace Atomex.Client.Wpf.ViewModels
                 await order.CreateProofOfPossessionAsync(account);
 
                 terminal.OrderSendAsync(order);
+
+                // wait for swap confirmation
+                var timeStamp = DateTime.UtcNow;
+
+                while (DateTime.UtcNow < timeStamp + SwapTimeout)
+                {
+                    await Task.Delay(SwapCheckInterval);
+
+                    var currentOrder = terminal.Account.GetOrderById(order.ClientOrderId);
+
+                    if (currentOrder == null)
+                        continue;
+
+                    if (currentOrder.Status == OrderStatus.PartiallyFilled || currentOrder.Status == OrderStatus.Filled)
+                        return null;
+
+                    if (currentOrder.Status == OrderStatus.Canceled)
+                        return new Error(Errors.PriceHasChanged, Resources.SvPriceHasChanged);
+
+                    if (currentOrder.Status == OrderStatus.Rejected)
+                        return new Error(Errors.OrderRejected, Resources.SvOrderRejected);
+                }
+
+                return new Error(Errors.TimeoutReached, Resources.SvTimeoutReached);
             }
             catch (Exception e)
             {
@@ -171,8 +211,6 @@ namespace Atomex.Client.Wpf.ViewModels
             
                 return new Error(Errors.SwapError, Resources.CvConversionError);
             }
-
-            return null;
         }
 
         private void DesignerMode()

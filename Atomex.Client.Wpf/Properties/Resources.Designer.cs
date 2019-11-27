@@ -394,6 +394,15 @@ namespace Atomex.Client.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Failed.
+        /// </summary>
+        public static string SvFailed {
+            get {
+                return ResourceManager.GetString("SvFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Gas limit:.
         /// </summary>
         public static string SvGasLimit {
@@ -448,6 +457,35 @@ namespace Atomex.Client.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Swap successfully created.
+        ///
+        ///NOTE: Do not sign out or close the application until the swap is completed, otherwise it may result in a loss of funds..
+        /// </summary>
+        public static string SvOrderMatched {
+            get {
+                return ResourceManager.GetString("SvOrderMatched", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Order rejected..
+        /// </summary>
+        public static string SvOrderRejected {
+            get {
+                return ResourceManager.GetString("SvOrderRejected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Oops, the price has changed during the order sending. Please try again..
+        /// </summary>
+        public static string SvPriceHasChanged {
+            get {
+                return ResourceManager.GetString("SvPriceHasChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Send.
         /// </summary>
         public static string SvSend {
@@ -480,6 +518,15 @@ namespace Atomex.Client.Wpf.Properties {
         public static string SvSuccess {
             get {
                 return ResourceManager.GetString("SvSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Atomex is not responding for a long time..
+        /// </summary>
+        public static string SvTimeoutReached {
+            get {
+                return ResourceManager.GetString("SvTimeoutReached", resourceCulture);
             }
         }
         

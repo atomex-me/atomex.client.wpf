@@ -78,5 +78,20 @@ namespace Atomex.Client.Wpf.ViewModels
                 backAction: null,
                 nextAction: nextAction);
         }
+
+        public static MessageViewModel Message(string title, string text, int goBackPages)
+        {
+            return new MessageViewModel(
+                title: title,
+                text: text,
+                backTitle: Resources.SvBack,
+                nextTitle: null,
+                backAction: () =>
+                {
+                    for (var i = 0; i < goBackPages; ++i)
+                        Navigation.Back();
+                },
+                nextAction: null);
+        }
     }
 }

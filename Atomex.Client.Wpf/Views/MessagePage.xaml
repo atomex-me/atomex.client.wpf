@@ -37,6 +37,8 @@
                    FontSize="15"
                    FontFamily="{StaticResource RobotoLight}"
                    HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
                    Foreground="{StaticResource DefaultForegroundBrush}"/>
 
         <StackPanel Orientation="Horizontal"

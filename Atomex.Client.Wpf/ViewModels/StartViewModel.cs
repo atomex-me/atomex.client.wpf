@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows.Input;
-using Atomex.Wallet.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
-using System.Diagnostics;
 using Atomex.Subsystems;
+using Atomex.Wallet.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -13,8 +14,18 @@ namespace Atomex.Client.Wpf.ViewModels
         private IAtomexApp AtomexApp { get; }
         private IDialogViewer DialogViewer { get; }
 
+        private bool _hasWallets;
+        public bool HasWallets {
+            get => _hasWallets;
+            private set { _hasWallets = value; OnPropertyChanged(nameof(HasWallets)); }
+        }
+
         public StartViewModel()
         {
+#if DEBUG
+            if (Env.IsInDesignerMode())
+                DesignerMode();
+#endif
         }
 
         public StartViewModel(
@@ -23,6 +34,7 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             AtomexApp = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+            HasWallets = WalletInfo.AvailableWallets().Count() > 0;
         }
 
         private ICommand _myWalletsCommand;
@@ -84,6 +96,11 @@ namespace Atomex.Client.Wpf.ViewModels
 
             DialogViewer?.HideCreateWalletDialog();
             DialogViewer?.HideStartDialog();
+        }
+
+        private void DesignerMode()
+        {
+            HasWallets = true;
         }
     }
 }
