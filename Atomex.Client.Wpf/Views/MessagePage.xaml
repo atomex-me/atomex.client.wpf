@@ -6,6 +6,7 @@
       xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
       xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
       xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       UseLayoutRounding="True"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Center"
@@ -15,7 +16,11 @@
       d:DataContext="{d:DesignInstance Type=viewModels:MessageViewModel, IsDesignTimeCreatable=True}">
 
     <Page.Resources>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed" />
+        <SolidColorBrush x:Key="IconButtonForegroundBrush" Color="#BECFDE" />
+        <SolidColorBrush x:Key="IconButtonMouseOverBrush" Color="White" />
+        <SolidColorBrush x:Key="IconButtonPressedBrush" Color="#29456d" />
+        <SolidColorBrush x:Key="AlmostTransparentBrush" Color="#00000001" />
     </Page.Resources>
 
     <StackPanel Orientation="Vertical">
@@ -23,7 +28,8 @@
                 Height="33"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Stretch"
-                Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+                Background="{StaticResource ChildViewHeaderBackgroundBrush}"
+                Visibility="{Binding IsLinkVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <TextBlock Text="{Binding Title}"
                        Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
                        FontFamily="{StaticResource RobotoLight}"
@@ -38,6 +44,56 @@
                    FontFamily="{StaticResource RobotoLight}"
                    HorizontalAlignment="Center"
                    Foreground="{StaticResource DefaultForegroundBrush}"/>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Grid.Column="1"
+                    Grid.Row="0">
+
+            <Button Content="{Binding Id}"
+                    ToolTip="{Binding TxExplorerUri}"
+                    Margin="20 20 20 0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Command="{Binding OpenTxInExplorerCommand}"
+                    CommandParameter="{Binding Id}"
+                    Style="{StaticResource ExplorerLinkButton}" />
+
+            <controls:IconButton 
+                                 VerticalAlignment="Center"
+                                 Foreground="{StaticResource IconButtonForegroundBrush}"
+                                 MouseOverBrush="{StaticResource IconButtonMouseOverBrush}"
+                                 PressedBrush="{StaticResource IconButtonPressedBrush}"
+                                 Margin="5 20 20 0"
+                                 ToolTip="Copy transaction id to clipboard"
+                                 Command="{Binding CopyCommand}"
+                                 CommandParameter="{Binding Id}">
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type controls:IconButton}">
+                        <iconPacks:PackIconOcticons x:Name="clippyTxIdIcon"
+                                                    Kind="Clippy"
+                                                    Foreground="{TemplateBinding Foreground}"
+                                                    Background="{StaticResource AlmostTransparentBrush}"
+                                                    Width="15"
+                                                    Height="15"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="clippyTxIdIcon"
+                                        Property="Foreground"
+                                        Value="{Binding MouseOverBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:IconButton}}}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="clippyTxIdIcon"
+                                        Property="Foreground"
+                                        Value="{Binding PressedBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:IconButton}}}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </controls:IconButton>
+        </StackPanel>
 
         <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Center"

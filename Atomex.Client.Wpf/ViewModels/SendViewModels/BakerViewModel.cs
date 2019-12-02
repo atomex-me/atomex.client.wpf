@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Atomex.Client.Wpf.ViewModels.SendViewModels
+﻿namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
     public class BakerViewModel : BaseViewModel
     {

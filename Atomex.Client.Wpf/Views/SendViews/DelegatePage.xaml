@@ -75,6 +75,30 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Border Style="{StaticResource FieldHeader}">
+                <TextBlock Text="From Address:"
+                           Margin="0 0 7 0"
+                           Foreground="{StaticResource DefaultForegroundBrush}"
+                           FontFamily="{StaticResource RobotoMedium}"
+                           FontSize="13"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"/>
+            </Border>
+            <ComboBox Width="380"
+                     Height="40"
+                     Margin="0 5 0 5"
+                     ItemsSource="{Binding FromAddressList}"
+                     DisplayMemberPath="Address"
+                     SelectedValue="{Binding WalletAddress}"
+                     Text="{Binding From, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Background="{StaticResource DefaultSubstrateBrush}"
+                     Foreground="{StaticResource DefaultForegroundBrush}"
+                     helpers:ComboBoxHelper.CornerRadius="0 20 20 0"
+                     Style="{StaticResource CustomComboBox}"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"/>
 
         <StackPanel Orientation="Horizontal"
