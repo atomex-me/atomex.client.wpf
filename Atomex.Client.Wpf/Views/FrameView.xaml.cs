@@ -20,6 +20,7 @@ namespace Atomex.Client.Wpf.Views
             resolver.AddResolver(Navigation.MessageAlias, () => new MessagePage());
             resolver.AddResolver(Navigation.SendAlias, () => new SendPage());
             resolver.AddResolver(Navigation.SendConfirmationAlias, () => new SendConfirmationPage());
+            resolver.AddResolver(Navigation.DelegateConfirmationAlias, () => new DelegateConfirmationPage());
             resolver.AddResolver(Navigation.ConversionConfirmationAlias, () => new ConversionConfirmationPage());
             resolver.AddResolver(Navigation.SendingAlias, () => new SendingPage());
             resolver.AddResolver(Navigation.DelegateAlias, () => new DelegatePage());

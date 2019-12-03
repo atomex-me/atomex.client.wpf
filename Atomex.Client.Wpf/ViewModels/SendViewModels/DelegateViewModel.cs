@@ -29,6 +29,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         
         private Tezos xTezos;
         private WalletAddress _walletAddress;
+        private TezosTransaction Tx;
 
         public WalletAddress WalletAddress
         {
@@ -62,6 +63,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 _fromAddressList = value;
                 OnPropertyChanged(nameof(FromAddressList));
+                
                 WalletAddress = FromAddressList.FirstOrDefault();
             }
         }
@@ -261,13 +263,28 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             if (result.HasError)
                 Warning = result.Error.Description;
             else
+            {
+                var confirmationViewModel = new DelegateConfirmationViewModel(DialogViewer)
+                {
+                    Currency = xTezos,
+                    WalletAddress = WalletAddress,
+                    UseDefaultFee = UseDefaultFee,
+                    Tx = Tx,
+                    From = WalletAddress.Address,
+                    To = Address,
+                    BaseCurrencyCode = BaseCurrencyCode,
+                    BaseCurrencyFormat = BaseCurrencyFormat,
+                    Fee = Fee,
+                    FeeInBase = FeeInBase,
+                    FeePrice = FeePrice,
+                    CurrencyCode = xTezos.FeeCode,
+                    CurrencyFormat = xTezos.FeeFormat
+                };
+                
                 Navigation.Navigate(
-                    uri: Navigation.MessageAlias,
-                    context: MessageViewModel.Success(
-                        text: $"Successful delegation!",
-                        xTezos.TxExplorerUri,
-                        result.Value,
-                        nextAction: () => {DialogViewer?.HideDelegateDialog();}));
+                    uri: Navigation.DelegateConfirmationAlias,
+                    context: confirmationViewModel);
+            }
         }));
         
         public DelegateViewModel()
@@ -368,7 +385,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 return new Result<string>(new Error(Errors.AlreadyDelegated, $"Already delegated from {_walletAddress.Address} to {_address}"));
             }
-
             var tx = new TezosTransaction
             {
                 StorageLimit = xTezos.StorageLimit,
@@ -381,29 +397,19 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
-                var signResult = await tx
-                    .SignDelegationOperationAsync(keyStorage, _walletAddress, cancellationToken, UseDefaultFee)
-                    .ConfigureAwait(false);
-
-                if (!signResult)
-                {
-                    Log.Error("Transaction signing error");
-                    return new Result<string>(new Error(Errors.TransactionSigningError, "Transaction signing error"));
-                }
-
-                var result = await xTezos.BlockchainApi
-                    .BroadcastAsync(tx, cancellationToken)
-                    .ConfigureAwait(false);
-
-                return result.HasError
-                    ? new Result<string>(new Error(Errors.TransactionBroadcastError, result.Error.Description))
-                    : new Result<string>(result.Value);
+                var calculatedFee = await tx.AutoFillAsync(keyStorage, _walletAddress, UseDefaultFee);
+                if(!calculatedFee)
+                    return new Result<string>(new Error(Errors.TransactionCreationError, $"Autofill transaction failed"));
+                Fee = tx.Fee;
+                Tx = tx;
             }
-            catch
+            catch (Exception e)
             {
-                return new Result<string>(new Error(Errors.TransactionBroadcastError,
-                    "Something went wrong. Try again later"));
+                Log.Error(e, "Autofill delegation error");
+                return new Result<string>(new Error(Errors.TransactionCreationError, $"Autofill delegation error. Try again later"));
             }
+            
+            return new Result<string>("Successful check");
         }
         
         public void Show()

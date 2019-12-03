@@ -8,6 +8,7 @@ namespace Atomex.Client.Wpf.Common
         public const string NotFoundAlias = "NotFoundPage";
         public const string SendAlias = "SendPage";
         public const string SendConfirmationAlias = "SendConfirmationPage";
+        public const string DelegateConfirmationAlias = "DelegateConfirmationPage";
         public const string ConversionConfirmationAlias = "ConversionConfirmationPage";
         public const string SendingAlias = "SendingPage";
         public const string MessageAlias = "MessagePage";
