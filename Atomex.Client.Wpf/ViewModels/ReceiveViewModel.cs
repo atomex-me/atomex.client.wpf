@@ -66,11 +66,18 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         public ReceiveViewModel(IAtomexApp app)
+            : this(app, null)
+        {
+        }
+
+        public ReceiveViewModel(IAtomexApp app, Currency currency)
         {
             FromCurrencies = app.Account.Currencies
                 .Where(c => c.IsTransactionsAvailable)
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
+
+            Currency = currency;
         }
 
         private async Task CreateQrCodeAsync()

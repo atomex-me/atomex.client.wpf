@@ -109,7 +109,7 @@
                            Style="{StaticResource AmountTextBlock}">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="FeeAmount" Mode="OneWay"/>
+                            <Binding Path="Fee" Mode="OneWay"/>
                             <Binding Path="CurrencyFormat" Mode="OneWay"/>
                         </MultiBinding>
                     </TextBlock.Text>

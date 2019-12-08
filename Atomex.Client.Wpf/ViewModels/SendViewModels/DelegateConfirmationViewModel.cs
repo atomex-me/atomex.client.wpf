@@ -22,8 +22,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public string CurrencyFormat { get; set; }
         public string BaseCurrencyFormat { get; set; }
         public decimal Fee { get; set; }
-        public decimal FeePrice { get; set; }
-        public decimal FeeAmount => Currency.GetFeeAmount(Fee, FeePrice);
         public decimal FeeInBase { get; set; }
         public string CurrencyCode { get; set; }
         public string BaseCurrencyCode { get; set; }
@@ -34,6 +32,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         private ICommand _nextCommand;
         public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(Send));
 
+        private Action _onDelegate;
+
 #if DEBUG
         public DelegateConfirmationViewModel()
         {
@@ -41,9 +41,12 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 DesignerMode();
         }
 #endif
-        public DelegateConfirmationViewModel(IDialogViewer dialogViewer)
+        public DelegateConfirmationViewModel(
+            IDialogViewer dialogViewer,
+            Action onDelegate = null)
         {
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+            _onDelegate = onDelegate;
         }
 
         private async void Send()
@@ -87,7 +90,12 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         text: $"Successful delegation!",
                         xTezos.TxExplorerUri,
                         result.Value,
-                        nextAction: () => {DialogViewer?.HideDelegateDialog();}));
+                        nextAction: () =>
+                        {
+                            DialogViewer?.HideDelegateDialog();
+
+                            _onDelegate?.Invoke();
+                        }));
             }
             catch (Exception e)
             {
@@ -106,7 +114,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             From = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
             To = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
             Fee = 0.0001m;
-            FeePrice = 1m;
+            //FeePrice = 1m;
             FeeInBase = 8.43m;
         }
     }

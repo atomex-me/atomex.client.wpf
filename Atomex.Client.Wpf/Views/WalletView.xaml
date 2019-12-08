@@ -15,8 +15,12 @@
 
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Hidden"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityCollapsedConverter" FalseEquivalent="Collapsed"/>
         <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" FalseEquivalent="Hidden" OppositeBoolValue="True"/>
+        <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityCollapsedConverter" FalseEquivalent="Collapsed" OppositeBoolValue="True"/>
         <converters:IsPositiveValueConverter x:Key="IsPositiveValueConverter"/>
+        <SolidColorBrush x:Key="NoDelegationsBrush" Color="Gray"/>
+        <SolidColorBrush x:Key="DelegatedAmountBrush" Color="#ffa500"/>
         <SolidColorBrush x:Key="UnconfirmedAmountBrush" Color="#ffa500"/>
         <SolidColorBrush x:Key="NegativeAmountBrush" Color="#aec4e5"/>
         <SolidColorBrush x:Key="PositiveAmountBrush" Color="White"/>
@@ -28,255 +32,340 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Background="{StaticResource DefaultSubstrateBrush}"
-                CornerRadius="10"
-                Margin="10 20 10 10"
-                Grid.Row="0"
-                HorizontalAlignment="Center"
-                MinWidth="380">
-            <Grid>
-                <StackPanel Orientation="Vertical"
-                            IsEnabled="True"
-                            Visibility="{Binding IsBalanceUpdating, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <StackPanel Orientation="Horizontal"
-                                Margin="25 25 25 10">
-                        <Image Source="{Binding CurrencyViewModel.LargeIconPath}"
-                               Width="90"
-                               Height="90"
-                               VerticalAlignment="Top"
-                               Style="{StaticResource BaseImageStyle}"/>
-                        <StackPanel Orientation="Vertical"
-                                    Margin="20 10 0 0">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Foreground="{StaticResource BalanceBackgroundBrush}"
-                                           FontFamily="{StaticResource Roboto}"
-                                           FontSize="36"
-                                           VerticalAlignment="Bottom"
-                                           HorizontalAlignment="Left"
-                                           Style="{StaticResource BaseTextBlockStyle}">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="CurrencyViewModel.AvailableAmount" Mode="OneWay"/>
-                                            <Binding Path="CurrencyViewModel.CurrencyFormat" Mode="OneWay"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                                <TextBlock Text="{Binding CurrencyViewModel.CurrencyCode}"
-                                           Foreground="{StaticResource BalanceBackgroundBrush}"
-                                           FontFamily="{StaticResource Roboto}"
-                                           VerticalAlignment="Bottom"
-                                           FontSize="22"
-                                           HorizontalAlignment="Left"
-                                           Margin="5 0 0 0"
-                                           Padding="0 0 0 4"
-                                           Style="{StaticResource BaseTextBlockStyle}"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="0 -5 0 0">
-                                <TextBlock Foreground="{StaticResource UsdBalanceBackgroundBrush}"
-                                           FontFamily="{StaticResource Roboto}"
-                                           FontSize="24"
-                                           VerticalAlignment="Bottom"
-                                           HorizontalAlignment="Left"
-                                           Style="{StaticResource BaseTextBlockStyle}">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="CurrencyViewModel.AvailableAmountInBase" Mode="OneWay"/>
-                                            <Binding Path="CurrencyViewModel.BaseCurrencyFormat" Mode="OneWay"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                                <TextBlock Text="{Binding CurrencyViewModel.BaseCurrencyCode}"
-                                           Foreground="{StaticResource UsdBalanceBackgroundBrush}"
-                                           FontFamily="{StaticResource Roboto}"
-                                           VerticalAlignment="Bottom"
-                                           FontSize="14"
-                                           HorizontalAlignment="Left"
-                                           Margin="2 0 0 0"
-                                           Padding="0 0 0 2"
-                                           Style="{StaticResource BaseTextBlockStyle}"/>
-                            </StackPanel>
-                            <Grid HorizontalAlignment="Left"
-                                  Visibility="{Binding CurrencyViewModel.HasUnconfirmedAmount, Converter={StaticResource bool2VisibilityConverter}}"
-                                  Margin="0 15 0 0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="27"/>
-                                </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="10 20 10 10"
+                    Grid.Row="0">
+            <Border Background="{StaticResource DefaultSubstrateBrush}"
+                    CornerRadius="10"
+                    MinWidth="380">
+                <Grid>
+                    <StackPanel Orientation="Vertical"
+                                IsEnabled="True"
+                                Visibility="{Binding IsBalanceUpdating, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="25 25 25 10">
+                            <Image Source="{Binding CurrencyViewModel.LargeIconPath}"
+                                   Width="90"
+                                   Height="90"
+                                   VerticalAlignment="Top"
+                                   Style="{StaticResource BaseImageStyle}"/>
+                            <StackPanel Orientation="Vertical"
+                                        Margin="20 10 0 0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Foreground="{StaticResource BalanceBackgroundBrush}"
+                                               FontFamily="{StaticResource Roboto}"
+                                               FontSize="36"
+                                               VerticalAlignment="Bottom"
+                                               HorizontalAlignment="Left"
+                                               Style="{StaticResource BaseTextBlockStyle}">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                                                <Binding Path="CurrencyViewModel.AvailableAmount" Mode="OneWay"/>
+                                                <Binding Path="CurrencyViewModel.CurrencyFormat" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding CurrencyViewModel.CurrencyCode}"
+                                               Foreground="{StaticResource BalanceBackgroundBrush}"
+                                               FontFamily="{StaticResource Roboto}"
+                                               VerticalAlignment="Bottom"
+                                               FontSize="22"
+                                               HorizontalAlignment="Left"
+                                               Margin="5 0 0 0"
+                                               Padding="0 0 0 4"
+                                               Style="{StaticResource BaseTextBlockStyle}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0 -5 0 0">
+                                    <TextBlock Foreground="{StaticResource UsdBalanceBackgroundBrush}"
+                                               FontFamily="{StaticResource Roboto}"
+                                               FontSize="24"
+                                               VerticalAlignment="Bottom"
+                                               HorizontalAlignment="Left"
+                                               Style="{StaticResource BaseTextBlockStyle}">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                                                <Binding Path="CurrencyViewModel.AvailableAmountInBase" Mode="OneWay"/>
+                                                <Binding Path="CurrencyViewModel.BaseCurrencyFormat" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding CurrencyViewModel.BaseCurrencyCode}"
+                                               Foreground="{StaticResource UsdBalanceBackgroundBrush}"
+                                               FontFamily="{StaticResource Roboto}"
+                                               VerticalAlignment="Bottom"
+                                               FontSize="14"
+                                               HorizontalAlignment="Left"
+                                               Margin="2 0 0 0"
+                                               Padding="0 0 0 2"
+                                               Style="{StaticResource BaseTextBlockStyle}"/>
+                                </StackPanel>
+                                <Grid HorizontalAlignment="Left"
+                                      Visibility="{Binding CurrencyViewModel.HasUnconfirmedAmount, Converter={StaticResource bool2VisibilityConverter}}"
+                                      Margin="0 15 0 0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="27"/>
+                                    </Grid.RowDefinitions>
 
-                                <Image Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/warning.png"
-                                       Width="21"
-                                       Height="21"
-                                       Grid.Column="0"
-                                       Grid.Row="0"
-                                       ToolTip="Unconfirmed"
-                                       Style="{StaticResource BaseImageStyle}"/>
-                                <TextBlock FontFamily="{StaticResource Roboto}"
-                                           FontSize="14"
-                                           Foreground="{StaticResource UnconfirmedAmountBrush}"
-                                           Grid.Column="1"
+                                    <Image Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/warning.png"
+                                           Width="21"
+                                           Height="21"
+                                           Grid.Column="0"
                                            Grid.Row="0"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Right"
-                                           Margin="7 0 0 0"
                                            ToolTip="Unconfirmed"
-                                           Style="{StaticResource BaseTextBlockStyle}">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="CurrencyViewModel.UnconfirmedAmount" Mode="OneWay"/>
-                                            <Binding Path="CurrencyViewModel.CurrencyFormat" Mode="OneWay"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                                <TextBlock Text="{Binding CurrencyViewModel.CurrencyCode}"
-                                           FontFamily="{StaticResource Roboto}"
-                                           FontSize="8"
-                                           Foreground="{StaticResource UnconfirmedAmountBrush}"
-                                           Grid.Column="2"
-                                           Grid.Row="0"
-                                           VerticalAlignment="Center"
-                                           Margin="4 0 0 0"
-                                           Padding="0 3 0 0"
-                                           ToolTip="Unconfirmed"
-                                           Style="{StaticResource BaseTextBlockStyle}"/>
-                                <TextBlock FontFamily="{StaticResource Roboto}"
-                                           FontSize="11"
-                                           Foreground="DarkGray"
-                                           Grid.Column="3"
-                                           Grid.Row="0"
-                                           VerticalAlignment="Center"
-                                           Margin="7 0 0 0" 
-                                           Padding="0 2 0 0" 
-                                           ToolTip="Unconfirmed" 
-                                           Style="{StaticResource BaseTextBlockStyle}">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="CurrencyViewModel.UnconfirmedAmountInBase" Mode="OneWay"/>
-                                            <Binding Path="CurrencyViewModel.BaseCurrencyFormat" Mode="OneWay"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </Grid>
+                                           Style="{StaticResource BaseImageStyle}"/>
+                                    <TextBlock FontFamily="{StaticResource Roboto}"
+                                               FontSize="14"
+                                               Foreground="{StaticResource UnconfirmedAmountBrush}"
+                                               Grid.Column="1"
+                                               Grid.Row="0"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right"
+                                               Margin="7 0 0 0"
+                                               ToolTip="Unconfirmed"
+                                               Style="{StaticResource BaseTextBlockStyle}">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                                                <Binding Path="CurrencyViewModel.UnconfirmedAmount" Mode="OneWay"/>
+                                                <Binding Path="CurrencyViewModel.CurrencyFormat" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding CurrencyViewModel.CurrencyCode}"
+                                               FontFamily="{StaticResource Roboto}"
+                                               FontSize="8"
+                                               Foreground="{StaticResource UnconfirmedAmountBrush}"
+                                               Grid.Column="2"
+                                               Grid.Row="0"
+                                               VerticalAlignment="Center"
+                                               Margin="4 0 0 0"
+                                               Padding="0 3 0 0"
+                                               ToolTip="Unconfirmed"
+                                               Style="{StaticResource BaseTextBlockStyle}"/>
+                                    <TextBlock FontFamily="{StaticResource Roboto}"
+                                               FontSize="11"
+                                               Foreground="DarkGray"
+                                               Grid.Column="3"
+                                               Grid.Row="0"
+                                               VerticalAlignment="Center"
+                                               Margin="7 0 0 0" 
+                                               Padding="0 2 0 0" 
+                                               ToolTip="Unconfirmed" 
+                                               Style="{StaticResource BaseTextBlockStyle}">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                                                <Binding Path="CurrencyViewModel.UnconfirmedAmountInBase" Mode="OneWay"/>
+                                                <Binding Path="CurrencyViewModel.BaseCurrencyFormat" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel HorizontalAlignment="Center"
+                                    Margin="10"
+                                    Orientation="Horizontal"
+                                    Visibility="Visible">
+                            <controls:RoundedButton 
+                                Content="Send"
+                                Margin="0 0 2 0"
+                                Style="{StaticResource WalletMenuButton}"
+                                Command="{Binding SendCommand}"
+                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"/>
+                            <controls:RoundedButton
+                                Content="Receive"
+                                Margin="2 0 2 0"
+                                Style="{StaticResource WalletMenuButton}"
+                                Command="{Binding ReceiveCommand}"
+                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"/>
+                            <controls:RoundedButton
+                                Content="Convert"
+                                Margin="1 0 1 0"
+                                Style="{StaticResource WalletMenuButton}"
+                                Command="{Binding ConvertCommand}"
+                                IsEnabled="{Binding Currency.IsSwapAvailable}"/>
+                            <controls:RoundedButton
+                                Content="Update"
+                                Margin="2 0 0 0"
+                                Style="{StaticResource WalletMenuButton}"
+                                Command="{Binding UpdateCommand}"
+                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"/>
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel HorizontalAlignment="Center" Margin="10" Orientation="Horizontal" Visibility="Visible">
-                        <controls:RoundedButton 
-                            Content="Send"
-                            Style="{StaticResource WalletMenuButton}"
-                            Command="{Binding SendCommand}"
-                            IsEnabled="{Binding Currency.IsTransactionsAvailable}"/>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="10"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Visibility="{Binding IsBalanceUpdating, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Image Name="CurrencyLogo"
+                               Source="{Binding CurrencyViewModel.LargeIconPath}"
+                               Margin="0 0 0 0"
+                               Width="64"
+                               Height="64"
+                               VerticalAlignment="Top"
+                               IsEnabled="{Binding IsBalanceUpdating}">
+                            <Image.RenderTransform>
+                                <RotateTransform Angle="0" CenterX="32" CenterY="32"/>
+                            </Image.RenderTransform>
+                            <Image.Style>
+                                <Style TargetType="Image" BasedOn="{StaticResource BaseImageStyle}">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="True">
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard Name="UpdatingImageAnimation">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                                         From="0"
+                                                                         To="360"
+                                                                         Duration="00:00:01.000"
+                                                                         RepeatBehavior="Forever"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                            <Trigger.ExitActions>
+                                                <StopStoryboard BeginStoryboardName="UpdatingImageAnimation"/>
+                                            </Trigger.ExitActions>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                        <TextBlock Name="UpdatingTextBlock"
+                                   Text="balance update in progress..."
+                                   Margin="10 0 0 0"
+                                   Foreground="{StaticResource DefaultForegroundBrush}"
+                                   FontFamily="{StaticResource Roboto}"
+                                   FontSize="15"
+                                   VerticalAlignment="Center"
+                                   IsEnabled="{Binding IsBalanceUpdating}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="True">
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard Name="UpdatingTextBlockAnimation">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                         From="1.0"
+                                                                         To="0.1"
+                                                                         Duration="00:00:01.000"
+                                                                         AutoReverse="True"
+                                                                         RepeatBehavior="Forever"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                            <Trigger.ExitActions>
+                                                <StopStoryboard BeginStoryboardName="UpdatingTextBlockAnimation"/>
+                                            </Trigger.ExitActions>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <Button Width="24"
+                            Height="24"
+                            Margin="0 5 1 0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            ToolTip="Cancel"
+                            Command="{Binding CancelUpdateCommand}"
+                            Style="{DynamicResource ChildViewCloseButtonLight}"
+                            Visibility="{Binding IsBalanceUpdating, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </Grid>
+            </Border>
+
+            <Border Background="{StaticResource DefaultSubstrateBrush}"
+                    CornerRadius="10"
+                    Margin="10 0 0 0"
+                    MinWidth="350"
+                    Visibility="{Binding IsDelegatable, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                <Grid>
+                    <StackPanel Orientation="Vertical"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Visibility="{Binding HasDelegations, Converter={StaticResource InverseBoolToVisibilityCollapsedConverter}}">
+                        <TextBlock Text="No delegations found"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{StaticResource NoDelegationsBrush}"/>
                         <controls:RoundedButton
-                            Content="Receive"
-                            Style="{StaticResource WalletMenuButton}"
-                            Command="{Binding ReceiveCommand}"
-                            IsEnabled="{Binding Currency.IsTransactionsAvailable}"/>
-                        <controls:RoundedButton
-                            Content="Convert"
-                            Style="{StaticResource WalletMenuButton}"
-                            Command="{Binding ConvertCommand}"
-                            IsEnabled="{Binding Currency.IsSwapAvailable}"/>
-                        <controls:RoundedButton
-                            Content="Update"
-                            Style="{StaticResource WalletMenuButton}"
-                            Command="{Binding UpdateCommand}"
-                            IsEnabled="{Binding Currency.IsTransactionsAvailable}"/>
-                        <controls:RoundedButton
+                            Margin="0 10 0 0"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Center"
                             Content="Delegate"
                             Style="{StaticResource WalletMenuButton}"
-                            Command="{Binding DelegateCommand}"/>
+                            Command="{Binding DelegateCommand}"
+                            IsEnabled="{Binding CanDelegate}"/>
                     </StackPanel>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal"
-                            Margin="10"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Visibility="{Binding IsBalanceUpdating, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <Image Name="CurrencyLogo"
-                           Source="{Binding CurrencyViewModel.LargeIconPath}"
-                           Margin="0 0 0 0"
-                           Width="64"
-                           Height="64"
-                           VerticalAlignment="Top"
-                           IsEnabled="{Binding IsBalanceUpdating}">
-                        <Image.RenderTransform>
-                            <RotateTransform Angle="0" CenterX="32" CenterY="32"/>
-                        </Image.RenderTransform>
-                        <Image.Style>
-                            <Style TargetType="Image" BasedOn="{StaticResource BaseImageStyle}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="True">
-                                        <Trigger.EnterActions>
-                                            <BeginStoryboard Name="UpdatingImageAnimation">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
-                                                                     From="0"
-                                                                     To="360"
-                                                                     Duration="00:00:01.000"
-                                                                     RepeatBehavior="Forever"/>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </Trigger.EnterActions>
-                                        <Trigger.ExitActions>
-                                            <StopStoryboard BeginStoryboardName="UpdatingImageAnimation"/>
-                                        </Trigger.ExitActions>
-                                    </Trigger>
-                                </Style.Triggers>
+                    
+                    <ListBox Margin="10 10 10 50"
+                             MaxHeight="140"
+                             Background="#1F000000"
+                             BorderThickness="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                             ItemsSource="{Binding Delegations}"
+                             Visibility="{Binding HasDelegations, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
                             </Style>
-                        </Image.Style>
-                    </Image>
-                    <TextBlock Name="UpdatingTextBlock"
-                               Text="balance update in progress..."
-                               Margin="10 0 0 0"
-                               Foreground="{StaticResource DefaultForegroundBrush}"
-                               FontFamily="{StaticResource Roboto}"
-                               FontSize="15"
-                               VerticalAlignment="Center"
-                               IsEnabled="{Binding IsBalanceUpdating}">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="True">
-                                        <Trigger.EnterActions>
-                                            <BeginStoryboard Name="UpdatingTextBlockAnimation">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                     From="1.0"
-                                                                     To="0.1"
-                                                                     Duration="00:00:01.000"
-                                                                     AutoReverse="True"
-                                                                     RepeatBehavior="Forever"/>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </Trigger.EnterActions>
-                                        <Trigger.ExitActions>
-                                            <StopStoryboard BeginStoryboardName="UpdatingTextBlockAnimation"/>
-                                        </Trigger.ExitActions>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </StackPanel>
-
-                <Button Width="24"
-                        Height="24"
-                        Margin="0 5 1 0"
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type viewModels:Delegation}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="34"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="80"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Width="30"
+                                           Height="30"
+                                           Margin="2"
+                                           Source="{Binding Baker.Logo}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           Grid.Column="0"/>
+                                    <TextBlock Text="{Binding Address}"
+                                               Margin="3 0 0 0"
+                                               VerticalAlignment="Center"
+                                               FontSize="10"
+                                               FontFamily="{StaticResource RobotoLight}"
+                                               Foreground="{StaticResource DefaultForegroundBrush}"
+                                               Grid.Column="1"/>
+                                    <TextBlock Text="{Binding Balance, StringFormat=0.000000}"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               FontSize="10"
+                                               FontFamily="{StaticResource RobotoLight}"
+                                               Foreground="{StaticResource DelegatedAmountBrush}"
+                                               Grid.Column="2"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <controls:RoundedButton
+                        Margin="0 0 10 10"
+                        VerticalAlignment="Bottom"
                         HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
-                        ToolTip="Cancel"
-                        Command="{Binding CancelUpdateCommand}"
-                        Style="{DynamicResource ChildViewCloseButtonLight}"
-                        Visibility="{Binding IsBalanceUpdating, Converter={StaticResource BoolToVisibilityConverter}}"/>
-            </Grid>
-        </Border>
-
+                        Content="Delegate"
+                        Style="{StaticResource WalletMenuButton}"
+                        Command="{Binding DelegateCommand}"
+                        Visibility="{Binding HasDelegations, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                </Grid>
+            </Border>
+        </StackPanel>
+        
         <DataGrid x:Name="DgTransactions"
                   Margin="10"
                   MinRowHeight="35"

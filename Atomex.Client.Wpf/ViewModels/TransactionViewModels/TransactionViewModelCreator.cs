@@ -5,9 +5,9 @@ using Atomex.Blockchain.Tezos;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {
-    public class TransactionViewModelCreator
+    public static class TransactionViewModelCreator
     {
-        public TransactionViewModel CreateViewModel(IBlockchainTransaction tx)
+        public static TransactionViewModel CreateViewModel(IBlockchainTransaction tx)
         {
             switch (tx.Currency)
             {
