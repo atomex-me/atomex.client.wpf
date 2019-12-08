@@ -190,7 +190,6 @@
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Width" Value="90"/>
         <Setter Property="Height" Value="30"/>
-        <Setter Property="Margin" Value="2"/>
         <Setter Property="CornerRadius" Value="5"/>
     </Style>
 

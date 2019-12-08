@@ -76,7 +76,7 @@
                                                                 HorizontalAlignment="Center"/>
                                     <TextBlock x:Name="WalletName"
                                                Text="{Binding Description}"
-                                               Margin="5 0 0 0"
+                                               Margin="7 0 0 0"
                                                VerticalAlignment="Center"
                                                FontSize="13"
                                                FontFamily="{StaticResource RobotoLight}"/>

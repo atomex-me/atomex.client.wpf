@@ -1,4 +1,6 @@
 ﻿using System;
+using System;
+using System;
 using System.Threading.Tasks;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -16,6 +18,9 @@ namespace Atomex.Client.Wpf.Controls
 
         void ShowSendDialog(object dataContext, Action dialogLoaded = null);
         void HideSendDialog();
+
+        void ShowDelegateDialog(object dataContext, Action dialogLoaded = null);
+        void HideDelegateDialog();
 
         void ShowConversionConfirmationDialog(object dataContext, Action dialogLoaded = null);
         void HideConversionConfirmationDialog();

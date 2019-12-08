@@ -14,6 +14,7 @@ namespace Atomex.Client.Wpf.Views
         private ChildWindow _startView;
         private ChildWindow _createWalletView;
         private ChildWindow _sendView;
+        private ChildWindow _delegateView;
         private ChildWindow _conversionConfirmationView;
         private ChildWindow _receiveView;
         private ChildWindow _unlockView;
@@ -121,6 +122,25 @@ namespace Atomex.Client.Wpf.Views
         public void HideSendDialog()
         {
             _sendView.Close();
+        }
+
+        public void ShowDelegateDialog(object dataContext, Action dialogLoaded = null)
+        {
+            if (_delegateView != null && _delegateView.IsOpen)
+                return;
+
+            _delegateView = new FrameView { DataContext = dataContext };
+
+            if (dialogLoaded != null)
+                _delegateView.Loaded += (sender, args) => { dialogLoaded(); };
+
+            this.ShowChildWindowAsync(
+                dialog: _delegateView,
+                overlayFillBehavior: ChildWindowManager.OverlayFillBehavior.FullWindow);
+        }
+        public void HideDelegateDialog()
+        {
+            _delegateView.Close();
         }
 
         public void ShowConversionConfirmationDialog(object dataContext, Action dialogLoaded = null)

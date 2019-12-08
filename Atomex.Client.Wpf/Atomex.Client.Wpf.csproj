@@ -364,7 +364,10 @@
     <Compile Include="ViewModels\CurrencyViewModels\LitecoinCurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\TezosCurrencyViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\BakerViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\DelegateConfirmationViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendConfirmationViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\DelegateViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModel.cs" />
@@ -403,8 +406,14 @@
     <Compile Include="Views\ConversionConfirmationPage.xaml.cs">
       <DependentUpon>ConversionConfirmationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SendViews\DelegateConfirmationPage.xaml.cs">
+      <DependentUpon>DelegateConfirmationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SendViews\SendConfirmationPage.xaml.cs">
       <DependentUpon>SendConfirmationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SendViews\DelegatePage.xaml.cs">
+      <DependentUpon>DelegatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SendViews\SendPage.xaml.cs">
       <DependentUpon>SendPage.xaml</DependentUpon>
@@ -484,6 +493,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\BakersComboBoxStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\IconButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -528,9 +541,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\SendViews\DelegateConfirmationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\SendViews\SendConfirmationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SendViews\DelegatePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SendViews\SendPage.xaml">
       <SubType>Designer</SubType>

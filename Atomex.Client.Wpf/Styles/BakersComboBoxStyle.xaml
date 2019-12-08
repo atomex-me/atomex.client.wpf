@@ -1,0 +1,58 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
+                    xmlns:sendViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.SendViewModels">
+    
+    <converters:StringToUpperCaseConverter x:Key="StringToUpperCaseConverter"/>
+    <converters:AmountToStringConverter x:Key="AmountToStringConverter"/>
+
+    <DataTemplate x:Key="BakerItemTemplate" DataType="{x:Type sendViewModels:BakerViewModel}">
+        <Grid Margin="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="48"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="26"/>
+                <RowDefinition Height="22"/>
+            </Grid.RowDefinitions>
+
+            <Image Width="48"
+                   Height="48"
+                   Source="{Binding Logo}"
+                   Grid.Column="0"
+                   Grid.RowSpan="2"/>
+            
+            <TextBlock Text="{Binding Name}"
+                       FontFamily="{StaticResource RobotoBold}"
+                       FontWeight="Bold"
+                       FontSize="16"
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       Margin="7 0 0 0"
+                       VerticalAlignment="Bottom"
+                       Grid.Column="1"
+                       Grid.Row="0"/>
+
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Top"
+                        Grid.Column="1"
+                        Grid.Row="1">
+                <TextBlock FontFamily="{StaticResource Roboto}"
+                           FontSize="13"
+                           Foreground="{StaticResource DefaultForegroundBrush}"
+                           Margin="7 0 0 0"
+                           Text="{Binding Fee, StringFormat=0.00%}">
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>    
+
+
+    <Style x:Key="BakersComboBox" TargetType="ComboBox" BasedOn="{StaticResource CustomComboBox}">
+        <Setter Property="ItemTemplate" Value="{StaticResource BakerItemTemplate}"/>
+        <Setter Property="Background" Value="{StaticResource DefaultSubstrateBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}"/>
+    </Style>
+
+</ResourceDictionary>

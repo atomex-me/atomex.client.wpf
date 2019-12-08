@@ -1,0 +1,159 @@
+﻿<Page x:Class="Atomex.Client.Wpf.Views.SendViews.DelegateConfirmationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:sendViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.SendViewModels"
+      xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
+      mc:Ignorable="d" 
+      UseLayoutRounding="True"
+      Focusable="False"
+      d:DesignHeight="240"
+      d:DesignWidth="560"
+      d:DataContext="{d:DesignInstance Type=sendViewModels:DelegateConfirmationViewModel, IsDesignTimeCreatable=True}">
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="AmountForegroundBrush" Color="#eeff00"/>
+        <SolidColorBrush x:Key="AmountInBaseForegroundBrush" Color="DarkGray"/>
+        <SolidColorBrush x:Key="AddressForegroundBrush" Color="Orange"/>
+
+        <Style x:Key="AmountTextBlock" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource RobotoMedium}"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="{StaticResource AmountForegroundBrush}"/>
+        </Style>
+
+        <Style x:Key="AmountInBaseTextBlock" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource AmountTextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource AmountInBaseForegroundBrush}"/>
+        </Style>
+    </Page.Resources>
+
+    <StackPanel Orientation="Vertical"
+                Width="560">
+
+        <Border Margin="0 10 0 10"
+                Height="33"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
+                Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+            <TextBlock Text="Delegation confirmation"
+                       Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
+                       FontFamily="{StaticResource RobotoLight}"
+                       FontSize="25"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+        <TextBlock Text="Do you really want to delegate:"
+                   Margin="20 20 20 20"
+                   FontSize="15"
+                   FontFamily="{StaticResource RobotoLight}"
+                   HorizontalAlignment="Center"
+                   Foreground="{StaticResource DefaultForegroundBrush}"/>
+
+        <Grid Margin="20 0 20 0"
+              HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="from address:"
+                       FontSize="15"
+                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       HorizontalAlignment="Right"
+                       Grid.Column="0"
+                       Grid.Row="0"/>
+            <TextBlock Text="{Binding From}"
+                       Margin="5 0 0 0"
+                       TextWrapping="Wrap"
+                       FontSize="15"
+                       FontFamily="{StaticResource RobotoMedium}"
+                       Foreground="{StaticResource AddressForegroundBrush}"
+                       Grid.Column="1"
+                       Grid.Row="0"/>
+
+            <TextBlock Text="to address:"
+                       FontSize="15"
+                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       HorizontalAlignment="Right"
+                       Grid.Column="0"
+                       Grid.Row="1"/>
+            <TextBlock Text="{Binding To}"
+                       Margin="5 0 0 0"
+                       TextWrapping="Wrap"
+                       FontSize="15"
+                       FontFamily="{StaticResource RobotoMedium}"
+                       Foreground="{StaticResource AddressForegroundBrush}"
+                       Grid.Column="1"
+                       Grid.Row="1"/>
+
+            <TextBlock Text="with commission:"
+                       FontSize="15"
+                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       HorizontalAlignment="Right"
+                       Grid.Column="0"
+                       Grid.Row="2"/>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="1"
+                        Grid.Row="2">
+                <TextBlock Margin="5 0 0 0"
+                           Style="{StaticResource AmountTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="Fee" Mode="OneWay"/>
+                            <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text="{Binding CurrencyCode}"
+                           Margin="3 0 0 1"
+                           FontSize="11"
+                           VerticalAlignment="Bottom"
+                           Style="{StaticResource AmountTextBlock}"/>
+                <TextBlock Text="("
+                           Margin="5 0 0 0"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+                <TextBlock Style="{StaticResource AmountInBaseTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="FeeInBase" Mode="OneWay"/>
+                            <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text="{Binding BaseCurrencyCode}"
+                           Margin="3 0 0 1"
+                           FontSize="11"
+                           VerticalAlignment="Bottom"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+                <TextBlock Text=")"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0 20 0 20">
+            <controls:RoundedButton Width="100"
+                                    Height="40"
+                                    Margin="0 0 3 0"
+                                    CornerRadius="20 0 0 20"
+                                    Content="No"
+                                    Command="{Binding BackCommand}"/>
+            <controls:RoundedButton Width="100"
+                                    Height="40"
+                                    CornerRadius="0 20 20 0"
+                                    Content="Yes"
+                                    Command="{Binding NextCommand}"/>
+        </StackPanel>
+    </StackPanel>
+</Page>
