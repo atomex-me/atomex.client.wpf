@@ -11,6 +11,7 @@ namespace Atomex.Client.Wpf.Common
         public const string DelegateConfirmationAlias = "DelegateConfirmationPage";
         public const string ConversionConfirmationAlias = "ConversionConfirmationPage";
         public const string SendingAlias = "SendingPage";
+        public const string DelegatingAlias = "DelegatingPage";
         public const string MessageAlias = "MessagePage";
         public const string DelegateAlias = "DelegatePage";
 
@@ -71,10 +72,8 @@ namespace Atomex.Client.Wpf.Common
                 navigationState: context);
         }
 
-        public static void Navigate(Page page)
-        {
+        public static void Navigate(Page page) =>
             Navigate(page, null);
-        }
 
         public static void Navigate(string uri, object context)
         {
@@ -86,10 +85,8 @@ namespace Atomex.Client.Wpf.Common
             Navigate(page, context);
         }
 
-        public static void Navigate(string uri)
-        {
+        public static void Navigate(string uri) =>
             Navigate(uri, null);
-        }
 
         public static void Back()
         {
@@ -97,9 +94,7 @@ namespace Atomex.Client.Wpf.Common
                 Instance._service.GoBack();
         }
 
-        public static void UseResolver(IPageResolver resolver)
-        {
+        public static void UseResolver(IPageResolver resolver) =>
             Instance._resolver = resolver;
-        }
     }
 }

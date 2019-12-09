@@ -87,7 +87,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 _bakerViewModel = value;
                 OnPropertyChanged(nameof(BakerViewModel));
                 
-                Address = _bakerViewModel?.Address;
+                if (_bakerViewModel != null)
+                    Address = _bakerViewModel.Address;
             }
         }
         
@@ -171,7 +172,18 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public string Address
         {
             get => _address;
-            set { _address = value; OnPropertyChanged(nameof(Address)); }
+            set
+            {
+                _address = value;
+                OnPropertyChanged(nameof(Address));
+
+                var baker = FromBakersList.FirstOrDefault(b => b.Address == _address);
+
+                if (baker == null)
+                    BakerViewModel = null;
+                else if (baker != BakerViewModel)
+                    BakerViewModel = baker;
+            }
         }
 
         private string _warning;
@@ -187,59 +199,82 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             DialogViewer?.HideDelegateDialog();
         }));
 
+        private bool _delegationCheck;
+        public bool DelegationCheck
+        {
+            get => _delegationCheck;
+            set { _delegationCheck = value; OnPropertyChanged(nameof(DelegationCheck)); }
+        }
+
         private ICommand _nextCommand;
         public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(async () =>
         {
-            if (string.IsNullOrEmpty(Address)) {
-                Warning = Resources.SvEmptyAddressError;
+            if (DelegationCheck)
                 return;
-            }
 
-            if (!_tezos.IsValidAddress(Address)) {
-                Warning = Resources.SvInvalidAddressError;
-                return;
-            }
+            DelegationCheck = true;
 
-            if (Fee < 0) {
-                Warning = Resources.SvCommissionLessThanZeroError;
-                return;
-            }
-
-            /*
-            if (xTezos.GetFeeAmount(Fee, FeePrice) > CurrencyViewModel.AvailableAmount) {
-                Warning = Resources.SvAvailableFundsError;
-                return;
-            }*/
-
-            var result = await SendDelegation();
-
-            if (result.HasError)
-                Warning = result.Error.Description;
-            else
+            try
             {
-                var confirmationViewModel = new DelegateConfirmationViewModel(DialogViewer, _onDelegate)
+
+                if (string.IsNullOrEmpty(Address))
                 {
-                    Currency = _tezos,
-                    WalletAddress = WalletAddress,
-                    UseDefaultFee = UseDefaultFee,
-                    Tx = _tx,
-                    From = WalletAddress.Address,
-                    To = Address,
-                    BaseCurrencyCode = BaseCurrencyCode,
-                    BaseCurrencyFormat = BaseCurrencyFormat,
-                    Fee = Fee,
-                    FeeInBase = FeeInBase,
-                    CurrencyCode = _tezos.FeeCode,
-                    CurrencyFormat = _tezos.FeeFormat
-                };
-                
-                Navigation.Navigate(
-                    uri: Navigation.DelegateConfirmationAlias,
-                    context: confirmationViewModel);
+                    Warning = Resources.SvEmptyAddressError;
+                    return;
+                }
+
+                if (!_tezos.IsValidAddress(Address))
+                {
+                    Warning = Resources.SvInvalidAddressError;
+                    return;
+                }
+
+                if (Fee < 0)
+                {
+                    Warning = Resources.SvCommissionLessThanZeroError;
+                    return;
+                }
+
+                /*
+                if (xTezos.GetFeeAmount(Fee, FeePrice) > CurrencyViewModel.AvailableAmount) {
+                    Warning = Resources.SvAvailableFundsError;
+                    return;
+                }*/
+
+                var result = await GetDelegate();
+
+                if (result.HasError)
+                    Warning = result.Error.Description;
+                else
+                {
+                    var confirmationViewModel = new DelegateConfirmationViewModel(DialogViewer, _onDelegate)
+                    {
+                        Currency = _tezos,
+                        WalletAddress = WalletAddress,
+                        UseDefaultFee = UseDefaultFee,
+                        Tx = _tx,
+                        From = WalletAddress.Address,
+                        To = Address,
+                        BaseCurrencyCode = BaseCurrencyCode,
+                        BaseCurrencyFormat = BaseCurrencyFormat,
+                        Fee = Fee,
+                        FeeInBase = FeeInBase,
+                        CurrencyCode = _tezos.FeeCode,
+                        CurrencyFormat = _tezos.FeeFormat
+                    };
+
+                    Navigation.Navigate(
+                        uri: Navigation.DelegateConfirmationAlias,
+                        context: confirmationViewModel);
+                }
+            }
+            finally
+            {
+                DelegationCheck = false;
             }
         }));
 
-        private Action _onDelegate;
+        private readonly Action _onDelegate;
 
         public DelegateViewModel()
         {
@@ -318,7 +353,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             WalletAddress = FromAddressList.FirstOrDefault().WalletAddress;
         }
 
-        private async Task<Result<string>> SendDelegation(CancellationToken cancellationToken = default)
+        private async Task<Result<string>> GetDelegate(CancellationToken cancellationToken = default)
         {
             if(_walletAddress == null)
                 return new Result<string>(new Error(Errors.InvalidWallets, "You don't have non-empty accounts"));

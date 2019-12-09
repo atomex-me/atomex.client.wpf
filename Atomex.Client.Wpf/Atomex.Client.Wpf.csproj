@@ -406,6 +406,9 @@
     <Compile Include="Views\ConversionConfirmationPage.xaml.cs">
       <DependentUpon>ConversionConfirmationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DelegatingPage.xaml.cs">
+      <DependentUpon>DelegatingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SendViews\DelegateConfirmationPage.xaml.cs">
       <DependentUpon>DelegateConfirmationPage.xaml</DependentUpon>
     </Compile>
@@ -538,6 +541,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ConversionConfirmationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DelegatingPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

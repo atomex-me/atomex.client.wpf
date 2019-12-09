@@ -24,6 +24,7 @@ namespace Atomex.Client.Wpf.Views
             resolver.AddResolver(Navigation.ConversionConfirmationAlias, () => new ConversionConfirmationPage());
             resolver.AddResolver(Navigation.SendingAlias, () => new SendingPage());
             resolver.AddResolver(Navigation.DelegateAlias, () => new DelegatePage());
+            resolver.AddResolver(Navigation.DelegatingAlias, () => new DelegatingPage());
 
             Navigation.UseResolver(resolver);
             Navigation.Service = Frame.NavigationService;

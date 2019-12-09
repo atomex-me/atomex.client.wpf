@@ -18,183 +18,194 @@
       d:DataContext="{d:DesignInstance Type=viewModels:DelegateViewModel, IsDesignTimeCreatable=True}">
     <Page.Resources>
         <SolidColorBrush x:Key="AmountBrush" Color="#ffa500"/>
-        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed" />
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed"/>
+        <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" FalseEquivalent="Collapsed" OppositeBoolValue="True"/>
     </Page.Resources>
 
-    <StackPanel Orientation="Vertical"
-                Width="600">
+    <Grid Width="600">
+        <StackPanel Orientation="Vertical"                     
+                    IsEnabled="{Binding DelegationCheck, Converter={StaticResource InverseBooleanConverter}}">
 
-        <Border Margin="0 10 0 10"
-                Height="33"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Stretch"
-                Background="{StaticResource ChildViewHeaderBackgroundBrush}">
-            <TextBlock Text="Delegate"
-                       Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
+            <Border Margin="0 10 0 10"
+                    Height="33"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Stretch"
+                    Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+                <TextBlock Text="Delegate"
+                           Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
+                           FontFamily="{StaticResource RobotoLight}"
+                           FontSize="25"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+            </Border>
+
+            <TextBlock Text="Delegating to a bakery."
+                       Foreground="{StaticResource DefaultForegroundBrush}"
                        FontFamily="{StaticResource RobotoLight}"
-                       FontSize="25"
+                       FontSize="15"
+                       Margin="40 20 40 15"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"/>
+
+            <ComboBox Width="510"
+                      MinHeight="68"
+                      Margin="0 5 0 5"
+                      ItemsSource="{Binding FromBakersList}"
+                      SelectedValue="{Binding BakerViewModel}"
+                      helpers:ComboBoxHelper.CornerRadius="20"
+                      Style="{StaticResource BakersComboBox}"/>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <Border Style="{StaticResource FieldHeader}">
+                    <TextBlock Text="To Address:"
+                               Margin="0 0 7 0"
+                               Foreground="{StaticResource DefaultForegroundBrush}"
+                               FontFamily="{StaticResource RobotoMedium}"
+                               FontSize="13"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                </Border>
+                <TextBox Width="410"
+                         Height="40"
+                         Margin="0 5 0 5"
+                         Text="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Background="{StaticResource DefaultSubstrateBrush}"
+                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         helpers:TextBoxHelper.CornerRadius="0 20 20 0"
+                         FontFamily="Roboto"
+                         Style="{StaticResource CustomTextBox}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <Border Style="{StaticResource FieldHeader}">
+                    <TextBlock Text="From Address:"
+                               Margin="0 0 7 0"
+                               Foreground="{StaticResource DefaultForegroundBrush}"
+                               FontFamily="{StaticResource RobotoMedium}"
+                               FontSize="13"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                </Border>
+                <ComboBox Width="410"
+                         Height="40"
+                         Margin="0 5 0 5"
+                         ItemsSource="{Binding FromAddressList}"
+                         SelectedValuePath="WalletAddress"
+                         SelectedValue="{Binding WalletAddress, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                         Background="{StaticResource DefaultSubstrateBrush}"
+                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         helpers:ComboBoxHelper.CornerRadius="0 20 20 0"
+                         Style="{StaticResource CustomComboBox}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type ComboBoxItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock
+                                    Margin="3 0 0 0"
+                                    Text="{Binding Address}"
+                                    Foreground="{StaticResource DefaultForegroundBrush}"
+                                    FontSize="12"
+                                    FontFamily="{StaticResource Roboto}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"/>
+                                <TextBlock
+                                    Margin="10 0 0 0"
+                                    Text="{Binding AvailableBalance, StringFormat=0.000000}"
+                                    Foreground="{StaticResource AmountBrush}"
+                                    FontSize="12"
+                                    FontFamily="{StaticResource Roboto}"
+                                     VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"/>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        IsEnabled="{Binding UseDefaultFee, Converter={StaticResource InverseBooleanConverter}}"
+                        Style="{StaticResource BaseDisabledStyle}">
+                <Border Style="{StaticResource FieldHeader}">
+                    <TextBlock Text="Fee:"
+                               Margin="0 0 7 0"
+                               Foreground="{StaticResource DefaultForegroundBrush}"
+                               FontFamily="{StaticResource RobotoMedium}"
+                               FontSize="13"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                </Border>
+
+                <TextBox Width="410"
+                         Height="40"
+                         Margin="0 5 0 5"
+                         FontSize="18"
+                         Background="{StaticResource DefaultSubstrateBrush}"
+                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         Text="{Binding FeeString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         helpers:TextBoxHelper.CornerRadius="0 20 20 0"
+                         helpers:AmountTextBoxHelper.CurrencyCode="{Binding FeeCurrencyCode}"
+                         helpers:AmountTextBoxHelper.BaseCurrencyCode="{Binding BaseCurrencyCode}"
+                         Style="{StaticResource AmountTextBox}">
+                    <helpers:AmountTextBoxHelper.AmountInBase>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="FeeInBase" Mode="OneWay"/>
+                            <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </helpers:AmountTextBoxHelper.AmountInBase>
+                    <i:Interaction.Behaviors>
+                        <behaviors:TextBoxInputBehavior InputMode="DecimalInput"
+                                                        UseInvariantCulture="True"
+                                                        JustPositiveDecimalInput="True"/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+            </StackPanel>
+
+            <mah:ToggleSwitch IsChecked="{Binding UseDefaultFee}"
+                              HorizontalAlignment="Center"
+                              OffLabel="Use default fee"
+                              OnLabel="Use default fee"
+                              FontFamily="{StaticResource RobotoLight}"
+                              FontSize="13"
+                              Margin="10"
+                              Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"/>
+
+            <TextBlock Text="{Binding Warning}"
+                       Foreground="{StaticResource WarningForegroundBrush}"
+                       FontFamily="{StaticResource RobotoLight}"
+                       FontSize="13"
+                       Margin="20 5 20 0"
+                       TextWrapping="Wrap"
                        HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
-        </Border>
+                       VerticalAlignment="Bottom"/>
 
-        <TextBlock Text="Delegating to a bakery."
-                   Foreground="{StaticResource DefaultForegroundBrush}"
-                   FontFamily="{StaticResource RobotoLight}"
-                   FontSize="15"
-                   Margin="40 20 40 15"
-                   TextWrapping="Wrap"
-                   HorizontalAlignment="Center"/>
-
-        <ComboBox Width="510"
-                  MinHeight="68"
-                  Margin="0 5 0 5"
-                  ItemsSource="{Binding FromBakersList}"
-                  SelectedValue="{Binding BakerViewModel}"
-                  helpers:ComboBoxHelper.CornerRadius="20"
-                  Style="{StaticResource BakersComboBox}"/>
-
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Center">
-            <Border Style="{StaticResource FieldHeader}">
-                <TextBlock Text="To Address:"
-                           Margin="0 0 7 0"
-                           Foreground="{StaticResource DefaultForegroundBrush}"
-                           FontFamily="{StaticResource RobotoMedium}"
-                           FontSize="13"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Right"/>
-            </Border>
-            <TextBox Width="410"
-                     Height="40"
-                     Margin="0 5 0 5"
-                     Text="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     Background="{StaticResource DefaultSubstrateBrush}"
-                     Foreground="{StaticResource DefaultForegroundBrush}"
-                     helpers:TextBoxHelper.CornerRadius="0 20 20 0"
-                     FontFamily="Roboto"
-                     Style="{StaticResource CustomTextBox}"/>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0 20 0 20">
+                <controls:RoundedButton Width="100"
+                                        Height="40"
+                                        Margin="0 0 3 0"
+                                        CornerRadius="20 0 0 20"
+                                        Content="Cancel"
+                                        Command="{Binding BackCommand}"/>
+                <controls:RoundedButton Width="100"
+                                        Height="40"
+                                        CornerRadius="0 20 20 0"
+                                        Content="Delegate"
+                                        Command="{Binding NextCommand}"/>
+            </StackPanel>
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Center">
-            <Border Style="{StaticResource FieldHeader}">
-                <TextBlock Text="From Address:"
-                           Margin="0 0 7 0"
-                           Foreground="{StaticResource DefaultForegroundBrush}"
-                           FontFamily="{StaticResource RobotoMedium}"
-                           FontSize="13"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Right"/>
-            </Border>
-            <ComboBox Width="410"
-                     Height="40"
-                     Margin="0 5 0 5"
-                     ItemsSource="{Binding FromAddressList}"
-                     SelectedValuePath="WalletAddress"
-                     SelectedValue="{Binding WalletAddress, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                     Background="{StaticResource DefaultSubstrateBrush}"
-                     Foreground="{StaticResource DefaultForegroundBrush}"
-                     helpers:ComboBoxHelper.CornerRadius="0 20 20 0"
-                     Style="{StaticResource CustomComboBox}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type ComboBoxItem}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock
-                                Margin="3 0 0 0"
-                                Text="{Binding Address}"
-                                Foreground="{StaticResource DefaultForegroundBrush}"
-                                FontSize="12"
-                                FontFamily="{StaticResource Roboto}"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"/>
-                            <TextBlock
-                                Margin="10 0 0 0"
-                                Text="{Binding AvailableBalance, StringFormat=0.000000}"
-                                Foreground="{StaticResource AmountBrush}"
-                                FontSize="12"
-                                FontFamily="{StaticResource Roboto}"
-                                 VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-        </StackPanel>
+        <Border Background="{StaticResource DefaultSubstrateBrush}"
+                Visibility="{Binding DelegationCheck, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Center"/>
-
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    IsEnabled="{Binding UseDefaultFee, Converter={StaticResource InverseBooleanConverter}}"
-                    Style="{StaticResource BaseDisabledStyle}">
-            <Border Style="{StaticResource FieldHeader}">
-                <TextBlock Text="Fee:"
-                           Margin="0 0 7 0"
-                           Foreground="{StaticResource DefaultForegroundBrush}"
-                           FontFamily="{StaticResource RobotoMedium}"
-                           FontSize="13"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Right"/>
-            </Border>
-
-            <TextBox Width="410"
-                     Height="40"
-                     Margin="0 5 0 5"
-                     FontSize="18"
-                     Background="{StaticResource DefaultSubstrateBrush}"
-                     Foreground="{StaticResource DefaultForegroundBrush}"
-                     Text="{Binding FeeString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     helpers:TextBoxHelper.CornerRadius="0 20 20 0"
-                     helpers:AmountTextBoxHelper.CurrencyCode="{Binding FeeCurrencyCode}"
-                     helpers:AmountTextBoxHelper.BaseCurrencyCode="{Binding BaseCurrencyCode}"
-                     Style="{StaticResource AmountTextBox}">
-                <helpers:AmountTextBoxHelper.AmountInBase>
-                    <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                        <Binding Path="FeeInBase" Mode="OneWay"/>
-                        <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
-                    </MultiBinding>
-                </helpers:AmountTextBoxHelper.AmountInBase>
-                <i:Interaction.Behaviors>
-                    <behaviors:TextBoxInputBehavior InputMode="DecimalInput"
-                                                    UseInvariantCulture="True"
-                                                    JustPositiveDecimalInput="True"/>
-                </i:Interaction.Behaviors>
-            </TextBox>
-        </StackPanel>
-
-        <mah:ToggleSwitch IsChecked="{Binding UseDefaultFee}"
-                          HorizontalAlignment="Center"
-                          OffLabel="Use default fee"
-                          OnLabel="Use default fee"
-                          FontFamily="{StaticResource RobotoLight}"
-                          FontSize="13"
-                          Margin="10"
-                          Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"/>
-
-        <TextBlock Text="{Binding Warning}"
-                   Foreground="{StaticResource WarningForegroundBrush}"
-                   FontFamily="{StaticResource RobotoLight}"
-                   FontSize="13"
-                   Margin="20 5 20 0"
-                   TextWrapping="Wrap"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Bottom"/>
-
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    Margin="0 20 0 20">
-            <controls:RoundedButton Width="100"
-                                    Height="40"
-                                    Margin="0 0 3 0"
-                                    CornerRadius="20 0 0 20"
-                                    Content="Cancel"
-                                    Command="{Binding BackCommand}"/>
-            <controls:RoundedButton Width="100"
-                                    Height="40"
-                                    CornerRadius="0 20 20 0"
-                                    Content="Send"
-                                    Command="{Binding NextCommand}"/>
-        </StackPanel>
-    </StackPanel>
+        <mah:ProgressRing Width="80"
+                          Height="80"
+                          IsActive="{Binding DelegationCheck}"
+                          Visibility="{Binding DelegationCheck, Converter={StaticResource BoolToVisibilityConverter}}"/>
+    </Grid>
 </Page>

@@ -57,6 +57,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             
             try
             {
+                Navigation.Navigate(uri: Navigation.DelegatingAlias);
+
                 var signResult = await Tx
                     .SignDelegationOperationAsync(keyStorage, WalletAddress, default);
 
