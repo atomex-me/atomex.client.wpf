@@ -22,6 +22,17 @@ using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
+    public class WalletAddressViewModel
+    {
+        public WalletAddress WalletAddress { get; set; }
+
+        public string Address => WalletAddress.Address;
+        public decimal AvailableBalance => WalletAddress.AvailableBalance();
+
+        public WalletAddressViewModel(WalletAddress walletAddress) =>
+            WalletAddress = walletAddress;
+    }
+
     public class DelegateViewModel : BaseViewModel
     {
         private IAtomexApp App { get; }
@@ -54,8 +65,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             }
         }
 
-        private List<WalletAddress> _fromAddressList;
-        public List<WalletAddress> FromAddressList
+        private List<WalletAddressViewModel> _fromAddressList;
+        public List<WalletAddressViewModel> FromAddressList
         {
             get => _fromAddressList;
             private set 
@@ -63,7 +74,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 _fromAddressList = value;
                 OnPropertyChanged(nameof(FromAddressList));
                 
-                WalletAddress = FromAddressList.FirstOrDefault();
+                WalletAddress = FromAddressList.FirstOrDefault().WalletAddress;
             }
         }
 
@@ -295,6 +306,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             FromAddressList = (await App.Account
                 .GetUnspentAddressesAsync(_tezos, cancellationToken).ConfigureAwait(false))
                 .OrderByDescending(x => x.Balance)
+                .Select(w => new WalletAddressViewModel(w))
                 .ToList();
 
             if (!FromAddressList?.Any() ?? false)
@@ -303,7 +315,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 return;
             }
 
-            WalletAddress = FromAddressList.FirstOrDefault();
+            WalletAddress = FromAddressList.FirstOrDefault().WalletAddress;
         }
 
         private async Task<Result<string>> SendDelegation(CancellationToken cancellationToken = default)

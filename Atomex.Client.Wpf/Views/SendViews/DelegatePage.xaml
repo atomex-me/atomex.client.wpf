@@ -14,15 +14,16 @@
       UseLayoutRounding="True"
       Focusable="False"
       d:DesignHeight="500"
-      d:DesignWidth="560"   
+      d:DesignWidth="600"
       d:DataContext="{d:DesignInstance Type=viewModels:DelegateViewModel, IsDesignTimeCreatable=True}">
     <Page.Resources>
+        <SolidColorBrush x:Key="AmountBrush" Color="#ffa500"/>
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed" />
     </Page.Resources>
 
     <StackPanel Orientation="Vertical"
-                Width="560">
+                Width="600">
 
         <Border Margin="0 10 0 10"
                 Height="33"
@@ -45,7 +46,7 @@
                    TextWrapping="Wrap"
                    HorizontalAlignment="Center"/>
 
-        <ComboBox Width="480"
+        <ComboBox Width="510"
                   MinHeight="68"
                   Margin="0 5 0 5"
                   ItemsSource="{Binding FromBakersList}"
@@ -64,13 +65,14 @@
                            VerticalAlignment="Center"
                            HorizontalAlignment="Right"/>
             </Border>
-            <TextBox Width="380"
+            <TextBox Width="410"
                      Height="40"
                      Margin="0 5 0 5"
                      Text="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Background="{StaticResource DefaultSubstrateBrush}"
                      Foreground="{StaticResource DefaultForegroundBrush}"
                      helpers:TextBoxHelper.CornerRadius="0 20 20 0"
+                     FontFamily="Roboto"
                      Style="{StaticResource CustomTextBox}"/>
         </StackPanel>
 
@@ -85,16 +87,38 @@
                            VerticalAlignment="Center"
                            HorizontalAlignment="Right"/>
             </Border>
-            <ComboBox Width="380"
+            <ComboBox Width="410"
                      Height="40"
                      Margin="0 5 0 5"
                      ItemsSource="{Binding FromAddressList}"
-                     DisplayMemberPath="Address"
+                     SelectedValuePath="WalletAddress"
                      SelectedValue="{Binding WalletAddress, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                      Background="{StaticResource DefaultSubstrateBrush}"
                      Foreground="{StaticResource DefaultForegroundBrush}"
                      helpers:ComboBoxHelper.CornerRadius="0 20 20 0"
-                     Style="{StaticResource CustomComboBox}"/>
+                     Style="{StaticResource CustomComboBox}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type ComboBoxItem}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                Margin="3 0 0 0"
+                                Text="{Binding Address}"
+                                Foreground="{StaticResource DefaultForegroundBrush}"
+                                FontSize="12"
+                                FontFamily="{StaticResource Roboto}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"/>
+                            <TextBlock
+                                Margin="10 0 0 0"
+                                Text="{Binding AvailableBalance, StringFormat=0.000000}"
+                                Foreground="{StaticResource AmountBrush}"
+                                FontSize="12"
+                                FontFamily="{StaticResource Roboto}"
+                                 VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal"
@@ -114,7 +138,7 @@
                            HorizontalAlignment="Right"/>
             </Border>
 
-            <TextBox Width="380"
+            <TextBox Width="410"
                      Height="40"
                      Margin="0 5 0 5"
                      FontSize="18"
