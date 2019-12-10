@@ -80,14 +80,11 @@ namespace Atomex.Client.Wpf.ViewModels
             _nextAction = nextAction;
         }
 
-        public static MessageViewModel Error(string text)
-        {
-            return Error(text, goBackPages: 1);
-        }
+        public static MessageViewModel Error(string text) =>
+            Error(text, goBackPages: 1);
 
-        public static MessageViewModel Error(string text, int goBackPages)
-        {
-            return new MessageViewModel(
+        public static MessageViewModel Error(string text, int goBackPages) =>
+            new MessageViewModel(
                 title: Resources.SvError,
                 text: text,
                 backTitle: Resources.SvBack,
@@ -98,22 +95,18 @@ namespace Atomex.Client.Wpf.ViewModels
                         Navigation.Back();
                 },
                 nextAction: null);
-        }
 
-        public static MessageViewModel Success(string text, Action nextAction)
-        {
-            return new MessageViewModel(
+        public static MessageViewModel Success(string text, Action nextAction) =>
+            new MessageViewModel(
                 title: Resources.SvSuccess,
                 text: text,
                 backTitle: null,
                 nextTitle: Resources.SvOk,
                 backAction: null,
                 nextAction: nextAction);
-        }
 
-        public static MessageViewModel Message(string title, string text, int goBackPages)
-        {
-            return new MessageViewModel(
+        public static MessageViewModel Message(string title, string text, int goBackPages) =>
+            new MessageViewModel(
                 title: title,
                 text: text,
                 backTitle: Resources.SvBack,
@@ -124,11 +117,9 @@ namespace Atomex.Client.Wpf.ViewModels
                         Navigation.Back();
                 },
                 nextAction: null);
-        }
 
-        public static MessageViewModel Success(string text, string baseUrl, string id, Action nextAction)
-        {
-            return new MessageViewModel(
+        public static MessageViewModel Success(string text, string baseUrl, string id, Action nextAction) =>
+            new MessageViewModel(
                 title: Resources.SvSuccess,
                 text: text,
                 baseUrl: baseUrl,
@@ -137,7 +128,6 @@ namespace Atomex.Client.Wpf.ViewModels
                 nextTitle: Resources.SvOk,
                 backAction: null,
                 nextAction: nextAction);
-        }
         
         private ICommand _openTxInExplorerCommand;
         public ICommand OpenTxInExplorerCommand => _openTxInExplorerCommand ?? (_openTxInExplorerCommand = new RelayCommand<string>((id) =>

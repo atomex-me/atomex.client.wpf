@@ -7,14 +7,20 @@ using System.Windows.Media.Imaging;
 using Atomex.Core.Entities;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels.Abstract;
+using Atomex.Client.Wpf.ViewModels.SendViewModels;
 using Atomex.Common;
 using QRCoder;
+using System;
+using System.Windows.Input;
+using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
     public class ReceiveViewModel : BaseViewModel
     {
         private const int PixelsPerModule = 20;
+
+        private IAtomexApp App { get; }
 
         private List<CurrencyViewModel> _fromCurrencies;
         public List<CurrencyViewModel> FromCurrencies
@@ -31,28 +37,62 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 _currency = value;
                 OnPropertyChanged(nameof(Currency));
-
 #if DEBUG
                 if (!Env.IsInDesignerMode())
+                {
 #endif
-                    Address = App.AtomexApp.Account
+                    var activeAddresses = App.Account
+                        .GetUnspentAddressesAsync(_currency)
+                        .WaitForResult();
+
+                    var freeAddress = App.Account
                         .GetFreeExternalAddressAsync(_currency)
-                        .WaitForResult()
-                        .Address;
+                        .WaitForResult();
+
+                    FromAddressList = activeAddresses
+                        .Select(wa => new WalletAddressViewModel(wa))
+                        .ToList()
+                        .AddEx(new WalletAddressViewModel(freeAddress, isFreeAddress: true));
+#if DEBUG
+                }
+#endif
             }
         }
 
-        private string _address;
-        public string Address
+        private List<WalletAddressViewModel> _fromAddressList;
+        public List<WalletAddressViewModel> FromAddressList
         {
-            get => _address;
+            get => _fromAddressList;
+            private set
+                {
+                _fromAddressList = value;
+                OnPropertyChanged(nameof(FromAddressList));
+
+                SelectedAddress = GetDefaultAddress();
+            }
+        }
+
+        private WalletAddress _selectedAddress;
+        public WalletAddress SelectedAddress
+        {
+            get => _selectedAddress;
             set
             {
-                _address = value;
-                OnPropertyChanged(nameof(Address));
+                _selectedAddress = value;
+                OnPropertyChanged(nameof(SelectedAddress));
 
-                CreateQrCodeAsync().FireAndForget();
+                if (_selectedAddress != null)
+                    CreateQrCodeAsync().FireAndForget();
+
+                Warning = string.Empty;
             }
+        }
+
+        private string _warning;
+        public string Warning
+        {
+            get => _warning;
+            set { _warning = value; OnPropertyChanged(nameof(Warning)); }
         }
 
         public BitmapSource QrCode { get; private set; }
@@ -72,6 +112,8 @@ namespace Atomex.Client.Wpf.ViewModels
 
         public ReceiveViewModel(IAtomexApp app, Currency currency)
         {
+            App = app ?? throw new ArgumentNullException(nameof(app));
+
             FromCurrencies = app.Account.Currencies
                 .Where(c => c.IsTransactionsAvailable)
                 .Select(CurrencyViewModelCreator.CreateViewModel)
@@ -87,7 +129,7 @@ namespace Atomex.Client.Wpf.ViewModels
             await Task.Factory.StartNew(() =>
             {
                 using (var qrGenerator = new QRCodeGenerator())
-                using (var qrData = qrGenerator.CreateQrCode(Address, QRCodeGenerator.ECCLevel.Q))
+                using (var qrData = qrGenerator.CreateQrCode(_selectedAddress.Address, QRCodeGenerator.ECCLevel.Q))
                 using (var qrCode = new QRCode(qrData))
                     qrCodeBitmap = qrCode.GetGraphic(PixelsPerModule);
             });
@@ -104,6 +146,35 @@ namespace Atomex.Client.Wpf.ViewModels
             }
         }
 
+        private WalletAddress GetDefaultAddress()
+        {
+            if (Currency is Tezos || Currency is Ethereum)
+            {
+                var activeAddressViewModel = FromAddressList
+                    .FirstOrDefault(vm => vm.WalletAddress.HasActivity && vm.WalletAddress.AvailableBalance() > 0);
+
+                if (activeAddressViewModel != null)
+                    return activeAddressViewModel.WalletAddress;
+            }
+
+            return FromAddressList.First(vm => vm.IsFreeAddress).WalletAddress;
+        }
+
+        private ICommand _copyCommand;
+        public ICommand CopyCommand => _copyCommand ?? (_copyCommand = new RelayCommand<string>((s) =>
+        {
+            try
+            {
+                Clipboard.SetText(SelectedAddress.Address);
+
+                Warning = "Address successfully copied to clipboard.";
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Copy to clipboard error");
+            }
+        }));
+
         private void DesignerMode()
         {
             FromCurrencies = DesignTime.Currencies
@@ -111,7 +182,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 .ToList();
 
             Currency = FromCurrencies.First().Currency;
-            Address = "mzztP8VVJYxV93EUiiYrJUbL55MLx7KLoM";
+           // Address = "mzztP8VVJYxV93EUiiYrJUbL55MLx7KLoM";
         }
     }
 }

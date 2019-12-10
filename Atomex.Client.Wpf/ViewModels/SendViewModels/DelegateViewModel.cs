@@ -22,17 +22,6 @@ using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
-    public class WalletAddressViewModel
-    {
-        public WalletAddress WalletAddress { get; set; }
-
-        public string Address => WalletAddress.Address;
-        public decimal AvailableBalance => WalletAddress.AvailableBalance();
-
-        public WalletAddressViewModel(WalletAddress walletAddress) =>
-            WalletAddress = walletAddress;
-    }
-
     public class DelegateViewModel : BaseViewModel
     {
         private IAtomexApp App { get; }

@@ -369,6 +369,7 @@
     <Compile Include="ViewModels\SendViewModels\SendConfirmationViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\DelegateViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\WalletAddressViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModelFactory.cs" />

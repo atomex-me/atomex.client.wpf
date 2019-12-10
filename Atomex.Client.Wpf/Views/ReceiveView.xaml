@@ -7,7 +7,9 @@
              xmlns:helpers="clr-namespace:Atomex.Client.Wpf.Helpers"
              xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
              xmlns:common="clr-namespace:Atomex.Client.Wpf.Common"
-             mc:Ignorable="d" 
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                      xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
+                      mc:Ignorable="d" 
 
              ShowTitleBar="False"
              Background="Transparent"
@@ -17,12 +19,22 @@
 
              UseLayoutRounding="True"
              common:ChildWindowHelper.IsOpen="True"
-             d:DesignWidth="600"
+             d:DesignWidth="630"
              d:DesignHeight="400"
              d:DataContext="{d:DesignInstance Type=viewModels:ReceiveViewModel, IsDesignTimeCreatable=True}">
 
+    <controls:ChildWindow.Resources>
+        <SolidColorBrush x:Key="NewAddressBrush" Color="#FFB8B8B8"/>
+        <SolidColorBrush x:Key="AmountBrush" Color="#ffa500"/>
+        <SolidColorBrush x:Key="IconButtonForegroundBrush" Color="#BECFDE"/>
+        <SolidColorBrush x:Key="IconButtonMouseOverBrush" Color="White"/>
+        <SolidColorBrush x:Key="IconButtonPressedBrush" Color="#29456d"/>
+        <SolidColorBrush x:Key="AlmostTransparentBrush" Color="#00000001"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed"/>
+    </controls:ChildWindow.Resources>
+    
     <Border Style="{StaticResource ChildViewBorder}"
-            Width="560">
+            Width="630">
         <Grid>
             <StackPanel Orientation="Vertical">
                 <Border Margin="0 10 0 20"
@@ -36,7 +48,7 @@
                                VerticalAlignment="Center"/>
                 </Border>
 
-                <ComboBox Width="480"
+                <ComboBox Width="500"
                           MinHeight="68"
                           Margin="0 5 0 5"
                           ItemsSource="{Binding FromCurrencies}"
@@ -46,7 +58,8 @@
                           Style="{StaticResource CurrencyComboBox}"/>
 
                 <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Center">
+                            HorizontalAlignment="Center"
+                            Margin="37 0 0 0">
                     <Border Width="90"
                             Height="40"
                             Background="{StaticResource FieldHeaderBackgroundBrush}"
@@ -59,16 +72,98 @@
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right"/>
                     </Border>
-                    <TextBox Width="390"
+                    
+                    <ComboBox Width="410"
                              Height="40"
                              Margin="0 5 0 5"
-                             IsReadOnly="True"
-                             Text="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             ItemsSource="{Binding FromAddressList}"
+                             SelectedValuePath="WalletAddress"
+                             SelectedValue="{Binding SelectedAddress, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                              Background="{StaticResource DefaultSubstrateBrush}"
                              Foreground="{StaticResource DefaultForegroundBrush}"
-                             helpers:TextBoxHelper.CornerRadius="0 20 20 0"
-                             Style="{StaticResource CustomTextBox}"/>
+                             helpers:ComboBoxHelper.CornerRadius="0 20 20 0"
+                             Style="{StaticResource CustomComboBox}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type ComboBoxItem}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                            Text="(new)"
+                                            Foreground="{StaticResource NewAddressBrush}"
+                                            FontSize="12"
+                                            FontFamily="{StaticResource Roboto}"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Visibility="{Binding IsFreeAddress, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    <TextBlock
+                                            Margin="3 0 0 0"
+                                            Text="{Binding Address}"
+                                            Foreground="{StaticResource DefaultForegroundBrush}"
+                                            FontSize="12"
+                                            FontFamily="{StaticResource Roboto}"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"/>
+                                    <TextBlock
+                                            Margin="10 0 0 0"
+                                            Foreground="{StaticResource AmountBrush}"
+                                            FontSize="12"
+                                            FontFamily="{StaticResource Roboto}"
+                                            VerticalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                                                <Binding Path="AvailableBalance" Mode="OneWay"/>
+                                                <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <controls:IconButton 
+                            VerticalAlignment="Center"
+                            Foreground="{StaticResource IconButtonForegroundBrush}"
+                            MouseOverBrush="{StaticResource IconButtonMouseOverBrush}"
+                            PressedBrush="{StaticResource IconButtonPressedBrush}"
+                            Margin="7 0 0 0"
+                            ToolTip="Copy to clipboard"
+                            Command="{Binding CopyCommand}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="{x:Type controls:IconButton}">
+                                <iconPacks:PackIconOcticons
+                                    x:Name="clippyTxIdIcon"
+                                    Kind="Clippy"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Background="{StaticResource AlmostTransparentBrush}"
+                                    Width="25"
+                                    Height="25"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="clippyTxIdIcon"
+                                            Property="Foreground"
+                                            Value="{Binding MouseOverBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:IconButton}}}" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="clippyTxIdIcon"
+                                            Property="Foreground"
+                                            Value="{Binding PressedBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:IconButton}}}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </controls:IconButton>
                 </StackPanel>
+
+                <TextBlock Text="{Binding Warning}"
+                           Foreground="{StaticResource WarningForegroundBrush}"
+                           FontFamily="{StaticResource RobotoLight}"
+                           FontSize="13"
+                           Margin="20 5 20 0"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
 
                 <Image Width="128"
                        Height="Auto"
