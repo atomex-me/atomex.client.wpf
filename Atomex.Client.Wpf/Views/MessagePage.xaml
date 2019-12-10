@@ -23,7 +23,9 @@
         <SolidColorBrush x:Key="AlmostTransparentBrush" Color="#00000001" />
     </Page.Resources>
 
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical"
+                Width="560">
+        
         <Border Margin="0 10 0 10"
                 Height="33"
                 VerticalAlignment="Top"

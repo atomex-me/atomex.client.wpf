@@ -19,8 +19,7 @@
              d:DesignWidth="560"
              d:DesignHeight="450">
 
-    <Border Style="{StaticResource ChildViewBorder}"
-            Width="560">
+    <Border Style="{StaticResource ChildViewBorder}">
         <Grid>
             <Frame x:Name="Frame"
                    NavigationUIVisibility="Hidden"/>

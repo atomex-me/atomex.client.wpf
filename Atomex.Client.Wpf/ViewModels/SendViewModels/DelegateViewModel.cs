@@ -309,9 +309,11 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                             Address = x.Address,
                             Logo = x.Logo,
                             Name = x.Name,
-                            Fee = x.Fee
+                            Fee = x.Fee,
+                            StakingAvailable = x.StakingAvailable
                         })
-                        .ToList();
+                        .ToList()
+                        .SortList((b1, b2) => b1.IsFull.CompareTo(b2.IsFull));
                 });
             }
             catch (Exception e)
@@ -432,7 +434,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     Logo = "https://api.baking-bad.org/logos/tezoshodl.png", //"tezoshodl.png",
                     Name = "TezosHODL",
                     Address = "tz1sdfldjsflksjdlkf123sfa",
-                    Fee = 5
+                    Fee = 5,
+                    StakingAvailable = 10000.000000m
                 }
             };
 

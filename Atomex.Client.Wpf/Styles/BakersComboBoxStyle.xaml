@@ -2,55 +2,128 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
                     xmlns:sendViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.SendViewModels">
-    
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.ComboBox.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <SolidColorBrush x:Key="BakerComboBoxItemsBackgroundBrush" Color="#FF172130"/>
+
+    <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     <converters:StringToUpperCaseConverter x:Key="StringToUpperCaseConverter"/>
     <converters:AmountToStringConverter x:Key="AmountToStringConverter"/>
+    <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed"/>
+    <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" FalseEquivalent="Collapsed" OppositeBoolValue="True"/>
 
     <DataTemplate x:Key="BakerItemTemplate" DataType="{x:Type sendViewModels:BakerViewModel}">
-        <Grid Margin="3">
+        <Grid Margin="3" Width="440">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="48"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
             
             <Grid.RowDefinitions>
                 <RowDefinition Height="26"/>
                 <RowDefinition Height="22"/>
             </Grid.RowDefinitions>
-
+            
             <Image Width="48"
                    Height="48"
                    Source="{Binding Logo}"
                    Grid.Column="0"
                    Grid.RowSpan="2"/>
-            
+
             <TextBlock Text="{Binding Name}"
                        FontFamily="{StaticResource RobotoBold}"
                        FontWeight="Bold"
                        FontSize="16"
-                       Foreground="{StaticResource DefaultForegroundBrush}"
                        Margin="7 0 0 0"
                        VerticalAlignment="Bottom"
                        Grid.Column="1"
-                       Grid.Row="0"/>
+                       Grid.Row="0">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFull}" Value="true">
+                                <Setter Property="Foreground" Value="#ffa500"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsFull}" Value="false">
+                                <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
-            <StackPanel Orientation="Horizontal"
-                        VerticalAlignment="Top"
-                        Grid.Column="1"
-                        Grid.Row="1">
-                <TextBlock FontFamily="{StaticResource Roboto}"
-                           FontSize="13"
-                           Foreground="{StaticResource DefaultForegroundBrush}"
-                           Margin="7 0 0 0"
-                           Text="{Binding Fee, StringFormat=0.00%}">
-                </TextBlock>
-            </StackPanel>
+            <TextBlock FontFamily="{StaticResource Roboto}"
+                       FontSize="13"
+                       Margin="7 0 0 0"
+                       Text="{Binding Fee, StringFormat=0.00%}"
+                       VerticalAlignment="Top"
+                       Grid.Column="1"
+                       Grid.Row="1">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFull}" Value="true">
+                                <Setter Property="Foreground" Value="#ffa500"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsFull}" Value="false">
+                                <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <TextBlock FontFamily="{StaticResource Roboto}"
+                       FontSize="12"
+                       Text="BAKER IS FULL"
+                       Foreground="#ffa500"
+                       Margin="7 0 0 0"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Grid.Column="2"
+                       Grid.Row="0"
+                       Grid.RowSpan="2"
+                       Visibility="{Binding IsFull, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+            <TextBlock FontFamily="{StaticResource Roboto}"
+                       FontSize="11"
+                       Text="Available"
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       Margin="7 0 0 0"
+                       VerticalAlignment="Bottom"
+                       HorizontalAlignment="Right"
+                       Grid.Column="2"
+                       Grid.Row="0"
+                       Visibility="{Binding IsFull, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+            
+            <TextBlock FontFamily="{StaticResource Roboto}"
+                       FontSize="11"
+                       Text="{Binding StakingAvailable}"
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       Margin="7 0 0 0"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Right"
+                       Grid.Column="2"
+                       Grid.Row="1"
+                       Visibility="{Binding IsFull, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
         </Grid>
-    </DataTemplate>    
+    </DataTemplate>
 
-
+    <!--<Style x:Key="BakerContainerStyle"
+           TargetType="ComboBoxItem"
+           BasedOn="{StaticResource MahApps.Styles.ComboBoxItem}">
+        --><!--<Setter Property="BorderThickness" Value="0"/>-->
+        <!--<Setter Property="Background" Value="{StaticResource BakerComboBoxItemsBackgroundBrush}"/>--><!--
+        <Setter Property="IsEnabled" Value="{Binding IsFull, Converter={StaticResource InverseBooleanConverter}}"/>
+    </Style>-->
+    
     <Style x:Key="BakersComboBox" TargetType="ComboBox" BasedOn="{StaticResource CustomComboBox}">
         <Setter Property="ItemTemplate" Value="{StaticResource BakerItemTemplate}"/>
+        <!--<Setter Property="ItemContainerStyle" Value="{StaticResource BakerContainerStyle}"/>-->
         <Setter Property="Background" Value="{StaticResource DefaultSubstrateBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}"/>
     </Style>
