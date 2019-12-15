@@ -186,7 +186,7 @@
                 </StackPanel>
 
                 <TextBlock Foreground="{StaticResource CopyrightForegroundBrush}"
-                           Text="© 2018 Atomex LTD, All rights reserved"
+                           Text="© 2018 Igor Matsak, All rights reserved"
                            Margin="0 0 0 7"
                            FontSize="11"
                            FontFamily="{StaticResource RobotoLight}"

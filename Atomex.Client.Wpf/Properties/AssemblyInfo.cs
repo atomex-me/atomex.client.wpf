@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Atomex.Client.Wpf")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright © 2018 Igor Matsak")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

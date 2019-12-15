@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Atomex.Client.Wpf.Tests")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCopyright("Copyright © 2018 Igor Matsak")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

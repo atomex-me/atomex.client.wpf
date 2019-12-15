@@ -3,7 +3,7 @@
 <?define Name = "Atomex Client" ?>
 <?define Manufacturer = "Atomex.me" ?>
 <?define Description = "Multicurrency HD wallet with built-in hybrid exchange based on atomic swap." ?>
-<?define Version = "1.0.19" ?>
+<?define Version = "1.0.20" ?>
 <?define UpgradeCode = "DB7FCF8D-E0C6-4C99-A6B1-3FB6D703F97E" ?>
 <?define ExeName = "Atomex.Client.Wpf.exe" ?>
 
@@ -13,7 +13,7 @@
 					 Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
 
 		<Package InstallerVersion="400" Compressed="yes" Manufacturer="$(var.Manufacturer)"
-						 Description="$(var.Description)" Comments="(c) 2018-2019 Atomex.me"
+						 Description="$(var.Description)" Comments="Copyright © 2018 Igor Matsak"
 						 InstallPrivileges="limited" InstallScope="perUser" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />    
