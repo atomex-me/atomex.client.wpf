@@ -380,7 +380,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 From = _walletAddress.Address,
                 To = _address,
                 Fee = Fee.ToMicroTez(),
-                Currency = _tezos
+                Currency = _tezos,
+                CreationTime = DateTime.UtcNow,
             };
 
             try
