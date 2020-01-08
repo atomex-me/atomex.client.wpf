@@ -1,16 +1,16 @@
-﻿<Page x:Class="Atomex.Client.Wpf.Views.SendViews.DelegateConfirmationPage"
+﻿<Page x:Class="Atomex.Client.Wpf.Views.SendConfirmationPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:sendViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.SendViewModels"
+      xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
       xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
       mc:Ignorable="d" 
       UseLayoutRounding="True"
       Focusable="False"
       d:DesignHeight="240"
       d:DesignWidth="560"
-      d:DataContext="{d:DesignInstance Type=sendViewModels:DelegateConfirmationViewModel, IsDesignTimeCreatable=True}">
+      d:DataContext="{d:DesignInstance Type=viewModels:SendConfirmationViewModel, IsDesignTimeCreatable=True}">
 
     <Page.Resources>
         <SolidColorBrush x:Key="AmountForegroundBrush" Color="#eeff00"/>
@@ -36,7 +36,7 @@
                 VerticalAlignment="Top"
                 HorizontalAlignment="Stretch"
                 Background="{StaticResource ChildViewHeaderBackgroundBrush}">
-            <TextBlock Text="Delegation confirmation"
+            <TextBlock Text="Send confirmation"
                        Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
                        FontFamily="{StaticResource RobotoLight}"
                        FontSize="25"
@@ -44,7 +44,7 @@
                        VerticalAlignment="Center"/>
         </Border>
 
-        <TextBlock Text="Do you really want to delegate:"
+        <TextBlock Text="Do you really want:"
                    Margin="20 20 20 20"
                    FontSize="15"
                    FontFamily="{StaticResource RobotoLight}"
@@ -63,21 +63,49 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="from address:"
+            <TextBlock Text="to send:"
                        FontSize="15"
                        FontFamily="{StaticResource RobotoLight}"
                        Foreground="{StaticResource DefaultForegroundBrush}"
                        HorizontalAlignment="Right"
                        Grid.Column="0"
                        Grid.Row="0"/>
-            <TextBlock Text="{Binding From}"
-                       Margin="5 0 0 0"
-                       TextWrapping="Wrap"
-                       FontSize="15"
-                       FontFamily="{StaticResource RobotoMedium}"
-                       Foreground="{StaticResource AddressForegroundBrush}"
-                       Grid.Column="1"
-                       Grid.Row="0"/>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="1"
+                        Grid.Row="0">
+                <TextBlock Margin="5 0 0 0"
+                           Style="{StaticResource AmountTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="Amount" Mode="OneWay"/>
+                            <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text="{Binding CurrencyCode}"
+                           Margin="3 0 0 1"
+                           FontSize="11"
+                           VerticalAlignment="Bottom"
+                           Style="{StaticResource AmountTextBlock}"/>
+                <TextBlock Text="("
+                           Margin="5 0 0 0"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+                <TextBlock Style="{StaticResource AmountInBaseTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="AmountInBase" Mode="OneWay"/>
+                            <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text="{Binding BaseCurrencyCode}"
+                           Margin="3 0 0 1"
+                           FontSize="11"
+                           VerticalAlignment="Bottom"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+                <TextBlock Text=")"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+            </StackPanel>
 
             <TextBlock Text="to address:"
                        FontSize="15"
@@ -109,7 +137,7 @@
                            Style="{StaticResource AmountTextBlock}">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="Fee" Mode="OneWay"/>
+                            <Binding Path="FeeAmount" Mode="OneWay"/>
                             <Binding Path="CurrencyFormat" Mode="OneWay"/>
                         </MultiBinding>
                     </TextBlock.Text>

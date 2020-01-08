@@ -12,14 +12,14 @@ using Atomex.Blockchain;
 using Atomex.Blockchain.BitcoinBased;
 using Atomex.Blockchain.Tezos;
 using Atomex.Blockchain.Tezos.Internal;
-using Atomex.Common;
-using Atomex.Core.Entities;
-using Atomex.Wallet;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.SendViewModels;
 using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
+using Atomex.Common;
+using Atomex.Core.Entities;
+using Atomex.Wallet;
 using NBitcoin;
 using Serilog;
 
@@ -279,15 +279,11 @@ namespace Atomex.Client.Wpf.ViewModels
             Cancellation.Cancel();
         }));
 
-        private void OnSendClick()
-        {
-            var viewModel = new SendViewModel(App, DialogViewer, Currency);
-
-            DialogViewer?.ShowSendDialog(viewModel, dialogLoaded: viewModel.Show);
-        }
+        private void OnSendClick() =>
+            DialogViewer.ShowDialog(Dialogs.Send, new SendViewModel(App, DialogViewer, Currency), defaultPageId: Pages.Send);
 
         private void OnReceiveClick() =>
-            DialogViewer?.ShowReceiveDialog(new ReceiveViewModel(App, Currency));
+            DialogViewer.ShowDialog(Dialogs.Receive, new ReceiveViewModel(App, Currency));
 
         private void OnConvertClick()
         {
@@ -338,7 +334,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 await Application.Current.Dispatcher.InvokeAsync(OnUpdateClick);
             });
 
-            DialogViewer?.ShowDelegateDialog(viewModel, dialogLoaded: viewModel.Show);
+            DialogViewer.ShowDialog(Dialogs.Delegate, viewModel, defaultPageId: Pages.Delegate);
         }
 
         private void UpdateTransactonEventHandler(object sender, TransactionEventArgs args)
@@ -364,6 +360,16 @@ namespace Atomex.Client.Wpf.ViewModels
                 Log.Error(e, "Transaction remove error");
             }
         }
+
+        //private int ResolveSendDialog(string currency) =>
+        //    currency switch
+        //    {
+        //        "BTC" => Dialogs.BitcoinBasedSend,
+        //        "LTC" => Dialogs.BitcoinBasedSend,
+        //        "ETH" => Dialogs.EthereumSend,
+        //        "XTZ" => Dialogs.TezosSend,
+        //        _ => throw new NotSupportedException($"Currency {currency} not supported")
+        //    };
 
         private void DesignerMode()
         {
@@ -407,28 +413,32 @@ namespace Atomex.Client.Wpf.ViewModels
                     },
                     Address = "tz1aqcYgG6NuViML5vdWhohHJBYxcDVLNUsE",
                     Balance = 1000.2123m
-                },                new Delegation
+                },
+                new Delegation
                 {
                     Baker = new BakerData {
                         Logo = "https://api.baking-bad.org/logos/letzbake.png"
                     },
                     Address = "tz1aqcYgG6NuViML5vdWhohHJBYxcDVLNUsE",
                     Balance = 1000.2123m
-                },                new Delegation
+                },
+                new Delegation
                 {
                     Baker = new BakerData {
                         Logo = "https://api.baking-bad.org/logos/letzbake.png"
                     },
                     Address = "tz1aqcYgG6NuViML5vdWhohHJBYxcDVLNUsE",
                     Balance = 1000.2123m
-                },                new Delegation
+                },
+                new Delegation
                 {
                     Baker = new BakerData {
                         Logo = "https://api.baking-bad.org/logos/letzbake.png"
                     },
                     Address = "tz1aqcYgG6NuViML5vdWhohHJBYxcDVLNUsE",
                     Balance = 1000.2123m
-                },                new Delegation
+                },
+                new Delegation
                 {
                     Baker = new BakerData {
                         Logo = "https://api.baking-bad.org/logos/letzbake.png"

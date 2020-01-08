@@ -53,12 +53,12 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 AtomexApp.UseTerminal(new Terminal(App.Configuration, account), restart: true);
 
-                DialogViewer?.HideMyWalletsDialog();
-                DialogViewer?.HideStartDialog();
-                DialogViewer?.HideUnlockDialog();
+                DialogViewer.HideDialog(Dialogs.MyWallets);
+                DialogViewer.HideDialog(Dialogs.Start);
+                DialogViewer.HideDialog(Dialogs.Unlock);
             };
 
-            DialogViewer?.ShowUnlockDialog(unlockViewModel);
+            DialogViewer.ShowDialog(Dialogs.Unlock, unlockViewModel);
         }));
 
 

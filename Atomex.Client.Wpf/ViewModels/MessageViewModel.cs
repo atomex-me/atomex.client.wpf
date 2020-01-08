@@ -80,20 +80,13 @@ namespace Atomex.Client.Wpf.ViewModels
             _nextAction = nextAction;
         }
 
-        public static MessageViewModel Error(string text) =>
-            Error(text, goBackPages: 1);
-
-        public static MessageViewModel Error(string text, int goBackPages) =>
+        public static MessageViewModel Error(string text, Action backAction) =>
             new MessageViewModel(
                 title: Resources.SvError,
                 text: text,
                 backTitle: Resources.SvBack,
                 nextTitle: null,
-                backAction: () =>
-                {
-                    for (var i = 0; i < goBackPages; ++i)
-                        Navigation.Back();
-                },
+                backAction: backAction,
                 nextAction: null);
 
         public static MessageViewModel Success(string text, Action nextAction) =>
@@ -105,17 +98,13 @@ namespace Atomex.Client.Wpf.ViewModels
                 backAction: null,
                 nextAction: nextAction);
 
-        public static MessageViewModel Message(string title, string text, int goBackPages) =>
+        public static MessageViewModel Message(string title, string text, Action backAction) =>
             new MessageViewModel(
                 title: title,
                 text: text,
                 backTitle: Resources.SvBack,
                 nextTitle: null,
-                backAction: () =>
-                {
-                    for (var i = 0; i < goBackPages; ++i)
-                        Navigation.Back();
-                },
+                backAction: backAction,
                 nextAction: null);
 
         public static MessageViewModel Success(string text, string baseUrl, string id, Action nextAction) =>

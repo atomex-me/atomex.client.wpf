@@ -40,14 +40,13 @@ namespace Atomex.Client.Wpf.ViewModels
         private ICommand _myWalletsCommand;
         public ICommand MyWalletsCommand => _myWalletsCommand ?? (_myWalletsCommand = new Command(() =>
         {
-            DialogViewer?.ShowMyWalletsDialog(
-                new MyWalletsViewModel(AtomexApp, DialogViewer));
+            DialogViewer.ShowDialog(Dialogs.MyWallets, new MyWalletsViewModel(AtomexApp, DialogViewer));
         }));
 
         private ICommand _createNewCommand;
         public ICommand CreateNewCommand => _createNewCommand ?? (_createNewCommand = new Command(() =>
         {
-            DialogViewer?.ShowCreateWalletDialog(
+            DialogViewer.ShowDialog(Dialogs.CreateWallet,
                 new CreateWalletViewModel(
                     app: AtomexApp,
                     scenario: CreateWalletScenario.CreateNew,
@@ -58,7 +57,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private ICommand _restoreByMnemonicCommand;
         public ICommand RestoreByMnemonicCommand => _restoreByMnemonicCommand ?? (_restoreByMnemonicCommand = new Command(() =>
         {
-            DialogViewer?.ShowCreateWalletDialog(
+            DialogViewer.ShowDialog(Dialogs.CreateWallet,
                 new CreateWalletViewModel(
                     app: AtomexApp,
                     scenario: CreateWalletScenario.Restore,
@@ -87,15 +86,15 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void OnCanceled()
         {
-            DialogViewer?.HideCreateWalletDialog();
+            DialogViewer.HideDialog(Dialogs.CreateWallet);
         }
 
         private void OnAccountCreated(IAccount account)
         {
             AtomexApp.UseTerminal(new Terminal(App.Configuration, account), restart: true);
 
-            DialogViewer?.HideCreateWalletDialog();
-            DialogViewer?.HideStartDialog();
+            DialogViewer?.HideDialog(Dialogs.CreateWallet);
+            DialogViewer?.HideDialog(Dialogs.Start);
         }
 
         private void DesignerMode()

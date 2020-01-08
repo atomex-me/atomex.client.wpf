@@ -1,0 +1,252 @@
+﻿<Page x:Class="Atomex.Client.Wpf.Views.SendViews.EthereumSendPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.SendViewModels"
+      xmlns:helpers="clr-namespace:Atomex.Client.Wpf.Helpers"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:behaviors="clr-namespace:Atomex.Client.Wpf.Behaviors"
+      xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+      xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
+      mc:Ignorable="d"
+      UseLayoutRounding="True"
+      Focusable="False"
+      d:DesignHeight="580"
+      d:DesignWidth="560"   
+      d:DataContext="{d:DesignInstance Type=viewModels:SendViewModel, IsDesignTimeCreatable=True}">
+    <Page.Resources>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed" />
+    </Page.Resources>
+
+    <Grid Width="560">
+        <StackPanel Orientation="Vertical">
+
+            <Border Margin="0 10 0 10"
+                    Height="33"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Stretch"
+                    Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+                <TextBlock Text="Send"
+                           Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
+                           FontFamily="{StaticResource RobotoLight}"
+                           FontSize="25"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+            </Border>
+
+            <TextBlock Text="Instantly sending of currency."
+                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       FontFamily="{StaticResource RobotoLight}"
+                       FontSize="15"
+                       Margin="40 20 40 15"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"/>
+
+            <ComboBox Width="480"
+                      MinHeight="68"
+                      Margin="0 5 0 5"
+                      ItemsSource="{Binding FromCurrencies}"
+                      SelectedValuePath="Currency"
+                      SelectedValue="{Binding Currency}"
+                      helpers:ComboBoxHelper.CornerRadius="20"
+                      Style="{StaticResource CurrencyComboBox}"/>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <Border Style="{StaticResource FieldHeader}">
+                    <TextBlock Text="To Address:"
+                               Margin="0 0 7 0"
+                               Foreground="{StaticResource DefaultForegroundBrush}"
+                               FontFamily="{StaticResource RobotoMedium}"
+                               FontSize="13"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                </Border>
+                <TextBox Width="380"
+                         Height="40"
+                         Margin="0 5 0 5"
+                         Text="{Binding To, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Background="{StaticResource DefaultSubstrateBrush}"
+                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         helpers:TextBoxHelper.CornerRadius="0 20 20 0"
+                         Style="{StaticResource CustomTextBox}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <Border Style="{StaticResource FieldHeader}">
+                    <TextBlock Text="Amount:"
+                               Margin="0 0 7 0"
+                               Foreground="{StaticResource DefaultForegroundBrush}"
+                               FontFamily="{StaticResource RobotoMedium}"
+                               FontSize="13"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                </Border>
+
+                <TextBox Width="380"
+                         Height="40"
+                         Margin="0 5 0 5"
+                         FontSize="18"
+                         Background="{StaticResource DefaultSubstrateBrush}"
+                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         Text="{Binding AmountString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         helpers:TextBoxHelper.CornerRadius="0 20 20 0"
+                         helpers:AmountTextBoxHelper.CurrencyCode="{Binding CurrencyCode}"
+                         helpers:AmountTextBoxHelper.BaseCurrencyCode="{Binding BaseCurrencyCode}"
+                         Style="{StaticResource AmountTextBox}">
+                    <helpers:AmountTextBoxHelper.AmountInBase>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="AmountInBase" Mode="OneWay"/>
+                            <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </helpers:AmountTextBoxHelper.AmountInBase>
+
+                    <i:Interaction.Behaviors>
+                        <behaviors:TextBoxInputBehavior InputMode="DecimalInput"
+                                                        UseInvariantCulture="True"
+                                                        JustPositiveDecimalInput="True"/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        IsEnabled="{Binding UseDefaultFee, Converter={StaticResource InverseBooleanConverter}}"
+                        Style="{StaticResource BaseDisabledStyle}">
+                <Border Style="{StaticResource FieldHeader}">
+                    <TextBlock Text="Gas price:"
+                               Margin="0 0 7 0"
+                               Foreground="{StaticResource DefaultForegroundBrush}"
+                               FontFamily="{StaticResource RobotoMedium}"
+                               FontSize="13"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                </Border>
+
+                <TextBox Width="380"
+                         Height="40"
+                         Margin="0 5 0 5"
+                         FontSize="18"
+                         Text="{Binding GasPriceString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Background="{StaticResource DefaultSubstrateBrush}"
+                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         helpers:TextBoxHelper.CornerRadius="0 20 20 0"
+                         Style="{StaticResource AmountTextBox}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:TextBoxInputBehavior InputMode="DecimalInput"
+                                                        UseInvariantCulture="True"
+                                                        JustPositiveDecimalInput="True"/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        IsEnabled="{Binding UseDefaultFee, Converter={StaticResource InverseBooleanConverter}}"
+                        Style="{StaticResource BaseDisabledStyle}">
+                <Border Style="{StaticResource FieldHeader}">
+                    <TextBlock Text="Gas limit:"
+                               Margin="0 0 7 0"
+                               Foreground="{StaticResource DefaultForegroundBrush}"
+                               FontFamily="{StaticResource RobotoMedium}"
+                               FontSize="13"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                </Border>
+
+                <TextBox Width="380"
+                         Height="40"
+                         Margin="0 5 0 5"
+                         FontSize="18"
+                         Background="{StaticResource DefaultSubstrateBrush}"
+                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         Text="{Binding GasLimitString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         helpers:TextBoxHelper.CornerRadius="0 20 20 0"
+                         Style="{StaticResource AmountTextBox}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:TextBoxInputBehavior InputMode="DecimalInput"
+                                                        UseInvariantCulture="True"
+                                                        JustPositiveDecimalInput="True"/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        IsEnabled="false"
+                        Style="{StaticResource BaseDisabledStyle}">
+                <Border Style="{StaticResource FieldHeader}">
+                    <TextBlock Text="Total fee:"
+                               Margin="0 0 7 0"
+                               Foreground="{StaticResource DefaultForegroundBrush}"
+                               FontFamily="{StaticResource RobotoMedium}"
+                               FontSize="13"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                </Border>
+
+                <TextBox Width="380"
+                         Height="40"
+                         Margin="0 5 0 5"
+                         FontSize="18"
+                         Background="{StaticResource DefaultSubstrateBrush}"
+                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         Text="{Binding TotalFeeString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         helpers:TextBoxHelper.CornerRadius="0 20 20 0"
+                         helpers:AmountTextBoxHelper.CurrencyCode="{Binding FeeCurrencyCode}"
+                         helpers:AmountTextBoxHelper.BaseCurrencyCode="{Binding BaseCurrencyCode}"
+                         Style="{StaticResource AmountTextBox}">
+                    <helpers:AmountTextBoxHelper.AmountInBase>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="TotalFeeInBase" Mode="OneWay"/>
+                            <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </helpers:AmountTextBoxHelper.AmountInBase>
+                    <i:Interaction.Behaviors>
+                        <behaviors:TextBoxInputBehavior InputMode="DecimalInput"
+                                                        UseInvariantCulture="True"
+                                                        JustPositiveDecimalInput="True"/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+            </StackPanel>
+
+            <mah:ToggleSwitch IsChecked="{Binding UseDefaultFee}"
+                              HorizontalAlignment="Center"
+                              OffLabel="Use default fee"
+                              OnLabel="Use default fee"
+                              FontFamily="{StaticResource RobotoLight}"
+                              FontSize="13"
+                              Margin="10"
+                              Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"/>
+
+            <TextBlock Text="{Binding Warning}"
+                       Foreground="{StaticResource WarningForegroundBrush}"
+                       FontFamily="{StaticResource RobotoLight}"
+                       FontSize="13"
+                       Margin="20 5 20 0"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"/>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0 20 0 20">
+                <controls:RoundedButton Width="100"
+                                        Height="40"
+                                        Margin="0 0 3 0"
+                                        CornerRadius="20 0 0 20"
+                                        Content="Cancel"
+                                        Command="{Binding BackCommand}"/>
+                <controls:RoundedButton Width="100"
+                                        Height="40"
+                                        CornerRadius="0 20 20 0"
+                                        Content="Send"
+                                        Command="{Binding NextCommand}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

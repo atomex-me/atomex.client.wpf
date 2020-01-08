@@ -84,7 +84,7 @@ namespace Atomex.Client.Wpf
             var mainView = new MainWindow();
             mainView.DataContext = new MainViewModel(AtomexApp, mainView, mainView);
             mainView.Show();        
-            mainView.ShowStartDialog(new StartViewModel(AtomexApp, mainView));
+            mainView.ShowDialog(Dialogs.Start, new StartViewModel(AtomexApp, mainView));
 
             MainWindow = mainView;
 

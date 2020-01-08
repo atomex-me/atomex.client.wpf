@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
-                    xmlns:sendViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.SendViewModels">
+                    xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.ComboBox.xaml" />
@@ -15,7 +15,7 @@
     <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed"/>
     <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" FalseEquivalent="Collapsed" OppositeBoolValue="True"/>
 
-    <DataTemplate x:Key="BakerItemTemplate" DataType="{x:Type sendViewModels:BakerViewModel}">
+    <DataTemplate x:Key="BakerItemTemplate" DataType="{x:Type viewModels:BakerViewModel}">
         <Grid Margin="3" Width="440">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="48"/>

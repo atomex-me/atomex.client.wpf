@@ -72,10 +72,10 @@ namespace Atomex.Client.Wpf.ViewModels
 
             unlockViewModel.Unlocked += (sender, args) =>
             {
-                DialogViewer?.HideUnlockDialog();
+                DialogViewer?.HideDialog(Dialogs.Unlock);
             };
 
-            DialogViewer.ShowUnlockDialog(unlockViewModel);
+            DialogViewer.ShowDialog(Dialogs.Unlock, unlockViewModel);
         }
 
         private void DesignerMode()

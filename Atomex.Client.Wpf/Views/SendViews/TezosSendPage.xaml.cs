@@ -2,9 +2,9 @@
 
 namespace Atomex.Client.Wpf.Views.SendViews
 {
-    public partial class SendConfirmationPage : Page
+    public partial class TezosSendPage : Page
     {
-        public SendConfirmationPage()
+        public TezosSendPage()
         {
             InitializeComponent();
         }

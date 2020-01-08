@@ -73,16 +73,14 @@ namespace Atomex.Client.Wpf.Controls
             window.Dispatcher.VerifyAccess();
 
             var metroDialogContainer = window.Template.FindName("PART_MetroActiveDialogContainer", window) as Grid;
-            metroDialogContainer = metroDialogContainer ?? window.Template.FindName("PART_MetroInactiveDialogsContainer", window) as Grid;
+            metroDialogContainer ??= window.Template.FindName("PART_MetroInactiveDialogsContainer", window) as Grid;
 
             if (metroDialogContainer == null)
-            {
                 throw new InvalidOperationException("The provided child window can not add, there is no container defined.");
-            }
+
             if (metroDialogContainer.Children.Contains(dialog))
-            {
                 throw new InvalidOperationException("The provided child window is already visible in the specified window.");
-            }
+
             if (overlayFillBehavior == OverlayFillBehavior.WindowContent)
             {
                 metroDialogContainer.SetValue(Grid.RowProperty, (int)metroDialogContainer.GetValue(Grid.RowProperty) + 1);
@@ -132,14 +130,11 @@ namespace Atomex.Client.Wpf.Controls
         {
             window.Dispatcher.VerifyAccess();
 
-            if (container == null)
-            {
+            if (container == null)     
                 throw new InvalidOperationException("The provided child window can not add, there is no container defined.");
-            }
+
             if (container.Children.Contains(dialog))
-            {
                 throw new InvalidOperationException("The provided child window is already visible in the specified window.");
-            }
 
             return ShowChildWindowInternalAsync<TResult>(dialog, container);
         }
@@ -197,7 +192,7 @@ namespace Atomex.Client.Wpf.Controls
             window.Dispatcher.VerifyAccess();
 
             var container = window.Template.FindName("PART_MetroActiveDialogContainer", window) as Grid;
-            container = container ?? window.Template.FindName("PART_MetroInactiveDialogsContainer", window) as Grid;
+            container ??= window.Template.FindName("PART_MetroInactiveDialogsContainer", window) as Grid;
 
             if (container == null)
                 throw new InvalidOperationException("There is no container defined.");

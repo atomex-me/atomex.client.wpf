@@ -7,7 +7,7 @@ using Atomex.Core.Entities;
 using Atomex.Wallet;
 using Serilog;
 
-namespace Atomex.Client.Wpf.ViewModels.SendViewModels
+namespace Atomex.Client.Wpf.ViewModels
 {
     public class DelegateConfirmationViewModel : BaseViewModel
     {
@@ -27,12 +27,15 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public string BaseCurrencyCode { get; set; }
 
         private ICommand _backCommand;
-        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(Navigation.Back));
+        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
+        {
+            DialogViewer.Back(Dialogs.Delegate);
+        }));
 
         private ICommand _nextCommand;
         public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(Send));
 
-        private Action _onDelegate;
+        private readonly Action _onDelegate;
 
 #if DEBUG
         public DelegateConfirmationViewModel()
@@ -57,7 +60,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             
             try
             {
-                Navigation.Navigate(uri: Navigation.DelegatingAlias);
+                DialogViewer.PushPage(Dialogs.Delegate, Pages.Delegating);
 
                 var signResult = await Tx
                     .SignDelegationOperationAsync(keyStorage, WalletAddress, default);
@@ -65,50 +68,51 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 if (!signResult)
                 {
                     Log.Error("Transaction signing error");
-                    Navigation.Navigate(
-                        uri: Navigation.MessageAlias,
-                        context: MessageViewModel.Error(
-                            text: "Transaction signing error",
-                            goBackPages: 2));
+
+                    DialogViewer.PushPage(Dialogs.Delegate, Pages.Message, MessageViewModel.Error(
+                        text: "Transaction signing error",
+                        backAction: BackToConfirmation));
+
                     return;
                 }
 
                 var result = await tezos.BlockchainApi
-                    .BroadcastAsync(Tx);
+                    .TryBroadcastAsync(Tx);
 
                 if (result.Error != null)
                 {
-                    Navigation.Navigate(
-                        uri: Navigation.MessageAlias,
-                        context: MessageViewModel.Error(
-                            text: result.Error.Description,
-                            goBackPages: 2));
+                    DialogViewer.PushPage(Dialogs.Delegate, Pages.Message, MessageViewModel.Error(
+                        text: result.Error.Description,
+                        backAction: BackToConfirmation));
+
                     return;
                 }
 
-                Navigation.Navigate(
-                    uri: Navigation.MessageAlias,
-                    context: MessageViewModel.Success(
-                        text: $"Successful delegation!",
-                        tezos.TxExplorerUri,
-                        result.Value,
-                        nextAction: () =>
-                        {
-                            DialogViewer?.HideDelegateDialog();
+                DialogViewer.PushPage(Dialogs.Delegate, Pages.Message, MessageViewModel.Success(
+                    text: $"Successful delegation!",
+                    tezos.TxExplorerUri,
+                    result.Value,
+                    nextAction: () =>
+                    {
+                        DialogViewer.HideDialog(Dialogs.Delegate);
 
-                            _onDelegate?.Invoke();
-                        }));
+                        _onDelegate?.Invoke();
+                    }));
             }
             catch (Exception e)
             {
-                Navigation.Navigate(
-                    uri: Navigation.MessageAlias,
-                    context: MessageViewModel.Error(
-                        text: "An error has occurred while delegation.",
-                        goBackPages: 2));
+                DialogViewer.PushPage(Dialogs.Delegate, Pages.Message, MessageViewModel.Error(
+                    text: "An error has occurred while delegation.",
+                    backAction: BackToConfirmation));
 
                 Log.Error(e, "delegation send error.");
             }
+        }
+
+        private void BackToConfirmation()
+        {
+            DialogViewer.Back(Dialogs.Delegate); // to delegating view
+            DialogViewer.Back(Dialogs.Delegate); // to confirmation view
         }
 
         private void DesignerMode()

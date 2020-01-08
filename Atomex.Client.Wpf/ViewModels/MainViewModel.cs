@@ -1,21 +1,21 @@
 ﻿using System;
-using System.IO;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Atomex.Client.Wpf.Common;
+using Atomex.Client.Wpf.Controls;
+using Atomex.Client.Wpf.Properties;
+using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.MarketData;
 using Atomex.MarketData.Abstract;
 using Atomex.Subsystems;
 using Atomex.Subsystems.Abstract;
-using Atomex.Wallet.Abstract;
-using Atomex.Client.Wpf.Common;
-using Atomex.Client.Wpf.Controls;
-using Atomex.Client.Wpf.ViewModels.Abstract;
-using Atomex.Core.Entities;
 using Atomex.Updates;
 using Atomex.Wallet;
+using Atomex.Wallet.Abstract;
 using MahApps.Metro.Controls.Dialogs;
 using Serilog;
 
@@ -227,7 +227,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 AtomexApp.UseTerminal(null);
 
-                DialogViewer.ShowStartDialog(new StartViewModel(AtomexApp, DialogViewer));
+                DialogViewer.ShowDialog(Dialogs.Start, new StartViewModel(AtomexApp, DialogViewer));
             }
             catch (Exception e)
             {
@@ -282,10 +282,8 @@ namespace Atomex.Client.Wpf.ViewModels
 
             var result = await DialogViewer
                 .ShowMessageAsync(
-                    title: "Warning",
-                    message: "You have active swaps. Closing the application or sign out may " +
-                             "result in loss of funds as a result of the failore of the " +
-                             "refund operation. Are you sure you want to close the application?",
+                    title: Resources.Warning,
+                    message: Resources.ActiveSwapsWarning,
                     style: MessageDialogStyle.AffirmativeAndNegative);
 
             return result == MessageDialogResult.Negative;
@@ -315,13 +313,10 @@ namespace Atomex.Client.Wpf.ViewModels
 
             unlockViewModel.Unlocked += (s, a) =>
             {
-                DialogViewer?.HideUnlockDialog();
+                DialogViewer?.HideDialog(Dialogs.Unlock);
             };
 
-            DialogViewer?.ShowUnlockDialog(unlockViewModel, (s, a) =>
-            {
-                SignOut();
-            });
+            DialogViewer?.ShowDialog(Dialogs.Unlock, unlockViewModel, canceled: () => SignOut());
         }
 
         private void DesignerMode()

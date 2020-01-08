@@ -61,6 +61,15 @@ namespace Atomex.Client.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на You have active swaps. Closing the application or sign out may result in loss of funds as a result of the failore of the refund operation. Are you sure you want to close the application?.
+        /// </summary>
+        public static string ActiveSwapsWarning {
+            get {
+                return ResourceManager.GetString("ActiveSwapsWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Conversion error. Please contant technical support..
         /// </summary>
         public static string CvConversionError {
@@ -536,6 +545,15 @@ namespace Atomex.Client.Wpf.Properties {
         public static string SvYes {
             get {
                 return ResourceManager.GetString("SvYes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Warning.
+        /// </summary>
+        public static string Warning {
+            get {
+                return ResourceManager.GetString("Warning", resourceCulture);
             }
         }
     }

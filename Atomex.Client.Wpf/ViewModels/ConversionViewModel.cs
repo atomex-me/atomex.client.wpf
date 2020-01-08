@@ -603,9 +603,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 UseRewardForRedeem = _useRewardForRedeem
             };
 
-            DialogViewer?.ShowConversionConfirmationDialog(viewModel, dialogLoaded: () => {
-                viewModel.Show();
-            });
+            DialogViewer.ShowDialog(Dialogs.Convert, viewModel, defaultPageId: Pages.ConversionConfirmation);
         }
 
         private void DesignerMode()

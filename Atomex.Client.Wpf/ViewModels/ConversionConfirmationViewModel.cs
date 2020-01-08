@@ -47,7 +47,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private ICommand _backCommand;
         public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
         {
-            DialogViewer?.HideConversionConfirmationDialog();
+            DialogViewer.HideDialog(Dialogs.Convert);
         }));
 
         private ICommand _nextCommand;
@@ -68,63 +68,48 @@ namespace Atomex.Client.Wpf.ViewModels
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
         }
 
-        public void Show()
-        {
-            Navigation.Navigate(
-                uri: Navigation.ConversionConfirmationAlias,
-                context: this);
-        }
-
         private async void Send()
         {
             try
             {
-                Navigation.Navigate(uri: Navigation.SendingAlias);
+                DialogViewer.PushPage(Dialogs.Convert, Pages.Sending);
 
-                var error = await SendSwapAsync();
+                var error = await ConvertAsync();
 
                 if (error != null)
                 {
                     if (error.Code == Errors.PriceHasChanged)
                     {
-                        Navigation.Navigate(
-                            uri: Navigation.MessageAlias,
-                            context: MessageViewModel.Message(
-                                title: Resources.SvFailed,
-                                text: error.Description,
-                                goBackPages: 2));
+                        DialogViewer.PushPage(Dialogs.Convert, Pages.Message, MessageViewModel.Message(
+                            title: Resources.SvFailed,
+                            text: error.Description,
+                            backAction: BackToConfirmation));
                     }
                     else
                     {
-                        Navigation.Navigate(
-                            uri: Navigation.MessageAlias,
-                            context: MessageViewModel.Error(
-                                text: error.Description,
-                                goBackPages: 2));
+                        DialogViewer.PushPage(Dialogs.Convert, Pages.Message, MessageViewModel.Error(
+                            text: error.Description,
+                            backAction: BackToConfirmation));
                     }
 
                     return;
                 }
 
-                Navigation.Navigate(
-                    uri: Navigation.MessageAlias,
-                    context: MessageViewModel.Success(
-                        text: Resources.SvOrderMatched,
-                        nextAction: () => {DialogViewer?.HideConversionConfirmationDialog();}));
+                DialogViewer.PushPage(Dialogs.Convert, Pages.Message, MessageViewModel.Success(
+                    text: Resources.SvOrderMatched,
+                    nextAction: () => { DialogViewer?.HideDialog(Dialogs.Convert); }));
             }
             catch (Exception e)
             {
-                Navigation.Navigate(
-                    uri: Navigation.MessageAlias,
-                    context: MessageViewModel.Error(
-                        text: "An error has occurred while sending swap.",
-                        goBackPages: 2));
+                DialogViewer.PushPage(Dialogs.Convert, Pages.Message, MessageViewModel.Error(
+                    text: "An error has occurred while sending swap.",
+                    backAction: BackToConfirmation));
 
                 Log.Error(e, "Swap error.");
             }
         }
 
-        private async Task<Error> SendSwapAsync()
+        private async Task<Error> ConvertAsync()
         {
             try
             {
@@ -211,6 +196,12 @@ namespace Atomex.Client.Wpf.ViewModels
             
                 return new Error(Errors.SwapError, Resources.CvConversionError);
             }
+        }
+
+        private void BackToConfirmation()
+        {
+            DialogViewer.Back(Dialogs.Convert); // to sending view
+            DialogViewer.Back(Dialogs.Convert); // to confirmation view
         }
 
         private void DesignerMode()

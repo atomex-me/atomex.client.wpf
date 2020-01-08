@@ -20,7 +20,7 @@ using Atomex.Wallet;
 using Newtonsoft.Json.Linq;
 using Serilog;
 
-namespace Atomex.Client.Wpf.ViewModels.SendViewModels
+namespace Atomex.Client.Wpf.ViewModels
 {
     public class DelegateViewModel : BaseViewModel
     {
@@ -185,7 +185,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         private ICommand _backCommand;
         public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
         {
-            DialogViewer?.HideDelegateDialog();
+            DialogViewer?.HideDialog(Dialogs.Delegate);
         }));
 
         private bool _delegationCheck;
@@ -205,7 +205,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
-
                 if (string.IsNullOrEmpty(Address))
                 {
                     Warning = Resources.SvEmptyAddressError;
@@ -252,9 +251,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         CurrencyFormat = _tezos.FeeFormat
                     };
 
-                    Navigation.Navigate(
-                        uri: Navigation.DelegateConfirmationAlias,
-                        context: confirmationViewModel);
+                    DialogViewer.PushPage(Dialogs.Delegate, Pages.DelegateConfirmation, confirmationViewModel);
                 }
             }
             finally
@@ -347,7 +344,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         private async Task<Result<string>> GetDelegate(CancellationToken cancellationToken = default)
         {
             if(_walletAddress == null)
-                return new Result<string>(new Error(Errors.InvalidWallets, "You don't have non-empty accounts"));
+                return new Error(Errors.InvalidWallets, "You don't have non-empty accounts");
             
             var wallet = (HdWallet) App.Account.Wallet;
             var keyStorage = wallet.KeyStorage;
@@ -362,16 +359,16 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             }
             catch
             {
-                return new Result<string>(new Error(Errors.WrongDelegationAddress, "Wrong delegation address"));
+                return new Error(Errors.WrongDelegationAddress, "Wrong delegation address");
             }
             
             if (delegateData["deactivated"].Value<bool>())
-                return new Result<string>(new Error(Errors.WrongDelegationAddress, "Baker is deactivated. Pick another one"));
+                return new Error(Errors.WrongDelegationAddress, "Baker is deactivated. Pick another one");
 
             var delegators = delegateData["delegated_contracts"]?.Values<string>();
 
             if (delegators.Contains(_walletAddress.Address))
-                return new Result<string>(new Error(Errors.AlreadyDelegated, $"Already delegated from {_walletAddress.Address} to {_address}"));
+                return new Error(Errors.AlreadyDelegated, $"Already delegated from {_walletAddress.Address} to {_address}");
             
             var tx = new TezosTransaction
             {
@@ -388,7 +385,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 var calculatedFee = await tx.AutoFillAsync(keyStorage, _walletAddress, UseDefaultFee);
                 if(!calculatedFee)
-                    return new Result<string>(new Error(Errors.TransactionCreationError, $"Autofill transaction failed"));
+                    return new Error(Errors.TransactionCreationError, $"Autofill transaction failed");
 
                 Fee = tx.Fee;
                 _tx = tx;
@@ -396,19 +393,12 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             catch (Exception e)
             {
                 Log.Error(e, "Autofill delegation error");
-                return new Result<string>(new Error(Errors.TransactionCreationError, $"Autofill delegation error. Try again later"));
+                return new Error(Errors.TransactionCreationError, $"Autofill delegation error. Try again later");
             }
             
-            return new Result<string>("Successful check");
+            return "Successful check";
         }
-        
-        public void Show()
-        {
-            Navigation.Navigate(
-                uri: Navigation.DelegateAlias,
-                context: this);
-        }
-        
+                
         private void SubscribeToServices()
         {
             if (App.HasQuotesProvider)

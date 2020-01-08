@@ -30,6 +30,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -319,14 +320,11 @@
     <Compile Include="Common\DecimalExtensions.cs" />
     <Compile Include="Common\DesignTime.cs" />
     <Compile Include="Common\Environment.cs" />
-    <Compile Include="Common\IPageResolver.cs" />
     <Compile Include="Common\Msi\MsiApi.cs" />
     <Compile Include="Common\Msi\MsiPackage.cs" />
     <Compile Include="Common\Msi\MsiProduct.cs" />
     <Compile Include="Common\Msi\PropsCollection.cs" />
     <Compile Include="Common\MsiProductProvider.cs" />
-    <Compile Include="Common\Navigation.cs" />
-    <Compile Include="Common\PageResolver.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SingleApp.cs" />
     <Compile Include="Common\ChildWindowHelper.cs" />
@@ -354,6 +352,7 @@
     <Compile Include="Helpers\ComboBoxHelper.cs" />
     <Compile Include="ViewModels\ConversionConfirmationViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WalletTypeViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs.cs" />
     <Compile Include="ViewModels\MyWalletsViewModel.cs" />
     <Compile Include="ViewModels\Abstract\IExpandable.cs" />
     <Compile Include="ViewModels\CreateWalletViewModel.cs" />
@@ -364,12 +363,13 @@
     <Compile Include="ViewModels\CurrencyViewModels\LitecoinCurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\TezosCurrencyViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
-    <Compile Include="ViewModels\SendViewModels\BakerViewModel.cs" />
-    <Compile Include="ViewModels\SendViewModels\DelegateConfirmationViewModel.cs" />
-    <Compile Include="ViewModels\SendViewModels\SendConfirmationViewModel.cs" />
-    <Compile Include="ViewModels\SendViewModels\DelegateViewModel.cs" />
+    <Compile Include="ViewModels\BakerViewModel.cs" />
+    <Compile Include="ViewModels\DelegateConfirmationViewModel.cs" />
+    <Compile Include="ViewModels\SendConfirmationViewModel.cs" />
+    <Compile Include="ViewModels\DelegateViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\BitcoinBasedSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModel.cs" />
-    <Compile Include="ViewModels\SendViewModels\WalletAddressViewModel.cs" />
+    <Compile Include="ViewModels\WalletAddressViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModelFactory.cs" />
@@ -410,14 +410,23 @@
     <Compile Include="Views\DelegatingPage.xaml.cs">
       <DependentUpon>DelegatingPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SendViews\DelegateConfirmationPage.xaml.cs">
+    <Compile Include="Views\DelegateConfirmationPage.xaml.cs">
       <DependentUpon>DelegateConfirmationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SendViews\SendConfirmationPage.xaml.cs">
+    <Compile Include="Views\SendConfirmationPage.xaml.cs">
       <DependentUpon>SendConfirmationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SendViews\DelegatePage.xaml.cs">
+    <Compile Include="Views\DelegatePage.xaml.cs">
       <DependentUpon>DelegatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SendViews\BitcoinBasedSendPage.xaml.cs">
+      <DependentUpon>BitcoinBasedSendPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SendViews\EthereumSendPage.xaml.cs">
+      <DependentUpon>EthereumSendPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SendViews\TezosSendPage.xaml.cs">
+      <DependentUpon>TezosSendPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SendViews\SendPage.xaml.cs">
       <DependentUpon>SendPage.xaml</DependentUpon>
@@ -549,15 +558,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SendViews\DelegateConfirmationPage.xaml">
+    <Page Include="Views\DelegateConfirmationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SendViews\SendConfirmationPage.xaml">
+    <Page Include="Views\SendConfirmationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SendViews\DelegatePage.xaml">
+    <Page Include="Views\DelegatePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SendViews\BitcoinBasedSendPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SendViews\EthereumSendPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SendViews\TezosSendPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

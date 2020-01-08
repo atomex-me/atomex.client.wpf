@@ -1,24 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Atomex.Client.Wpf.Controls;
+using Atomex.Client.Wpf.ViewModels;
+using Atomex.Client.Wpf.Views.SendViews;
 using MahApps.Metro.Controls.Dialogs;
 
 namespace Atomex.Client.Wpf.Views
 {
+    public delegate Page PageConstructor();
+
+    public delegate ChildWindow DialogConstructor(
+        int dialogId,
+        object dataContext,
+        Action loaded,
+        Action canceled,
+        int pageId);
+
     public partial class MainWindow : IDialogViewer, IMainView
     {
-        private ChildWindow _startView;
-        private ChildWindow _createWalletView;
-        private ChildWindow _sendView;
-        private ChildWindow _delegateView;
-        private ChildWindow _conversionConfirmationView;
-        private ChildWindow _receiveView;
-        private ChildWindow _unlockView;
-        private ChildWindow _myWalletsView;
+        private IDictionary<int, ChildWindow> _dialogs;
+        private IDictionary<int, DialogConstructor> _dialogsFactory;
+        private IDictionary<int, PageConstructor> _pagesFactory;
 
         private DispatcherTimer _activityTimer;
         private bool _inactivityControlEnabled;
@@ -30,6 +38,7 @@ namespace Atomex.Client.Wpf.Views
         public MainWindow()
         {
             InitializeComponent();
+            InitializeDialogs();
 
             Closing += (sender, args) => MainViewClosing?.Invoke(sender, args);
 
@@ -60,6 +69,37 @@ namespace Atomex.Client.Wpf.Views
             };
         }
 
+        private void InitializeDialogs()
+        {
+            _dialogs = new Dictionary<int, ChildWindow>();
+
+            _dialogsFactory = new Dictionary<int, DialogConstructor>
+            {
+                { Dialogs.Start, ShowDialogAsync<StartView> },
+                { Dialogs.CreateWallet, ShowDialogAsync<CreateWalletView> },
+                { Dialogs.MyWallets, ShowDialogAsync<MyWalletsView> },
+                { Dialogs.Receive, ShowDialogAsync<ReceiveView> },
+                { Dialogs.Unlock, ShowDialogAsync<UnlockView> },
+                { Dialogs.Send, ShowDialogAsync<FrameView> },
+                { Dialogs.BitcoinBasedSend, ShowDialogAsync<FrameView> },
+                { Dialogs.EthereumSend, ShowDialogAsync<FrameView> },
+                { Dialogs.TezosSend, ShowDialogAsync<FrameView> },
+                { Dialogs.Delegate, ShowDialogAsync<FrameView> },
+            };
+
+            _pagesFactory = new Dictionary<int, PageConstructor>
+            {
+                { Pages.Message, () => new MessagePage() },
+                { Pages.Send, () => new SendPage() },
+                { Pages.SendConfirmation, () => new SendConfirmationPage() },
+                { Pages.Sending, () => new SendingPage() },
+                { Pages.Delegate, () => new DelegatePage() },
+                { Pages.DelegateConfirmation, () => new DelegateConfirmationPage() },
+                { Pages.Delegating, () => new DelegatingPage() },
+                { Pages.ConversionConfirmation, () => new ConversionConfirmationPage() }
+            };
+        }
+
         public void StartInactivityControl(TimeSpan timeOut)
         {
             _activityTimer = new DispatcherTimer { Interval = timeOut, IsEnabled = true };
@@ -79,158 +119,103 @@ namespace Atomex.Client.Wpf.Views
             _activityTimer?.Stop();
         }
 
+        public void ShowDialog(
+            int dialogId,
+            object dataContext,
+            Action loaded = null,
+            Action canceled = null,
+            int defaultPageId = 0)
+        {
+            if (_dialogs.TryGetValue(dialogId, out var childView) && childView != null && childView.IsOpen)
+                return;
+
+            if (!_dialogsFactory.TryGetValue(dialogId, out var dialogConstructor))
+                throw new ArgumentException($"Dialog constructor for dialog {dialogId} not found");
+
+            childView = dialogConstructor(dialogId, dataContext, loaded, canceled, defaultPageId);
+
+            _dialogs[dialogId] = childView;
+        }
+
+        public void HideDialog(int dialogId)
+        {
+            if (!_dialogs.TryGetValue(dialogId, out var childView))
+                return;
+
+            _dialogs.Remove(dialogId);
+
+            childView.Close();
+        }
+
         public void HideAllDialogs()
         {
+            _dialogs.Clear();
+
             this.CloseAllChildWindows();
         }
 
-        public void ShowStartDialog(object dataContext)
+        public void PushPage(int dialogId, int pageId, object dataContext = null)
         {
-            ShowDialogAsync<StartView>(dataContext, ref _startView);
+            if (!_dialogs.TryGetValue(dialogId, out var childView))
+                throw new ArgumentException($"Dialog {dialogId} not found");
+
+            if (!(childView is FrameView frameView))
+                throw new Exception("Invalid dialog type");
+
+            if (!_pagesFactory.TryGetValue(pageId, out var pageConstructor))
+                throw new ArgumentException($"Page constructor for page {pageId} not found");
+
+            var page = pageConstructor();
+            page.DataContext = dataContext;
+
+            frameView.NavigationService.Navigate(page, dataContext);
         }
 
-        public void HideStartDialog()
+        public void PopPage(int dialogId)
         {
-            _startView.Close();
+            if (!_dialogs.TryGetValue(dialogId, out var childView))
+                throw new ArgumentException($"Dialog {dialogId} not found");
+
+            if (!(childView is FrameView frameView))
+                throw new Exception("Invalid dialog type");
+
+            if (frameView.NavigationService.CanGoBack)
+                frameView.NavigationService.GoBack();
         }
 
-        public void ShowCreateWalletDialog(object dataContext)
-        {
-            ShowDialogAsync<CreateWalletView>(dataContext, ref _createWalletView);
-        }
+        public void Back(int dialogId) =>
+            PopPage(dialogId);
 
-        public void HideCreateWalletDialog()
-        {
-            _createWalletView.Close();
-        }
-
-        public void ShowSendDialog(object dataContext, Action dialogLoaded = null)
-        {
-            if (_sendView != null && _sendView.IsOpen)
-                return;
-
-            _sendView = new FrameView {DataContext = dataContext};
-
-            if (dialogLoaded != null)
-                _sendView.Loaded += (sender, args) => { dialogLoaded(); };
-
-            this.ShowChildWindowAsync(
-                dialog: _sendView,
-                overlayFillBehavior: ChildWindowManager.OverlayFillBehavior.FullWindow);
-        }
-
-        public void HideSendDialog()
-        {
-            _sendView.Close();
-        }
-
-        public void ShowDelegateDialog(object dataContext, Action dialogLoaded = null)
-        {
-            if (_delegateView != null && _delegateView.IsOpen)
-                return;
-
-            _delegateView = new FrameView { DataContext = dataContext };
-
-            if (dialogLoaded != null)
-                _delegateView.Loaded += (sender, args) => { dialogLoaded(); };
-
-            this.ShowChildWindowAsync(
-                dialog: _delegateView,
-                overlayFillBehavior: ChildWindowManager.OverlayFillBehavior.FullWindow);
-        }
-        public void HideDelegateDialog()
-        {
-            _delegateView.Close();
-        }
-
-        public void ShowConversionConfirmationDialog(object dataContext, Action dialogLoaded = null)
-        {
-            if (_conversionConfirmationView != null && _conversionConfirmationView.IsOpen)
-                return;
-
-            _conversionConfirmationView = new FrameView { DataContext = dataContext };
-
-            if (dialogLoaded != null)
-                _conversionConfirmationView.Loaded += (sender, args) => { dialogLoaded(); };
-
-            this.ShowChildWindowAsync(_conversionConfirmationView);
-        }
-
-        public void HideConversionConfirmationDialog()
-        {
-            _conversionConfirmationView.Close();
-        }
-
-        public void ShowReceiveDialog(object dataContext)
-        {
-            if (_receiveView != null) {
-                if (_receiveView.IsOpen)
-                    return;
-
-                _receiveView.DataContext = dataContext;
-            } else {
-                _receiveView = new ReceiveView {DataContext = dataContext};
-            }
-
-            this.ShowChildWindowAsync(
-                dialog: _receiveView,
-                overlayFillBehavior: ChildWindowManager.OverlayFillBehavior.FullWindow);
-        }
-
-        public void HideReceiveDialog()
-        {
-            _receiveView.Close();
-        }
-
-        public void ShowUnlockDialog(object dataContext, EventHandler canceled = null)
-        {
-            ShowDialogAsync<UnlockView>(
-                dataContext: dataContext,
-                childView: ref _unlockView,
-                canceled: canceled);
-        }
-
-        public void HideUnlockDialog()
-        {
-            _unlockView?.Close();
-        }
-
-        public void ShowMyWalletsDialog(object dataContext)
-        {
-            ShowDialogAsync<MyWalletsView>(dataContext, ref _myWalletsView);
-        }
-
-        public void HideMyWalletsDialog()
-        {
-            _myWalletsView?.Close();
-        }
-
-        public void ShowMessage(string title, string message)
-        {
+        public void ShowMessage(string title, string message) =>
             this.ShowMessageAsync(title, message);
-        }
 
-        public Task<MessageDialogResult> ShowMessageAsync(string title, string message, MessageDialogStyle style)
-        {
-            return this.ShowMessageAsync(title, message, style, settings: null);
-        }
+        public Task<MessageDialogResult> ShowMessageAsync(string title, string message, MessageDialogStyle style) =>
+            this.ShowMessageAsync(title, message, style, settings: null);
 
-        private void ShowDialogAsync<TView>(
+        private ChildWindow ShowDialogAsync<TView>(
+            int dialogId,
             object dataContext,
-            ref ChildWindow childView,
-            EventHandler canceled = null)
+            Action loaded = null,
+            Action canceled = null,
+            int defaultPageId = 0)
             where TView : ChildWindow, new()
         {
-            if (childView != null && childView.IsOpen)
-                return;
+            var childView = new TView {DataContext = dataContext};
 
-            childView = new TView {DataContext = dataContext};
+            if (defaultPageId != 0)
+                childView.Loaded += (s, e) => PushPage(dialogId, defaultPageId, dataContext);
+
+            if (loaded != null)
+                childView.Loaded += (s, e) => loaded();
+
             if (canceled != null)
-                childView.CloseButtonClicked += canceled;
+                childView.CloseButtonClicked += (s, e) => canceled();
 
             this.ShowChildWindowAsync(
                 dialog: childView,
                 overlayFillBehavior: ChildWindowManager.OverlayFillBehavior.FullWindow);
+
+            return childView;
         }
     }
 }

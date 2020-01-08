@@ -57,7 +57,9 @@ namespace Atomex.Client.Wpf.ViewModels
 
             try
             {
-                await Task.Run(() => { _unlockAction(Password); });
+                await Task.Run(() => {
+                    _unlockAction(Password);
+                });
             }
             catch (CryptographicException e)
             {

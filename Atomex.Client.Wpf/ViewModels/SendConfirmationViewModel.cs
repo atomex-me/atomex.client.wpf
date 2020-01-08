@@ -5,11 +5,13 @@ using Atomex.Client.Wpf.Controls;
 using Atomex.Core.Entities;
 using Serilog;
 
-namespace Atomex.Client.Wpf.ViewModels.SendViewModels
+namespace Atomex.Client.Wpf.ViewModels
 {
     public class SendConfirmationViewModel : BaseViewModel
     {
-        public IDialogViewer DialogViewer { get; }
+        private readonly int _dialogId;
+        private readonly IDialogViewer _dialogViewer;
+
         public Currency Currency { get; set; }
         public string To { get; set; }
         public string CurrencyFormat { get; set; }
@@ -24,7 +26,10 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public string BaseCurrencyCode { get; set; }
 
         private ICommand _backCommand;
-        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(Navigation.Back));
+        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
+        {
+            _dialogViewer.Back(_dialogId);
+        }));
 
         private ICommand _nextCommand;
         public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(Send));
@@ -36,9 +41,10 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 DesignerMode();
         }
 #endif
-        public SendConfirmationViewModel(IDialogViewer dialogViewer)
+        public SendConfirmationViewModel(IDialogViewer dialogViewer, int dialogId)
         {
-            DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+            _dialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+            _dialogId = dialogId;
         }
 
         private async void Send()
@@ -47,37 +53,38 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
-                Navigation.Navigate(uri: Navigation.SendingAlias);
+                _dialogViewer.PushPage(_dialogId, Pages.Sending);
 
                 var error = await account
                     .SendAsync(Currency, To, Amount, Fee, FeePrice);
 
                 if (error != null)
                 {
-                    Navigation.Navigate(
-                        uri: Navigation.MessageAlias,
-                        context: MessageViewModel.Error(
-                            text: error.Description,
-                            goBackPages: 2));
+                    _dialogViewer.PushPage(_dialogId, Pages.Message, MessageViewModel.Error(
+                        text: error.Description,
+                        backAction: BackToConfirmation));
+
                     return;
                 }
 
-                Navigation.Navigate(
-                    uri: Navigation.MessageAlias,
-                    context: MessageViewModel.Success(
-                        text: "Sending was successful",
-                        nextAction: () => {DialogViewer?.HideSendDialog();}));
+                _dialogViewer.PushPage(_dialogId, Pages.Message, MessageViewModel.Success(
+                    text: "Sending was successful",
+                    nextAction: () => { _dialogViewer.HideDialog(_dialogId); }));
             }
             catch (Exception e)
             {
-                Navigation.Navigate(
-                    uri: Navigation.MessageAlias,
-                    context: MessageViewModel.Error(
-                        text: "An error has occurred while sending transaction.",
-                        goBackPages: 2));
+                _dialogViewer.PushPage(_dialogId, Pages.Message, MessageViewModel.Error(
+                    text: "An error has occurred while sending transaction.",
+                    backAction: BackToConfirmation));
 
                 Log.Error(e, "Transaction send error.");
             }
+        }
+
+        private void BackToConfirmation()
+        {
+            _dialogViewer.Back(_dialogId); // to sending view
+            _dialogViewer.Back(_dialogId); // to confirmation view
         }
 
         private void DesignerMode()

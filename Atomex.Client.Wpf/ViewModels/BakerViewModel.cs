@@ -1,4 +1,4 @@
-﻿namespace Atomex.Client.Wpf.ViewModels.SendViewModels
+﻿namespace Atomex.Client.Wpf.ViewModels
 {
     public class BakerViewModel : BaseViewModel
     {
