@@ -85,6 +85,7 @@ namespace Atomex.Client.Wpf.Views
                 { Dialogs.EthereumSend, ShowDialogAsync<FrameView> },
                 { Dialogs.TezosSend, ShowDialogAsync<FrameView> },
                 { Dialogs.Delegate, ShowDialogAsync<FrameView> },
+                { Dialogs.Convert, ShowDialogAsync<FrameView> }
             };
 
             _pagesFactory = new Dictionary<int, PageConstructor>
