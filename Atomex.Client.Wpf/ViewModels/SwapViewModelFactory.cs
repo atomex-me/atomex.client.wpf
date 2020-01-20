@@ -1,12 +1,12 @@
 ﻿using System.Windows.Media;
 using Atomex.Common;
-using Atomex.Core.Entities;
+using Atomex.Core;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
     public static class SwapViewModelFactory
     {
-        public static SwapViewModel CreateSwapViewModel(ClientSwap swap)
+        public static SwapViewModel CreateSwapViewModel(Swap swap)
         {
             var fromCurrency = CurrencyViewModelCreator.CreateViewModel(
                 currency: swap.SoldCurrency,
@@ -41,14 +41,14 @@ namespace Atomex.Client.Wpf.ViewModels
             };
         }
 
-        private static SwapMode ModeBySwap(ClientSwap swap)
+        private static SwapMode ModeBySwap(Swap swap)
         {
             return swap.IsInitiator
                 ? SwapMode.Initiator
                 : SwapMode.CounterParty;
         }
 
-        private static SwapCompactState CompactStateBySwap(ClientSwap swap)
+        private static SwapCompactState CompactStateBySwap(Swap swap)
         {
             if (swap.IsComplete)
                 return SwapCompactState.Completed;

@@ -4,10 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Atomex.Core.Entities;
+using Atomex.Core;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels.Abstract;
-using Atomex.Client.Wpf.ViewModels.SendViewModels;
 using Atomex.Common;
 using QRCoder;
 using System;
@@ -42,11 +41,11 @@ namespace Atomex.Client.Wpf.ViewModels
                 {
 #endif
                     var activeAddresses = App.Account
-                        .GetUnspentAddressesAsync(_currency)
+                        .GetUnspentAddressesAsync(_currency.Name)
                         .WaitForResult();
 
                     var freeAddress = App.Account
-                        .GetFreeExternalAddressAsync(_currency)
+                        .GetFreeExternalAddressAsync(_currency.Name)
                         .WaitForResult();
 
                     FromAddressList = activeAddresses

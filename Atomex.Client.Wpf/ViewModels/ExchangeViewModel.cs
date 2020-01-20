@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Threading;
-using Atomex.Core.Entities;
+using Atomex.Core;
 using Atomex.Client.Wpf.Common;
 using Atomex.Common;
 using Atomex.Subsystems.Abstract;

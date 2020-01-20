@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Atomex.Core.Entities;
+using Atomex.Core;
 using Atomex.MarketData.Abstract;
 using Atomex.Wallet;
 using Atomex.Wallet.Abstract;
@@ -63,7 +63,7 @@ namespace Atomex.Client.Wpf.ViewModels.Abstract
         protected virtual async Task UpdateAsync()
         {
             var balance = await Account
-                .GetBalanceAsync(Currency)
+                .GetBalanceAsync(Currency.Name)
                 .ConfigureAwait(false);
 
             await Application.Current.Dispatcher.InvokeAsync(() =>

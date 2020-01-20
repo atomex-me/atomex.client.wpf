@@ -14,7 +14,6 @@ using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Common;
 using Atomex.Core;
-using Atomex.Core.Entities;
 using Atomex.MarketData.Abstract;
 using Atomex.Wallet;
 using Newtonsoft.Json.Linq;
@@ -327,7 +326,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private async Task PrepareWallet(CancellationToken cancellationToken = default)
         {   
             FromAddressList = (await App.Account
-                .GetUnspentAddressesAsync(_tezos, cancellationToken).ConfigureAwait(false))
+                .GetUnspentAddressesAsync(_tezos.Name, cancellationToken).ConfigureAwait(false))
                 .OrderByDescending(x => x.Balance)
                 .Select(w => new WalletAddressViewModel(w))
                 .ToList();

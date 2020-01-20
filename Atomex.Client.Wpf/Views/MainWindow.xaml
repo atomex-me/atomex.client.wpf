@@ -7,6 +7,7 @@
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:views="clr-namespace:Atomex.Client.Wpf.Views"
         xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
+        xmlns:customControls="clr-namespace:Atomex.Client.Wpf.Controls"
         mc:Ignorable="d"
         Title="atomex"
         Width="1000"
@@ -14,6 +15,10 @@
         Icon="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/logo.png"
         Style="{StaticResource MainWindowStyle}"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel, IsDesignTimeCreatable=True}">
+
+    <controls:MetroWindow.Resources>
+        <FrameworkElement x:Key="ProxyElement" DataContext="{Binding}"/>
+    </controls:MetroWindow.Resources>
 
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
@@ -88,43 +93,6 @@
                                Text="Update Atomex" />
                 </StackPanel>
             </Button>
-            <!--<Button Command="{Binding LockCommand}"
-                    Visibility="{Binding HasAccount, Converter={StaticResource bool2VisibilityConverter}}">
-                <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconModern Margin="0 0 3 0"
-                                              Width="16"
-                                              Height="16"
-                                              VerticalAlignment="Center"
-                                              HorizontalAlignment="Center">
-                        <iconPacks:PackIconModern.Style>
-                            <Style TargetType="iconPacks:PackIconModern">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsLocked}" Value="True">
-                                        <Setter Property="Kind" Value="Lock"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsLocked}" Value="False">
-                                        <Setter Property="Kind" Value="Unlock"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </iconPacks:PackIconModern.Style>
-                    </iconPacks:PackIconModern>
-                    <TextBlock VerticalAlignment="Center">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsLocked}" Value="True">
-                                        <Setter Property="Text" Value="Locked"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsLocked}" Value="False">
-                                        <Setter Property="Text" Value="Unlocked"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </StackPanel>
-            </Button>-->
             <Button Command="{Binding SignOutCommand}"
                     Visibility="{Binding HasAccount, Converter={StaticResource bool2VisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">
@@ -138,63 +106,6 @@
                                Text="SignOut"/>
                 </StackPanel>
             </Button>
-            <!--<Button Command="{Binding AuthCommand}"
-                    Visibility="{Binding IsConnected, Converter={StaticResource bool2VisibilityConverter}}">
-                <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconEntypo Margin="0 0 3 0"
-                                              Kind="User"
-                                              Width="16"
-                                              Height="16"
-                                              VerticalAlignment="Center"
-                                              HorizontalAlignment="Center">
-                        <iconPacks:PackIconEntypo.Style>
-                            <Style TargetType="iconPacks:PackIconEntypo">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsAuthenticated}" Value="False">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </iconPacks:PackIconEntypo.Style>
-                    </iconPacks:PackIconEntypo>
-                    <iconPacks:PackIconFontAwesome Margin="0 0 3 0"
-                                                   Kind="UserSecretSolid"
-                                                   Width="16"
-                                                   Height="16"
-                                                   VerticalAlignment="Center"
-                                                   HorizontalAlignment="Center">
-                        <iconPacks:PackIconFontAwesome.Style>
-                            <Style TargetType="iconPacks:PackIconFontAwesome">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsAuthenticated}" Value="False">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </iconPacks:PackIconFontAwesome.Style>
-                    </iconPacks:PackIconFontAwesome>
-                    <TextBlock VerticalAlignment="Center">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
-                                        <Setter Property="Text" Value="{Binding Login}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsAuthenticated}" Value="False">
-                                        <Setter Property="Text" Value="Anonymous"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </StackPanel>
-            </Button>-->
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
     <DockPanel x:Name="MainDockerPanel">
@@ -270,6 +181,94 @@
                 </TextBlock>
             </StatusBarItem>
         </StatusBar>
-        <views:NavigationView Visibility="{Binding HasAccount, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        
+        <ContentControl Visibility="Collapsed" Content="{StaticResource ProxyElement}"/>
+        
+        <controls:HamburgerMenu
+            Style="{StaticResource HamburgerMenuStyle}"
+            SelectedIndex="{Binding SelectedMenuIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            HamburgerVisibility="Collapsed"
+            HamburgerHeight="20"
+            IsPaneOpen="True"
+            Visibility="{Binding HasAccount, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <controls:HamburgerMenu.ItemsSource>
+                <customControls:NavigationMenuItemCollection>
+                    <customControls:NavigationMenuItem Header="Portfolio">
+                        <customControls:NavigationMenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="ChartPie" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </customControls:NavigationMenuItem.Icon>
+                        <customControls:NavigationMenuItem.Content>
+                            <views:PortfolioView DataContext="{Binding Path=DataContext.PortfolioViewModel, Source={StaticResource ProxyElement}}"/>
+                        </customControls:NavigationMenuItem.Content>
+                    </customControls:NavigationMenuItem>
+
+                    <customControls:NavigationMenuItem Header="Wallets">
+                        <customControls:NavigationMenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="Wallet" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </customControls:NavigationMenuItem.Icon>
+                        <customControls:NavigationMenuItem.Content>
+                            <views:WalletsView DataContext="{Binding Path=DataContext.WalletsViewModel, Source={StaticResource ProxyElement}}"/>
+                        </customControls:NavigationMenuItem.Content>
+                    </customControls:NavigationMenuItem>
+
+                    <customControls:NavigationMenuItem Header="Conversion">
+                        <customControls:NavigationMenuItem.Icon>
+                            <!--<iconPacks:PackIconOcticons Kind="Sync" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
+                            <Image Width="24" Height="24" Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/exchanged.png"/>
+                        </customControls:NavigationMenuItem.Icon>
+                        <customControls:NavigationMenuItem.Content>
+                            <views:ConversionView DataContext="{Binding Path=DataContext.ConversionViewModel, Source={StaticResource ProxyElement}}"/>
+                        </customControls:NavigationMenuItem.Content>
+                    </customControls:NavigationMenuItem>
+
+                    <!--<controls:NavigationMenuItem Header="Charts">
+                        <controls:NavigationMenuItem.Icon>
+                            <iconPacks:PackIconEntypo Kind="LineGraph" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </controls:NavigationMenuItem.Icon>
+                        <controls:NavigationMenuItem.Content>
+                            -->
+                    <!--<Grid>
+                                <Image Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/under_construction.png"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Width="200"
+                                       Height="200"/>
+                            </Grid>-->
+                    <!--
+                            <views:ExchangeView DataContext="{Binding Path=DataContext.ExchangeViewModel, Source={StaticResource ProxyElement}}"/>
+                        </controls:NavigationMenuItem.Content>
+                    </controls:NavigationMenuItem>-->
+
+                </customControls:NavigationMenuItemCollection>
+            </controls:HamburgerMenu.ItemsSource>
+
+            <controls:HamburgerMenu.OptionsItemsSource>
+                <customControls:NavigationMenuItemCollection>
+
+                    <customControls:NavigationMenuItem Header="Settings">
+                        <customControls:NavigationMenuItem.Icon>
+                            <iconPacks:PackIconOcticons Kind="Gear" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </customControls:NavigationMenuItem.Icon>
+                        <customControls:NavigationMenuItem.Content>
+                            <!--<Grid>
+                                <Image Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/under_construction.png"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Width="200"
+                                       Height="200"/>
+                            </Grid>-->
+                            <views:SettingsView DataContext="{Binding Path=DataContext.SettingsViewModel, Source={StaticResource ProxyElement}}"/>
+                        </customControls:NavigationMenuItem.Content>
+                    </customControls:NavigationMenuItem>
+
+                    <!--<controls:NavigationMenuItem Header="Help">
+                        <controls:NavigationMenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="HelpCircle" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </controls:NavigationMenuItem.Icon>
+                    </controls:NavigationMenuItem>-->
+
+                </customControls:NavigationMenuItemCollection>
+            </controls:HamburgerMenu.OptionsItemsSource>
+        </controls:HamburgerMenu>
     </DockPanel>
 </controls:MetroWindow>

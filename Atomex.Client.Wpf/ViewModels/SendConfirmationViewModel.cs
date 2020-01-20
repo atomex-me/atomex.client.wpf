@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
-using Atomex.Core.Entities;
+using Atomex.Core;
 using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels
@@ -56,7 +56,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 _dialogViewer.PushPage(_dialogId, Pages.Sending);
 
                 var error = await account
-                    .SendAsync(Currency, To, Amount, Fee, FeePrice);
+                    .SendAsync(Currency.Name, To, Amount, Fee, FeePrice);
 
                 if (error != null)
                 {

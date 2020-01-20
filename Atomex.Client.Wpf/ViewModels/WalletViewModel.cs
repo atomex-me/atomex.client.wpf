@@ -18,10 +18,11 @@ using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.SendViewModels;
 using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 using Atomex.Common;
-using Atomex.Core.Entities;
+using Atomex.Core;
 using Atomex.Wallet;
 using NBitcoin;
 using Serilog;
+using Network = NBitcoin.Network;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -178,7 +179,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     return;
 
                 var transactions = (await App.Account
-                    .GetTransactionsAsync(Currency))
+                    .GetTransactionsAsync(Currency.Name))
                     .ToList();
 
                 await Application.Current.Dispatcher.InvokeAsync(() =>
@@ -209,11 +210,11 @@ namespace Atomex.Client.Wpf.ViewModels
                 var tezos = Currency as Tezos;
 
                 var balance = await App.Account
-                    .GetBalanceAsync(tezos)
+                    .GetBalanceAsync(tezos.Name)
                     .ConfigureAwait(false);
 
                 var addresses = await App.Account
-                    .GetUnspentAddressesAsync(tezos)
+                    .GetUnspentAddressesAsync(tezos.Name)
                     .ConfigureAwait(false);
 
                 var rpc = new Rpc(tezos.RpcNodeUri);
@@ -305,8 +306,8 @@ namespace Atomex.Client.Wpf.ViewModels
                 var scanner = new HdWalletScanner(App.Account);
 
                 await scanner.ScanAsync(
-                    currency: Currency,
-                    skipUsed: true,
+                    currency: Currency.Name,
+                    skipUsed: false,
                     cancellationToken: Cancellation.Token);
 
                 await LoadTransactionsAsync();

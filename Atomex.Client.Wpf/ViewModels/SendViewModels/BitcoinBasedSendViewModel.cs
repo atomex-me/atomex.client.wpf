@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
-using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
-using Atomex.Common;
-using Atomex.Core.Entities;
+using Atomex.Core;
 using Atomex.MarketData.Abstract;
 using Atomex.Wallet.BitcoinBased;
 

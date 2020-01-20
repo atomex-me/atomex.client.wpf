@@ -7,7 +7,7 @@ using Atomex.Blockchain;
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels.Abstract;
-using Atomex.Core.Entities;
+using Atomex.Core;
 using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels

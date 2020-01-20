@@ -9,7 +9,7 @@ using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Common;
-using Atomex.Core.Entities;
+using Atomex.Core;
 using Atomex.MarketData.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
@@ -111,7 +111,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     var estimatedFee = _amount != 0
                         ? (_amount < CurrencyViewModel.AvailableAmount
                             ? App.Account
-                                .EstimateFeeAsync(Currency, To, _amount, BlockchainTransactionType.Output)
+                                .EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
                                 .WaitForResult()
                             : null)
                         : 0;
@@ -119,7 +119,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     if (estimatedFee == null)
                     {
                         var (maxAmount, maxFee) = App.Account
-                            .EstimateMaxAmountToSendAsync(Currency, To, BlockchainTransactionType.Output)
+                            .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output)
                             .WaitForResult();
 
                         if (maxAmount > 0)

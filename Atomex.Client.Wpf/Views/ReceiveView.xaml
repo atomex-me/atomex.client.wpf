@@ -8,8 +8,8 @@
              xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
              xmlns:common="clr-namespace:Atomex.Client.Wpf.Common"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-                      xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
-                      mc:Ignorable="d" 
+             xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
+             mc:Ignorable="d" 
 
              ShowTitleBar="False"
              Background="Transparent"

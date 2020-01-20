@@ -1,7 +1,7 @@
 ﻿using System;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
-using Atomex.Core.Entities;
+using Atomex.Core;
 
 namespace Atomex.Client.Wpf.ViewModels
 {

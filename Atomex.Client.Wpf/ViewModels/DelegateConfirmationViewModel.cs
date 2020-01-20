@@ -3,7 +3,7 @@ using System.Windows.Input;
 using Atomex.Blockchain.Tezos;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
-using Atomex.Core.Entities;
+using Atomex.Core;
 using Atomex.Wallet;
 using Serilog;
 

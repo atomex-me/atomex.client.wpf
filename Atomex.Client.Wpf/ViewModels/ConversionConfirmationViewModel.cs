@@ -10,7 +10,6 @@ using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Common;
 using Atomex.Core;
-using Atomex.Core.Entities;
 using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels
@@ -118,7 +117,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 var fromWallets = (await account
                     .GetUnspentAddressesAsync(
                         toAddress: null,
-                        currency: FromCurrency,
+                        currency: FromCurrency.Name,
                         amount: Amount,
                         fee: 0,
                         feePrice: 0,

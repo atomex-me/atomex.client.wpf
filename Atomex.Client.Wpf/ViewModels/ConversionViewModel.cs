@@ -9,7 +9,6 @@ using Atomex.Abstract;
 using Atomex.Blockchain.Abstract;
 using Atomex.Common;
 using Atomex.Core;
-using Atomex.Core.Entities;
 using Atomex.MarketData;
 using Atomex.MarketData.Abstract;
 using Atomex.Subsystems;
@@ -204,7 +203,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 var estimatedPaymentFee = _amount != 0
                     ? (_amount < FromCurrencyViewModel.AvailableAmount
                         ? App.Account
-                            .EstimateFeeAsync(FromCurrency, null, _amount, BlockchainTransactionType.SwapPayment)
+                            .EstimateFeeAsync(FromCurrency.Name, null, _amount, BlockchainTransactionType.SwapPayment)
                             .WaitForResult()
                         : null)
                     : 0;
@@ -212,7 +211,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 if (estimatedPaymentFee == null)
                 {
                     var (maxAmount, maxFee) = App.Account
-                        .EstimateMaxAmountToSendAsync(FromCurrency, null, BlockchainTransactionType.SwapPayment)
+                        .EstimateMaxAmountToSendAsync(FromCurrency.Name, null, BlockchainTransactionType.SwapPayment)
                         .WaitForResult();
 
                     if (maxAmount > 0)
@@ -620,7 +619,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
             var swapViewModels = new List<SwapViewModel>()
             {
-                SwapViewModelFactory.CreateSwapViewModel(new ClientSwap
+                SwapViewModelFactory.CreateSwapViewModel(new Swap
                 {
                     Symbol = symbol,
                     Price = 0.0000888m,
@@ -628,7 +627,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     Side = Side.Buy,
                     TimeStamp = DateTime.UtcNow
                 }),
-                SwapViewModelFactory.CreateSwapViewModel(new ClientSwap
+                SwapViewModelFactory.CreateSwapViewModel(new Swap
                 {
 
                     Symbol = symbol,

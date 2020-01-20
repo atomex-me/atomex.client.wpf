@@ -3,7 +3,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
-using Atomex.Core.Entities;
+using Atomex.Core;
 
 namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
 {

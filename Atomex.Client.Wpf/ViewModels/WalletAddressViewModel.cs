@@ -1,4 +1,4 @@
-﻿using Atomex.Core.Entities;
+﻿using Atomex.Core;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
