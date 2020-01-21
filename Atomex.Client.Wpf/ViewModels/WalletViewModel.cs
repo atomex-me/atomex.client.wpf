@@ -307,7 +307,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 await scanner.ScanAsync(
                     currency: Currency.Name,
-                    skipUsed: false,
+                    skipUsed: true,
                     cancellationToken: Cancellation.Token);
 
                 await LoadTransactionsAsync();
