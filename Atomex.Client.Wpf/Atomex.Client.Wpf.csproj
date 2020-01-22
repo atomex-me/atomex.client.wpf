@@ -339,6 +339,7 @@
     <Compile Include="Controls\SwapStateDataTemplateSelector.cs" />
     <Compile Include="Controls\TransactionStateDataTemplateSelector.cs" />
     <Compile Include="Controls\TransactionDataTemplateSelector.cs" />
+    <Compile Include="Controls\WalletDataTemplateSelector.cs" />
     <Compile Include="Converters\AmountToStringConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityCollapsedConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
@@ -387,6 +388,8 @@
     <Compile Include="ViewModels\TransactionViewModels\TezosTransactionViewModel.cs" />
     <Compile Include="ViewModels\UnlockViewModel.cs" />
     <Compile Include="Common\WalletInfo.cs" />
+    <Compile Include="ViewModels\WalletViewModels\TezosWalletViewModel.cs" />
+    <Compile Include="ViewModels\WalletViewModels\WalletViewModelCreator.cs" />
     <Compile Include="Views\ConversionView.xaml.cs">
       <DependentUpon>ConversionView.xaml</DependentUpon>
     </Compile>
@@ -466,8 +469,8 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\TransactionViewModel.cs" />
     <Compile Include="ViewModels\WalletsViewModel.cs" />
-    <Compile Include="ViewModels\WalletViewModel.cs" />
-    <Compile Include="ViewModels\CurrencyViewModelCreator.cs" />
+    <Compile Include="ViewModels\WalletViewModels\WalletViewModel.cs" />
+    <Compile Include="ViewModels\CurrencyViewModels\CurrencyViewModelCreator.cs" />
     <Compile Include="Views\CreateWalletViews\CreateStoragePasswordView.xaml.cs">
       <DependentUpon>CreateStoragePasswordView.xaml</DependentUpon>
     </Compile>
@@ -495,7 +498,10 @@
     <Compile Include="Views\WalletsView.xaml.cs">
       <DependentUpon>WalletsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WalletView.xaml.cs">
+    <Compile Include="Views\WalletViews\TezosWalletView.xaml.cs">
+      <DependentUpon>TezosWalletView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WalletViews\WalletView.xaml.cs">
       <DependentUpon>WalletView.xaml</DependentUpon>
     </Compile>
     <Page Include="Styles\AmountTextBoxStyle.xaml">
@@ -731,7 +737,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\WalletView.xaml">
+    <Page Include="Views\WalletViews\TezosWalletView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\WalletViews\WalletView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -871,6 +881,7 @@
     <Resource Include="Resources\Images\github.png" />
     <Resource Include="Resources\Images\twitter.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

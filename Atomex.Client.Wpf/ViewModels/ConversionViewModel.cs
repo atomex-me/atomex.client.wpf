@@ -20,6 +20,7 @@ using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Serilog;
 using System.Globalization;
+using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 
 namespace Atomex.Client.Wpf.ViewModels
 {

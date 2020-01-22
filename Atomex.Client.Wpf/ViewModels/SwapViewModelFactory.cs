@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Common;
 using Atomex.Core;
 

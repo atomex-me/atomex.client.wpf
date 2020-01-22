@@ -4,19 +4,33 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
-             xmlns:views="clr-namespace:Atomex.Client.Wpf.Views"
+             xmlns:walletViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.WalletViewModels"
+             xmlns:walletViews="clr-namespace:Atomex.Client.Wpf.Views.WalletViews"
+             xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
              mc:Ignorable="d"
              d:DesignHeight="600"
              d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=viewModels:WalletsViewModel, IsDesignTimeCreatable=True}"
              UseLayoutRounding="True">
+    <UserControl.Resources>
+        <DataTemplate x:Key="DefaultWalletTemplate">
+            <walletViews:WalletView/>
+        </DataTemplate>
+        <DataTemplate x:Key="TezosWalletTemplate">
+            <walletViews:TezosWalletView/>
+        </DataTemplate>
+        <controls:WalletDataTemplateSelector x:Key="WalletDataTemplateSelector"
+            DefaultTemplate="{StaticResource DefaultWalletTemplate}"
+            TezosTemplate="{StaticResource TezosWalletTemplate}"/>
+    </UserControl.Resources>
     <Grid>
         <TabControl Style="{StaticResource WalletTabControl}"
                     ItemsSource="{Binding Wallets}"
-                    SelectedItem="{Binding Selected}"               
-                    Margin="0 5 0 0">
+                    SelectedItem="{Binding Selected}"
+                    Margin="0 5 0 0"
+                    ContentTemplateSelector="{StaticResource WalletDataTemplateSelector}">
             <TabControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type viewModels:WalletViewModel}">
+                <DataTemplate DataType="{x:Type walletViewModels:WalletViewModel}">
                     <StackPanel x:Name="walletTabItem" Orientation="Vertical" Background="Transparent" >
                         <ContentControl x:Name="ContentControl"
                                         HorizontalAlignment="Center"
@@ -51,11 +65,6 @@
                     </DataTemplate.Triggers>
                 </DataTemplate>
             </TabControl.ItemTemplate>
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                    <views:WalletView/>
-                </DataTemplate>
-            </TabControl.ContentTemplate>
         </TabControl>
     </Grid>
 </UserControl>

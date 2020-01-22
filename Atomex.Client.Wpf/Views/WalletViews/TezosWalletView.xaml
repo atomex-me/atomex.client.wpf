@@ -1,16 +1,17 @@
-﻿<UserControl x:Class="Atomex.Client.Wpf.Views.WalletView"
+﻿<UserControl x:Class="Atomex.Client.Wpf.Views.WalletViews.TezosWalletView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
              xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
-             xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
+             xmlns:walletViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.WalletViewModels"
              xmlns:txViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.TransactionViewModels"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="600"
              d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance Type=viewModels:WalletViewModel, IsDesignTimeCreatable=True}"
+             d:DataContext="{d:DesignInstance Type=walletViewModels:TezosWalletViewModel, IsDesignTimeCreatable=True}"
              UseLayoutRounding="True">
 
     <UserControl.Resources>
@@ -24,6 +25,9 @@
         <SolidColorBrush x:Key="UnconfirmedAmountBrush" Color="#ffa500"/>
         <SolidColorBrush x:Key="NegativeAmountBrush" Color="#aec4e5"/>
         <SolidColorBrush x:Key="PositiveAmountBrush" Color="White"/>
+        <SolidColorBrush x:Key="IconButtonForegroundBrush" Color="#BECFDE"/>
+        <SolidColorBrush x:Key="IconButtonMouseOverBrush" Color="White"/>
+        <SolidColorBrush x:Key="IconButtonPressedBrush" Color="#29456d"/>
     </UserControl.Resources>
 
     <Grid>
@@ -288,8 +292,7 @@
             <Border Background="{StaticResource DefaultSubstrateBrush}"
                     CornerRadius="10"
                     Margin="10 0 0 0"
-                    MinWidth="350"
-                    Visibility="{Binding IsDelegatable, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                    MinWidth="350">
                 <Grid>
                     <StackPanel Orientation="Vertical"
                                 VerticalAlignment="Center"
@@ -322,12 +325,13 @@
                             </Style>
                         </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type viewModels:Delegation}">
+                            <DataTemplate DataType="{x:Type walletViewModels:Delegation}">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="34"/>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <!--<ColumnDefinition Width="26"/>-->
                                     </Grid.ColumnDefinitions>
                                     <Image Width="30"
                                            Height="30"
@@ -344,12 +348,46 @@
                                                Foreground="{StaticResource DefaultForegroundBrush}"
                                                Grid.Column="1"/>
                                     <TextBlock Text="{Binding Balance, StringFormat=0.000000}"
+                                               Margin="10 0 5 0"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
                                                FontSize="10"
                                                FontFamily="{StaticResource RobotoLight}"
                                                Foreground="{StaticResource DelegatedAmountBrush}"
                                                Grid.Column="2"/>
+                                    <!--<controls:IconButton HorizontalAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         Foreground="{StaticResource IconButtonForegroundBrush}"
+                                         MouseOverBrush="{StaticResource IconButtonMouseOverBrush}"
+                                         PressedBrush="{StaticResource IconButtonPressedBrush}"
+                                         ToolTip="Undelegate"
+                                         Command="{Binding UndelegateCommand}"
+                                         Grid.Column="3">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type controls:IconButton}">
+                                                <iconPacks:PackIconMaterial x:Name="removeIcon"
+                                                        Kind="CloseCircleOutline"
+                                                        Foreground="{TemplateBinding Foreground}"
+                                                        Background="#01000000"
+                                                        Width="20"
+                                                        Height="20"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Center"/>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="removeIcon"
+                                                            Property="Foreground"
+                                                            Value="{Binding MouseOverBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:IconButton}}}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="removeIcon"
+                                                            Property="Foreground"
+                                                            Value="{Binding PressedBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:IconButton}}}"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </controls:IconButton>-->
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

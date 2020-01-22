@@ -137,10 +137,7 @@
                               KeyboardNavigation.TabNavigation="Local"
                               KeyboardNavigation.DirectionalNavigation="Contained"
                               Grid.Row="1">
-                            <ContentPresenter Content="{TemplateBinding SelectedContent}"
-                                              ContentTemplate="{TemplateBinding SelectedContentTemplate}"
-                                              ContentStringFormat="{TemplateBinding SelectedContentStringFormat}"
-                                              ContentSource="SelectedContent"
+                            <ContentPresenter ContentSource="SelectedContent"
                                               Name="PART_SelectedContentHost"
                                               SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
                         </Grid>

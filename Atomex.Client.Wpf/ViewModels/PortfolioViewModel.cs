@@ -11,6 +11,7 @@ using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.Wpf;
 using PieSeries = OxyPlot.Series.PieSeries;
+using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 
 namespace Atomex.Client.Wpf.ViewModels
 {

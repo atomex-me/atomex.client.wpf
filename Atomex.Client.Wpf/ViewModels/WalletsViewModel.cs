@@ -5,6 +5,8 @@ using Atomex.Subsystems;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
+using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
+using Atomex.Client.Wpf.ViewModels.WalletViewModels;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -71,7 +73,7 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             Wallets = e.Terminal?.Account != null
                 ? new ObservableCollection<WalletViewModel>(
-                    e.Terminal.Account.Currencies.Select(currency => new WalletViewModel(
+                    e.Terminal.Account.Currencies.Select(currency => WalletViewModelCreator.CreateViewModel(
                         app: App,
                         dialogViewer: DialogViewer,
                         menuSelector: MenuSelector,
@@ -94,72 +96,3 @@ namespace Atomex.Client.Wpf.ViewModels
         }
     }
 }
-
-
-//Wallets.Add(new WalletViewModel
-//{
-//    Header = "Bitcoin Gold",
-//    IconBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/bitcoin_gold.png"))),
-//    IconMaskBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/bitcoin_gold_mask.png"))),
-//    UnselectedIconBrush = Brushes.White,
-//    IconPath = "pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/bitcoin_90x90.png"
-//});
-
-/*
-    <!--<TabItem Header="Bitcoin">
-        <helpers:TabItemHelper.Glyph>
-            <iconPacks:PackIconSimpleIcons Kind="Bitcoin" Width="48" Height="48" Foreground="Orange" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </helpers:TabItemHelper.Glyph>
-        <TabItem.Content>
-            <local:WalletView/>
-        </TabItem.Content>
-    </TabItem>
-    <TabItem Header="Bitcoin Cash">
-        <helpers:TabItemHelper.Glyph>
-            <iconPacks:PackIconSimpleIcons Kind="Bitcoin" Width="48" Height="48" Foreground="#4bce50" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </helpers:TabItemHelper.Glyph>
-    </TabItem>
-    <TabItem Header="BGold">
-        <helpers:TabItemHelper.Glyph>
-            <Canvas Width="48" Height="48" Background="White">
-                <Canvas.OpacityMask>
-                    <ImageBrush ImageSource="Resources/Images/bitcoin_gold_mask.png"/>
-                </Canvas.OpacityMask>
-            </Canvas>
-        </helpers:TabItemHelper.Glyph>
-    </TabItem>
-    <TabItem Header="Ethereum">
-        <helpers:TabItemHelper.Glyph>
-            <iconPacks:PackIconSimpleIcons Kind="Ethereum" Width="48" Height="48" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </helpers:TabItemHelper.Glyph>
-    </TabItem>
-    <TabItem Header="Litecoin">
-        <helpers:TabItemHelper.Glyph>
-            <Canvas Width="48" Height="48" Background="#bebebe">
-                <Canvas.OpacityMask>
-                    <ImageBrush ImageSource="Resources/Images/litecoin_mask.png"/>
-                </Canvas.OpacityMask>
-            </Canvas>
-        </helpers:TabItemHelper.Glyph>
-    </TabItem>
-    <TabItem Header="Dash">
-        <helpers:TabItemHelper.Glyph>
-            <Canvas Width="48" Height="48" Background="#2573c2">
-                <Canvas.OpacityMask>
-                    <ImageBrush ImageSource="Resources/Images/dash_mask.png"/>
-                </Canvas.OpacityMask>
-            </Canvas>
-        </helpers:TabItemHelper.Glyph>
-    </TabItem>
-    <TabItem Header="Dogecoin">
-        <helpers:TabItemHelper.Glyph>
-            <iconPacks:PackIconMaterial Kind="Coin" Width="48" Height="48" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </helpers:TabItemHelper.Glyph>
-    </TabItem>
-    <TabItem Header="Feathercoin">
-        <helpers:TabItemHelper.Glyph>
-            <iconPacks:PackIconMaterial Kind="Coin" Width="48" Height="48" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </helpers:TabItemHelper.Glyph>
-    </TabItem>-->
-
- */

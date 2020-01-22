@@ -12,6 +12,7 @@ using QRCoder;
 using System;
 using System.Windows.Input;
 using Serilog;
+using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 
 namespace Atomex.Client.Wpf.ViewModels
 {

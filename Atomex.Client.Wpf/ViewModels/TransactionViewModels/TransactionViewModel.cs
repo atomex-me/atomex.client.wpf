@@ -7,6 +7,7 @@ using Atomex.Blockchain;
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels.Abstract;
+using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Core;
 using Serilog;
 
