@@ -210,7 +210,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
                 await scanner.ScanAsync(
                     currency: Currency.Name,
-                    skipUsed: false,
+                    skipUsed: true,
                     cancellationToken: Cancellation.Token);
 
                 await LoadTransactionsAsync();
