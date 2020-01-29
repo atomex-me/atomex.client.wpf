@@ -103,14 +103,23 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         private decimal Amount
         {
             get => _amount;
-            set {
+            set
+                {
                 var previousAmount = _amount;
                 _amount = value;
+
+                var (maxAmount, maxFee) = App.Account
+                    .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output)
+                    .WaitForResult();
+
+                var availableAmount = Currency is BitcoinBasedCurrency
+                    ? CurrencyViewModel.AvailableAmount
+                    : maxAmount + maxFee;
 
                 if (UseDefaultFee)
                 {
                     var estimatedFee = _amount != 0
-                        ? (_amount < CurrencyViewModel.AvailableAmount
+                        ? (_amount < availableAmount
                             ? App.Account
                                 .EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
                                 .WaitForResult()
@@ -119,10 +128,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                     if (estimatedFee == null)
                     {
-                        var (maxAmount, maxFee) = App.Account
-                            .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output)
-                            .WaitForResult();
-
                         if (maxAmount > 0)
                         {
                             _amount = maxAmount;
@@ -136,8 +141,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         }
                     }
 
-                    if (_amount + estimatedFee.Value > CurrencyViewModel.AvailableAmount)
-                        _amount = Math.Max(CurrencyViewModel.AvailableAmount - estimatedFee.Value, 0);
+                    if (_amount + estimatedFee.Value > availableAmount)
+                        _amount = Math.Max(availableAmount - estimatedFee.Value, 0);
 
                     if (_amount == 0)
                         estimatedFee = 0;

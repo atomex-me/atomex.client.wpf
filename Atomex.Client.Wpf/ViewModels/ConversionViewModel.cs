@@ -201,8 +201,16 @@ namespace Atomex.Client.Wpf.ViewModels
                 var previousAmount = _amount;
                 _amount = value;
 
+                var (maxAmount, maxFee) = App.Account
+                    .EstimateMaxAmountToSendAsync(FromCurrency.Name, null, BlockchainTransactionType.SwapPayment)
+                    .WaitForResult();
+
+                var availableAmount = FromCurrency is BitcoinBasedCurrency
+                    ? FromCurrencyViewModel.AvailableAmount
+                    : maxAmount + maxFee;
+
                 var estimatedPaymentFee = _amount != 0
-                    ? (_amount < FromCurrencyViewModel.AvailableAmount
+                    ? (_amount < availableAmount
                         ? App.Account
                             .EstimateFeeAsync(FromCurrency.Name, null, _amount, BlockchainTransactionType.SwapPayment)
                             .WaitForResult()
@@ -211,10 +219,6 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 if (estimatedPaymentFee == null)
                 {
-                    var (maxAmount, maxFee) = App.Account
-                        .EstimateMaxAmountToSendAsync(FromCurrency.Name, null, BlockchainTransactionType.SwapPayment)
-                        .WaitForResult();
-
                     if (maxAmount > 0)
                     {
                         _amount = maxAmount;
@@ -238,8 +242,8 @@ namespace Atomex.Client.Wpf.ViewModels
                     _useRewardForRedeem = true;
                 }
 
-                if (_amount + _estimatedPaymentFee > FromCurrencyViewModel.AvailableAmount)
-                    _amount = Math.Max(FromCurrencyViewModel.AvailableAmount - _estimatedPaymentFee, 0);
+                if (_amount + _estimatedPaymentFee > availableAmount)
+                    _amount = Math.Max(availableAmount - _estimatedPaymentFee, 0);
 
                 OnPropertyChanged(nameof(CurrencyFormat));
                 OnPropertyChanged(nameof(TargetCurrencyFormat));
