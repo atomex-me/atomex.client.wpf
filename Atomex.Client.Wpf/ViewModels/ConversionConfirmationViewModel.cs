@@ -17,6 +17,8 @@ namespace Atomex.Client.Wpf.ViewModels
 {
     public class ConversionConfirmationViewModel : BaseViewModel
     {
+        public event EventHandler OnSuccess;
+
         private static TimeSpan SwapTimeout = TimeSpan.FromSeconds(60);
         private static TimeSpan SwapCheckInterval = TimeSpan.FromSeconds(3);
 
@@ -95,9 +97,14 @@ namespace Atomex.Client.Wpf.ViewModels
                     return;
                 }
 
+
                 DialogViewer.PushPage(Dialogs.Convert, Pages.Message, MessageViewModel.Success(
                     text: Resources.SvOrderMatched,
-                    nextAction: () => { DialogViewer?.HideDialog(Dialogs.Convert); }));
+                    nextAction: () => {
+                        DialogViewer?.HideDialog(Dialogs.Convert);
+                        OnSuccess?.Invoke(this, EventArgs.Empty);
+                    }),
+                    closeAction: () => OnSuccess?.Invoke(this, EventArgs.Empty));
             }
             catch (Exception e)
             {
@@ -178,8 +185,20 @@ namespace Atomex.Client.Wpf.ViewModels
                     if (currentOrder == null)
                         continue;
 
+                    if (currentOrder.Status == OrderStatus.Pending)
+                        continue;
+
                     if (currentOrder.Status == OrderStatus.PartiallyFilled || currentOrder.Status == OrderStatus.Filled)
+                    {
+                        var swap = (await terminal.Account
+                            .GetSwapsAsync())
+                            .FirstOrDefault(s => s.OrderId == currentOrder.Id);
+
+                        if (swap == null)
+                            continue;
+
                         return null;
+                    }
 
                     if (currentOrder.Status == OrderStatus.Canceled)
                         return new Error(Errors.PriceHasChanged, Resources.SvPriceHasChanged);

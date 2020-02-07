@@ -15,7 +15,7 @@ namespace Atomex.Client.Wpf.Controls
         void HideDialog(int dialogId);
         void HideAllDialogs();
 
-        void PushPage(int dialogId, int pageId, object dataContext = null);
+        void PushPage(int dialogId, int pageId, object dataContext = null, Action closeAction = null);
         void PopPage(int dialogId);
         void Back(int dialogId);
 

@@ -155,13 +155,16 @@ namespace Atomex.Client.Wpf.Views
             this.CloseAllChildWindows();
         }
 
-        public void PushPage(int dialogId, int pageId, object dataContext = null)
+        public void PushPage(int dialogId, int pageId, object dataContext = null, Action onClose = null)
         {
             if (!_dialogs.TryGetValue(dialogId, out var childView))
                 throw new ArgumentException($"Dialog {dialogId} not found");
 
             if (!(childView is FrameView frameView))
                 throw new Exception("Invalid dialog type");
+
+            if (childView != null && onClose != null)
+                childView.CloseButtonClicked += (s, e) => onClose();
 
             if (!_pagesFactory.TryGetValue(pageId, out var pageConstructor))
                 throw new ArgumentException($"Page constructor for page {pageId} not found");

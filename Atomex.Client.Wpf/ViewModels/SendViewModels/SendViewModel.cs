@@ -108,17 +108,17 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 var previousAmount = _amount;
                 _amount = value;
 
-                var (maxAmount, maxFee) = App.Account
-                    .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output)
-                    .WaitForResult();
-
-                var availableAmount = Currency is BitcoinBasedCurrency
-                    ? CurrencyViewModel.AvailableAmount
-                    : maxAmount + maxFee;
-
                 if (UseDefaultFee)
                 {
-                    var estimatedFee = _amount != 0
+                    var (maxAmount, maxFeeAmount, _) = App.Account
+                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, true)
+                        .WaitForResult();
+
+                    var availableAmount = Currency is BitcoinBasedCurrency
+                        ? CurrencyViewModel.AvailableAmount
+                        : maxAmount + maxFeeAmount;
+
+                    var estimatedFeeAmount = _amount != 0
                         ? (_amount < availableAmount
                             ? App.Account
                                 .EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
@@ -126,12 +126,12 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                             : null)
                         : 0;
 
-                    if (estimatedFee == null)
+                    if (estimatedFeeAmount == null)
                     {
                         if (maxAmount > 0)
                         {
                             _amount = maxAmount;
-                            estimatedFee = maxFee;
+                            estimatedFeeAmount = maxFeeAmount;
                         }
                         else
                         {
@@ -141,15 +141,15 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         }
                     }
 
-                    if (_amount + estimatedFee.Value > availableAmount)
-                        _amount = Math.Max(availableAmount - estimatedFee.Value, 0);
+                    if (_amount + estimatedFeeAmount.Value > availableAmount)
+                        _amount = Math.Max(availableAmount - estimatedFeeAmount.Value, 0);
 
                     if (_amount == 0)
-                        estimatedFee = 0;
+                        estimatedFeeAmount = 0;
 
                     OnPropertyChanged(nameof(AmountString));
 
-                    _fee = Currency.GetFeeFromFeeAmount(estimatedFee.Value, Currency.GetDefaultFeePrice());
+                    _fee = Currency.GetFeeFromFeeAmount(estimatedFeeAmount.Value, Currency.GetDefaultFeePrice());
                     OnPropertyChanged(nameof(FeeString));
 
                     if (UseFeePrice)
@@ -162,12 +162,23 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 }
                 else
                 {
-                    var feeAmount = Currency.GetFeeAmount(_fee, _feePrice);
+                    var (maxAmount, maxFeeAmount, _) = App.Account
+                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, false)
+                        .WaitForResult();
 
-                    if (_amount + feeAmount > CurrencyViewModel.AvailableAmount)
-                        _amount = Math.Max(CurrencyViewModel.AvailableAmount - feeAmount, 0);
+                    var availableAmount = Currency is BitcoinBasedCurrency
+                        ? CurrencyViewModel.AvailableAmount
+                        : maxAmount + maxFeeAmount;
+
+                    var feeAmount = Math.Max(Currency.GetFeeAmount(_fee, _feePrice), maxFeeAmount);
+
+                    if (_amount + feeAmount > availableAmount)
+                        _amount = Math.Max(availableAmount - feeAmount, 0);
 
                     OnPropertyChanged(nameof(AmountString));
+                    
+                    if (_fee != 0)
+                        Fee = _fee;
 
                     Warning = string.Empty;
                 }
@@ -191,25 +202,55 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         private decimal Fee
         {
             get => _fee;
-            set {
-                _fee = value;
-
-                if (!UseDefaultFee)
+            set
+            {
+                if (_amount == 0)
+                    _fee = 0;
+                else
                 {
-                    var feeAmount = Currency.GetFeeAmount(_fee, _feePrice);
+                    _fee = Math.Min(value, Currency.GetMaximumFee());
 
-                    if (_amount + feeAmount > CurrencyViewModel.AvailableAmount)
-                        feeAmount = Math.Max(CurrencyViewModel.AvailableAmount - _amount, 0);
+                    if (!UseDefaultFee)
+                    {
+                        var estimatedFeeAmount = _amount != 0
+                            ? App.Account
+                                .EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
+                                .WaitForResult()
+                            : 0;
 
-                    _fee = Currency.GetFeeFromFeeAmount(feeAmount, _feePrice);
+                        var feeAmount = Currency.GetFeeAmount(_fee, _feePrice);
 
-                    OnPropertyChanged(nameof(FeeString));
-                    Warning = string.Empty;
+                        if (feeAmount > estimatedFeeAmount.Value)
+                        {
+                            var (maxAmount, maxFee, _) = App.Account
+                                .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, true)
+                                .WaitForResult();
+
+                            var availableAmount = Currency is BitcoinBasedCurrency
+                                ? CurrencyViewModel.AvailableAmount
+                                : maxAmount + maxFee;
+
+                            if (_amount + feeAmount > availableAmount)
+                                _amount = Math.Max(availableAmount - feeAmount, 0);
+                        }
+                        else if (feeAmount < estimatedFeeAmount.Value)
+                            _fee = Currency.GetFeeFromFeeAmount(estimatedFeeAmount.Value, Currency.GetDefaultFeePrice());
+
+                        if (_amount == 0)
+                            _fee = 0;
+
+                        OnPropertyChanged(nameof(AmountString));
+
+                        OnPropertyChanged(nameof(FeeString));
+                        Warning = string.Empty;
+                    }
+
+                    OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
                 }
-
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
             }
         }
+
+
 
         public string FeeString
         {
@@ -360,7 +401,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 return;
             }
 
-            if (Fee < 0)
+            if (Fee <= 0)
             {
                 Warning = Resources.SvCommissionLessThanZeroError;
                 return;
@@ -381,6 +422,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 BaseCurrencyCode = BaseCurrencyCode,
                 BaseCurrencyFormat = BaseCurrencyFormat,
                 Fee = Fee,
+                UseDeafultFee = UseDefaultFee,
                 FeeInBase = FeeInBase,
                 FeePrice = FeePrice,
                 CurrencyCode = CurrencyCode,

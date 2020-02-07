@@ -20,6 +20,7 @@ namespace Atomex.Client.Wpf.ViewModels
         public decimal Fee { get; set; }
         public decimal FeePrice { get; set; }
         public decimal FeeAmount => Currency.GetFeeAmount(Fee, FeePrice);
+        public bool UseDeafultFee { get; set; }
         public decimal AmountInBase { get; set; }
         public decimal FeeInBase { get; set; }
         public string CurrencyCode { get; set; }
@@ -56,7 +57,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 _dialogViewer.PushPage(_dialogId, Pages.Sending);
 
                 var error = await account
-                    .SendAsync(Currency.Name, To, Amount, Fee, FeePrice);
+                    .SendAsync(Currency.Name, To, Amount, Fee, FeePrice, UseDeafultFee);
 
                 if (error != null)
                 {
@@ -95,6 +96,7 @@ namespace Atomex.Client.Wpf.ViewModels
             Fee = 0.0001m;
             FeePrice = 1m;
             FeeInBase = 8.43m;
+            UseDeafultFee = true;
         }
     }
 }

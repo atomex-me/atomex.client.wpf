@@ -201,9 +201,23 @@ namespace Atomex.Client.Wpf.ViewModels
                 var previousAmount = _amount;
                 _amount = value;
 
-                var (maxAmount, maxFee) = App.Account
+                var (maxAmount, maxFee, reserve) = App.Account
                     .EstimateMaxAmountToSendAsync(FromCurrency.Name, null, BlockchainTransactionType.SwapPayment)
                     .WaitForResult();
+
+                var swaps = App.Account
+                    .GetSwapsAsync()
+                    .WaitForResult();
+
+                var usedAmount = swaps.Sum(s => (s.IsActive && s.SoldCurrency == FromCurrency) 
+                    ? s.Symbol.IsBaseCurrency(FromCurrency) 
+                        ? s.Qty 
+                        : s.Qty * s.Price
+                    : 0);
+
+                usedAmount = Math.Ceiling(usedAmount * 1000000) / 1000000;
+
+                maxAmount = Math.Max(maxAmount - usedAmount, 0);
 
                 var availableAmount = FromCurrency is BitcoinBasedCurrency
                     ? FromCurrencyViewModel.AvailableAmount
@@ -226,17 +240,23 @@ namespace Atomex.Client.Wpf.ViewModels
                     }
                     else
                     {
-                        _amount = previousAmount;
-                        // todo: insufficient funds warning
+                        _amount = 0; // previousAmount;
+                        OnPropertyChanged(nameof(Amount));
                         return;
+                        // todo: insufficient funds warning
+                        // 
                     }
                 }
 
+                var walletAddress = App.Account
+                    .GetRedeemAddressAsync(ToCurrency.Name)
+                    .WaitForResult();
+
                 _estimatedPaymentFee = estimatedPaymentFee.Value;
-                _estimatedRedeemFee = ToCurrency.GetDefaultRedeemFee();
+                _estimatedRedeemFee = ToCurrency.GetDefaultRedeemFee(walletAddress);
                 _useRewardForRedeem = false;
 
-                if (ToCurrencyViewModel.AvailableAmount == 0 && !(ToCurrency is BitcoinBasedCurrency))
+                if (walletAddress.AvailableBalance() < _estimatedRedeemFee && !(ToCurrency is BitcoinBasedCurrency))
                 {
                     _estimatedRedeemFee *= 2; // todo: show hint or tool tip
                     _useRewardForRedeem = true;
@@ -473,8 +493,13 @@ namespace Atomex.Client.Wpf.ViewModels
                 if (orderBook == null)
                     return;
 
+                var walletAddress = App.Account
+                    .GetRedeemAddressAsync(ToCurrency.Name)
+                    .WaitForResult();
+
                 _estimatedPrice = orderBook.EstimatedDealPrice(side, Amount);
                 _estimatedMaxAmount = orderBook.EstimateMaxAmount(side);
+                EstimatedRedeemFee = ToCurrency.GetDefaultRedeemFee(walletAddress);
 
                 _isNoLiquidity = Amount != 0 && _estimatedPrice == 0;
 
@@ -607,7 +632,14 @@ namespace Atomex.Client.Wpf.ViewModels
                 UseRewardForRedeem = _useRewardForRedeem
             };
 
+            viewModel.OnSuccess += ViewModel_OnSuccess;
+
             DialogViewer.ShowDialog(Dialogs.Convert, viewModel, defaultPageId: Pages.ConversionConfirmation);
+        }
+
+        private void ViewModel_OnSuccess(object sender, EventArgs e)
+        {
+            Amount = _amount;
         }
 
         private void DesignerMode()
