@@ -209,13 +209,13 @@ namespace Atomex.Client.Wpf.ViewModels
                     .GetSwapsAsync()
                     .WaitForResult();
 
-                var usedAmount = swaps.Sum(s => (s.IsActive && s.SoldCurrency == FromCurrency) 
+                var usedAmount = swaps.Sum(s => (s.IsActive && s.SoldCurrency.Name == FromCurrency.Name && !s.StateFlags.HasFlag(SwapStateFlags.IsPaymentConfirmed))
                     ? s.Symbol.IsBaseCurrency(FromCurrency) 
                         ? s.Qty 
                         : s.Qty * s.Price
                     : 0);
 
-                usedAmount = Math.Ceiling(usedAmount * 1000000) / 1000000;
+                usedAmount = Math.Ceiling(usedAmount * FromCurrency.DigitsMultiplier) / FromCurrency.DigitsMultiplier;
 
                 maxAmount = Math.Max(maxAmount - usedAmount, 0);
 
@@ -632,14 +632,14 @@ namespace Atomex.Client.Wpf.ViewModels
                 UseRewardForRedeem = _useRewardForRedeem
             };
 
-            viewModel.OnSuccess += ViewModel_OnSuccess;
+            viewModel.OnSuccess += OnSuccessConvertion;
 
             DialogViewer.ShowDialog(Dialogs.Convert, viewModel, defaultPageId: Pages.ConversionConfirmation);
         }
 
-        private void ViewModel_OnSuccess(object sender, EventArgs e)
+        private void OnSuccessConvertion(object sender, EventArgs e)
         {
-            Amount = _amount;
+            Amount = _amount; // recalculate amount
         }
 
         private void DesignerMode()
