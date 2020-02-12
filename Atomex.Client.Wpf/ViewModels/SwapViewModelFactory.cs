@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Common;
 using Atomex.Core;
@@ -17,8 +18,8 @@ namespace Atomex.Client.Wpf.ViewModels
                 currency: swap.PurchasedCurrency,
                 subscribeToUpdates:false);
 
-            var fromAmount = AmountHelper.QtyToAmount(swap.Side, swap.Qty, swap.Price);
-            var toAmount = AmountHelper.QtyToAmount(swap.Side.Opposite(), swap.Qty, swap.Price);
+            var fromAmount = AmountHelper.QtyToAmount(swap.Side, swap.Qty, swap.Price, swap.SoldCurrency.DigitsMultiplier);
+            var toAmount = AmountHelper.QtyToAmount(swap.Side.Opposite(), swap.Qty, swap.Price, swap.PurchasedCurrency.DigitsMultiplier);
 
             return new SwapViewModel
             {

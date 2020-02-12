@@ -29,6 +29,8 @@ namespace Atomex.Client.Wpf.ViewModels
         private IAtomexApp App { get; }
         private IDialogViewer DialogViewer { get; }
 
+        private decimal _estimatedOrderPrice;
+
         private ISymbols Symbols
         {
             get
@@ -215,7 +217,7 @@ namespace Atomex.Client.Wpf.ViewModels
                         : s.Qty * s.Price
                     : 0);
 
-                usedAmount = Math.Ceiling(usedAmount * FromCurrency.DigitsMultiplier) / FromCurrency.DigitsMultiplier;
+                usedAmount = AmountHelper.RoundDown(usedAmount, FromCurrency.DigitsMultiplier);
 
                 maxAmount = Math.Max(maxAmount - usedAmount, 0);
 
@@ -497,21 +499,26 @@ namespace Atomex.Client.Wpf.ViewModels
                     .GetRedeemAddressAsync(ToCurrency.Name)
                     .WaitForResult();
 
-                _estimatedPrice = orderBook.EstimatedDealPrice(side, Amount);
-                _estimatedMaxAmount = orderBook.EstimateMaxAmount(side);
+                (_estimatedOrderPrice, _estimatedPrice) = orderBook.EstimateOrderPrices(
+                    side,
+                    Amount,
+                    FromCurrency.DigitsMultiplier,
+                    symbol.Base.DigitsMultiplier);
+
+                _estimatedMaxAmount = orderBook.EstimateMaxAmount(side, FromCurrency.DigitsMultiplier);
                 EstimatedRedeemFee = ToCurrency.GetDefaultRedeemFee(walletAddress);
 
-                _isNoLiquidity = Amount != 0 && _estimatedPrice == 0;
+                _isNoLiquidity = Amount != 0 && _estimatedOrderPrice == 0;
 
                 if (symbol.IsBaseCurrency(ToCurrency))
                 {
                     _targetAmount = _estimatedPrice != 0
-                        ? Amount / _estimatedPrice
+                        ? AmountHelper.AmountToQty(side, Amount, _estimatedPrice, ToCurrency.DigitsMultiplier)
                         : 0m;
                 }
                 else if (symbol.IsQuoteCurrency(ToCurrency))
                 {
-                    _targetAmount = Amount * _estimatedPrice;
+                    _targetAmount = AmountHelper.QtyToAmount(side, Amount, _estimatedPrice, ToCurrency.DigitsMultiplier);
                 }
 
                 if (Application.Current.Dispatcher != null)
@@ -592,11 +599,11 @@ namespace Atomex.Client.Wpf.ViewModels
 
             var side = symbol.OrderSideForBuyCurrency(ToCurrency);
             var price = EstimatedPrice;
-            var qty = Math.Round(AmountHelper.AmountToQty(side, Amount, price), symbol.Base.Digits);
+            var qty = AmountHelper.AmountToQty(side, Amount, price, symbol.Base.DigitsMultiplier);
 
             if (qty < symbol.MinimumQty)
             {
-                var minimumAmount = Math.Round(AmountHelper.QtyToAmount(side, symbol.MinimumQty, price), FromCurrency.Digits);
+                var minimumAmount = AmountHelper.QtyToAmount(side, symbol.MinimumQty, price, FromCurrency.DigitsMultiplier);
                 var message = string.Format(CultureInfo.InvariantCulture, Resources.CvMinimumAllowedQtyWarning, minimumAmount, FromCurrency.Name);
 
                 DialogViewer.ShowMessage(Resources.CvWarning, message);
@@ -624,6 +631,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 TargetAmountInBase = TargetAmountInBase,
 
                 EstimatedPrice = EstimatedPrice,
+                EstimatedOrderPrice = _estimatedOrderPrice,
                 EstimatedPaymentFee = EstimatedPaymentFee,
                 EstimatedRedeemFee = EstimatedRedeemFee,
                 EstimatedPaymentFeeInBase = EstimatedPaymentFeeInBase,

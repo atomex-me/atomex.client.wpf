@@ -86,7 +86,7 @@
                            Margin="7 0 0 0">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="AvailableAmount" Mode="OneWay"/>
+                            <Binding Path="TotalAmount" Mode="OneWay"/>
                             <Binding Path="CurrencyFormat" Mode="OneWay"/>
                         </MultiBinding>
                     </TextBlock.Text>

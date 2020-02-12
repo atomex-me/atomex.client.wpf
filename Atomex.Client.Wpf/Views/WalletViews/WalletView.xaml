@@ -61,7 +61,7 @@
                                                Style="{StaticResource BaseTextBlockStyle}">
                                         <TextBlock.Text>
                                             <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                                <Binding Path="CurrencyViewModel.AvailableAmount" Mode="OneWay"/>
+                                                <Binding Path="CurrencyViewModel.TotalAmount" Mode="OneWay"/>
                                                 <Binding Path="CurrencyViewModel.CurrencyFormat" Mode="OneWay"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
@@ -86,7 +86,7 @@
                                                Style="{StaticResource BaseTextBlockStyle}">
                                         <TextBlock.Text>
                                             <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                                <Binding Path="CurrencyViewModel.AvailableAmountInBase" Mode="OneWay"/>
+                                                <Binding Path="CurrencyViewModel.TotalAmountInBase" Mode="OneWay"/>
                                                 <Binding Path="CurrencyViewModel.BaseCurrencyFormat" Mode="OneWay"/>
                                             </MultiBinding>
                                         </TextBlock.Text>

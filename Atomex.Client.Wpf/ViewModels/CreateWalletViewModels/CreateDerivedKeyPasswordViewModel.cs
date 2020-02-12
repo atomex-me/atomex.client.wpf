@@ -84,7 +84,8 @@ namespace Atomex.Client.Wpf.ViewModels.CreateWalletViewModels
                 mnemonic: StepData.Mnemonic,
                 wordList: StepData.Language,
                 passPhrase: Password,
-                network: StepData.Network) {
+                network: StepData.Network)
+            {
                 PathToWallet = StepData.PathToWallet
             };
 
