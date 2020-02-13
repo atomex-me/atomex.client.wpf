@@ -242,6 +242,7 @@ namespace Atomex.Client.Wpf.ViewModels
                         Tx = _tx,
                         From = WalletAddress.Address,
                         To = Address,
+                        IsAmountLessThanMin = WalletAddress.Balance < BakerViewModel.MinDelegation, 
                         BaseCurrencyCode = BaseCurrencyCode,
                         BaseCurrencyFormat = BaseCurrencyFormat,
                         Fee = Fee,
@@ -297,7 +298,7 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 await Task.Run(async () =>
                 {
-                    bakers = (await new BbApi(_tezos)
+                    bakers = (await BbApi
                         .GetBakers(App.Account.Network)
                         .ConfigureAwait(false))
                         .Select(x => new BakerViewModel
@@ -306,10 +307,10 @@ namespace Atomex.Client.Wpf.ViewModels
                             Logo = x.Logo,
                             Name = x.Name,
                             Fee = x.Fee,
+                            MinDelegation = x.MinDelegation,
                             StakingAvailable = x.StakingAvailable
                         })
-                        .ToList()
-                        .SortList((b1, b2) => b1.IsFull.CompareTo(b2.IsFull));
+                        .ToList();
                 });
             }
             catch (Exception e)
@@ -421,10 +422,11 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 new BakerViewModel()
                 {
-                    Logo = "https://api.baking-bad.org/logos/tezoshodl.png", //"tezoshodl.png",
+                    Logo = "https://api.baking-bad.org/logos/tezoshodl.png",
                     Name = "TezosHODL",
                     Address = "tz1sdfldjsflksjdlkf123sfa",
                     Fee = 5,
+                    MinDelegation = 10,
                     StakingAvailable = 10000.000000m
                 }
             };

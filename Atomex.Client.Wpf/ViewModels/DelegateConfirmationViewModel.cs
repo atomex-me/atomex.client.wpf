@@ -22,6 +22,7 @@ namespace Atomex.Client.Wpf.ViewModels
         public string CurrencyFormat { get; set; }
         public string BaseCurrencyFormat { get; set; }
         public decimal Fee { get; set; }
+        public bool IsAmountLessThanMin { get; set; }
         public decimal FeeInBase { get; set; }
         public string CurrencyCode { get; set; }
         public string BaseCurrencyCode { get; set; }

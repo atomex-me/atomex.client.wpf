@@ -116,7 +116,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                         continue;
 
 
-                    var baker = await new BbApi(tezos)
+                    var baker = await BbApi
                         .GetBaker(@delegate, App.Account.Network)
                         .ConfigureAwait(false);
 

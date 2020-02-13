@@ -8,6 +8,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <SolidColorBrush x:Key="BakerComboBoxItemsBackgroundBrush" Color="#FF172130"/>
+    <SolidColorBrush x:Key="MinDelegationBrush" Color="#C0C0C0"/>
 
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     <converters:StringToUpperCaseConverter x:Key="StringToUpperCaseConverter"/>
@@ -56,26 +57,53 @@
                 </TextBlock.Style>
             </TextBlock>
 
-            <TextBlock FontFamily="{StaticResource Roboto}"
-                       FontSize="13"
-                       Margin="7 0 0 0"
-                       Text="{Binding Fee, StringFormat=0.00%}"
-                       VerticalAlignment="Top"
-                       Grid.Column="1"
-                       Grid.Row="1">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsFull}" Value="true">
-                                <Setter Property="Foreground" Value="#ffa500"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsFull}" Value="false">
-                                <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+            <StackPanel Orientation="Horizontal"
+                        Margin="7 0 0 0"
+                        VerticalAlignment="Top"
+                        Grid.Column="1"
+                        Grid.Row="1">
+                <TextBlock FontFamily="{StaticResource Roboto}"
+                           VerticalAlignment="Center"
+                           FontSize="13"
+                           Text="{Binding Fee, StringFormat=0.00%}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsFull}" Value="true">
+                                    <Setter Property="Foreground" Value="#ffa500"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsFull}" Value="false">
+                                    <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                
+                <TextBlock FontFamily="{StaticResource Roboto}"
+                           FontSize="11"
+                           Margin="7 0 0 0"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource MinDelegationBrush}"
+                           Visibility="{Binding IsMinDelegation, Converter={StaticResource BoolToVisibilityConverter}}"
+                           Text="{Binding MinDelegation, StringFormat=(min {0} tez)}">
+
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsFull}" Value="true">
+                                    <Setter Property="Foreground" Value="#ffa500"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsFull}" Value="false">
+                                    <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                
+            </StackPanel>
+
 
             <TextBlock FontFamily="{StaticResource Roboto}"
                        FontSize="12"

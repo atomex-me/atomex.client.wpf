@@ -140,6 +140,28 @@
             </StackPanel>
         </Grid>
 
+
+        <TextBlock
+            TextWrapping="Wrap"
+            Text="ATTENTION!"
+            Margin="20 20 0 0"
+            Style="{StaticResource AmountTextBlock}"
+            Foreground="LightCoral"
+            FontSize="20"
+            FontFamily="{StaticResource RobotoLight}"
+            HorizontalAlignment="Center"
+            Visibility="{Binding IsAmountLessThanMin, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+        <TextBlock
+            TextWrapping="Wrap"
+            Text="According to the policy of the selected baker, you will not receive any rewards, as the balance of your wallet is less than the minimum amount of delegation. We recommend you to choose another baker."
+            Margin="20 0 20 20"
+            Style="{StaticResource AmountTextBlock}"
+            Foreground="LightCoral"
+            FontFamily="{StaticResource RobotoLight}"
+            HorizontalAlignment="Center"
+            Visibility="{Binding IsAmountLessThanMin, Converter={StaticResource BoolToVisibilityConverter}}" />
+
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     Margin="0 20 0 20">
