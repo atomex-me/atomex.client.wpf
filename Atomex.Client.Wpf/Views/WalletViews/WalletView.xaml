@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
              xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
              xmlns:walletViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.WalletViewModels"
              xmlns:txViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.TransactionViewModels"
@@ -12,19 +11,6 @@
              d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=walletViewModels:WalletViewModel, IsDesignTimeCreatable=True}"
              UseLayoutRounding="True">
-
-    <UserControl.Resources>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Hidden"/>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityCollapsedConverter" FalseEquivalent="Collapsed"/>
-        <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" FalseEquivalent="Hidden" OppositeBoolValue="True"/>
-        <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityCollapsedConverter" FalseEquivalent="Collapsed" OppositeBoolValue="True"/>
-        <converters:IsPositiveValueConverter x:Key="IsPositiveValueConverter"/>
-        <SolidColorBrush x:Key="NoDelegationsBrush" Color="Gray"/>
-        <SolidColorBrush x:Key="DelegatedAmountBrush" Color="#ffa500"/>
-        <SolidColorBrush x:Key="UnconfirmedAmountBrush" Color="#ffa500"/>
-        <SolidColorBrush x:Key="NegativeAmountBrush" Color="#aec4e5"/>
-        <SolidColorBrush x:Key="PositiveAmountBrush" Color="White"/>
-    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -36,15 +22,15 @@
                     HorizontalAlignment="Center"
                     Margin="10 20 10 10"
                     Grid.Row="0">
-            <Border Background="{StaticResource DefaultSubstrateBrush}"
+            <Border Background="{DynamicResource DefaultSubstrateBrush}"
                     CornerRadius="10"
                     MinWidth="380">
                 <Grid>
                     <StackPanel Orientation="Vertical"
                                 IsEnabled="True"
-                                Visibility="{Binding IsBalanceUpdating, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                Visibility="{Binding IsBalanceUpdating, Converter={StaticResource InverseBoolToVisibilityHiddenConverter}}">
                         <StackPanel Orientation="Horizontal"
-                                    Margin="25 25 25 10">
+                                    Margin="20 20 20 0">
                             <Image Source="{Binding CurrencyViewModel.LargeIconPath}"
                                    Width="90"
                                    Height="90"
@@ -53,8 +39,8 @@
                             <StackPanel Orientation="Vertical"
                                         Margin="20 10 0 0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Foreground="{StaticResource BalanceBackgroundBrush}"
-                                               FontFamily="{StaticResource Roboto}"
+                                    <TextBlock Foreground="{DynamicResource BalanceBackgroundBrush}"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
                                                FontSize="36"
                                                VerticalAlignment="Bottom"
                                                HorizontalAlignment="Left"
@@ -67,8 +53,8 @@
                                         </TextBlock.Text>
                                     </TextBlock>
                                     <TextBlock Text="{Binding CurrencyViewModel.CurrencyCode}"
-                                               Foreground="{StaticResource BalanceBackgroundBrush}"
-                                               FontFamily="{StaticResource Roboto}"
+                                               Foreground="{DynamicResource BalanceBackgroundBrush}"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
                                                VerticalAlignment="Bottom"
                                                FontSize="22"
                                                HorizontalAlignment="Left"
@@ -78,8 +64,8 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal"
                                             Margin="0 -5 0 0">
-                                    <TextBlock Foreground="{StaticResource UsdBalanceBackgroundBrush}"
-                                               FontFamily="{StaticResource Roboto}"
+                                    <TextBlock Foreground="{DynamicResource UsdBalanceBackgroundBrush}"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
                                                FontSize="24"
                                                VerticalAlignment="Bottom"
                                                HorizontalAlignment="Left"
@@ -92,8 +78,8 @@
                                         </TextBlock.Text>
                                     </TextBlock>
                                     <TextBlock Text="{Binding CurrencyViewModel.BaseCurrencyCode}"
-                                               Foreground="{StaticResource UsdBalanceBackgroundBrush}"
-                                               FontFamily="{StaticResource Roboto}"
+                                               Foreground="{DynamicResource UsdBalanceBackgroundBrush}"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
                                                VerticalAlignment="Bottom"
                                                FontSize="14"
                                                HorizontalAlignment="Left"
@@ -102,8 +88,8 @@
                                                Style="{StaticResource BaseTextBlockStyle}"/>
                                 </StackPanel>
                                 <Grid HorizontalAlignment="Left"
-                                      Visibility="{Binding CurrencyViewModel.HasUnconfirmedAmount, Converter={StaticResource bool2VisibilityConverter}}"
-                                      Margin="0 15 0 0">
+                                      Visibility="{Binding CurrencyViewModel.HasUnconfirmedAmount, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"
+                                      Margin="0 10 0 0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
@@ -114,23 +100,25 @@
                                         <RowDefinition Height="27"/>
                                     </Grid.RowDefinitions>
 
-                                    <Image Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/warning.png"
-                                           Width="21"
-                                           Height="21"
-                                           Grid.Column="0"
-                                           Grid.Row="0"
-                                           ToolTip="Unconfirmed"
-                                           Style="{StaticResource BaseImageStyle}"/>
-                                    <TextBlock FontFamily="{StaticResource Roboto}"
+                                    <Path Data="{DynamicResource FontAwesome.QuestionCircleSolid}"
+                                          Fill="{DynamicResource UnconfirmedAmountBrush}"
+                                          Width="21"
+                                          Height="21"
+                                          Stretch="Uniform"
+                                          Grid.Column="0"
+                                          Grid.Row="0"
+                                          ToolTip="Unconfirmed"/>
+
+                                    <TextBlock FontFamily="{DynamicResource DefaultFontFamily}"
                                                FontSize="14"
-                                               Foreground="{StaticResource UnconfirmedAmountBrush}"
-                                               Grid.Column="1"
-                                               Grid.Row="0"
+                                               Foreground="{DynamicResource UnconfirmedAmountBrush}"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Right"
                                                Margin="7 0 0 0"
                                                ToolTip="Unconfirmed"
-                                               Style="{StaticResource BaseTextBlockStyle}">
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               Grid.Column="1"
+                                               Grid.Row="0">
                                         <TextBlock.Text>
                                             <MultiBinding Converter="{StaticResource AmountToStringConverter}">
                                                 <Binding Path="CurrencyViewModel.UnconfirmedAmount" Mode="OneWay"/>
@@ -139,26 +127,26 @@
                                         </TextBlock.Text>
                                     </TextBlock>
                                     <TextBlock Text="{Binding CurrencyViewModel.CurrencyCode}"
-                                               FontFamily="{StaticResource Roboto}"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
                                                FontSize="8"
-                                               Foreground="{StaticResource UnconfirmedAmountBrush}"
-                                               Grid.Column="2"
-                                               Grid.Row="0"
+                                               Foreground="{DynamicResource UnconfirmedAmountBrush}"
                                                VerticalAlignment="Center"
                                                Margin="4 0 0 0"
                                                Padding="0 3 0 0"
                                                ToolTip="Unconfirmed"
-                                               Style="{StaticResource BaseTextBlockStyle}"/>
-                                    <TextBlock FontFamily="{StaticResource Roboto}"
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               Grid.Column="2"
+                                               Grid.Row="0"/>
+                                    <TextBlock FontFamily="{DynamicResource DefaultFontFamily}"
                                                FontSize="11"
                                                Foreground="DarkGray"
-                                               Grid.Column="3"
-                                               Grid.Row="0"
                                                VerticalAlignment="Center"
                                                Margin="7 0 0 0" 
                                                Padding="0 2 0 0" 
                                                ToolTip="Unconfirmed" 
-                                               Style="{StaticResource BaseTextBlockStyle}">
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               Grid.Column="3"
+                                               Grid.Row="0">
                                         <TextBlock.Text>
                                             <MultiBinding Converter="{StaticResource AmountToStringConverter}">
                                                 <Binding Path="CurrencyViewModel.UnconfirmedAmountInBase" Mode="OneWay"/>
@@ -177,27 +165,27 @@
                             <controls:RoundedButton 
                                 Content="Send"
                                 Margin="0 0 2 0"
-                                Style="{StaticResource WalletMenuButton}"
                                 Command="{Binding SendCommand}"
-                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"/>
+                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"
+                                Style="{StaticResource WalletMenuButton}"/>
                             <controls:RoundedButton
                                 Content="Receive"
                                 Margin="2 0 2 0"
-                                Style="{StaticResource WalletMenuButton}"
                                 Command="{Binding ReceiveCommand}"
-                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"/>
+                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"
+                                Style="{StaticResource WalletMenuButton}"/>
                             <controls:RoundedButton
                                 Content="Convert"
                                 Margin="1 0 1 0"
-                                Style="{StaticResource WalletMenuButton}"
                                 Command="{Binding ConvertCommand}"
-                                IsEnabled="{Binding Currency.IsSwapAvailable}"/>
+                                IsEnabled="{Binding Currency.IsSwapAvailable}"
+                                Style="{StaticResource WalletMenuButton}"/>
                             <controls:RoundedButton
                                 Content="Update"
                                 Margin="2 0 0 0"
-                                Style="{StaticResource WalletMenuButton}"
                                 Command="{Binding UpdateCommand}"
-                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"/>
+                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"
+                                Style="{StaticResource WalletMenuButton}"/>
                         </StackPanel>
                     </StackPanel>
 
@@ -205,7 +193,7 @@
                                 Margin="10"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Visibility="{Binding IsBalanceUpdating, Converter={StaticResource BoolToVisibilityConverter}}">
+                                Visibility="{Binding IsBalanceUpdating, Converter={StaticResource BoolToVisibilityHiddenConverter}}">
                         <Image Name="CurrencyLogo"
                                Source="{Binding CurrencyViewModel.LargeIconPath}"
                                Margin="0 0 0 0"
@@ -242,8 +230,8 @@
                         <TextBlock Name="UpdatingTextBlock"
                                    Text="balance update in progress..."
                                    Margin="10 0 0 0"
-                                   Foreground="{StaticResource DefaultForegroundBrush}"
-                                   FontFamily="{StaticResource Roboto}"
+                                   Foreground="{DynamicResource DefaultForegroundBrush}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    FontSize="15"
                                    VerticalAlignment="Center"
                                    IsEnabled="{Binding IsBalanceUpdating}">
@@ -281,7 +269,7 @@
                             ToolTip="Cancel"
                             Command="{Binding CancelUpdateCommand}"
                             Style="{DynamicResource ChildViewCloseButtonLight}"
-                            Visibility="{Binding IsBalanceUpdating, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            Visibility="{Binding IsBalanceUpdating, Converter={StaticResource BoolToVisibilityHiddenConverter}}"/>
                 </Grid>
             </Border>
         </StackPanel>
@@ -309,7 +297,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type txViewModels:TransactionViewModel}">
                             <StackPanel Orientation="Horizontal" Margin="3 0 3 0">
-                                <TextBlock FontFamily="{StaticResource Roboto}"
+                                <TextBlock FontFamily="{DynamicResource DefaultFontFamily}"
                                            FontSize="13">
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
@@ -323,19 +311,19 @@
                                             <DataTrigger Binding="{Binding Amount, Converter={StaticResource IsPositiveValueConverter}}"
                                                         Value="False">
                                                 <Setter Property="Foreground"
-                                                        Value="{StaticResource NegativeAmountBrush}"/>
+                                                        Value="{DynamicResource NegativeAmountBrush}"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Amount, Converter={StaticResource IsPositiveValueConverter}}"
                                                         Value="True">
                                                 <Setter Property="Foreground"
-                                                        Value="{StaticResource PositiveAmountBrush}"/>
+                                                        Value="{DynamicResource PositiveAmountBrush}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
                                 <TextBlock Text="{Binding CurrencyCode}"
-                                           FontFamily="{StaticResource Roboto}"
+                                           FontFamily="{DynamicResource DefaultFontFamily}"
                                            FontSize="8"
                                            VerticalAlignment="Bottom"
                                            Margin="3 0 0 2"

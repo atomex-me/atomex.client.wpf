@@ -50,9 +50,9 @@ namespace Atomex.Client.Wpf.ViewModels
                         .WaitForResult();
 
                     FromAddressList = activeAddresses
-                        .Select(wa => new WalletAddressViewModel(wa))
+                        .Select(wa => new WalletAddressViewModel(wa, _currency.Format))
                         .ToList()
-                        .AddEx(new WalletAddressViewModel(freeAddress, isFreeAddress: true));
+                        .AddEx(new WalletAddressViewModel(freeAddress, _currency.Format, isFreeAddress: true));
 #if DEBUG
                 }
 #endif
@@ -64,7 +64,7 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             get => _fromAddressList;
             private set
-                {
+            {
                 _fromAddressList = value;
                 OnPropertyChanged(nameof(FromAddressList));
 
@@ -128,10 +128,10 @@ namespace Atomex.Client.Wpf.ViewModels
 
             await Task.Factory.StartNew(() =>
             {
-                using (var qrGenerator = new QRCodeGenerator())
-                using (var qrData = qrGenerator.CreateQrCode(_selectedAddress.Address, QRCodeGenerator.ECCLevel.Q))
-                using (var qrCode = new QRCode(qrData))
-                    qrCodeBitmap = qrCode.GetGraphic(PixelsPerModule);
+                using var qrGenerator = new QRCodeGenerator();
+                using var qrData = qrGenerator.CreateQrCode(_selectedAddress.Address, QRCodeGenerator.ECCLevel.Q);
+                using var qrCode = new QRCode(qrData);
+                qrCodeBitmap = qrCode.GetGraphic(PixelsPerModule);
             });
 
             if (Application.Current.Dispatcher != null)

@@ -19,10 +19,14 @@ namespace Atomex.Client.Wpf.Helpers
                 typeof(ComboBoxHelper),
                 new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static CornerRadius GetCornerRadius(ComboBox comboBox) => (CornerRadius)comboBox.GetValue(CornerRadiusProperty);
-        public static void SetCornerRadius(ComboBox comboBox, object value) => comboBox.SetValue(CornerRadiusProperty, value);
+        public static CornerRadius GetCornerRadius(ComboBox comboBox) =>
+            (CornerRadius)comboBox.GetValue(CornerRadiusProperty);
+        public static void SetCornerRadius(ComboBox comboBox, object value) =>
+            comboBox.SetValue(CornerRadiusProperty, value);
 
-        public static string GetPlaceHolder(ComboBox comboBox) => (string)comboBox.GetValue(PlaceHolderProperty);
-        public static void SetPlaceHolder(ComboBox comboBox, string value) => comboBox.SetValue(PlaceHolderProperty, value);
+        public static string GetPlaceHolder(ComboBox comboBox) =>
+            (string)comboBox.GetValue(PlaceHolderProperty);
+        public static void SetPlaceHolder(ComboBox comboBox, string value) =>
+            comboBox.SetValue(PlaceHolderProperty, value);
     }
 }

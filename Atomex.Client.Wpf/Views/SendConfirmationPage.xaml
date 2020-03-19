@@ -13,18 +13,14 @@
       d:DataContext="{d:DesignInstance Type=viewModels:SendConfirmationViewModel, IsDesignTimeCreatable=True}">
 
     <Page.Resources>
-        <SolidColorBrush x:Key="AmountForegroundBrush" Color="#eeff00"/>
-        <SolidColorBrush x:Key="AmountInBaseForegroundBrush" Color="DarkGray"/>
-        <SolidColorBrush x:Key="AddressForegroundBrush" Color="Orange"/>
-
         <Style x:Key="AmountTextBlock" TargetType="{x:Type TextBlock}">
-            <Setter Property="FontFamily" Value="{StaticResource RobotoMedium}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource DefaultMediumFontFamily}"/>
             <Setter Property="FontSize" Value="15"/>
-            <Setter Property="Foreground" Value="{StaticResource AmountForegroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DefaultAmountForegroundBrush}"/>
         </Style>
 
         <Style x:Key="AmountInBaseTextBlock" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource AmountTextBlock}">
-            <Setter Property="Foreground" Value="{StaticResource AmountInBaseForegroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DefaultAmountInBaseForegroundBrush}"/>
         </Style>
     </Page.Resources>
 
@@ -35,21 +31,21 @@
                 Height="33"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Stretch"
-                Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+                Background="{DynamicResource ChildViewHeaderBackgroundBrush}">
             <TextBlock Text="Send confirmation"
-                       Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource ChildViewHeaderForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="25"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
         </Border>
 
         <TextBlock Text="Do you really want:"
-                   Margin="20 20 20 20"
+                   Margin="20"
                    FontSize="15"
-                   FontFamily="{StaticResource RobotoLight}"
+                   FontFamily="{DynamicResource DefaultLightFontFamily}"
                    HorizontalAlignment="Center"
-                   Foreground="{StaticResource DefaultForegroundBrush}"/>
+                   Foreground="{DynamicResource DefaultForegroundBrush}"/>
 
         <Grid Margin="20 0 20 0"
               HorizontalAlignment="Center">
@@ -65,8 +61,8 @@
 
             <TextBlock Text="to send:"
                        FontSize="15"
-                       FontFamily="{StaticResource RobotoLight}"
-                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
                        HorizontalAlignment="Right"
                        Grid.Column="0"
                        Grid.Row="0"/>
@@ -109,8 +105,8 @@
 
             <TextBlock Text="to address:"
                        FontSize="15"
-                       FontFamily="{StaticResource RobotoLight}"
-                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
                        HorizontalAlignment="Right"
                        Grid.Column="0"
                        Grid.Row="1"/>
@@ -118,15 +114,15 @@
                        Margin="5 0 0 0"
                        TextWrapping="Wrap"
                        FontSize="15"
-                       FontFamily="{StaticResource RobotoMedium}"
-                       Foreground="{StaticResource AddressForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultMediumFontFamily}"
+                       Foreground="{DynamicResource DefaultAddressForegroundBrush}"
                        Grid.Column="1"
                        Grid.Row="1"/>
 
             <TextBlock Text="with commission:"
                        FontSize="15"
-                       FontFamily="{StaticResource RobotoLight}"
-                       Foreground="{StaticResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
                        HorizontalAlignment="Right"
                        Grid.Column="0"
                        Grid.Row="2"/>
@@ -138,11 +134,11 @@
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
                             <Binding Path="FeeAmount" Mode="OneWay"/>
-                            <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                            <Binding Path="FeeCurrencyFormat" Mode="OneWay"/>
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <TextBlock Text="{Binding CurrencyCode}"
+                <TextBlock Text="{Binding FeeCurrencyCode}"
                            Margin="3 0 0 1"
                            FontSize="11"
                            VerticalAlignment="Bottom"

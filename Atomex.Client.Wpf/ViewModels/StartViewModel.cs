@@ -91,7 +91,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void OnAccountCreated(IAccount account)
         {
-            AtomexApp.UseTerminal(new Terminal(App.Configuration, account), restart: true);
+            AtomexApp.UseTerminal(new WebSocketAtomexClient(App.Configuration, account), restart: true);
 
             DialogViewer?.HideDialog(Dialogs.CreateWallet);
             DialogViewer?.HideDialog(Dialogs.Start);

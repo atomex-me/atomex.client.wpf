@@ -2,21 +2,16 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:helpers="clr-namespace:Atomex.Client.Wpf.Helpers">
 
-    <SolidColorBrush x:Key="CustomTextBoxBackgroundBrush" Color="{StaticResource DefaultTextBoxBackgroundColor}"/>
-    <SolidColorBrush x:Key="CustomTextBoxForegroundBrush" Color="{StaticResource DefaultTextBoxForegroundColor}"/>
-    <SolidColorBrush x:Key="CustomTextBoxBorderBrush" Color="{StaticResource DefaultTextBoxBackgroundColor}"/>
-    <SolidColorBrush x:Key="CustomTextBoxCaretBrush" Color="{StaticResource DefaultTextBoxForegroundColor}"/>
-
     <Style x:Key="CustomTextBox" TargetType="{x:Type TextBox}">
-        <Setter Property="Background" Value="{StaticResource CustomTextBoxBackgroundBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource CustomTextBoxForegroundBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource CustomTextBoxBorderBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource CustomTextBoxBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CustomTextBoxForegroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CustomTextBoxBorderBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="CaretBrush" Value="{StaticResource CustomTextBoxForegroundBrush}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource CustomTextBoxForegroundBrush}"/>
         <Setter Property="ContextMenu" Value="{DynamicResource TextBoxMetroContextMenu}"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
-        <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -81,13 +76,19 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource Self}}" Value="">
-                            <Setter TargetName="PART_PlaceHolder" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_PlaceHolder"
+                                    Property="Visibility"
+                                    Value="Visible" />
                         </DataTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(helpers:TextBoxHelper.MouseOverBorderBrush)}"/>
+                            <Setter TargetName="PART_Border"
+                                    Property="BorderBrush"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(helpers:TextBoxHelper.MouseOverBorderBrush)}"/>
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(helpers:TextBoxHelper.FocusBorderBrush)}" />
+                            <Setter TargetName="PART_Border"
+                                    Property="BorderBrush"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(helpers:TextBoxHelper.FocusBorderBrush)}" />
                             <Trigger.EnterActions>
                                 <BeginStoryboard Storyboard="{StaticResource EnterGotFocus}" />
                             </Trigger.EnterActions>

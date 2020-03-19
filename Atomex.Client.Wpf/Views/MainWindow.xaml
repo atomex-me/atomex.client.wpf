@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:views="clr-namespace:Atomex.Client.Wpf.Views"
         xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
         xmlns:customControls="clr-namespace:Atomex.Client.Wpf.Controls"
@@ -24,8 +23,8 @@
         <controls:WindowCommands>
             <Button x:Name="btnUpdate"
                     Command="{Binding UpdateCommand}"
-                    Foreground="Gold"
-                    Visibility="{Binding UpdatesReady, Converter={StaticResource bool2VisibilityConverter}}">
+                    Foreground="{DynamicResource DefaultUpdateForegroundBrush}"
+                    Visibility="{Binding UpdatesReady, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <Button.Template>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Grid Background="{TemplateBinding Background}">
@@ -83,25 +82,29 @@
                     </Style>
                 </Button.Style>
                 <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconModern Margin="0 0 3 0"
-                                              Width="16"
-                                              Height="16"
-                                              VerticalAlignment="Center"
-                                              HorizontalAlignment="Center"
-                                              Kind="Refresh" />
+                    <Path Stretch="Uniform"
+                          Margin="0 0 4 0"
+                          SnapsToDevicePixels="False"
+                          UseLayoutRounding="False"
+                          Width="16"
+                          Height="16"
+                          Fill="{DynamicResource DefaultUpdateForegroundBrush}"
+                          Data="{DynamicResource Unicons.Sync}"/>
                     <TextBlock VerticalAlignment="Center"
                                Text="Update Atomex" />
                 </StackPanel>
             </Button>
             <Button Command="{Binding SignOutCommand}"
-                    Visibility="{Binding HasAccount, Converter={StaticResource bool2VisibilityConverter}}">
+                    Visibility="{Binding HasAccount, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconMaterial Margin="0 0 3 0"
-                                                Width="16"
-                                                Height="16"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                Kind="Logout"/>
+                    <Path Stretch="Uniform"
+                          Margin="0 0 4 0"
+                          SnapsToDevicePixels="False"
+                          UseLayoutRounding="False"
+                          Width="16"
+                          Height="16"
+                          Fill="{Binding Foreground, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type controls:WindowCommands}}}"
+                          Data="{DynamicResource Unicons.SignOutAlt}"/>
                     <TextBlock VerticalAlignment="Center"
                                Text="SignOut"/>
                 </StackPanel>
@@ -110,15 +113,15 @@
     </controls:MetroWindow.RightWindowCommands>
     <DockPanel x:Name="MainDockerPanel">
         <StatusBar DockPanel.Dock="Bottom"
-                   Background="{StaticResource MainWindowTitleBrush}">
+                   Background="{DynamicResource MainWindowTitleBrush}">
             <StatusBarItem DockPanel.Dock="Left">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Version:" Margin="2px 0 4px 0"
                                FontSize="11"
-                               Foreground="{StaticResource StatusBarDisconnectedForeground}"/>
-                    <TextBlock Text="{Binding Path=InstalledVersion}"
+                               Foreground="{DynamicResource StatusBarDisconnectedForeground}"/>
+                    <TextBlock Text="{Binding InstalledVersion}"
                                FontSize="11"
-                               Foreground="{StaticResource StatusBarDisconnectedForeground}" />
+                               Foreground="{DynamicResource StatusBarDisconnectedForeground}" />
                 </StackPanel>
             </StatusBarItem>
             <StatusBarItem DockPanel.Dock="Right">
@@ -128,11 +131,11 @@
                         <Style TargetType="TextBlock">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsExchangeConnected}" Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource StatusBarConnectedForeground}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource StatusBarConnectedForeground}"/>
                                     <Setter Property="ToolTip" Value="Connected"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsExchangeConnected}" Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource StatusBarDisconnectedForeground}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource StatusBarDisconnectedForeground}"/>
                                     <Setter Property="ToolTip" Value="Disconnected"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -148,11 +151,11 @@
                         <Style TargetType="TextBlock">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsMarketDataConnected}" Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource StatusBarConnectedForeground}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource StatusBarConnectedForeground}"/>
                                     <Setter Property="ToolTip" Value="Connected"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsMarketDataConnected}" Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource StatusBarDisconnectedForeground}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource StatusBarDisconnectedForeground}"/>
                                     <Setter Property="ToolTip" Value="Disconnected"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -168,11 +171,11 @@
                         <Style TargetType="TextBlock">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsQuotesProviderAvailable}" Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource StatusBarConnectedForeground}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource StatusBarConnectedForeground}"/>
                                     <Setter Property="ToolTip" Value="Available"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsQuotesProviderAvailable}" Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource StatusBarDisconnectedForeground}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource StatusBarDisconnectedForeground}"/>
                                     <Setter Property="ToolTip" Value="Not available"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -185,59 +188,58 @@
         <ContentControl Visibility="Collapsed" Content="{StaticResource ProxyElement}"/>
         
         <controls:HamburgerMenu
-            Style="{StaticResource HamburgerMenuStyle}"
-            SelectedIndex="{Binding SelectedMenuIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            HamburgerVisibility="Collapsed"
-            HamburgerHeight="20"
-            IsPaneOpen="True"
-            Visibility="{Binding HasAccount, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Style="{StaticResource HamburgerMenuStyle}"
+                SelectedIndex="{Binding SelectedMenuIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                HamburgerVisibility="Collapsed"
+                HamburgerHeight="0"
+                IsPaneOpen="True"
+                Visibility="{Binding HasAccount, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
             <controls:HamburgerMenu.ItemsSource>
                 <customControls:NavigationMenuItemCollection>
                     <customControls:NavigationMenuItem Header="Portfolio">
                         <customControls:NavigationMenuItem.Icon>
-                            <iconPacks:PackIconMaterial Kind="ChartPie" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Path Stretch="Uniform"
+                                  SnapsToDevicePixels="False"
+                                  UseLayoutRounding="False"
+                                  Width="30"
+                                  Height="30"
+                                  Fill="{DynamicResource DefaultForegroundBrush}"
+                                  Data="{DynamicResource FontAwesome.ChartPieSolid}"/>
                         </customControls:NavigationMenuItem.Icon>
                         <customControls:NavigationMenuItem.Content>
-                            <views:PortfolioView DataContext="{Binding Path=DataContext.PortfolioViewModel, Source={StaticResource ProxyElement}}"/>
+                            <views:PortfolioView DataContext="{Binding DataContext.PortfolioViewModel, Source={StaticResource ProxyElement}}"/>
                         </customControls:NavigationMenuItem.Content>
                     </customControls:NavigationMenuItem>
 
                     <customControls:NavigationMenuItem Header="Wallets">
                         <customControls:NavigationMenuItem.Icon>
-                            <iconPacks:PackIconMaterial Kind="Wallet" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Path Stretch="Uniform"
+                                  SnapsToDevicePixels="False"
+                                  UseLayoutRounding="False"
+                                  Width="30"
+                                  Height="30"
+                                  Fill="{DynamicResource DefaultForegroundBrush}"
+                                  Data="{DynamicResource Entypo.Wallet}"/>
                         </customControls:NavigationMenuItem.Icon>
                         <customControls:NavigationMenuItem.Content>
-                            <views:WalletsView DataContext="{Binding Path=DataContext.WalletsViewModel, Source={StaticResource ProxyElement}}"/>
+                            <views:WalletsView DataContext="{Binding DataContext.WalletsViewModel, Source={StaticResource ProxyElement}}"/>
                         </customControls:NavigationMenuItem.Content>
                     </customControls:NavigationMenuItem>
 
                     <customControls:NavigationMenuItem Header="Conversion">
                         <customControls:NavigationMenuItem.Icon>
-                            <!--<iconPacks:PackIconOcticons Kind="Sync" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
-                            <Image Width="24" Height="24" Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/exchanged.png"/>
+                            <Path Stretch="Uniform"
+                                  SnapsToDevicePixels="False"
+                                  UseLayoutRounding="False"
+                                  Width="30"
+                                  Height="30"
+                                  Fill="{DynamicResource DefaultForegroundBrush}"
+                                  Data="{DynamicResource Unicons.ExchangeAlt}"/>
                         </customControls:NavigationMenuItem.Icon>
                         <customControls:NavigationMenuItem.Content>
-                            <views:ConversionView DataContext="{Binding Path=DataContext.ConversionViewModel, Source={StaticResource ProxyElement}}"/>
+                            <views:ConversionView DataContext="{Binding DataContext.ConversionViewModel, Source={StaticResource ProxyElement}}"/>
                         </customControls:NavigationMenuItem.Content>
                     </customControls:NavigationMenuItem>
-
-                    <!--<controls:NavigationMenuItem Header="Charts">
-                        <controls:NavigationMenuItem.Icon>
-                            <iconPacks:PackIconEntypo Kind="LineGraph" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                        </controls:NavigationMenuItem.Icon>
-                        <controls:NavigationMenuItem.Content>
-                            -->
-                    <!--<Grid>
-                                <Image Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/under_construction.png"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       Width="200"
-                                       Height="200"/>
-                            </Grid>-->
-                    <!--
-                            <views:ExchangeView DataContext="{Binding Path=DataContext.ExchangeViewModel, Source={StaticResource ProxyElement}}"/>
-                        </controls:NavigationMenuItem.Content>
-                    </controls:NavigationMenuItem>-->
 
                 </customControls:NavigationMenuItemCollection>
             </controls:HamburgerMenu.ItemsSource>
@@ -247,25 +249,18 @@
 
                     <customControls:NavigationMenuItem Header="Settings">
                         <customControls:NavigationMenuItem.Icon>
-                            <iconPacks:PackIconOcticons Kind="Gear" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            <Path Stretch="Uniform"
+                                  SnapsToDevicePixels="False"
+                                  UseLayoutRounding="False"
+                                  Width="30"
+                                  Height="30"
+                                  Fill="{DynamicResource DefaultForegroundBrush}"
+                                  Data="{DynamicResource Material.Settings}"/>
                         </customControls:NavigationMenuItem.Icon>
                         <customControls:NavigationMenuItem.Content>
-                            <!--<Grid>
-                                <Image Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/under_construction.png"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       Width="200"
-                                       Height="200"/>
-                            </Grid>-->
-                            <views:SettingsView DataContext="{Binding Path=DataContext.SettingsViewModel, Source={StaticResource ProxyElement}}"/>
+                            <views:SettingsView DataContext="{Binding DataContext.SettingsViewModel, Source={StaticResource ProxyElement}}"/>
                         </customControls:NavigationMenuItem.Content>
                     </customControls:NavigationMenuItem>
-
-                    <!--<controls:NavigationMenuItem Header="Help">
-                        <controls:NavigationMenuItem.Icon>
-                            <iconPacks:PackIconMaterial Kind="HelpCircle" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                        </controls:NavigationMenuItem.Icon>
-                    </controls:NavigationMenuItem>-->
 
                 </customControls:NavigationMenuItemCollection>
             </controls:HamburgerMenu.OptionsItemsSource>

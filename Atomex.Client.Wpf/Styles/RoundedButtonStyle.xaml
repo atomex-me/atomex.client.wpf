@@ -2,28 +2,25 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls">
 
-    <SolidColorBrush x:Key="RoundedButtonBackgroundBrush" Color="{StaticResource DefaultButtonBackgroundColor}"/>
-    <SolidColorBrush x:Key="RoundedButtonMouseOverBrush" Color="{StaticResource DefaultButtonMouseOverColor}"/>
-    <SolidColorBrush x:Key="RoundedButtonPressedBrush" Color="{StaticResource DefaultButtonPressedColor}"/>
-    <SolidColorBrush x:Key="RoundedButtonDisabledBrush" Color="{StaticResource DefaultButtonBackgroundColor}"/>
-    <SolidColorBrush x:Key="RoundedButtonForegroundBrush" Color="{StaticResource DefaultForegroundColor}"/>
-    <FontFamily x:Key="RoundedButtonFontFamily">Roboto Medium</FontFamily>
-
-    <Style x:Key="RoundedButtonFocusVisual">
+    <!--<Style x:Key="RoundedButtonFocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Rectangle Margin="1" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    <Rectangle Margin="1"
+                               SnapsToDevicePixels="true"
+                               Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                               StrokeThickness="1"
+                               StrokeDashArray="1 2"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
     <Style x:Key="DefaultRoundedButtonStyle" TargetType="{x:Type controls:RoundedButton}">
-        <Setter Property="FocusVisualStyle" Value="{StaticResource RoundedButtonFocusVisual}"/>
-        <Setter Property="Background" Value="{StaticResource RoundedButtonBackgroundBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource RoundedButtonForegroundBrush}"/>
-        <Setter Property="FontFamily" Value="{StaticResource RobotoMedium}"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Background" Value="{DynamicResource RoundedButtonBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource RoundedButtonForegroundBrush}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultButtonFontFamily}"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -35,23 +32,25 @@
                             Padding="{TemplateBinding Padding}">
                         <Grid>
                             <ContentPresenter Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
-                                              HorizontalAlignment="Center" VerticalAlignment="Center">
-
-                            </ContentPresenter>
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsDefaulted" Value="True">
-                            <Setter Property="Background" Value="{StaticResource RoundedButtonBackgroundBrush}"/>
+                            <Setter Property="Background" Value="{DynamicResource RoundedButtonBackgroundBrush}"/>
                         </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource RoundedButtonMouseOverBrush}"/>
+                        </Trigger>                        
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{StaticResource RoundedButtonMouseOverBrush}"/>
+                            <Setter Property="Background" Value="{DynamicResource RoundedButtonMouseOverBrush}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{StaticResource RoundedButtonPressedBrush}"/>
+                            <Setter Property="Background" Value="{DynamicResource RoundedButtonPressedBrush}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Background" Value="{StaticResource RoundedButtonDisabledBrush}"/>
+                            <Setter Property="Background" Value="{DynamicResource RoundedButtonDisabledBrush}"/>
                             <Setter Property="Opacity" Value="0.5"/>
                         </Trigger>
                     </ControlTemplate.Triggers>

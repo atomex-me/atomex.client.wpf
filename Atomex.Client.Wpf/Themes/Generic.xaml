@@ -1,5 +1,44 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="MainBackgroundColor1">AliceBlue</Color>
+    <Color x:Key="MainBackgroundColor2">AliceBlue</Color>
+
+    <LinearGradientBrush x:Key="MainBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Offset="0" Color="{DynamicResource MainBackgroundColor1}"/>
+        <GradientStop Offset="1" Color="{DynamicResource MainBackgroundColor2}"/>
+    </LinearGradientBrush>
+
+    <!-- Child View Colors -->
+    
+    <Color x:Key="ChildViewShadowColor">Black</Color>
+    <Color x:Key="ChildViewBackgroundColor1">AliceBlue</Color>
+    <Color x:Key="ChildViewBackgroundColor2">AliceBlue</Color>
+
+    <LinearGradientBrush x:Key="ChildViewBackgroundBrush" StartPoint="1,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="{DynamicResource ChildViewBackgroundColor1}"/>
+        <GradientStop Offset="1" Color="{DynamicResource ChildViewBackgroundColor2}"/>
+    </LinearGradientBrush>
+
+    <Style x:Key="ChildViewBorder" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource ChildViewBackgroundBrush}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="5"
+                                  Color="{DynamicResource ChildViewShadowColor}"
+                                  Opacity="1"
+                                  BlurRadius="20"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ChildViewBorderLight"
+           TargetType="Border"
+           BasedOn="{StaticResource ChildViewBorder}"/>
+
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Atomex.Client.Wpf;component/Themes/ChildWindow.xaml" />
+        <ResourceDictionary Source="/Atomex.Client.Wpf;component/Styles/ChildWindow.xaml" />
     </ResourceDictionary.MergedDictionaries>
+
 </ResourceDictionary>

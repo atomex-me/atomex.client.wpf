@@ -1,9 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <FontFamily x:Key="Comfortaa">pack://application:,,,/Resources/Fonts/#Comfortaa</FontFamily>
-    <FontFamily x:Key="Roboto">pack://application:,,,/Resources/Fonts/#Roboto</FontFamily>
-    <FontFamily x:Key="RobotoLight">pack://application:,,,/Resources/Fonts/#Roboto Light</FontFamily>
-    <FontFamily x:Key="RobotoMedium">pack://application:,,,/Resources/Fonts/#Roboto Medium</FontFamily>
-    <FontFamily x:Key="RobotoBold">pack://application:,,,/Resources/Fonts/#Roboto Bold</FontFamily>
     <FontFamily x:Key="AgencyFb">pack://application:,,,/Resources/Fonts/#Agency FB</FontFamily>
 </ResourceDictionary>

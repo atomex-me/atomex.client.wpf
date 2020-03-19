@@ -81,9 +81,6 @@ namespace Atomex.Client.Wpf.Views
                 { Dialogs.Receive, ShowDialogAsync<ReceiveView> },
                 { Dialogs.Unlock, ShowDialogAsync<UnlockView> },
                 { Dialogs.Send, ShowDialogAsync<FrameView> },
-                { Dialogs.BitcoinBasedSend, ShowDialogAsync<FrameView> },
-                { Dialogs.EthereumSend, ShowDialogAsync<FrameView> },
-                { Dialogs.TezosSend, ShowDialogAsync<FrameView> },
                 { Dialogs.Delegate, ShowDialogAsync<FrameView> },
                 { Dialogs.Convert, ShowDialogAsync<FrameView> }
             };
@@ -91,7 +88,11 @@ namespace Atomex.Client.Wpf.Views
             _pagesFactory = new Dictionary<int, PageConstructor>
             {
                 { Pages.Message, () => new MessagePage() },
-                { Pages.Send, () => new SendPage() },
+                { Pages.SendBitcoinBased, () => new SendPage() },
+                { Pages.SendEthereum, () => new EthereumSendPage() },
+                { Pages.SendTezos, () => new SendPage() },
+                { Pages.SendErc20, () => new EthereumSendPage() },
+                { Pages.SendFa12, () => new SendPage() },
                 { Pages.SendConfirmation, () => new SendConfirmationPage() },
                 { Pages.Sending, () => new SendingPage() },
                 { Pages.Delegate, () => new DelegatePage() },

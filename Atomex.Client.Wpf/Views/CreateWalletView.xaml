@@ -14,7 +14,7 @@
              IsOpen="True"
              ShowTitleBar="False"
              Background="Transparent"
-             OverlayBrush="#2F000000"
+             OverlayBrush="{DynamicResource DefaultSubstrateBrush}"
              CloseByEscape="False"
              CloseOnOverlay="False"
 
@@ -50,14 +50,14 @@
                                         Content="{Binding BackText}"
                                         FontSize="13"
                                         Command="{Binding BackCommand}"
-                                        Visibility="{Binding CanBack, Converter={StaticResource bool2VisibilityConverter}}"/>
+                                        Visibility="{Binding CanBack, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
                 <controls:RoundedButton Width="120"
                                         Height="40"
                                         Margin="3 5 0 5"
                                         Content="{Binding NextText}"
                                         FontSize="13"
                                         Command="{Binding NextCommand}"
-                                        Visibility="{Binding CanNext, Converter={StaticResource bool2VisibilityConverter}}">
+                                        Visibility="{Binding CanNext, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                     <controls:RoundedButton.Style>
                         <Style BasedOn="{StaticResource DefaultRoundedButtonStyle}" TargetType="{x:Type controls:RoundedButton}">
                             <Style.Triggers>
@@ -79,12 +79,12 @@
                                          VerticalAlignment="Bottom"
                                          StepsCount="{Binding StepsCount}"
                                          CurrentStep="{Binding Step}"
-                                         StepBackground="{StaticResource StepBackgroundBrush}"
-                                         CompletedStepBackground="{StaticResource CompletedStepBackgroundBrush}"
-                                         Foreground="{StaticResource StepForegroundBrush}"/>
+                                         StepBackground="{DynamicResource StepBackgroundBrush}"
+                                         CompletedStepBackground="{DynamicResource CompletedStepBackgroundBrush}"
+                                         Foreground="{DynamicResource StepForegroundBrush}"/>
 
-            <Border Background="{StaticResource DefaultSubstrateBrush}"
-                  Visibility="{Binding InProgress, Converter={StaticResource bool2VisibilityConverter}}">
+            <Border Background="{DynamicResource DefaultSubstrateBrush}"
+                    Visibility="{Binding InProgress, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <mah:ProgressRing IsActive="{Binding InProgress}"/>
             </Border>
         </Grid>

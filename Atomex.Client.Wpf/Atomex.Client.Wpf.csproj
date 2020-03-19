@@ -77,9 +77,6 @@
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net46\MahApps.Metro.dll</HintPath>
     </Reference>
-    <Reference Include="MahApps.Metro.IconPacks, Version=2.3.0.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.IconPacks.2.3.0\lib\net46\MahApps.Metro.IconPacks.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -352,7 +349,10 @@
     <Compile Include="Helpers\ComboBoxHelper.cs" />
     <Compile Include="ViewModels\ConversionConfirmationViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WalletTypeViewModel.cs" />
+    <Compile Include="ViewModels\CurrencyViewModels\Fa12CurrencyViewModel.cs" />
+    <Compile Include="ViewModels\CurrencyViewModels\TzbtcCurrencyViewModel.cs" />
     <Compile Include="ViewModels\Dialogs.cs" />
+    <Compile Include="ViewModels\CurrencyViewModels\TetherCurrencyViewModel.cs" />
     <Compile Include="ViewModels\MyWalletsViewModel.cs" />
     <Compile Include="ViewModels\Abstract\IExpandable.cs" />
     <Compile Include="ViewModels\CreateWalletViewModel.cs" />
@@ -368,7 +368,12 @@
     <Compile Include="ViewModels\SendConfirmationViewModel.cs" />
     <Compile Include="ViewModels\DelegateViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\BitcoinBasedSendViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\Erc20SendViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\EthereumSendViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\Fa12SendViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\TezosSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\SendViewModelCreator.cs" />
     <Compile Include="ViewModels\WalletAddressViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModel.cs" />
@@ -382,6 +387,7 @@
     <Compile Include="ViewModels\CreateWalletViewModels\WriteDerivedKeyPasswordViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WriteMnemonicViewModel.cs" />
     <Compile Include="ViewModels\ReceiveViewModel.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\EthereumERC20TransactionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\TransactionViewModelCreator.cs" />
     <Compile Include="ViewModels\TransactionViewModels\BitcoinBasedTransactionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\EthereumTransactionViewModel.cs" />
@@ -421,14 +427,8 @@
     <Compile Include="Views\DelegatePage.xaml.cs">
       <DependentUpon>DelegatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SendViews\BitcoinBasedSendPage.xaml.cs">
-      <DependentUpon>BitcoinBasedSendPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\SendViews\EthereumSendPage.xaml.cs">
       <DependentUpon>EthereumSendPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SendViews\TezosSendPage.xaml.cs">
-      <DependentUpon>TezosSendPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SendViews\SendPage.xaml.cs">
       <DependentUpon>SendPage.xaml</DependentUpon>
@@ -441,9 +441,6 @@
     </Compile>
     <Compile Include="Views\StartView.xaml.cs">
       <DependentUpon>StartView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ExchangeView.xaml.cs">
-      <DependentUpon>ExchangeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\TabItemHelper.cs" />
     <Compile Include="Views\CreateWalletViews\WriteDerivedKeyPasswordView.xaml.cs">
@@ -463,7 +460,6 @@
     </Compile>
     <Compile Include="ViewModels\ConversionViewModel.cs" />
     <Compile Include="ViewModels\Abstract\CurrencyViewModel.cs" />
-    <Compile Include="ViewModels\ExchangeViewModel.cs" />
     <Compile Include="ViewModels\PortfolioViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -483,13 +479,16 @@
     <Compile Include="Views\MyWalletsView.xaml.cs">
       <DependentUpon>MyWalletsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SubViews\TezosTransactionDetailsView.xaml.cs">
+    <Compile Include="Views\TransactionDetailsViews\EthereumERC20TransactionDetailsView.xaml.cs">
+      <DependentUpon>EthereumERC20TransactionDetailsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TransactionDetailsViews\TezosTransactionDetailsView.xaml.cs">
       <DependentUpon>TezosTransactionDetailsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SubViews\EthereumTransactionDetailsView.xaml.cs">
+    <Compile Include="Views\TransactionDetailsViews\EthereumTransactionDetailsView.xaml.cs">
       <DependentUpon>EthereumTransactionDetailsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SubViews\TransactionDetailsView.xaml.cs">
+    <Compile Include="Views\TransactionDetailsViews\TransactionDetailsView.xaml.cs">
       <DependentUpon>TransactionDetailsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UnlockView.xaml.cs">
@@ -504,6 +503,10 @@
     <Compile Include="Views\WalletViews\WalletView.xaml.cs">
       <DependentUpon>WalletView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\Icons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\AmountTextBoxStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -512,13 +515,25 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\IconButton.xaml">
+    <Page Include="Styles\ChildWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\ChildWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Styles\ConvertButtonStyle.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Converters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\CustomTooltipStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\IconButtonStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\Styles.xaml">
       <SubType>Designer</SubType>
@@ -528,7 +543,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\Generic.xaml">
+    <Page Include="Themes\generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\blue.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\light.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -572,15 +595,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SendViews\BitcoinBasedSendPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\SendViews\EthereumSendPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\SendViews\TezosSendPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -599,10 +614,6 @@
     <Page Include="Views\StartView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\ExchangeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CreateWalletViews\WriteDerivedKeyPasswordView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -649,7 +660,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\CreateWalletViewStyle.xaml">
+    <Page Include="Styles\GenerateButtonStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -677,7 +688,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\LinkButton.xaml">
+    <Page Include="Styles\LinkButtonStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -717,15 +728,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SubViews\TezosTransactionDetailsView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\SubViews\EthereumTransactionDetailsView.xaml">
+    <Page Include="Views\TransactionDetailsViews\EthereumERC20TransactionDetailsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SubViews\TransactionDetailsView.xaml">
+    <Page Include="Views\TransactionDetailsViews\TezosTransactionDetailsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TransactionDetailsViews\EthereumTransactionDetailsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TransactionDetailsViews\TransactionDetailsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -789,9 +804,6 @@
     <Resource Include="Resources\Images\logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\login_window_logo.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Images\logo_pillow.png" />
   </ItemGroup>
   <ItemGroup>
@@ -832,7 +844,6 @@
   <ItemGroup>
     <Resource Include="Resources\Images\available.png" />
     <Resource Include="Resources\Images\locked.png" />
-    <Resource Include="Resources\Images\warning.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\refunded.png" />
@@ -881,7 +892,11 @@
     <Resource Include="Resources\Images\github.png" />
     <Resource Include="Resources\Images\twitter.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Images\tether.png" />
+    <Resource Include="Resources\Images\tether_90x90.png" />
+    <Resource Include="Resources\Images\tether_mask.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -890,11 +905,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
   </Target>
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties config_1debug_1json__JSONSchema="http://json.schemastore.org/config" />
-    </VisualStudio>
-  </ProjectExtensions>
+  <ProjectExtensions />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

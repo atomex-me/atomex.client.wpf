@@ -3,10 +3,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                     xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
-                    xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
                     xmlns:helpers="clr-namespace:Atomex.Client.Wpf.Helpers"
                     xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
                     xmlns:common="clr-namespace:Atomex.Client.Wpf.Common"
@@ -14,7 +12,7 @@
 
                     ShowTitleBar="False"
                     CloseOnOverlay="False"
-                    OverlayBrush="{StaticResource ChildViewBackgroundBrush}"
+                    OverlayBrush="{DynamicResource ChildViewBackgroundBrush}"
                     Background="Transparent"
 
                     UseLayoutRounding="True"
@@ -24,10 +22,6 @@
                     d:DesignWidth="400"
                     d:DesignHeight="300"
                     d:DataContext="{d:DesignInstance Type=viewModels:UnlockViewModel, IsDesignTimeCreatable=True}">
-    <controls:ChildWindow.Resources>
-        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-    </controls:ChildWindow.Resources>
 
     <Border CornerRadius="0"
             VerticalAlignment="Center"
@@ -39,13 +33,13 @@
                             Margin="10 0 10 0"
                             HorizontalAlignment="Center">
                     <TextBlock Text="Please enter password to unlock "
-                               Foreground="{StaticResource DefaultForegroundBrush}"
-                               FontFamily="{StaticResource RobotoLight}"
+                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                               FontFamily="{DynamicResource DefaultLightFontFamily}"
                                FontSize="15"
                                TextWrapping="Wrap"/>
                     <TextBlock Text="{Binding WalletName}"
-                               Foreground="{StaticResource DefaultForegroundBrush}"
-                               FontFamily="{StaticResource RobotoLight}"
+                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                               FontFamily="{DynamicResource DefaultLightFontFamily}"
                                FontSize="15"
                                TextWrapping="Wrap"/>
                 </StackPanel>
@@ -54,16 +48,29 @@
                              Height="40" 
                              Margin="0 10 0 5"
                              HorizontalAlignment="Center"
-                             Foreground="{StaticResource DefaultTextBoxForegroundBrush}"
-                             helpers:PasswordBoxHelper.Icon="{iconPacks:Material Kind=Lock}"
+                             Foreground="{DynamicResource DefaultTextBoxForegroundBrush}"
                              helpers:PasswordBoxHelper.CornerRadius="20"    
                              helpers:PasswordBoxHelper.PlaceHolder="Password..."
                              helpers:PasswordBoxHelper.SecurePassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource CustomSecurePasswordBox}"
-                             IsEnabled="{Binding InProgress, Converter={StaticResource InverseBooleanConverter}}"/>
+                             IsEnabled="{Binding InProgress, Converter={StaticResource InverseBooleanConverter}}">
+                    <helpers:PasswordBoxHelper.Icon>
+                        <Path Stretch="Uniform"
+                              SnapsToDevicePixels="False"
+                              UseLayoutRounding="False"
+                              Margin="3 0 3 1"
+                              Height="15"
+                              Fill="{DynamicResource DefaultTextBoxForegroundBrush}"
+                              Data="{DynamicResource FontAwesome.KeySolid}"/>
+                    </helpers:PasswordBoxHelper.Icon>
+                </PasswordBox>
 
-                <StackPanel Width="328" Margin="0 5" Visibility="{Binding Path=InvalidPassword, Converter={converters:BoolToVisibilityCollapsedConverter}}">
-                    <TextBlock Text="Invalid password" Foreground="OrangeRed" HorizontalAlignment="Center"/>
+                <StackPanel Width="328"
+                            Margin="0 5"
+                            Visibility="{Binding InvalidPassword, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                    <TextBlock Text="Invalid password"
+                               Foreground="OrangeRed"
+                               HorizontalAlignment="Center"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal"
@@ -90,7 +97,7 @@
             </StackPanel>
 
             <mah:ProgressRing IsActive="{Binding InProgress}"
-                              Visibility="{Binding InProgress, Converter={StaticResource BoolToVisibilityConverter}}"
+                              Visibility="{Binding InProgress, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"
                               Margin="0 220 0 0"
                               HorizontalAlignment="Center"
                               VerticalAlignment="Center"/>

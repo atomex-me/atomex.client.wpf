@@ -71,7 +71,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         {
             try
             {
-                if (Currency.Name == args.Currency.Name)
+                if (Currency.Name == args.Currency)
                 {
                     // update transactions list
                     await LoadTransactionsAsync();

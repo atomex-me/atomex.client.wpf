@@ -2,9 +2,9 @@
 
 namespace Atomex.Client.Wpf.Views
 {
-    public partial class ExchangeView : UserControl
+    public partial class TezosTransactionDetailsView : UserControl
     {
-        public ExchangeView()
+        public TezosTransactionDetailsView()
         {
             InitializeComponent();
         }

@@ -1,15 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mahControls="http://metro.mahapps.com/winfx/xaml/controls"
-                    xmlns:mahConverters="http://metro.mahapps.com/winfx/xaml/shared"
                     xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
-                    xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters">
+                    xmlns:mahConverters="http://metro.mahapps.com/winfx/xaml/shared">
 
-    <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityCollapsedConverter"
-                                          FalseValue="Visible"
-                                          TrueValue="Collapsed" />
-    <mahConverters:ThicknessToDoubleConverter x:Key="ThicknessToDoubleConverter" />
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Atomex.Client.Wpf;component/Styles/Converters.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="SimpleChildWindowFocusVisual">
         <Setter Property="Control.Template">
@@ -64,7 +61,7 @@
                         FocusVisualStyle="{x:Null}"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                         UseLayoutRounding="True"
-                        Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=EnableDropShadow, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=EnableDropShadow, Mode=OneWay, Converter={StaticResource BoolToVisibilityCollapsedConverter}}" />
 
                 <Border x:Name="PART_Border"
                         Background="{x:Null}"
@@ -97,14 +94,14 @@
                                    Fill="{TemplateBinding TitleBarBackground}"
                                    Focusable="False"
                                    StrokeThickness="0"
-                                   Visibility="{TemplateBinding ShowTitleBar, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                   Visibility="{TemplateBinding ShowTitleBar, Converter={StaticResource BoolToVisibilityCollapsedConverter}}" />
 
                         <Grid x:Name="PART_Header"
                               Grid.Row="1"
                               Grid.Column="1"
                               Height="{Binding TitleBarHeight, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
                               Focusable="False"
-                              Visibility="{TemplateBinding ShowTitleBar, Converter={StaticResource BooleanToVisibilityConverter}}">
+                              Visibility="{TemplateBinding ShowTitleBar, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -158,7 +155,7 @@
                                     IsTabStop="True"
                                     Style="{TemplateBinding CloseButtonStyle}"
                                     ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:ChildWindow}}, Path=CloseButtonToolTip, Mode=OneWay}"
-                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowCloseButton, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowCloseButton, Mode=OneWay, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                                 <Path Data="M 10.009,1.704 L 8.331,0.026 5.03,3.327 1.703,0 0,1.704 3.326,5.031 0.025,8.332 1.703,10.009 5.004,6.708 8.305,10.009 10.009,8.305 6.708,5.005"
                                       Fill="{TemplateBinding TitleForeground}"
                                       SnapsToDevicePixels="True" />
@@ -280,6 +277,5 @@
             </Setter.Value>
         </Setter>
         <Setter Property="VerticalContentAlignment" Value="Center" />
-    </Style>
-
+    </Style>    
 </ResourceDictionary>

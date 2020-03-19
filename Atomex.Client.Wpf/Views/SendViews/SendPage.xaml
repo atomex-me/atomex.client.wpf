@@ -9,17 +9,12 @@
       xmlns:behaviors="clr-namespace:Atomex.Client.Wpf.Behaviors"
       xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
       xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-      xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
       mc:Ignorable="d"
       UseLayoutRounding="True"
       Focusable="False"
       d:DesignHeight="500"
       d:DesignWidth="560"   
       d:DataContext="{d:DesignInstance Type=viewModels:SendViewModel, IsDesignTimeCreatable=True}">
-    <Page.Resources>
-        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed" />
-    </Page.Resources>
 
     <Grid Width="560">
         <StackPanel Orientation="Vertical">
@@ -28,18 +23,18 @@
                     Height="33"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Stretch"
-                    Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+                    Background="{DynamicResource ChildViewHeaderBackgroundBrush}">
                 <TextBlock Text="Send"
-                           Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
-                           FontFamily="{StaticResource RobotoLight}"
+                           Foreground="{DynamicResource ChildViewHeaderForegroundBrush}"
+                           FontFamily="{DynamicResource DefaultLightFontFamily}"
                            FontSize="25"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
             </Border>
 
             <TextBlock Text="Instantly sending of currency."
-                       Foreground="{StaticResource DefaultForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="15"
                        Margin="40 20 40 15"
                        TextWrapping="Wrap"
@@ -59,8 +54,8 @@
                 <Border Style="{StaticResource FieldHeader}">
                     <TextBlock Text="To Address:"
                                Margin="0 0 7 0"
-                               Foreground="{StaticResource DefaultForegroundBrush}"
-                               FontFamily="{StaticResource RobotoMedium}"
+                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                               FontFamily="{DynamicResource DefaultMediumFontFamily}"
                                FontSize="13"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Right"/>
@@ -69,8 +64,8 @@
                          Height="40"
                          Margin="0 5 0 5"
                          Text="{Binding To, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Background="{StaticResource DefaultSubstrateBrush}"
-                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         Background="{DynamicResource DefaultSubstrateBrush}"
+                         Foreground="{DynamicResource DefaultForegroundBrush}"
                          helpers:TextBoxHelper.CornerRadius="0 20 20 0"
                          Style="{StaticResource CustomTextBox}"/>
             </StackPanel>
@@ -80,8 +75,8 @@
                 <Border Style="{StaticResource FieldHeader}">
                     <TextBlock Text="Amount:"
                                Margin="0 0 7 0"
-                               Foreground="{StaticResource DefaultForegroundBrush}"
-                               FontFamily="{StaticResource RobotoMedium}"
+                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                               FontFamily="{DynamicResource DefaultMediumFontFamily}"
                                FontSize="13"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Right"/>
@@ -91,8 +86,8 @@
                          Height="40"
                          Margin="0 5 0 5"
                          FontSize="18"
-                         Background="{StaticResource DefaultSubstrateBrush}"
-                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         Background="{DynamicResource DefaultSubstrateBrush}"
+                         Foreground="{DynamicResource DefaultForegroundBrush}"
                          Text="{Binding AmountString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          helpers:TextBoxHelper.CornerRadius="0 20 20 0"
                          helpers:AmountTextBoxHelper.CurrencyCode="{Binding CurrencyCode}"
@@ -116,13 +111,12 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
                         IsEnabled="{Binding UseDefaultFee, Converter={StaticResource InverseBooleanConverter}}"
-                        Visibility="{Binding UseFeePrice, Converter={StaticResource BoolToVisibilityConverter}}"
                         Style="{StaticResource BaseDisabledStyle}">
                 <Border Style="{StaticResource FieldHeader}">
-                    <TextBlock Text="Gas price:"
+                    <TextBlock Text="Fee:"
                                Margin="0 0 7 0"
-                               Foreground="{StaticResource DefaultForegroundBrush}"
-                               FontFamily="{StaticResource RobotoMedium}"
+                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                               FontFamily="{DynamicResource DefaultMediumFontFamily}"
                                FontSize="13"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Right"/>
@@ -132,40 +126,8 @@
                          Height="40"
                          Margin="0 5 0 5"
                          FontSize="18"
-                         Text="{Binding FeePriceString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Background="{StaticResource DefaultSubstrateBrush}"
-                         Foreground="{StaticResource DefaultForegroundBrush}"
-                         helpers:TextBoxHelper.CornerRadius="0 20 20 0"
-                         helpers:AmountTextBoxHelper.CurrencyCode="{Binding FeePriceCode}"
-                         Style="{StaticResource AmountTextBox}">
-                    <i:Interaction.Behaviors>
-                        <behaviors:TextBoxInputBehavior InputMode="DecimalInput"
-                                                        UseInvariantCulture="True"
-                                                        JustPositiveDecimalInput="True"/>
-                    </i:Interaction.Behaviors>
-                </TextBox>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        IsEnabled="{Binding UseDefaultFee, Converter={StaticResource InverseBooleanConverter}}"
-                        Style="{StaticResource BaseDisabledStyle}">
-                <Border Style="{StaticResource FieldHeader}">
-                    <TextBlock Text="{Binding FeeName}"
-                               Margin="0 0 7 0"
-                               Foreground="{StaticResource DefaultForegroundBrush}"
-                               FontFamily="{StaticResource RobotoMedium}"
-                               FontSize="13"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Right"/>
-                </Border>
-
-                <TextBox Width="380"
-                         Height="40"
-                         Margin="0 5 0 5"
-                         FontSize="18"
-                         Background="{StaticResource DefaultSubstrateBrush}"
-                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         Background="{DynamicResource DefaultSubstrateBrush}"
+                         Foreground="{DynamicResource DefaultForegroundBrush}"
                          Text="{Binding FeeString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          helpers:TextBoxHelper.CornerRadius="0 20 20 0"
                          helpers:AmountTextBoxHelper.CurrencyCode="{Binding FeeCurrencyCode}"
@@ -189,14 +151,14 @@
                               HorizontalAlignment="Center"
                               OffLabel="Use default fee"
                               OnLabel="Use default fee"
-                              FontFamily="{StaticResource RobotoLight}"
+                              FontFamily="{DynamicResource DefaultLightFontFamily}"
                               FontSize="13"
                               Margin="10"
                               Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"/>
 
             <TextBlock Text="{Binding Warning}"
-                       Foreground="{StaticResource WarningForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource WarningForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="13"
                        Margin="20 5 20 0"
                        TextWrapping="Wrap"

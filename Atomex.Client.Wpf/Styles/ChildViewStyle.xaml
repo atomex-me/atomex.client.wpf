@@ -1,60 +1,54 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks">
-
-    <Color x:Key="ChildViewShadowColor">Black</Color>
-    <SolidColorBrush x:Key="ChildViewHeaderForegroundBrush" Color="{StaticResource DefaultForegroundColor}"/>
-    <SolidColorBrush x:Key="ChildViewHeaderBackgroundBrush" Color="{StaticResource DefaultBackgroundColor}"/>
-
-    <LinearGradientBrush x:Key="ChildViewBackgroundBrush" StartPoint="1,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#1a4274"/>
-        <GradientStop Offset="1" Color="#1a2e4c"/>
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="ChildViewBackgroundBrushLight" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Offset="0" Color="#c9dae9"/>
-        <GradientStop Offset="1" Color="#c2d8ea"/>
-    </LinearGradientBrush>
-
-    <!--<LinearGradientBrush x:Key="ChildViewBackgroundBrushLight" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Offset="0" Color="AliceBlue"/>
-        <GradientStop Offset="1" Color="#c9dae9"/>
-    </LinearGradientBrush>-->
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style x:Key="ChildViewBorder" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource ChildViewBackgroundBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource ChildViewBackgroundBrush}"/>
         <Setter Property="CornerRadius" Value="10"/>
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect ShadowDepth="5" Color="{StaticResource ChildViewShadowColor}" Opacity="1" BlurRadius="20"/>
+                <DropShadowEffect ShadowDepth="5"
+                                  Color="{DynamicResource ChildViewShadowColor}"
+                                  Opacity="1"
+                                  BlurRadius="20"/>
             </Setter.Value>
         </Setter>
     </Style>
     
-    <Style x:Key="ChildViewBorderLight" TargetType="Border" BasedOn="{StaticResource ChildViewBorder}">
-        <Setter Property="Background" Value="{StaticResource ChildViewBackgroundBrushLight}"/>
+    <Style x:Key="ChildViewBorderLight"
+           TargetType="Border"
+           BasedOn="{StaticResource ChildViewBorder}">
+        <Setter Property="Background" Value="{DynamicResource ChildViewBackgroundBrushLight}"/>
     </Style>
-
-    <SolidColorBrush x:Key="ChildViewCloseButtonBrush" Color="{StaticResource DefaultButtonBackgroundColor}"/>
-    <SolidColorBrush x:Key="ChildViewCloseButtonMouseOverBrush" Color="{StaticResource DefaultButtonMouseOverColor}"/>
-    <SolidColorBrush x:Key="ChildViewCloseButtonPressedBrush" Color="{StaticResource DefaultButtonPressedColor}"/>
 
     <Style x:Key="ChildViewCloseButton" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid>
-                        <iconPacks:PackIconMaterial x:Name="icon" Kind="CloseCircle" Width="20" Height="20" Foreground="{StaticResource ChildViewCloseButtonBrush}" Background="Transparent"/>
-                    </Grid>
+                    <Border Background="{DynamicResource AlmostTransparentBrush}">
+                        <Path x:Name="icon"
+                              Stretch="Uniform"
+                              SnapsToDevicePixels="False"
+                              UseLayoutRounding="False"
+                              Width="{TemplateBinding Width}"
+                              Height="{TemplateBinding Height}"
+                              Fill="{DynamicResource ChildViewCloseButtonBrush}"
+                              Data="{DynamicResource JavIcons.CloseCircleF}"/>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonMouseOverBrush}"/>
+                            <Setter TargetName="icon"
+                                    Property="Fill"
+                                    Value="{DynamicResource ChildViewCloseButtonMouseOverBrush}"/>
                         </Trigger>
                         <Trigger Property="IsDefaulted" Value="True">
-                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonBrush}"/>
+                            <Setter TargetName="icon"
+                                    Property="Fill"
+                                    Value="{DynamicResource ChildViewCloseButtonBrush}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonPressedBrush}"/>
+                            <Setter TargetName="icon"
+                                    Property="Fill"
+                                    Value="{DynamicResource ChildViewCloseButtonPressedBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -62,26 +56,35 @@
         </Setter>
     </Style>
 
-    <SolidColorBrush x:Key="ChildViewCloseButtonLightBrush" Color="{StaticResource DefaultButtonBackgroundLightColor}"/>
-    <SolidColorBrush x:Key="ChildViewCloseButtonMouseOverLightBrush" Color="{StaticResource DefaultButtonMouseOverLightColor}"/>
-    <SolidColorBrush x:Key="ChildViewCloseButtonPressedLightBrush" Color="{StaticResource DefaultButtonPressedLightColor}"/>
-
     <Style x:Key="ChildViewCloseButtonLight" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid>
-                        <iconPacks:PackIconMaterial x:Name="icon" Kind="CloseCircle" Width="20" Height="20" Foreground="{StaticResource ChildViewCloseButtonLightBrush}" Background="Transparent"/>
-                    </Grid>
+                    <Border Background="{DynamicResource AlmostTransparentBrush}">
+                        <Path x:Name="icon"
+                              Stretch="Uniform"
+                              SnapsToDevicePixels="False"
+                              UseLayoutRounding="False"
+                              Width="{TemplateBinding Width}"
+                              Height="{TemplateBinding Height}"
+                              Fill="{DynamicResource ChildViewCloseButtonLightBrush}"
+                              Data="{DynamicResource JavIcons.CloseCircleF}"/>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonMouseOverLightBrush}"/>
+                            <Setter TargetName="icon"
+                                    Property="Fill"
+                                    Value="{DynamicResource ChildViewCloseButtonMouseOverLightBrush}"/>
                         </Trigger>
                         <Trigger Property="IsDefaulted" Value="True">
-                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonLightBrush}"/>
+                            <Setter TargetName="icon"
+                                    Property="Fill"
+                                    Value="{DynamicResource ChildViewCloseButtonLightBrush}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="icon" Property="Foreground" Value="{StaticResource ChildViewCloseButtonPressedLightBrush}"/>
+                            <Setter TargetName="icon"
+                                    Property="Fill"
+                                    Value="{DynamicResource ChildViewCloseButtonPressedLightBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -9,7 +9,7 @@
 
     ShowTitleBar="False"
     Background="Transparent"
-    OverlayBrush="#2F000000"
+    OverlayBrush="{DynamicResource DefaultSubstrateBrush}"
     CloseByEscape="True"
     CloseOnOverlay="False"
 

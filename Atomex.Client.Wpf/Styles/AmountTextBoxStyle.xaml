@@ -2,8 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:helpers="clr-namespace:Atomex.Client.Wpf.Helpers">
 
-    <SolidColorBrush x:Key="AmountInBaseForegroundBrush" Color="DarkGray"/>
-
     <Style x:Key="AmountTextBox" BasedOn="{StaticResource CustomTextBox}" TargetType="{x:Type TextBox}">
         <Setter Property="helpers:AmountTextBoxHelper.CurrencyCodeFontSize" Value="12"/>
         <Setter Property="helpers:AmountTextBoxHelper.BaseCurrencyCodeFontSize" Value="10"/>
@@ -79,13 +77,13 @@
                                             VerticalAlignment="Center">
                                     <TextBlock HorizontalAlignment="Right"
                                                VerticalAlignment="Center"
-                                               Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                                               Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
                                                Text="{TemplateBinding helpers:AmountTextBoxHelper.AmountInBase}"
                                                FontSize="{TemplateBinding helpers:AmountTextBoxHelper.AmountInBaseFontSize}"/>
                                     <TextBlock HorizontalAlignment="Right"
                                                VerticalAlignment="Bottom"
                                                Margin="3 0 10 2"
-                                               Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                                               Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
                                                Text="{TemplateBinding helpers:AmountTextBoxHelper.BaseCurrencyCode}"
                                                FontSize="{TemplateBinding helpers:AmountTextBoxHelper.BaseCurrencyCodeFontSize}"/>
                                 </StackPanel>

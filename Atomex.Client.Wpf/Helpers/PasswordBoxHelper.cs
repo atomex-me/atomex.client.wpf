@@ -86,32 +86,50 @@ namespace Atomex.Client.Wpf.Helpers
                 typeof(PasswordBindingMarshaller),
                 typeof(PasswordBoxHelper), new PropertyMetadata());
 
-        public static CornerRadius GetCornerRadius(PasswordBox passwordBox) => (CornerRadius)passwordBox.GetValue(CornerRadiusProperty);
-        public static void SetCornerRadius(PasswordBox passwordBox, object value) => passwordBox.SetValue(CornerRadiusProperty, value);
+        public static CornerRadius GetCornerRadius(PasswordBox passwordBox) =>
+            (CornerRadius)passwordBox.GetValue(CornerRadiusProperty);
+        public static void SetCornerRadius(PasswordBox passwordBox, object value) =>
+            passwordBox.SetValue(CornerRadiusProperty, value);
 
-        public static string GetPlaceHolder(PasswordBox passwordBox) => (string)passwordBox.GetValue(PlaceHolderProperty);
-        public static void SetPlaceHolder(PasswordBox passwordBox, string value) => passwordBox.SetValue(PlaceHolderProperty, value);
+        public static string GetPlaceHolder(PasswordBox passwordBox) =>
+            (string)passwordBox.GetValue(PlaceHolderProperty);
+        public static void SetPlaceHolder(PasswordBox passwordBox, string value) =>
+            passwordBox.SetValue(PlaceHolderProperty, value);
 
-        public static Brush GetFocusBorderBrush(PasswordBox passwordBox) => (Brush)passwordBox.GetValue(FocusBorderBrushProperty);
-        public static void SetFocusBorderBrush(PasswordBox passwordBox, Brush value) => passwordBox.SetValue(FocusBorderBrushProperty, value);
+        public static Brush GetFocusBorderBrush(PasswordBox passwordBox) =>
+            (Brush)passwordBox.GetValue(FocusBorderBrushProperty);
+        public static void SetFocusBorderBrush(PasswordBox passwordBox, Brush value) =>
+            passwordBox.SetValue(FocusBorderBrushProperty, value);
 
-        public static Brush GetMouseOverBorderBrush(PasswordBox passwordBox) => (Brush)passwordBox.GetValue(MouseOverBorderBrushProperty);
-        public static void SetMouseOverBorderBrush(PasswordBox passwordBox, Brush value) => passwordBox.SetValue(MouseOverBorderBrushProperty, value);
+        public static Brush GetMouseOverBorderBrush(PasswordBox passwordBox) =>
+            (Brush)passwordBox.GetValue(MouseOverBorderBrushProperty);
+        public static void SetMouseOverBorderBrush(PasswordBox passwordBox, Brush value) =>
+            passwordBox.SetValue(MouseOverBorderBrushProperty, value);
 
-        public static object GetIcon(PasswordBox passwordBox) => passwordBox.GetValue(IconProperty);
-        public static void SetIcon(PasswordBox passwordBox, object value) => passwordBox.SetValue(IconProperty, value);
+        public static object GetIcon(PasswordBox passwordBox) =>
+            passwordBox.GetValue(IconProperty);
+        public static void SetIcon(PasswordBox passwordBox, object value) =>
+            passwordBox.SetValue(IconProperty, value);
 
-        public static object GetCapsLockIcon(PasswordBox passwordBox) => passwordBox.GetValue(CapsLockIconProperty);
-        public static void SetCapsLockIcon(PasswordBox passwordBox, object value) => passwordBox.SetValue(CapsLockIconProperty, value);
+        public static object GetCapsLockIcon(PasswordBox passwordBox) =>
+            passwordBox.GetValue(CapsLockIconProperty);
+        public static void SetCapsLockIcon(PasswordBox passwordBox, object value) =>
+            passwordBox.SetValue(CapsLockIconProperty, value);
 
-        public static object GetCapsLockWarningToolTip(PasswordBox passwordBox) => passwordBox.GetValue(CapsLockWarningToolTipProperty);
-        public static void SetCapsLockWarningToolTip(PasswordBox passwordBox, object value) => passwordBox.SetValue(CapsLockWarningToolTipProperty, value);
+        public static object GetCapsLockWarningToolTip(PasswordBox passwordBox) =>
+            passwordBox.GetValue(CapsLockWarningToolTipProperty);
+        public static void SetCapsLockWarningToolTip(PasswordBox passwordBox, object value) =>
+            passwordBox.SetValue(CapsLockWarningToolTipProperty, value);
 
-        public static object GetRevealButtonContent(PasswordBox passwordBox) => passwordBox.GetValue(RevealButtonContentProperty);
-        public static void SetRevealButtonContent(PasswordBox passwordBox, object value) => passwordBox.SetValue(RevealButtonContentProperty, value);
+        public static object GetRevealButtonContent(PasswordBox passwordBox) =>
+            passwordBox.GetValue(RevealButtonContentProperty);
+        public static void SetRevealButtonContent(PasswordBox passwordBox, object value) =>
+            passwordBox.SetValue(RevealButtonContentProperty, value);
 
-        public static Style GetRevealButtonStyle(PasswordBox passwordBox) => (Style)passwordBox.GetValue(RevealButtonStyleProperty);
-        public static void SetRevealButtonStyle(PasswordBox passwordBox, object value) => passwordBox.SetValue(RevealButtonStyleProperty, value);
+        public static Style GetRevealButtonStyle(PasswordBox passwordBox) =>
+            (Style)passwordBox.GetValue(RevealButtonStyleProperty);
+        public static void SetRevealButtonStyle(PasswordBox passwordBox, object value) =>
+            passwordBox.SetValue(RevealButtonStyleProperty, value);
 
         private static void ShowCapslockWarningChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -169,9 +187,8 @@ namespace Atomex.Client.Wpf.Helpers
             // in order to allow the GC to collect the control, we'll wrap the event handler inside an object living in an attached property
             // don't be tempted to use the Unloaded event as that will be fired  even when the control is still alive and well (e.g. switching tabs in a tab control) 
             var passwordBox = (PasswordBox)d;
-            var bindingMarshaller = passwordBox.GetValue(PasswordBindingMarshallerProperty) as PasswordBindingMarshaller;
 
-            if (bindingMarshaller == null)
+            if (!(passwordBox.GetValue(PasswordBindingMarshallerProperty) is PasswordBindingMarshaller bindingMarshaller))
             {
                 bindingMarshaller = new PasswordBindingMarshaller(passwordBox);
                 passwordBox.SetValue(PasswordBindingMarshallerProperty, bindingMarshaller);

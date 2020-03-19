@@ -3,11 +3,7 @@
                     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                     xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
                     xmlns:system="clr-namespace:System;assembly=mscorlib"
-                    xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters">
-
-    <SolidColorBrush x:Key="DefaultHamburgerMenuBackgroundBrush" Color="#2f000000"/>
-
-    <converters:ValueNotEqualConverter x:Key="ValueNotEqualConverter"/>
+                    xmlns:mahAppsControls="http://metro.mahapps.com/winfx/xaml/controls">
     
     <DataTemplate x:Key="HamburgerMenuImageItem" DataType="{x:Type controls:NavigationMenuItem}">
         <Grid Height="48">
@@ -24,17 +20,99 @@
             <TextBlock Grid.Column="1"
                        VerticalAlignment="Center"
                        FontSize="14"
-                       FontFamily="{StaticResource RobotoMedium}"
+                       FontFamily="{DynamicResource HamburgerMenuItemFontFamily}"
                        Text="{Binding Header}" />
         </Grid>
     </DataTemplate>
-    
+
+    <Style x:Key="HamburgerMenuItemContainerStyle"
+           TargetType="{x:Type ListBoxItem}">
+        <Setter Property="FocusVisualStyle" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mahAppsControls:HamburgerMenu}}, Path=ItemFocusVisualStyle, Mode=OneWay, FallbackValue={x:Null}}" />
+        <Setter Property="IsEnabled" Value="{Binding IsEnabled, Mode=OneWay, FallbackValue=true}" />
+        <Setter Property="IsTabStop" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mahAppsControls:HamburgerMenu}}, Path=IsTabStop, Mode=OneWay, FallbackValue=True}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Grid Background="{TemplateBinding Background}" RenderOptions.ClearTypeHint="{TemplateBinding RenderOptions.ClearTypeHint}">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Grid Margin="{TemplateBinding BorderThickness}">
+                            <Grid HorizontalAlignment="Left"
+                                  VerticalAlignment="Center"
+                                  Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mahAppsControls:HamburgerMenu}}, Path=ShowSelectionIndicator, Mode=OneWay, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                                <Rectangle x:Name="SelectionIndicator"
+                                           Width="{DynamicResource HamburgerMenuSelectionIndicatorThemeWidth}"
+                                           Height="{DynamicResource HamburgerMenuSelectionIndicatorThemeHeight}"
+                                           Fill="{TemplateBinding Foreground}"
+                                           Focusable="False"
+                                           Opacity="0.0" />
+                            </Grid>
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource HamburgerMenuItemForegroundBrush}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource HamburgerMenuItemSelectedBackground}" />
+                            <Setter TargetName="SelectionIndicator" Property="Opacity" Value="1.0" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="Selector.IsSelectionActive" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{DynamicResource HamburgerMenuItemForegroundBrush}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource HamburgerMenuItemSelectedBackground}" />
+                        </MultiTrigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsSelected" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource HamburgerMenuItemSelectedMouseOverBackground}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsSelected" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource HamburgerMenuItemUnselectedMouseOverBackground}" />
+                        </MultiTrigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource HamburgerMenuItemForegroundBrush}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource HamburgerMenuItemDisabledBackground}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsEnabled" Value="False" />
+                                <Condition Property="IsSelected" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{DynamicResource HamburgerMenuItemForegroundBrush}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource HamburgerMenuItemDisabledBackground}" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
     <Style x:Key="HamburgerMenuStyle" TargetType="mah:HamburgerMenu">
         <Style.Setters>
             <Setter Property="ItemTemplate" Value="{StaticResource HamburgerMenuImageItem}"/>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource HamburgerMenuItemContainerStyle}"/>
             <Setter Property="OptionsItemTemplate" Value="{StaticResource HamburgerMenuImageItem}"/>
+            <Setter Property="OptionsItemContainerStyle" Value="{StaticResource HamburgerMenuItemContainerStyle}"/>
             <Setter Property="DisplayMode" Value="CompactInline"/>
-            <Setter Property="PaneBackground" Value="{StaticResource DefaultHamburgerMenuBackgroundBrush}"/>
+            <Setter Property="PaneBackground" Value="{DynamicResource HamburgerMenuBackgroundBrush}"/>
             <Setter Property="OpenPaneLength" Value="150"/>
             <Setter Property="HamburgerWidth" Value="48"/>
             <Setter Property="ContentTemplate">
@@ -43,7 +121,7 @@
                         <!--<mah:TransitioningContentControl Content="{Binding Content}"
                                                          RestartTransitionOnContentChange="True"
                                                          Transition="Default"/>-->
-                        <ContentControl Content="{Binding Content}"/>
+                        <ContentControl Content="{Binding Content}" FocusVisualStyle="{x:Null}"/>
                     </DataTemplate>
                 </Setter.Value>
             </Setter>
@@ -54,7 +132,8 @@
                 <MultiDataTrigger.Conditions>
                     <Condition>
                         <Condition.Binding>
-                            <Binding Path="SelectedItem" RelativeSource="{RelativeSource Self}"
+                            <Binding Path="SelectedItem"
+                                     RelativeSource="{RelativeSource Self}"
                                      Converter="{StaticResource ValueNotEqualConverter}">
                                 <Binding.ConverterParameter>
                                     <system:Int32>-1</system:Int32>

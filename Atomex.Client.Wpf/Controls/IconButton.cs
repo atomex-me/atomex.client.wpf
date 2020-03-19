@@ -20,6 +20,13 @@ namespace Atomex.Client.Wpf.Controls
                 typeof(IconButton),
                 new PropertyMetadata(Brushes.Gray));
 
+        public static readonly DependencyProperty PathProperty
+            = DependencyProperty.Register(
+                nameof(Path),
+                typeof(object),
+                typeof(IconButton),
+                new PropertyMetadata(null));
+
         public Brush MouseOverBrush
         {
             get => (Brush)GetValue(MouseOverBrushProperty);
@@ -30,6 +37,12 @@ namespace Atomex.Client.Wpf.Controls
         {
             get => (Brush)GetValue(PressedBrushProperty);
             set => SetValue(PressedBrushProperty, value);
+        }
+
+        public object Path
+        {
+            get => GetValue(PathProperty);
+            set => SetValue(PathProperty, value);
         }
     }
 }

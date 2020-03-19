@@ -21,6 +21,7 @@ namespace Atomex.Client.Wpf.ViewModels.Abstract
         public event EventHandler AmountUpdated;
 
         public Currency Currency { get; set; }
+        public Currency ChainCurrency { get; set; }
         public string Header { get; set; }
         public Brush IconBrush { get; set; }
         public Brush UnselectedIconBrush { get; set; }
@@ -104,13 +105,13 @@ namespace Atomex.Client.Wpf.ViewModels.Abstract
         {
             try
             {
-                if (Currency.Name.Equals(args.Currency.Name))
+                if (Currency.Name.Equals(args.Currency))
                     await UpdateAsync()
                         .ConfigureAwait(false);
             }
             catch (Exception e)
             {
-                Log.Error(e, $"error for currency {args.Currency.Name}");
+                Log.Error(e, $"Error for currency {args.Currency}");
             }
         }
 

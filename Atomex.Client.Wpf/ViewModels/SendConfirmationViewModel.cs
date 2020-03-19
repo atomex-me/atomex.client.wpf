@@ -25,6 +25,8 @@ namespace Atomex.Client.Wpf.ViewModels
         public decimal FeeInBase { get; set; }
         public string CurrencyCode { get; set; }
         public string BaseCurrencyCode { get; set; }
+        public string FeeCurrencyCode { get; set; }
+        public string FeeCurrencyFormat { get; set; }
 
         private ICommand _backCommand;
         public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>

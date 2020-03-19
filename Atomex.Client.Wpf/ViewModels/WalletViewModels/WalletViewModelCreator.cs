@@ -2,6 +2,8 @@
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Core;
+using Atomex.EthereumTokens;
+using Atomex.TezosTokens;
 
 namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
@@ -17,6 +19,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             switch (currency)
             {
                 case BitcoinBasedCurrency _:
+                case FA12 _:
+                case ERC20 _:
                 case Ethereum _:
                     return new WalletViewModel(
                         app: app,

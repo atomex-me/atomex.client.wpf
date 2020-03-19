@@ -279,7 +279,7 @@ namespace Atomex.Client.Wpf.ViewModels
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
             _onDelegate = onDelegate;
 
-            _tezos = App.Account.Currencies.Get<Tezos>();
+            _tezos = App.Account.Currencies.Get<Tezos>("XTZ");
             FeeCurrencyCode = _tezos.FeeCode;
             BaseCurrencyCode = "USD";
             BaseCurrencyFormat = "$0.00";
@@ -329,7 +329,7 @@ namespace Atomex.Client.Wpf.ViewModels
             FromAddressList = (await App.Account
                 .GetUnspentAddressesAsync(_tezos.Name, cancellationToken).ConfigureAwait(false))
                 .OrderByDescending(x => x.Balance)
-                .Select(w => new WalletAddressViewModel(w))
+                .Select(w => new WalletAddressViewModel(w, _tezos.Format))
                 .ToList();
 
             if (!FromAddressList?.Any() ?? false)
@@ -341,7 +341,8 @@ namespace Atomex.Client.Wpf.ViewModels
             WalletAddress = FromAddressList.FirstOrDefault().WalletAddress;
         }
 
-        private async Task<Result<string>> GetDelegate(CancellationToken cancellationToken = default)
+        private async Task<Result<string>> GetDelegate(
+            CancellationToken cancellationToken = default)
         {
             if(_walletAddress == null)
                 return new Error(Errors.InvalidWallets, "You don't have non-empty accounts");

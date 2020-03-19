@@ -4,14 +4,14 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
-                    xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
                     xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
                     xmlns:common="clr-namespace:Atomex.Client.Wpf.Common"
+                    xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
                     mc:Ignorable="d" 
 
                     ShowTitleBar="False"
                     Background="Transparent"
-                    OverlayBrush="{StaticResource MainBackgroundBrush}"
+                    OverlayBrush="{DynamicResource MainBackgroundBrush}"
                     CloseByEscape="False"
                     CloseOnOverlay="False"
 
@@ -22,19 +22,12 @@
                     d:DataContext="{d:DesignInstance Type=viewModels:StartViewModel, IsDesignTimeCreatable=True}">
 
     <controls:ChildWindow.Resources>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" OppositeBoolValue="False" FalseEquivalent="Collapsed" />
-        <SolidColorBrush x:Key="AvailableWalletListTitleBackgroundBrush" Color="#F0000000"/>
-        <SolidColorBrush x:Key="CopyrightForegroundBrush" Color="#122d4f"/>
-
-        <SolidColorBrush x:Key="SocialDefaultBrush" Color="#7F122d4f"/>
-        <SolidColorBrush x:Key="SocialMouseOverBrush" Color="#FF122d4f"/>
-
         <ImageBrush x:Key="TelegramBrush" ImageSource="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/telegram.png"/>
         <ImageBrush x:Key="TwitterBrush" ImageSource="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/twitter.png"/>
         <ImageBrush x:Key="GithubBrush" ImageSource="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/github.png"/>
     </controls:ChildWindow.Resources>
 
-    <Border Style="{StaticResource ChildViewBorderLight}"
+    <Border Style="{DynamicResource ChildViewBorderLight}"
             Width="600"
             Height="320">
         <Grid>
@@ -83,7 +76,6 @@
                                             Content="MY WALLETS"
                                             VerticalAlignment="Bottom"
                                             FontSize="11"
-                                            FontFamily="{StaticResource RobotoMedium}"
                                             Command="{Binding MyWalletsCommand}"
                                             IsEnabled="{Binding HasWallets}"/>
 
@@ -94,7 +86,6 @@
                                             Content="CREATE NEW WALLET"
                                             VerticalAlignment="Bottom"
                                             FontSize="11"
-                                            FontFamily="{StaticResource RobotoMedium}"
                                             Command="{Binding CreateNewCommand}"/>
 
                     <Button Content="I want to restore my wallet"
@@ -102,58 +93,8 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
                             FontSize="12"
-                            FontFamily="{StaticResource Roboto}"
                             Command="{Binding RestoreByMnemonicCommand}"
                             Style="{StaticResource LinkButton}"/>
-
-                    <!--<StackPanel Margin="10 10 10 10"
-                                VerticalAlignment="Center"
-                                Visibility="{Binding HasAvailableWallets, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <TextBlock Text="Use existing wallet"
-                                   Foreground="#2e5185"
-                                   Background="Transparent"
-                                   Padding="0 5 0 3"
-                                   FontSize="13"
-                                   FontFamily="{StaticResource RobotoLight}"
-                                   TextAlignment="Center"
-                                   HorizontalAlignment="Stretch"/>
-                        <ListBox x:Name="WalletListBox"
-                                 Background="#4F2e5185"
-                                 MaxHeight="150"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                                 ItemsSource="{Binding Wallets}"
-                                 SelectionMode="Single">
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="{x:Type ListBoxItem}">
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconMaterial Kind="Wallet"
-                                                                    Width="24"
-                                                                    Height="24"
-                                                                    Margin="6"
-                                                                    VerticalAlignment="Center"
-                                                                    HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{Binding Name}"
-                                                   Margin="3 0 0 0"
-                                                   VerticalAlignment="Center"
-                                                   FontSize="13"
-                                                   FontFamily="{StaticResource RobotoLight}"
-                                                   Foreground="{StaticResource DefaultForegroundBrush}"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseDoubleClick">
-                                    <i:InvokeCommandAction Command="{Binding SelectWalletCommand}" CommandParameter="{Binding ElementName=WalletListBox, Path=SelectedItem}"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </ListBox>
-                    </StackPanel>-->
                 </StackPanel>
 
                 <StackPanel Margin="0 0 0 33"
@@ -163,33 +104,33 @@
                     <controls:IconButton Width="25"
                                          Height="25"
                                          OpacityMask="{StaticResource TwitterBrush}"
-                                         Foreground="{StaticResource SocialDefaultBrush}"
-                                         MouseOverBrush="{StaticResource SocialMouseOverBrush}"
-                                         PressedBrush="{StaticResource SocialDefaultBrush}"
+                                         Foreground="{DynamicResource SocialDefaultBrush}"
+                                         MouseOverBrush="{DynamicResource SocialMouseOverBrush}"
+                                         PressedBrush="{DynamicResource SocialDefaultBrush}"
                                          Command="{Binding TwitterCommand}"/>
                     <controls:IconButton Width="25"
                                          Height="25"
                                          Margin="3 0 0 0"
                                          OpacityMask="{StaticResource TelegramBrush}"
-                                         Foreground="{StaticResource SocialDefaultBrush}"
-                                         MouseOverBrush="{StaticResource SocialMouseOverBrush}"
-                                         PressedBrush="{StaticResource SocialDefaultBrush}"
+                                         Foreground="{DynamicResource SocialDefaultBrush}"
+                                         MouseOverBrush="{DynamicResource SocialMouseOverBrush}"
+                                         PressedBrush="{DynamicResource SocialDefaultBrush}"
                                          Command="{Binding TelegramCommand}"/>
                     <controls:IconButton Width="25"
                                          Height="25"
                                          Margin="4 0 0 0"
                                          OpacityMask="{StaticResource GithubBrush}"
-                                         Foreground="{StaticResource SocialDefaultBrush}"
-                                         MouseOverBrush="{StaticResource SocialMouseOverBrush}"
-                                         PressedBrush="{StaticResource SocialDefaultBrush}"
+                                         Foreground="{DynamicResource SocialDefaultBrush}"
+                                         MouseOverBrush="{DynamicResource SocialMouseOverBrush}"
+                                         PressedBrush="{DynamicResource SocialDefaultBrush}"
                                          Command="{Binding GithubCommand}"/>
                 </StackPanel>
 
-                <TextBlock Foreground="{StaticResource CopyrightForegroundBrush}"
+                <TextBlock Foreground="{DynamicResource CopyrightForegroundBrush}"
                            Text="© 2018 Igor Matsak, All rights reserved"
                            Margin="0 0 0 7"
                            FontSize="11"
-                           FontFamily="{StaticResource RobotoLight}"
+                           FontFamily="{DynamicResource DefaultFontFamily}"
                            VerticalAlignment="Bottom"
                            HorizontalAlignment="Center"/>
             </Grid>

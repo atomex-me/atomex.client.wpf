@@ -51,7 +51,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
             unlockViewModel.Unlocked += (sender, args) =>
             {
-                AtomexApp.UseTerminal(new Terminal(App.Configuration, account), restart: true);
+                AtomexApp.UseTerminal(new WebSocketAtomexClient(App.Configuration, account), restart: true);
 
                 DialogViewer.HideDialog(Dialogs.MyWallets);
                 DialogViewer.HideDialog(Dialogs.Start);

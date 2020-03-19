@@ -14,10 +14,10 @@
                 Height="33"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Stretch"
-                Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+                Background="{DynamicResource ChildViewHeaderBackgroundBrush}">
             <TextBlock Text="Delegating..."
-                       Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource ChildViewHeaderForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="25"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>

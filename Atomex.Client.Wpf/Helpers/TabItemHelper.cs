@@ -12,7 +12,9 @@ namespace Atomex.Client.Wpf.Helpers
                 typeof(TabItemHelper),
                 new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static object GetGlyph(TabItem tabItem) => tabItem.GetValue(GlyphProperty);
-        public static void SetGlyph(TabItem tabItem, object value) => tabItem.SetValue(GlyphProperty, value);
+        public static object GetGlyph(TabItem tabItem) =>
+            tabItem.GetValue(GlyphProperty);
+        public static void SetGlyph(TabItem tabItem, object value) =>
+            tabItem.SetValue(GlyphProperty, value);
     }
 }

@@ -4,34 +4,42 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
-                <!-- Accent and AppTheme setting -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro.IconPacks;component/Themes/IconPacks.xaml" />
 
+                <ResourceDictionary Source="Resources/Icons.xaml"/>
+
+                <ResourceDictionary Source="Styles/Converters.xaml"/>
                 <ResourceDictionary Source="Styles/Styles.xaml"/>
                 <ResourceDictionary Source="Styles/Fonts.xaml"/>
-                <ResourceDictionary Source="Styles/ChildViewStyle.xaml"/>
+                <ResourceDictionary Source="Styles/CustomTooltipStyle.xaml"/>
+                
                 <ResourceDictionary Source="Styles/RoundedButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles/LinkButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles/GenerateButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles/IconButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles/ConvertButtonStyle.xaml"/>
+
                 <ResourceDictionary Source="Styles/CustomTextBoxStyle.xaml"/>
                 <ResourceDictionary Source="Styles/AmountTextBoxStyle.xaml"/>
                 <ResourceDictionary Source="Styles/CustomPasswordBoxStyle.xaml"/>
                 <ResourceDictionary Source="Styles/CustomComboBoxStyle.xaml"/>
+                <ResourceDictionary Source="Styles/CustomDataGridStyle.xaml"/>
+
                 <ResourceDictionary Source="Styles/CurrencyComboBoxStyle.xaml"/>
                 <ResourceDictionary Source="Styles/BakersComboBoxStyle.xaml"/>
-                <ResourceDictionary Source="Styles/LinkButton.xaml"/>
+                
                 <ResourceDictionary Source="Styles/MainWindowStyle.xaml"/>
+                <ResourceDictionary Source="Styles/ChildViewStyle.xaml"/>
                 <ResourceDictionary Source="Styles/HamburgerMenuStyle.xaml"/>
                 <ResourceDictionary Source="Styles/WalletTabControlStyle.xaml"/>
-                <ResourceDictionary Source="Styles/CustomDataGridStyle.xaml"/>
                 <ResourceDictionary Source="Styles/WalletViewStyle.xaml"/>
-                <ResourceDictionary Source="Styles/CreateWalletViewStyle.xaml"/>
                 <ResourceDictionary Source="Styles/SwapViewStyle.xaml"/>
-                <ResourceDictionary Source="Styles/IconButton.xaml"/>
+
+                <ResourceDictionary Source="Themes/blue.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

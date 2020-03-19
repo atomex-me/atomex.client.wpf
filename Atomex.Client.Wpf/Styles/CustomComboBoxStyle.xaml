@@ -2,11 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:helpers="clr-namespace:Atomex.Client.Wpf.Helpers">
 
-    <SolidColorBrush x:Key="CustomComboBoxBackgroundBrush" Color="{StaticResource DefaultTextBoxBackgroundColor}"/>
-    <SolidColorBrush x:Key="CustomComboBoxForegroundBrush" Color="{StaticResource DefaultTextBoxForegroundColor}"/>
-    <SolidColorBrush x:Key="CustomComboBoxDisabledForegroundBrush" Color="#888888"/>
-    <!--<SolidColorBrush x:Key="CustomComboBoxToggleButtonBrush" Color="{StaticResource DefaultTextBoxForegroundColor}"/>-->
-
     <ControlTemplate x:Key="CustomComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -44,8 +39,8 @@
     </ControlTemplate>
 
     <Style x:Key="CustomComboBox" TargetType="{x:Type ComboBox}">
-        <Setter Property="Background" Value="{StaticResource CustomComboBoxBackgroundBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource CustomComboBoxForegroundBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource CustomComboBoxBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource CustomComboBoxForegroundBrush}"/>
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
@@ -54,7 +49,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="MinWidth" Value="120"/>
         <Setter Property="MinHeight" Value="20"/>
-        <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -126,7 +121,7 @@
                             <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{StaticResource CustomComboBoxDisabledForegroundBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource CustomComboBoxDisabledForegroundBrush}"/>
                         </Trigger>
                         <Trigger Property="IsGrouping" Value="true">
                             <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>

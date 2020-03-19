@@ -3,9 +3,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                     xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
-                    xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
                     xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
                     xmlns:common="clr-namespace:Atomex.Client.Wpf.Common"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -13,7 +11,7 @@
 
                     ShowTitleBar="False"
                     CloseOnOverlay="False"
-                    OverlayBrush="{StaticResource ChildViewBackgroundBrush}"
+                    OverlayBrush="{DynamicResource ChildViewBackgroundBrush}"
                     Background="Transparent"
 
                     UseLayoutRounding="True"
@@ -23,25 +21,24 @@
                     d:DesignWidth="900"
                     d:DesignHeight="900"
                     d:DataContext="{d:DesignInstance Type=viewModels:MyWalletsViewModel, IsDesignTimeCreatable=True}">
-    <controls:ChildWindow.Resources>
-        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-        <SolidColorBrush x:Key="AvailableWalletListBackgroundBrush" Color="#0b213d"/>
-        <SolidColorBrush x:Key="MainNetWalletForegroundBrush" Color="White"/>
-        <SolidColorBrush x:Key="TestNetWalletForegroundBrush" Color="#FFD0E6F9"/>
-    </controls:ChildWindow.Resources>
 
     <Border CornerRadius="0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center">
         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="219*"/>
+                <RowDefinition Height="98*"/>
+            </Grid.RowDefinitions>
             <StackPanel Orientation="Vertical"
-                        VerticalAlignment="Center">
+                        VerticalAlignment="Center"
+                        Grid.RowSpan="2">
                 <StackPanel Orientation="Horizontal"
                             Margin="10 0 10 0"
                             HorizontalAlignment="Center">
                     <TextBlock Text="Please select your wallet:"
-                               Foreground="{StaticResource DefaultForegroundBrush}"
-                               FontFamily="{StaticResource RobotoLight}"
+                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                               FontFamily="{DynamicResource DefaultLightFontFamily}"
                                FontSize="15"
                                TextWrapping="Wrap"/>
                 </StackPanel>
@@ -50,15 +47,17 @@
                         Padding="7"
                         Margin="0 10"
                         CornerRadius="10"
-                        Background="{StaticResource AvailableWalletListBackgroundBrush}">
+                        Background="{DynamicResource AvailableWalletListBackgroundBrush}">
                     <ListBox x:Name="WalletListBox"
                              Background="Transparent"
                              MaxHeight="450"
                              ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                              ItemsSource="{Binding Wallets}"
+                             FocusVisualStyle="{x:Null}"
                              SelectionMode="Single">
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                                 <Setter Property="Background" Value="Transparent"/>
                                 <Setter Property="BorderThickness" Value="0"/>
                             </Style>
@@ -67,38 +66,39 @@
                             <DataTemplate>
                                 <StackPanel Margin="0 3 0 3"
                                             Orientation="Horizontal">
-                                    <iconPacks:PackIconMaterial x:Name="WalletIcon"
-                                                                Kind="Wallet"
-                                                                Width="35"
-                                                                Height="35"
-                                                                Margin="0"
-                                                                VerticalAlignment="Center"
-                                                                HorizontalAlignment="Center"/>
+                                    <Path x:Name="WalletIcon"
+                                          Stretch="Uniform"
+                                          SnapsToDevicePixels="False"
+                                          UseLayoutRounding="False"
+                                          Width="30"
+                                          Height="30"
+                                          Fill="{DynamicResource DefaultForegroundBrush}"
+                                          Data="{DynamicResource Entypo.Wallet}"/>
                                     <TextBlock x:Name="WalletName"
                                                Text="{Binding Description}"
                                                Margin="7 0 0 0"
                                                VerticalAlignment="Center"
                                                FontSize="13"
-                                               FontFamily="{StaticResource RobotoLight}"/>
+                                               FontFamily="{DynamicResource DefaultLightFontFamily}"/>
                                 </StackPanel>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding Network}"
                                                  Value="0">
                                         <Setter TargetName="WalletIcon"
-                                                Property="Foreground"
-                                                Value="{StaticResource MainNetWalletForegroundBrush}"/>
+                                                Property="Fill"
+                                                Value="{DynamicResource MainNetWalletForegroundBrush}"/>
                                         <Setter TargetName="WalletName"
                                                 Property="Foreground"
-                                                Value="{StaticResource MainNetWalletForegroundBrush}"/>
+                                                Value="{DynamicResource MainNetWalletForegroundBrush}"/>
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding Network}"
                                                  Value="1">
                                         <Setter TargetName="WalletIcon"
-                                                Property="Foreground"
-                                                Value="{StaticResource TestNetWalletForegroundBrush}"/>
+                                                Property="Fill"
+                                                Value="{DynamicResource TestNetWalletForegroundBrush}"/>
                                         <Setter TargetName="WalletName"
                                                 Property="Foreground"
-                                                Value="{StaticResource TestNetWalletForegroundBrush}"/>
+                                                Value="{DynamicResource TestNetWalletForegroundBrush}"/>
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>

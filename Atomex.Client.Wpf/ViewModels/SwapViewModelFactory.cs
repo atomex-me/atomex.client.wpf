@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Media;
+using Atomex.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Common;
 using Atomex.Core;
@@ -8,18 +9,25 @@ namespace Atomex.Client.Wpf.ViewModels
 {
     public static class SwapViewModelFactory
     {
-        public static SwapViewModel CreateSwapViewModel(Swap swap)
+        public static SwapViewModel CreateSwapViewModel(Swap swap, ICurrencies currencies)
         {
-            var fromCurrency = CurrencyViewModelCreator.CreateViewModel(
-                currency: swap.SoldCurrency,
+            var soldCurrency = currencies.GetByName(swap.SoldCurrency);
+            var purchasedCurrency = currencies.GetByName(swap.PurchasedCurrency);
+
+            var fromCurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(
+                currency: soldCurrency,
                 subscribeToUpdates: false);
 
-            var toCurrency = CurrencyViewModelCreator.CreateViewModel(
-                currency: swap.PurchasedCurrency,
+            var toCurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(
+                currency: purchasedCurrency,
                 subscribeToUpdates:false);
 
-            var fromAmount = AmountHelper.QtyToAmount(swap.Side, swap.Qty, swap.Price, swap.SoldCurrency.DigitsMultiplier);
-            var toAmount = AmountHelper.QtyToAmount(swap.Side.Opposite(), swap.Qty, swap.Price, swap.PurchasedCurrency.DigitsMultiplier);
+            var fromAmount = AmountHelper.QtyToAmount(swap.Side, swap.Qty, swap.Price, soldCurrency.DigitsMultiplier);
+            var toAmount = AmountHelper.QtyToAmount(swap.Side.Opposite(), swap.Qty, swap.Price, purchasedCurrency.DigitsMultiplier);
+
+            var quoteCurrency = swap.Symbol.QuoteCurrency() == swap.SoldCurrency
+                ? soldCurrency
+                : purchasedCurrency;
 
             return new SwapViewModel
             {
@@ -28,18 +36,18 @@ namespace Atomex.Client.Wpf.ViewModels
                 Mode = ModeBySwap(swap),
                 Time = swap.TimeStamp,
 
-                FromBrush = new SolidColorBrush(fromCurrency.AmountColor),
+                FromBrush = new SolidColorBrush(fromCurrencyViewModel.AmountColor),
                 FromAmount = fromAmount,
-                FromAmountFormat = fromCurrency.CurrencyFormat,
-                FromCurrencyCode = fromCurrency.CurrencyCode,
+                FromAmountFormat = fromCurrencyViewModel.CurrencyFormat,
+                FromCurrencyCode = fromCurrencyViewModel.CurrencyCode,
 
-                ToBrush = new SolidColorBrush(toCurrency.AmountColor),
+                ToBrush = new SolidColorBrush(toCurrencyViewModel.AmountColor),
                 ToAmount = toAmount,
-                ToAmountFormat = toCurrency.CurrencyFormat,
-                ToCurrencyCode = toCurrency.CurrencyCode,
+                ToAmountFormat = toCurrencyViewModel.CurrencyFormat,
+                ToCurrencyCode = toCurrencyViewModel.CurrencyCode,
 
                 Price = swap.Price,
-                PriceFormat = $"F{swap.Symbol.Quote.Digits}"
+                PriceFormat = $"F{quoteCurrency.Digits}"
             };
         }
 

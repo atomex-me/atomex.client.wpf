@@ -4,9 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
-      xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
       xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
-      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       UseLayoutRounding="True"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Center"
@@ -15,14 +13,6 @@
       d:DesignWidth="560"
       d:DataContext="{d:DesignInstance Type=viewModels:MessageViewModel, IsDesignTimeCreatable=True}">
 
-    <Page.Resources>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed" />
-        <SolidColorBrush x:Key="IconButtonForegroundBrush" Color="#BECFDE" />
-        <SolidColorBrush x:Key="IconButtonMouseOverBrush" Color="White" />
-        <SolidColorBrush x:Key="IconButtonPressedBrush" Color="#29456d" />
-        <SolidColorBrush x:Key="AlmostTransparentBrush" Color="#00000001" />
-    </Page.Resources>
-
     <StackPanel Orientation="Vertical"
                 Width="560">
         
@@ -30,10 +20,10 @@
                 Height="33"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Stretch"
-                Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+                Background="{DynamicResource ChildViewHeaderBackgroundBrush}">
             <TextBlock Text="{Binding Title}"
-                       Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource ChildViewHeaderForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="25"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
@@ -42,15 +32,15 @@
         <TextBlock Text="{Binding Text}"
                    Margin="20 20 20 0"
                    FontSize="15"
-                   FontFamily="{StaticResource RobotoLight}"
+                   FontFamily="{DynamicResource DefaultLightFontFamily}"
                    HorizontalAlignment="Center"
                    TextAlignment="Center"
                    TextWrapping="Wrap"
-                   Foreground="{StaticResource DefaultForegroundBrush}"/>
+                   Foreground="{DynamicResource DefaultForegroundBrush}"/>
 
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"
-                    Visibility="{Binding IsLinkVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                    Visibility="{Binding IsLinkVisible, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
 
             <Button Content="{Binding Id}"
                     ToolTip="{Binding TxExplorerUri}"
@@ -63,38 +53,17 @@
 
             <controls:IconButton 
                     VerticalAlignment="Center"
-                    Foreground="{StaticResource IconButtonForegroundBrush}"
-                    MouseOverBrush="{StaticResource IconButtonMouseOverBrush}"
-                    PressedBrush="{StaticResource IconButtonPressedBrush}"
+                    Foreground="{DynamicResource IconButtonForegroundBrush}"
+                    MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
+                    PressedBrush="{DynamicResource IconButtonPressedBrush}"
+                    Path="{DynamicResource Octicons.Clippy}"
                     Margin="5 20 20 0"
+                    Width="15"
+                    Height="15"
                     ToolTip="Copy transaction id to clipboard"
                     Command="{Binding CopyCommand}"
-                    CommandParameter="{Binding Id}">
-                <Button.Template>
-                    <ControlTemplate TargetType="{x:Type controls:IconButton}">
-                        <iconPacks:PackIconOcticons x:Name="clippyTxIdIcon"
-                                                    Kind="Clippy"
-                                                    Foreground="{TemplateBinding Foreground}"
-                                                    Background="{StaticResource AlmostTransparentBrush}"
-                                                    Width="15"
-                                                    Height="15"
-                                                    VerticalAlignment="Center"
-                                                    HorizontalAlignment="Center" />
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="clippyTxIdIcon"
-                                        Property="Foreground"
-                                        Value="{Binding MouseOverBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:IconButton}}}" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="clippyTxIdIcon"
-                                        Property="Foreground"
-                                        Value="{Binding PressedBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:IconButton}}}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-            </controls:IconButton>
+                    CommandParameter="{Binding Id}"
+                    Style="{StaticResource PathButtonStyle}"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal"
@@ -105,9 +74,10 @@
                                     Margin="0 0 3 0"
                                     Content="{Binding BackText}"
                                     Command="{Binding BackCommand}"
-                                    Visibility="{Binding IsBackVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{Binding IsBackVisible, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <controls:RoundedButton.Style>
-                    <Style BasedOn="{StaticResource DefaultRoundedButtonStyle}" TargetType="{x:Type controls:RoundedButton}">
+                    <Style BasedOn="{StaticResource DefaultRoundedButtonStyle}"
+                           TargetType="{x:Type controls:RoundedButton}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsNextVisible}" Value="False">
                                 <Setter Property="CornerRadius" Value="20 20 20 20"/>
@@ -124,9 +94,10 @@
             <controls:RoundedButton Height="40"
                                     Content="{Binding NextText}"
                                     Command="{Binding NextCommand}"
-                                    Visibility="{Binding IsNextVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{Binding IsNextVisible, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <controls:RoundedButton.Style>
-                    <Style BasedOn="{StaticResource DefaultRoundedButtonStyle}" TargetType="{x:Type controls:RoundedButton}">
+                    <Style BasedOn="{StaticResource DefaultRoundedButtonStyle}"
+                           TargetType="{x:Type controls:RoundedButton}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsBackVisible}" Value="False">
                                 <Setter Property="CornerRadius" Value="20 20 20 20"/>

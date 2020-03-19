@@ -77,6 +77,10 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
             {
                 Description = $"Swap redeem {Math.Abs(Amount).ToString(CultureInfo.InvariantCulture)} {tx.Currency.Name}";
             }
+            else if (tx.Type.HasFlag(BlockchainTransactionType.TokenApprove))
+            {
+                Description = $"Token approve";
+            }
             else if (Amount < 0) //tx.Type.HasFlag(BlockchainTransactionType.Output))
             {
                 Description = $"Sent {Math.Abs(Amount).ToString(CultureInfo.InvariantCulture)} {tx.Currency.Name}";

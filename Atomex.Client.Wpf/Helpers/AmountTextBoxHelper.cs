@@ -47,22 +47,34 @@ namespace Atomex.Client.Wpf.Helpers
                 typeof(AmountTextBoxHelper),
                 new FrameworkPropertyMetadata(0.0d, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static string GetCurrencyCode(TextBox textBox) => (string)textBox.GetValue(CurrencyCodeProperty);
-        public static void SetCurrencyCode(TextBox textBox, string value) => textBox.SetValue(CurrencyCodeProperty, value);
+        public static string GetCurrencyCode(TextBox textBox) =>
+            (string)textBox.GetValue(CurrencyCodeProperty);
+        public static void SetCurrencyCode(TextBox textBox, string value) =>
+            textBox.SetValue(CurrencyCodeProperty, value);
 
-        public static string GetAmountInBase(TextBox textBox) => (string)textBox.GetValue(AmountInBaseProperty);
-        public static void SetAmountInBase(TextBox textBox, string value) => textBox.SetValue(AmountInBaseProperty, value);
+        public static string GetAmountInBase(TextBox textBox) =>
+            (string)textBox.GetValue(AmountInBaseProperty);
+        public static void SetAmountInBase(TextBox textBox, string value) =>
+            textBox.SetValue(AmountInBaseProperty, value);
 
-        public static string GetBaseCurrencyCode(TextBox textBox) => (string)textBox.GetValue(BaseCurrencyCodeProperty);
-        public static void SetBaseCurrencyCode(TextBox textBox, string value) => textBox.SetValue(BaseCurrencyCodeProperty, value);
+        public static string GetBaseCurrencyCode(TextBox textBox) =>
+            (string)textBox.GetValue(BaseCurrencyCodeProperty);
+        public static void SetBaseCurrencyCode(TextBox textBox, string value) =>
+            textBox.SetValue(BaseCurrencyCodeProperty, value);
 
-        public static double GetCurrencyCodeFontSize(TextBox textBox) => (double)textBox.GetValue(CurrencyCodeFontSizeProperty);
-        public static void SetCurrencyCodeFontSize(TextBox textBox, double value) => textBox.SetValue(CurrencyCodeFontSizeProperty, value);
+        public static double GetCurrencyCodeFontSize(TextBox textBox) =>
+            (double)textBox.GetValue(CurrencyCodeFontSizeProperty);
+        public static void SetCurrencyCodeFontSize(TextBox textBox, double value) =>
+            textBox.SetValue(CurrencyCodeFontSizeProperty, value);
 
-        public static double GetAmountInBaseFontSize(TextBox textBox) => (double)textBox.GetValue(AmountInBaseFontSizeProperty);
-        public static void SetAmountInBaseFontSize(TextBox textBox, double value) => textBox.SetValue(AmountInBaseFontSizeProperty, value);
+        public static double GetAmountInBaseFontSize(TextBox textBox) =>
+            (double)textBox.GetValue(AmountInBaseFontSizeProperty);
+        public static void SetAmountInBaseFontSize(TextBox textBox, double value) =>
+            textBox.SetValue(AmountInBaseFontSizeProperty, value);
 
-        public static double GetBaseCurrencyCodeFontSize(TextBox textBox) => (double)textBox.GetValue(BaseCurrencyCodeFontSizeProperty);
-        public static void SetBaseCurrencyCodeFontSize(TextBox textBox, double value) => textBox.SetValue(BaseCurrencyCodeFontSizeProperty, value);
+        public static double GetBaseCurrencyCodeFontSize(TextBox textBox) =>
+            (double)textBox.GetValue(BaseCurrencyCodeFontSizeProperty);
+        public static void SetBaseCurrencyCodeFontSize(TextBox textBox, double value) =>
+            textBox.SetValue(BaseCurrencyCodeFontSizeProperty, value);
     }
 }

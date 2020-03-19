@@ -47,6 +47,11 @@ namespace Atomex.Client.Wpf
         {
             base.OnStartup(e);
 
+            //Current.Resources.MergedDictionaries.Add(new ResourceDictionary()
+            //{
+            //    Source = new Uri("Themes/blue.xaml", UriKind.Relative)
+            //});
+
             // ensure there are no other instances of the app
             //if (!SingleApp.TryStart("AtomexApp"))
             //{
@@ -62,7 +67,7 @@ namespace Atomex.Client.Wpf
             Log.Information("Application startup");
 
             var currenciesProvider = new CurrenciesProvider(CurrenciesConfiguration);
-            var symbolsProvider = new SymbolsProvider(SymbolsConfiguration, currenciesProvider);
+            var symbolsProvider = new SymbolsProvider(SymbolsConfiguration);
 
             // init Atomex client app
             AtomexApp = new AtomexApp()

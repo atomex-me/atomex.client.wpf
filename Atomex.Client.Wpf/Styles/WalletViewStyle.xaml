@@ -2,42 +2,24 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
                     xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.TransactionViewModels"
-                    xmlns:subViews="clr-namespace:Atomex.Client.Wpf.Views.SubViews">
-
-    <Color x:Key="UnknownColor">#515973</Color>
-    <Color x:Key="PendingColor">#515973</Color>
-    <Color x:Key="ConfirmedColor">#4b79bb</Color>
-    <Color x:Key="UnconfirmedColor">#29456d</Color>
-    <Color x:Key="FailedColor">#e42552</Color>
-
-    <SolidColorBrush x:Key="UnknownBrush" Color="{StaticResource UnknownColor}"/>
-    <SolidColorBrush x:Key="PendingBrush" Color="{StaticResource PendingColor}"/>
-    <SolidColorBrush x:Key="ConfirmedBrush" Color="{StaticResource ConfirmedColor}"/>
-    <SolidColorBrush x:Key="UnconfirmedBrush" Color="{StaticResource UnconfirmedColor}"/>
-    <SolidColorBrush x:Key="FailedBrush" Color="{StaticResource FailedColor}"/>
-
-    <SolidColorBrush x:Key="BalanceBackgroundBrush" Color="White"/>
-    <SolidColorBrush x:Key="UsdBalanceBackgroundBrush" Color="Gray"/>
-    <SolidColorBrush x:Key="ExplorerLinkButtonForegroundBrush" Color="#6BBAFF"/>
-    <SolidColorBrush x:Key="ExplorerLinkButtonMouseOverBrush" Color="#CFE4F7"/>
+                    xmlns:views="clr-namespace:Atomex.Client.Wpf.Views">
 
     <Style x:Key="ExplorerLinkButton" TargetType="Button">
-        <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}"/>
         <Setter Property="FontSize" Value="12"/>
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <TextBlock>
-                        <ContentPresenter />
+                        <ContentPresenter/>
                     </TextBlock>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="Foreground" Value="{StaticResource ExplorerLinkButtonForegroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ExplorerLinkButtonForegroundBrush}" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Foreground" Value="{StaticResource ExplorerLinkButtonMouseOverBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ExplorerLinkButtonMouseOverBrush}" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -52,6 +34,12 @@
         <Image Width="24"
                Height="24"
                Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/received.png"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TokenApproveTemplate">
+        <Image Width="24"
+               Height="24"
+               Source="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/sent.png"/>
     </DataTemplate>
 
     <DataTemplate x:Key="SwapPaymentTemplate">
@@ -82,28 +70,34 @@
         UnknownTemplate="{StaticResource UnknownTemplate}"
         SentTemplate="{StaticResource SentTemplate}"
         ReceivedTemplate="{StaticResource ReceivedTemplate}"
+        TokenApproveTemplate="{StaticResource TokenApproveTemplate}"
         SwapPaymentTemplate="{StaticResource SwapPaymentTemplate}"
         SwapRedeemTemplate="{StaticResource SwapRedeemTemplate}"
         SwapRefundTemplate="{StaticResource SwapRefundTemplate}"/>
 
     <DataTemplate x:Key="TransactionDetailsTemplate"
                   DataType="viewModels:TransactionViewModel">
-        <subViews:TransactionDetailsView/>
+        <views:TransactionDetailsView/>
     </DataTemplate>
 
     <DataTemplate x:Key="BitcoinBasedTransactionDetailsTemplate"
                   DataType="viewModels:BitcoinBasedTransactionViewModel">
-        <subViews:TransactionDetailsView/>
+        <views:TransactionDetailsView/>
     </DataTemplate>
 
     <DataTemplate x:Key="TezosTransactionDetailsTemplate"
                   DataType="viewModels:TezosTransactionViewModel">
-        <subViews:TezosTransactionDetailsView/>
+        <views:TezosTransactionDetailsView/>
     </DataTemplate>
 
     <DataTemplate x:Key="EthereumTransactionDetailsTemplate"
                   DataType="viewModels:EthereumTransactionViewModel">
-        <subViews:EthereumTransactionDetailsView/>
+        <views:EthereumTransactionDetailsView/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="EthereumERC20TransactionDetailsTemplate"
+                  DataType="viewModels:EthereumERC20TransactionViewModel">
+        <views:EthereumTransactionDetailsView/>
     </DataTemplate>
 
     <controls:TransactionDataTemplateByCurrencySelector x:Key="TransactionDetailsDataTemplateSelector">
@@ -114,6 +108,7 @@
                     UnknownTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
                     SentTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
                     ReceivedTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
                     SwapPaymentTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
                     SwapRedeemTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
                     SwapRefundTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"/>
@@ -122,6 +117,7 @@
                     UnknownTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
                     SentTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
                     ReceivedTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
                     SwapPaymentTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
                     SwapRedeemTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"
                     SwapRefundTemplate="{StaticResource BitcoinBasedTransactionDetailsTemplate}"/>
@@ -130,6 +126,7 @@
                     UnknownTemplate="{StaticResource EthereumTransactionDetailsTemplate}"
                     SentTemplate="{StaticResource EthereumTransactionDetailsTemplate}"
                     ReceivedTemplate="{StaticResource EthereumTransactionDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource EthereumTransactionDetailsTemplate}"
                     SwapPaymentTemplate="{StaticResource EthereumTransactionDetailsTemplate}"
                     SwapRedeemTemplate="{StaticResource EthereumTransactionDetailsTemplate}"
                     SwapRefundTemplate="{StaticResource EthereumTransactionDetailsTemplate}"/>
@@ -138,6 +135,34 @@
                     UnknownTemplate="{StaticResource TezosTransactionDetailsTemplate}"
                     SentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
                     ReceivedTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SwapPaymentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SwapRedeemTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SwapRefundTemplate="{StaticResource TezosTransactionDetailsTemplate}"/>
+                <controls:TransactionDataTemplateSelector
+                    Currency="USDT"
+                    UnknownTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SentTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    ReceivedTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SwapPaymentTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SwapRedeemTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SwapRefundTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"/>
+                <controls:TransactionDataTemplateSelector
+                    Currency="TZBTC"
+                    UnknownTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    ReceivedTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SwapPaymentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SwapRedeemTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SwapRefundTemplate="{StaticResource TezosTransactionDetailsTemplate}"/>
+                <controls:TransactionDataTemplateSelector
+                    Currency="FA12"
+                    UnknownTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    ReceivedTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource TezosTransactionDetailsTemplate}"
                     SwapPaymentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
                     SwapRedeemTemplate="{StaticResource TezosTransactionDetailsTemplate}"
                     SwapRefundTemplate="{StaticResource TezosTransactionDetailsTemplate}"/>
@@ -147,32 +172,67 @@
     </controls:TransactionDataTemplateByCurrencySelector>
 
     <DataTemplate x:Key="UnknownStateTemplate" DataType="viewModels:TransactionViewModel">
-        <Border Background="{StaticResource UnknownBrush}" CornerRadius="5" Margin="3 0 3 0" HorizontalAlignment="Center">
-            <TextBlock Foreground="White" Text="{Binding State}" FontSize="11" Margin="5 3 5 3" HorizontalAlignment="Center"/>
+        <Border Background="{DynamicResource UnknownBrush}"
+                CornerRadius="5"
+                Margin="3 0 3 0"
+                HorizontalAlignment="Center">
+            <TextBlock Foreground="White"
+                       Text="{Binding State}"
+                       FontSize="11"
+                       Margin="5"
+                       HorizontalAlignment="Center"/>
         </Border>
     </DataTemplate>
 
     <DataTemplate x:Key="PendingStateTemplate" DataType="viewModels:TransactionViewModel">
-        <Border Background="{StaticResource PendingBrush}" CornerRadius="5" Margin="3 0 3 0" HorizontalAlignment="Center">
-            <TextBlock Foreground="White" Text="{Binding State}" FontSize="11" Margin="5 3 5 3" HorizontalAlignment="Center"/>
+        <Border Background="{DynamicResource PendingBrush}"
+                CornerRadius="5"
+                Margin="3 0 3 0"
+                HorizontalAlignment="Center">
+            <TextBlock Foreground="White"
+                       Text="{Binding State}"
+                       FontSize="11"
+                       Margin="5"
+                       HorizontalAlignment="Center"/>
         </Border>
     </DataTemplate>
 
     <DataTemplate x:Key="ConfirmedStateTemplate" DataType="viewModels:TransactionViewModel">
-        <Border Background="{StaticResource ConfirmedBrush}" CornerRadius="5" Margin="3 0 3 0" HorizontalAlignment="Center">
-            <TextBlock Foreground="White" Text="{Binding State}" FontSize="11" Margin="5 3 5 3" HorizontalAlignment="Center"/>
+        <Border Background="{DynamicResource ConfirmedBrush}"
+                CornerRadius="5"
+                Margin="3 0 3 0"
+                HorizontalAlignment="Center">
+            <TextBlock Foreground="White"
+                       Text="{Binding State}"
+                       FontSize="11"
+                       Margin="5"
+                       HorizontalAlignment="Center"/>
         </Border>
     </DataTemplate>
 
     <DataTemplate x:Key="UnconfirmedStateTemplate" DataType="viewModels:TransactionViewModel">
-        <Border Background="{StaticResource UnconfirmedBrush}" CornerRadius="5" Margin="3 0 3 0" HorizontalAlignment="Center">
-            <TextBlock Foreground="White" Text="{Binding State}" FontSize="11" Margin="5 3 5 3" HorizontalAlignment="Center"/>
+        <Border Background="{DynamicResource UnconfirmedBrush}"
+                CornerRadius="5"
+                Margin="3 0 3 0"
+                HorizontalAlignment="Center">
+            <TextBlock Foreground="White"
+                       Text="{Binding State}"
+                       FontSize="11"
+                       Margin="5"
+                       HorizontalAlignment="Center"/>
         </Border>
     </DataTemplate>
 
     <DataTemplate x:Key="FailedStateTemplate" DataType="viewModels:TransactionViewModel">
-        <Border Background="{StaticResource FailedBrush}" CornerRadius="5" Margin="3 0 3 0" HorizontalAlignment="Center">
-            <TextBlock Foreground="White" Text="{Binding State}" FontSize="11" Margin="5 3 5 3" HorizontalAlignment="Center"/>
+        <Border Background="{DynamicResource FailedBrush}"
+                CornerRadius="5"
+                Margin="3 0 3 0"
+                HorizontalAlignment="Center">
+            <TextBlock Foreground="White"
+                       Text="{Binding State}"
+                       FontSize="11"
+                       Margin="5"
+                       HorizontalAlignment="Center"/>
         </Border>
     </DataTemplate>
 
@@ -186,7 +246,7 @@
     <Style x:Key="WalletMenuButton"
            BasedOn="{StaticResource DefaultRoundedButtonStyle}"
            TargetType="{x:Type controls:RoundedButton}">
-        <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Width" Value="90"/>
         <Setter Property="Height" Value="30"/>

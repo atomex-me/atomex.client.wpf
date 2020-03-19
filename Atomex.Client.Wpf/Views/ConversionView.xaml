@@ -3,56 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:helpers="clr-namespace:Atomex.Client.Wpf.Helpers"
              xmlns:behaviors="clr-namespace:Atomex.Client.Wpf.Behaviors"
              xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
              xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
-             xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
              UseLayoutRounding="True"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="800"
+             d:DesignHeight="800"
+             d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=viewModels:ConversionViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="ArrowBrush" Color="#a5a5a5"/>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed"/>
-        <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" FalseEquivalent="Collapsed" OppositeBoolValue="True"/>
-        <Style x:Key="ConvertButtonStyle" TargetType="{x:Type controls:RoundedButton}" BasedOn="{StaticResource DefaultRoundedButtonStyle}">
-            <Setter Property="Background" Value="#214174"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type controls:RoundedButton}">
-                        <Border Name="border"
-                                BorderThickness="0"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                Background="{TemplateBinding Background}"
-                                Padding="{TemplateBinding Padding}">
-                            <Grid>
-                                <ContentPresenter Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
-                                                  HorizontalAlignment="Center" VerticalAlignment="Center">
-
-                                </ContentPresenter>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsDefaulted" Value="True">
-                                <Setter Property="Background" Value="{StaticResource RoundedButtonBackgroundBrush}"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{StaticResource RoundedButtonMouseOverBrush}"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="{StaticResource RoundedButtonPressedBrush}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="{StaticResource RoundedButtonDisabledBrush}"/>
-                                <Setter Property="Opacity" Value="0.5"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+        <Style x:Key="HeaderFieldTextBlockStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="0 0 10 0"/>
+            <Setter Property="Foreground" Value="{DynamicResource DefaultForegroundBrush}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource DefaultMediumFontFamily}"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
         </Style>
     </UserControl.Resources>
 
@@ -78,14 +46,9 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="From:"
-                           Margin="0 0 10 0"
-                           Foreground="{StaticResource DefaultForegroundBrush}"
-                           FontFamily="{StaticResource RobotoMedium}"
-                           FontSize="15"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Right"
                            Grid.Column="0"
-                           Grid.Row="0"/>
+                           Grid.Row="0"
+                           Style="{DynamicResource HeaderFieldTextBlockStyle}"/>
                 <ComboBox Width="300"
                           MinHeight="68"
                           Margin="0 5 0 5"
@@ -98,14 +61,9 @@
                           Grid.Row="0"/>
 
                 <TextBlock Text="To:"
-                           Margin="0 0 10 0"
-                           Foreground="{StaticResource DefaultForegroundBrush}"
-                           FontFamily="{StaticResource RobotoMedium}"
-                           FontSize="15"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Right"
                            Grid.Column="0"
-                           Grid.Row="1"/>
+                           Grid.Row="1"
+                           Style="{DynamicResource HeaderFieldTextBlockStyle}"/>
                 <ComboBox Width="300"
                           MinHeight="68"
                           Margin="0 5 0 5"
@@ -118,20 +76,15 @@
                           Grid.Row="1"/>
 
                 <TextBlock Text="Amount:"
-                           Margin="0 0 10 0"
-                           Foreground="{StaticResource DefaultForegroundBrush}"
-                           FontFamily="{StaticResource RobotoMedium}"
-                           FontSize="15"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Right"
                            Grid.Column="0"
-                           Grid.Row="2"/>
+                           Grid.Row="2"
+                           Style="{DynamicResource HeaderFieldTextBlockStyle}"/>
                 <TextBox Width="300"
                          Height="40"
                          Margin="0 5 0 5"
                          FontSize="18"
-                         Background="{StaticResource DefaultSubstrateBrush}"
-                         Foreground="{StaticResource DefaultForegroundBrush}"
+                         Background="{DynamicResource DefaultSubstrateBrush}"
+                         Foreground="{DynamicResource DefaultForegroundBrush}"
                          helpers:TextBoxHelper.CornerRadius="20"
                          helpers:AmountTextBoxHelper.CurrencyCode="{Binding CurrencyCode}"
                          helpers:AmountTextBoxHelper.BaseCurrencyCode="{Binding BaseCurrencyCode}"
@@ -139,7 +92,8 @@
                          Grid.Column="1"
                          Grid.Row="2">
                     <TextBox.Text>
-                        <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                      UpdateSourceTrigger="PropertyChanged">
                             <Binding Path="Amount" Mode="TwoWay"/>
                             <Binding Path="CurrencyFormat" Mode="OneWay"/>
                         </MultiBinding>
@@ -170,20 +124,22 @@
 
                     <controls:RoundedButton.Content>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="AliceBlue"
+                            <TextBlock Foreground="{DynamicResource MarketVolumeForegroundBrush}"
                                        FontSize="11"
-                                       Text="Available:  "/>
-                            <TextBlock Foreground="AliceBlue"
+                                       Text="Available:  "
+                                       FontFamily="{DynamicResource DefaultButtonFontFamily}"/>
+                            <TextBlock Foreground="{DynamicResource MarketVolumeForegroundBrush}"
                                        FontSize="11"
-                                       FontFamily="{StaticResource RobotoMedium}">
+                                       FontFamily="{DynamicResource DefaultButtonFontFamily}">
                                 <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                  UpdateSourceTrigger="PropertyChanged">
                                         <Binding Path="EstimatedMaxAmount" Mode="OneWay"/>
                                         <Binding Path="CurrencyFormat" Mode="OneWay"/>
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
-                            <TextBlock Foreground="AliceBlue"
+                            <TextBlock Foreground="{DynamicResource MarketVolumeForegroundBrush}"
                                        FontSize="9"
                                        Margin="3 0 0 1"
                                        VerticalAlignment="Bottom"
@@ -195,7 +151,7 @@
 
             <Border Height="Auto"
                     Margin="10 5 10 5"
-                    Background="{StaticResource DefaultSubstrateBrush}">
+                    Background="{DynamicResource DefaultSubstrateBrush}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -218,21 +174,22 @@
                                 Margin="0 0 0 0"
                                 Grid.Column="0"
                                 Grid.Row="1">
-                        <TextBlock Foreground="{StaticResource DefaultForegroundBrush}"
+                        <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
                                    FontSize="18"
-                                   FontFamily="{StaticResource Roboto}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    VerticalAlignment="Bottom">
                             <TextBlock.Text>
-                                <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                              UpdateSourceTrigger="PropertyChanged">
                                     <Binding Path="Amount" Mode="TwoWay"/>
                                     <Binding Path="CurrencyFormat" Mode="OneWay"/>
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
                         <TextBlock Margin="4 0 0 2"
-                                   Foreground="{StaticResource DefaultForegroundBrush}"
+                                   Foreground="{DynamicResource DefaultForegroundBrush}"
                                    Text="{Binding CurrencyCode}"
-                                   FontFamily="{StaticResource Roboto}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    VerticalAlignment="Bottom"/>
                     </StackPanel>
 
@@ -241,21 +198,22 @@
                                 Margin="0 0 0 0"
                                 Grid.Column="0"
                                 Grid.Row="2">
-                        <TextBlock Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                        <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
                                    FontSize="18"
-                                   FontFamily="{StaticResource Roboto}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    VerticalAlignment="Top">
                             <TextBlock.Text>
-                                <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                              UpdateSourceTrigger="PropertyChanged">
                                     <Binding Path="AmountInBase" Mode="TwoWay"/>
                                     <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
                         <TextBlock Margin="4 6 0 0"
-                                   Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                                   Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
                                    Text="{Binding BaseCurrencyCode}"
-                                   FontFamily="{StaticResource Roboto}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    VerticalAlignment="Top"/>
                     </StackPanel>
 
@@ -266,16 +224,17 @@
                            Grid.Row="1"
                            Grid.RowSpan="2"/>
 
-                    <iconPacks:PackIconFontAwesome Margin="0 0 0 0"
-                                                   Kind="ArrowAltCircleRightRegular"
-                                                   Width="24"
-                                                   Height="24"
-                                                   VerticalAlignment="Center"
-                                                   HorizontalAlignment="Center"
-                                                   Foreground="LightGray"
-                                                   Grid.Column="2"
-                                                   Grid.Row="1"
-                                                   Grid.RowSpan="2"/>
+                    <Path x:Name="icon"
+                          Stretch="Uniform"
+                          SnapsToDevicePixels="False"
+                          UseLayoutRounding="False"
+                          Width="24"
+                          Height="24"
+                          Fill="{DynamicResource ConversionArrowBrush}"
+                          Data="{DynamicResource FontAwesome.ArrowAltCircleRightRegular}"
+                          Grid.Column="2"
+                          Grid.Row="1"
+                          Grid.RowSpan="2"/>
 
                     <Image Source="{Binding ToCurrencyViewModel.LargeIconPath}"
                            Width="90"
@@ -289,30 +248,31 @@
                                 Margin="0 0 0 0"
                                 Grid.Column="4"
                                 Grid.Row="1">
-                        <TextBlock Foreground="#e25b5b"
+                        <TextBlock Foreground="{DynamicResource NoLiquidityForegroundBrush}"
                                    FontSize="18"
-                                   FontFamily="{StaticResource Roboto}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    VerticalAlignment="Bottom"
                                    Text="No liquidity"
-                                   Visibility="{Binding IsNoLiquidity, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <TextBlock Foreground="{StaticResource DefaultForegroundBrush}"
+                                   Visibility="{Binding IsNoLiquidity, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                        <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
                                    FontSize="18"
-                                   FontFamily="{StaticResource Roboto}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    VerticalAlignment="Bottom"
-                                   Visibility="{Binding IsNoLiquidity, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                   Visibility="{Binding IsNoLiquidity, Converter={StaticResource InverseBoolToVisibilityCollapsedConverter}}">
                             <TextBlock.Text>
-                                <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                              UpdateSourceTrigger="PropertyChanged">
                                     <Binding Path="TargetAmount" Mode="TwoWay"/>
                                     <Binding Path="TargetCurrencyFormat" Mode="OneWay"/>
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
                         <TextBlock Margin="4 0 0 2"
-                                   Foreground="{StaticResource DefaultForegroundBrush}"
+                                   Foreground="{DynamicResource DefaultForegroundBrush}"
                                    Text="{Binding TargetCurrencyCode}"
-                                   FontFamily="{StaticResource Roboto}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    VerticalAlignment="Bottom"
-                                   Visibility="{Binding IsNoLiquidity, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                                   Visibility="{Binding IsNoLiquidity, Converter={StaticResource InverseBoolToVisibilityCollapsedConverter}}"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal"
@@ -320,21 +280,22 @@
                                 Margin="0 0 0 0"
                                 Grid.Column="4"
                                 Grid.Row="2">
-                        <TextBlock Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                        <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
                                    FontSize="18"
-                                   FontFamily="{StaticResource Roboto}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    VerticalAlignment="Top">
                             <TextBlock.Text>
-                                <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                              UpdateSourceTrigger="PropertyChanged">
                                     <Binding Path="TargetAmountInBase" Mode="TwoWay"/>
                                     <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
                         <TextBlock Margin="4 6 0 0"
-                                   Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                                   Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
                                    Text="{Binding BaseCurrencyCode}"
-                                   FontFamily="{StaticResource Roboto}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    VerticalAlignment="Top"/>
                     </StackPanel>
 
@@ -344,7 +305,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Padding="10"
-                            Background="{StaticResource DefaultSubstrateBrush}"
+                            Background="{DynamicResource DefaultSubstrateBrush}"
                             CornerRadius="10">
 
                     <Grid VerticalAlignment="Center">
@@ -360,20 +321,21 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Text="Estimated price:"
-                                   Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                                   Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Center"
-                                   FontFamily="{StaticResource Roboto}"
                                    Grid.Column="0"
                                    Grid.Row="0"/>
-                        <TextBlock Foreground="{StaticResource DefaultForegroundBrush}"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"
-                                   FontFamily="{StaticResource Roboto}"
-                                   Grid.Column="2"
-                                   Grid.Row="0">
+                            <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
+                                       FontFamily="{DynamicResource DefaultFontFamily}"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Grid.Column="2"
+                                       Grid.Row="0">
                             <TextBlock.Text>
-                                <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                              UpdateSourceTrigger="PropertyChanged">
                                     <Binding Path="EstimatedPrice" Mode="TwoWay"/>
                                     <Binding Path="PriceFormat" Mode="OneWay"/>
                                 </MultiBinding>
@@ -381,10 +343,10 @@
                         </TextBlock>
 
                         <TextBlock Text="Estimated payment fee:"
-                                   Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                                   Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Center"
-                                   FontFamily="{StaticResource Roboto}"
                                    Grid.Column="0"
                                    Grid.Row="1"/>
                         <StackPanel Orientation="Horizontal"
@@ -392,26 +354,30 @@
                                     Grid.Row="1"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center">
-                            <TextBlock Foreground="{StaticResource DefaultForegroundBrush}"
-                                       FontFamily="{StaticResource Roboto}">
+                                <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
+                                           FontFamily="{DynamicResource DefaultFontFamily}">
                                 <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                  UpdateSourceTrigger="PropertyChanged">
                                         <Binding Path="EstimatedPaymentFee" Mode="TwoWay"/>
-                                        <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                                        <Binding Path="FromFeeCurrencyFormat" Mode="OneWay"/>
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
-                            <TextBlock Text="{Binding CurrencyCode}"
+                            
+                            <TextBlock Text="{Binding FromFeeCurrencyCode}"
                                        Margin="3 0 0 1"
                                        FontSize="9"
                                        VerticalAlignment="Bottom"
-                                       Foreground="{StaticResource DefaultForegroundBrush}"
-                                       FontFamily="{StaticResource Roboto}"/>
+                                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                                       FontFamily="{DynamicResource DefaultFontFamily}"/>
+
                             <TextBlock Margin="3 0 0 0"
-                                   Foreground="{StaticResource AmountInBaseForegroundBrush}"
-                                   FontFamily="{StaticResource Roboto}">
+                                   Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}">
                                 <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                  UpdateSourceTrigger="PropertyChanged">
                                         <Binding Path="EstimatedPaymentFeeInBase" Mode="TwoWay"/>
                                         <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                                     </MultiBinding>
@@ -420,10 +386,10 @@
                         </StackPanel>
 
                         <TextBlock Text="Estimated redeem fee:"
-                                   Foreground="{StaticResource AmountInBaseForegroundBrush}"
+                                   Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                   FontFamily="{DynamicResource DefaultFontFamily}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Center"
-                                   FontFamily="{StaticResource Roboto}"
                                    Grid.Column="0"
                                    Grid.Row="2"/>
                         <StackPanel Orientation="Horizontal"
@@ -431,26 +397,28 @@
                                     Grid.Row="2"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center">
-                            <TextBlock Foreground="{StaticResource DefaultForegroundBrush}"
-                                       FontFamily="{StaticResource Roboto}">
+                                <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
+                                           FontFamily="{DynamicResource DefaultFontFamily}">
                                 <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                  UpdateSourceTrigger="PropertyChanged">
                                         <Binding Path="EstimatedRedeemFee" Mode="TwoWay"/>
-                                        <Binding Path="TargetCurrencyFormat" Mode="OneWay"/>
+                                        <Binding Path="TargetFeeCurrencyFormat" Mode="OneWay"/>
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
-                            <TextBlock Text="{Binding TargetCurrencyCode}"
+                            <TextBlock Text="{Binding TargetFeeCurrencyCode}"
                                        Margin="3 0 0 1"
                                        FontSize="9"
                                        VerticalAlignment="Bottom"
-                                       Foreground="{StaticResource DefaultForegroundBrush}"
-                                       FontFamily="{StaticResource Roboto}"/>
+                                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                                       FontFamily="{DynamicResource DefaultFontFamily}"/>
                                 <TextBlock Margin="3 0 0 0"
-                                       Foreground="{StaticResource AmountInBaseForegroundBrush}"
-                                       FontFamily="{StaticResource Roboto}">
+                                       Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                       FontFamily="{DynamicResource DefaultFontFamily}">
                                 <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}" UpdateSourceTrigger="PropertyChanged">
+                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                  UpdateSourceTrigger="PropertyChanged">
                                         <Binding Path="EstimatedRedeemFeeInBase" Mode="TwoWay"/>
                                         <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                                     </MultiBinding>
@@ -458,7 +426,7 @@
                             </TextBlock>
                         </StackPanel>
                     </Grid>
-                        </Border>
+                    </Border>
                 </Grid>
             </Border>
 
@@ -488,9 +456,9 @@
                         <DataTemplate DataType="{x:Type viewModels:SwapViewModel}">
                             <StackPanel Orientation="Horizontal" Margin="5 0 5 0">
                                 <TextBlock Text="Convert "
-                                           FontFamily="{StaticResource Roboto}"
+                                           FontFamily="{DynamicResource DefaultFontFamily}"
                                            FontSize="13"/>
-                                <TextBlock FontFamily="{StaticResource RobotoMedium}"
+                                <TextBlock FontFamily="{DynamicResource DefaultMediumFontFamily}"
                                            FontSize="13"
                                            Foreground="{Binding FromBrush}">
                                     <TextBlock.Text>
@@ -501,15 +469,15 @@
                                     </TextBlock.Text>
                                 </TextBlock>
                                 <TextBlock Text="{Binding FromCurrencyCode}"
-                                           FontFamily="{StaticResource RobotoMedium}"
+                                           FontFamily="{DynamicResource DefaultMediumFontFamily}"
                                            FontSize="9"
                                            Foreground="{Binding FromBrush}"
                                            VerticalAlignment="Bottom"
                                            Margin="3 0 0 2"/>
                                 <TextBlock Text=" to "
-                                           FontFamily="{StaticResource Roboto}"
+                                           FontFamily="{DynamicResource DefaultFontFamily}"
                                            FontSize="13"/>
-                                <TextBlock FontFamily="{StaticResource RobotoMedium}"
+                                <TextBlock FontFamily="{DynamicResource DefaultMediumFontFamily}"
                                            FontSize="13"
                                            Foreground="{Binding ToBrush}">
                                     <TextBlock.Text>
@@ -520,7 +488,7 @@
                                     </TextBlock.Text>
                                 </TextBlock>
                                 <TextBlock Text="{Binding ToCurrencyCode}"
-                                           FontFamily="{StaticResource RobotoMedium}"
+                                           FontFamily="{DynamicResource DefaultMediumFontFamily}"
                                            FontSize="9"
                                            Foreground="{Binding ToBrush}"
                                            VerticalAlignment="Bottom"
@@ -529,8 +497,10 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="State" CellTemplateSelector="{StaticResource SwapStateDataTemplateSelector}"/>
-                <DataGridTextColumn Header="Time" Binding="{Binding LocalTime, StringFormat=dd MMM yyyy\, HH:mm}"/>
+                <DataGridTemplateColumn Header="State"
+                                        CellTemplateSelector="{StaticResource SwapStateDataTemplateSelector}"/>
+                <DataGridTextColumn Header="Time"
+                                    Binding="{Binding LocalTime, StringFormat=dd MMM yyyy\, HH:mm}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

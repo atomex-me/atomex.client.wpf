@@ -10,8 +10,6 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Atomex.Blockchain;
 using Atomex.Blockchain.BitcoinBased;
-using Atomex.Blockchain.Tezos;
-using Atomex.Blockchain.Tezos.Internal;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
@@ -65,7 +63,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         public bool IsSelected
         {
             get => _isSelected;
-            set {
+            set
+            {
                 _isSelected = value;
                 OnPropertyChanged(nameof(IsSelected));
                 OnPropertyChanged(nameof(Background));
@@ -119,7 +118,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         {
             try
             {
-                if (Currency.Name == args.Currency.Name)
+                if (Currency.Name == args.Currency)
                 {
                     // update transactions list
                     await LoadTransactionsAsync();
@@ -183,8 +182,13 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             Cancellation.Cancel();
         }));
 
-        private void OnSendClick() =>
-            DialogViewer.ShowDialog(Dialogs.Send, new SendViewModel(App, DialogViewer, Currency), defaultPageId: Pages.Send);
+        private void OnSendClick()
+        {
+            var sendViewModel = SendViewModelCreator.CreateViewModel(App, DialogViewer, Currency);
+            var sendPageId = SendViewModelCreator.GetSendPageId(Currency);
+
+            DialogViewer.ShowDialog(Dialogs.Send, sendViewModel, defaultPageId: sendPageId);
+        }
 
         private void OnReceiveClick() =>
             DialogViewer.ShowDialog(Dialogs.Receive, new ReceiveViewModel(App, Currency));
@@ -240,8 +244,10 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             try
             {
+                var txId = $"{args.Transaction.Id}:{args.Transaction.Currency.Name}";
+
                 var isRemoved = await App.Account
-                    .RemoveTransactionAsync(args.Transaction.Id);
+                    .RemoveTransactionAsync(txId);
 
                 if (isRemoved)
                     await LoadTransactionsAsync();
@@ -264,7 +270,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             var transactions = new List<TransactionViewModel>
             {
-                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<Bitcoin>(), Transaction.Create(Network.TestNet)))
+                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<Bitcoin>("BTC"), Transaction.Create(Network.TestNet)))
                 {
                     Description  = "Sent 0.00124 BTC",
                     Amount       = -0.00124m,
@@ -272,7 +278,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     CurrencyCode = CurrencyViewModel.CurrencyCode,
                     Time         = DateTime.Now,
                 },
-                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<Bitcoin>(), Transaction.Create(Network.TestNet)))
+                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<Bitcoin>("BTC"), Transaction.Create(Network.TestNet)))
                 {
                     Description  = "Received 1.00666 BTC",
                     Amount       = 1.00666m,

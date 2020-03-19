@@ -39,6 +39,12 @@ namespace Atomex.Client.Wpf.ViewModels
         public string CurrencyCode { get; set; }
         public string TargetCurrencyCode { get; set; }
         public string BaseCurrencyCode { get; set; }
+
+        public string FromFeeCurrencyCode { get; set; }
+        public string FromFeeCurrencyFormat { get; set; }
+        public string TargetFeeCurrencyCode { get; set; }
+        public string TargetFeeCurrencyFormat { get; set; }
+
         public decimal EstimatedPrice { get; set; }
         public decimal EstimatedOrderPrice { get; set; }
         public decimal EstimatedPaymentFee { get; set; }
@@ -98,7 +104,6 @@ namespace Atomex.Client.Wpf.ViewModels
                     return;
                 }
 
-
                 DialogViewer.PushPage(Dialogs.Convert, Pages.Message, MessageViewModel.Success(
                     text: Resources.SvOrderMatched,
                     nextAction: () => {
@@ -142,6 +147,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     return new Error(Errors.SwapError, Resources.CvInsufficientFunds);
 
                 var symbol     = App.Account.Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
+                var baseCurrency = App.Account.Currencies.GetByName(symbol.Base);
                 var side       = symbol.OrderSideForBuyCurrency(ToCurrency);
                 var terminal   = App.Terminal;
                 var price      = EstimatedPrice;
@@ -150,7 +156,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 if (price == 0)
                     return new Error(Errors.NoLiquidity, Resources.CvNoLiquidity);
 
-                var qty = AmountHelper.AmountToQty(side, Amount, price, symbol.Base.DigitsMultiplier);
+                var qty = AmountHelper.AmountToQty(side, Amount, price, baseCurrency.DigitsMultiplier);
 
                 if (qty < symbol.MinimumQty)
                 {
@@ -162,7 +168,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 var order = new Order
                 {
-                    Symbol = symbol,
+                    Symbol = symbol.Name,
                     TimeStamp = DateTime.UtcNow,
                     Price = orderPrice,
                     Qty = qty,

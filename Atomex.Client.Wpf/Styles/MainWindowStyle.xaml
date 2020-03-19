@@ -2,25 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls">
 
-    <Color x:Key="MainBackgroundColor1">#0f1a28</Color>
-    <Color x:Key="MainBackgroundColor2">#1a2e4c</Color>
-    <Color x:Key="MainBorderColor">Azure</Color>
-    <!--<Color x:Key="MainOverlayColor">Transparent</Color>-->
-    <!--<Color x:Key="MainOverlayColor">#30000000</Color>-->
-    <Color x:Key="MainOverlayColor">#40000000</Color>
-
-    <SolidColorBrush x:Key="MainWindowTitleBrush" Color="{StaticResource MainBackgroundColor1}"/>
-    <SolidColorBrush x:Key="MainNoActiveWindowTitleBrush" Color="{StaticResource MainBackgroundColor1}"/>
-    <SolidColorBrush x:Key="MainBorderBrush" Color="{StaticResource MainBorderColor}"/>
-    <SolidColorBrush x:Key="MainOverlayBrush" Color="{StaticResource MainOverlayColor}"/>
-    <SolidColorBrush x:Key="StatusBarConnectedForeground" Color="AliceBlue"/>
-    <SolidColorBrush x:Key="StatusBarDisconnectedForeground" Color="DarkGray"/>
-
-    <LinearGradientBrush x:Key="MainBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Offset="0" Color="{StaticResource MainBackgroundColor1}"/>
-        <GradientStop Offset="1" Color="{StaticResource MainBackgroundColor2}"/>
-    </LinearGradientBrush>
-
     <Storyboard x:Key="MainWindowOverlayFastSemiFadeIn"
                 BeginTime="0:0:0"
                 AccelerationRatio="0.5"
@@ -28,6 +9,7 @@
                 Storyboard.TargetProperty="Opacity">
         <DoubleAnimation To=".7" />
     </Storyboard>
+
     <Storyboard x:Key="MainWindowOverlayFastSemiFadeOut"
                 BeginTime="0:0:0"
                 AccelerationRatio="0.5"
@@ -37,11 +19,11 @@
     </Storyboard>
 
     <Style x:Key="MainWindowStyle" TargetType="{x:Type mah:MetroWindow}">
-        <Setter Property="Background" Value="{StaticResource MainBackgroundBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource MainBorderBrush}"/>
-        <Setter Property="WindowTitleBrush" Value="{StaticResource MainWindowTitleBrush}"/>
-        <Setter Property="NonActiveWindowTitleBrush" Value="{StaticResource MainNoActiveWindowTitleBrush}"/>
-        <Setter Property="OverlayBrush" Value="{StaticResource MainOverlayBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource MainBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderBrush}"/>
+        <Setter Property="WindowTitleBrush" Value="{DynamicResource MainWindowTitleBrush}"/>
+        <Setter Property="NonActiveWindowTitleBrush" Value="{DynamicResource MainNoActiveWindowTitleBrush}"/>
+        <Setter Property="OverlayBrush" Value="{DynamicResource MainOverlayBrush}"/>
         <Setter Property="OverlayFadeIn" Value="{StaticResource MainWindowOverlayFastSemiFadeIn}"/>
         <Setter Property="OverlayFadeOut" Value="{StaticResource MainWindowOverlayFastSemiFadeOut}"/>
         <Setter Property="ShowDialogsOverTitleBar" Value="False"/>
@@ -50,7 +32,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <TextBlock Text="{TemplateBinding Content}"
-                               FontFamily="{StaticResource Comfortaa}"
+                               FontFamily="{DynamicResource MainTitleFontFamily}"
                                FontSize="15"
                                VerticalAlignment="Center"
                                Margin="3 0 0 0"/>

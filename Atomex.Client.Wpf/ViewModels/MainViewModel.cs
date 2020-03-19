@@ -29,7 +29,6 @@ namespace Atomex.Client.Wpf.ViewModels
         public PortfolioViewModel PortfolioViewModel { get; set; }
         public WalletsViewModel WalletsViewModel { get; set; }
         public ConversionViewModel ConversionViewModel { get; set; }
-        public ExchangeViewModel ExchangeViewModel { get; set; }
         public SettingsViewModel SettingsViewModel { get; set; }
 
         private int _selectedMenuIndex;
@@ -175,7 +174,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void OnTerminalServiceStateChangedEventHandler(object sender, TerminalServiceEventArgs args)
         {
-            if (!(sender is ITerminal terminal))
+            if (!(sender is IAtomexClient terminal))
                 return;       
 
             IsExchangeConnected = terminal.IsServiceConnected(TerminalService.Exchange);

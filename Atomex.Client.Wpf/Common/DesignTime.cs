@@ -15,16 +15,12 @@ namespace Atomex.Client.Wpf.Common
             .FirstOrDefault(a => a.GetName().Name == "Atomex.Client.Core");
 
         private static readonly IConfiguration CurrenciesConfiguration = new ConfigurationBuilder()
-            .AddEmbeddedJsonFile(
-                assembly: CoreAssembly,
-                name: "currencies.json")
+            .AddEmbeddedJsonFile(CoreAssembly, "currencies.json")
             .Build()
             .GetSection(Network.TestNet.ToString());
 
         private static readonly IConfiguration SymbolsConfiguration = new ConfigurationBuilder()
-            .AddEmbeddedJsonFile(
-                assembly: CoreAssembly,
-                name: "symbols.json")
+            .AddEmbeddedJsonFile(CoreAssembly, "symbols.json")
             .Build()
             .GetSection(Network.TestNet.ToString());
 
@@ -32,6 +28,6 @@ namespace Atomex.Client.Wpf.Common
             = new Currencies(CurrenciesConfiguration);
 
         public static readonly ISymbols Symbols 
-            = new Symbols(SymbolsConfiguration, Currencies);
+            = new Symbols(SymbolsConfiguration);
     }
 }

@@ -17,36 +17,36 @@
                     Margin="10 30 10 20"
                     HorizontalAlignment="Center">
             <TextBlock Text="Step "
-                       Foreground="{StaticResource DefaultForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="25"/>
             <TextBlock Text="{Binding Step}"
-                       Foreground="{StaticResource DefaultForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="25"/>
             <TextBlock Text=": Mnemonic phrase"
-                       Foreground="{StaticResource DefaultForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="25"/>
         </StackPanel>
 
         <TextBlock Text="Mnemonic phrase is used to restore your wallet if the data on your device has been lost. Please, write it down and keep it in safe place."
-                   Foreground="{StaticResource DefaultForegroundBrush}"
-                   FontFamily="{StaticResource RobotoLight}"
+                   Foreground="{DynamicResource DefaultForegroundBrush}"
+                   FontFamily="{DynamicResource DefaultLightFontFamily}"
                    FontSize="15"
                    Margin="40 0 40 20"
                    TextWrapping="Wrap"
                    HorizontalAlignment="Center"/>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Border Width="90"
+            <Border Width="120"
                     Height="40"
-                    Background="{StaticResource DefaultBackgroundBrush}"
+                    Background="{DynamicResource DefaultBackgroundBrush}"
                     CornerRadius="20 0 0 20">
-                <TextBlock Text="Language:"
+                <TextBlock Text="Phrase language:"
                            Margin="0 0 7 0"
-                           Foreground="{StaticResource DefaultForegroundBrush}"
-                           FontFamily="{StaticResource RobotoMedium}"
+                           Foreground="{DynamicResource DefaultForegroundBrush}"
+                           FontFamily="{DynamicResource DefaultMediumFontFamily}"
                            FontSize="13"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Right"/>
@@ -63,14 +63,14 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Border Width="90"
+            <Border Width="120"
                     Height="40"
-                    Background="{StaticResource DefaultBackgroundBrush}"
+                    Background="{DynamicResource DefaultBackgroundBrush}"
                     CornerRadius="20 0 0 20">
                 <TextBlock Text="Word count:"
                            Margin="0 0 7 0"
-                           Foreground="{StaticResource DefaultForegroundBrush}"
-                           FontFamily="{StaticResource RobotoMedium}"
+                           Foreground="{DynamicResource DefaultForegroundBrush}"
+                           FontFamily="{DynamicResource DefaultMediumFontFamily}"
                            FontSize="13"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Right"/>
@@ -87,7 +87,7 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBox Width="400"
+            <TextBox Width="430"
                      Height="Auto"
                      MinHeight="40"
                      IsReadOnly="True"
@@ -111,8 +111,8 @@
         </StackPanel>
 
         <TextBlock Text="{Binding Warning}"
-                   Foreground="{StaticResource WarningForegroundBrush}"
-                   FontFamily="{StaticResource RobotoLight}"
+                   Foreground="{DynamicResource WarningForegroundBrush}"
+                   FontFamily="{DynamicResource DefaultLightFontFamily}"
                    FontSize="13"
                    Margin="20 5 20 0"
                    TextWrapping="Wrap"

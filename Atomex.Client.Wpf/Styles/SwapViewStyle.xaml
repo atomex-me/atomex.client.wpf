@@ -3,15 +3,8 @@
                     xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
                     xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls">
 
-    <SolidColorBrush x:Key="SwapStateCanceledBackgroundBrush" Color="{StaticResource UnconfirmedColor}"/>
-    <SolidColorBrush x:Key="SwapStateCompletedBackgroundBrush" Color="{StaticResource ConfirmedColor}"/>
-    <SolidColorBrush x:Key="SwapStateInProgressBackgroundBrush" Color="{StaticResource UnconfirmedColor}"/>
-    <SolidColorBrush x:Key="SwapStateUnconfirmedBackgroundBrush" Color="{StaticResource UnconfirmedColor}"/>
-    <SolidColorBrush x:Key="SwapStateRefundedBackgroundBrush" Color="{StaticResource ConfirmedColor}"/>
-    <SolidColorBrush x:Key="SwapStateUnsettledBackgroundBrush" Color="{StaticResource UnknownColor}"/>
-
     <DataTemplate x:Key="SwapCanceledTemplate" DataType="viewModels:SwapViewModel">
-        <Border Background="{StaticResource SwapStateCanceledBackgroundBrush}"
+        <Border Background="{DynamicResource SwapStateCanceledBackgroundBrush}"
                 CornerRadius="5"
                 Margin="3 0 3 0"
                 HorizontalAlignment="Center">
@@ -24,7 +17,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="SwapCompletedTemplate" DataType="viewModels:SwapViewModel">
-        <Border Background="{StaticResource SwapStateCompletedBackgroundBrush}"
+        <Border Background="{DynamicResource SwapStateCompletedBackgroundBrush}"
                 CornerRadius="5"
                 Margin="3 0 3 0"
                 HorizontalAlignment="Center">
@@ -37,7 +30,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="SwapInProgressTemplate" DataType="viewModels:SwapViewModel">
-        <Border Background="{StaticResource SwapStateInProgressBackgroundBrush}"
+        <Border Background="{DynamicResource SwapStateInProgressBackgroundBrush}"
                 CornerRadius="5"
                 Margin="3 0 3 0"
                 HorizontalAlignment="Center">
@@ -50,7 +43,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="SwapRefundTemplate" DataType="viewModels:SwapViewModel">
-        <Border Background="{StaticResource SwapStateRefundedBackgroundBrush}"
+        <Border Background="{DynamicResource SwapStateRefundedBackgroundBrush}"
                 CornerRadius="5"
                 Margin="3 0 3 0"
                 HorizontalAlignment="Center">
@@ -63,7 +56,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="SwapUnsettledTemplate" DataType="viewModels:SwapViewModel">
-        <Border Background="{StaticResource SwapStateUnsettledBackgroundBrush}"
+        <Border Background="{DynamicResource SwapStateUnsettledBackgroundBrush}"
                 CornerRadius="5"
                 Margin="3 0 3 0"
                 HorizontalAlignment="Center">

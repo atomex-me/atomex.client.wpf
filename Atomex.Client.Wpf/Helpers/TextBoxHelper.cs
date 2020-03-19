@@ -41,19 +41,29 @@ namespace Atomex.Client.Wpf.Helpers
                 typeof(TextBoxHelper),
                 new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static CornerRadius GetCornerRadius(TextBox textBox) => (CornerRadius)textBox.GetValue(CornerRadiusProperty);
-        public static void SetCornerRadius(TextBox textBox, object value) => textBox.SetValue(CornerRadiusProperty, value);
+        public static CornerRadius GetCornerRadius(TextBox textBox) =>
+            (CornerRadius)textBox.GetValue(CornerRadiusProperty);
+        public static void SetCornerRadius(TextBox textBox, object value) =>
+            textBox.SetValue(CornerRadiusProperty, value);
 
-        public static string GetPlaceHolder(TextBox textBox) => (string)textBox.GetValue(PlaceHolderProperty);
-        public static void SetPlaceHolder(TextBox textBox, string value) => textBox.SetValue(PlaceHolderProperty, value);
+        public static string GetPlaceHolder(TextBox textBox) =>
+            (string)textBox.GetValue(PlaceHolderProperty);
+        public static void SetPlaceHolder(TextBox textBox, string value) =>
+            textBox.SetValue(PlaceHolderProperty, value);
 
-        public static Brush GetFocusBorderBrush(TextBox textBox) => (Brush)textBox.GetValue(FocusBorderBrushProperty);
-        public static void SetFocusBorderBrush(TextBox textBox, Brush value) => textBox.SetValue(FocusBorderBrushProperty, value);
+        public static Brush GetFocusBorderBrush(TextBox textBox) =>
+            (Brush)textBox.GetValue(FocusBorderBrushProperty);
+        public static void SetFocusBorderBrush(TextBox textBox, Brush value) =>
+            textBox.SetValue(FocusBorderBrushProperty, value);
 
-        public static Brush GetMouseOverBorderBrush(TextBox textBox) => (Brush)textBox.GetValue(MouseOverBorderBrushProperty);
-        public static void SetMouseOverBorderBrush(TextBox textBox, Brush value) => textBox.SetValue(MouseOverBorderBrushProperty, value);
+        public static Brush GetMouseOverBorderBrush(TextBox textBox) =>
+            (Brush)textBox.GetValue(MouseOverBorderBrushProperty);
+        public static void SetMouseOverBorderBrush(TextBox textBox, Brush value) =>
+            textBox.SetValue(MouseOverBorderBrushProperty, value);
 
-        public static object GetIcon(TextBox textBox) => textBox.GetValue(IconProperty);
-        public static void SetIcon(TextBox textBox, object value) => textBox.SetValue(IconProperty, value);
+        public static object GetIcon(TextBox textBox) =>
+            textBox.GetValue(IconProperty);
+        public static void SetIcon(TextBox textBox, object value) =>
+            textBox.SetValue(IconProperty, value);
     }
 }

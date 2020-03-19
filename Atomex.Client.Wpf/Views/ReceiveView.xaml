@@ -7,13 +7,11 @@
              xmlns:helpers="clr-namespace:Atomex.Client.Wpf.Helpers"
              xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
              xmlns:common="clr-namespace:Atomex.Client.Wpf.Common"
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
              mc:Ignorable="d" 
 
              ShowTitleBar="False"
              Background="Transparent"
-             OverlayBrush="#2F000000"
+             OverlayBrush="{DynamicResource DefaultSubstrateBrush}"
              CloseByEscape="True"
              CloseOnOverlay="False"
 
@@ -22,16 +20,6 @@
              d:DesignWidth="630"
              d:DesignHeight="400"
              d:DataContext="{d:DesignInstance Type=viewModels:ReceiveViewModel, IsDesignTimeCreatable=True}">
-
-    <controls:ChildWindow.Resources>
-        <SolidColorBrush x:Key="NewAddressBrush" Color="#FFB8B8B8"/>
-        <SolidColorBrush x:Key="AmountBrush" Color="#ffa500"/>
-        <SolidColorBrush x:Key="IconButtonForegroundBrush" Color="#BECFDE"/>
-        <SolidColorBrush x:Key="IconButtonMouseOverBrush" Color="White"/>
-        <SolidColorBrush x:Key="IconButtonPressedBrush" Color="#29456d"/>
-        <SolidColorBrush x:Key="AlmostTransparentBrush" Color="#00000001"/>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseEquivalent="Collapsed"/>
-    </controls:ChildWindow.Resources>
     
     <Border Style="{StaticResource ChildViewBorder}"
             Width="630">
@@ -39,10 +27,10 @@
             <StackPanel Orientation="Vertical">
                 <Border Margin="0 10 0 20"
                         Height="33"
-                        Background="{StaticResource ChildViewHeaderBackgroundBrush}">
+                        Background="{DynamicResource ChildViewHeaderBackgroundBrush}">
                     <TextBlock Text="Receive"
-                               Foreground="{StaticResource ChildViewHeaderForegroundBrush}"
-                               FontFamily="{StaticResource RobotoLight}"
+                               Foreground="{DynamicResource ChildViewHeaderForegroundBrush}"
+                               FontFamily="{DynamicResource DefaultLightFontFamily}"
                                FontSize="25"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"/>
@@ -62,12 +50,12 @@
                             Margin="37 0 0 0">
                     <Border Width="90"
                             Height="40"
-                            Background="{StaticResource FieldHeaderBackgroundBrush}"
+                            Background="{DynamicResource FieldHeaderBackgroundBrush}"
                             CornerRadius="20 0 0 20">
                         <TextBlock Text="Address:"
                                    Margin="0 0 7 0"
-                                   Foreground="{StaticResource DefaultForegroundBrush}"
-                                   FontFamily="{StaticResource RobotoMedium}"
+                                   Foreground="{DynamicResource DefaultForegroundBrush}"
+                                   FontFamily="{DynamicResource DefaultMediumFontFamily}"
                                    FontSize="13"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right"/>
@@ -79,8 +67,8 @@
                              ItemsSource="{Binding FromAddressList}"
                              SelectedValuePath="WalletAddress"
                              SelectedValue="{Binding SelectedAddress, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                             Background="{StaticResource DefaultSubstrateBrush}"
-                             Foreground="{StaticResource DefaultForegroundBrush}"
+                             Background="{DynamicResource DefaultSubstrateBrush}"
+                             Foreground="{DynamicResource DefaultForegroundBrush}"
                              helpers:ComboBoxHelper.CornerRadius="0 20 20 0"
                              Style="{StaticResource CustomComboBox}">
                         <ComboBox.ItemTemplate>
@@ -88,25 +76,25 @@
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock
                                             Text="(new)"
-                                            Foreground="{StaticResource NewAddressBrush}"
+                                            Foreground="{DynamicResource NewAddressBrush}"
                                             FontSize="12"
-                                            FontFamily="{StaticResource Roboto}"
+                                            FontFamily="{DynamicResource DefaultFontFamily}"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
-                                            Visibility="{Binding IsFreeAddress, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                            Visibility="{Binding IsFreeAddress, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
                                     <TextBlock
                                             Margin="3 0 0 0"
                                             Text="{Binding Address}"
-                                            Foreground="{StaticResource DefaultForegroundBrush}"
+                                            Foreground="{DynamicResource DefaultForegroundBrush}"
                                             FontSize="12"
-                                            FontFamily="{StaticResource Roboto}"
+                                            FontFamily="{DynamicResource DefaultFontFamily}"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"/>
                                     <TextBlock
                                             Margin="10 0 0 0"
-                                            Foreground="{StaticResource AmountBrush}"
+                                            Foreground="{DynamicResource AmountBrush}"
                                             FontSize="12"
-                                            FontFamily="{StaticResource Roboto}"
+                                            FontFamily="{DynamicResource DefaultFontFamily}"
                                             VerticalAlignment="Center">
                                         <TextBlock.Text>
                                             <MultiBinding Converter="{StaticResource AmountToStringConverter}">
@@ -122,43 +110,21 @@
 
                     <controls:IconButton 
                             VerticalAlignment="Center"
-                            Foreground="{StaticResource IconButtonForegroundBrush}"
-                            MouseOverBrush="{StaticResource IconButtonMouseOverBrush}"
-                            PressedBrush="{StaticResource IconButtonPressedBrush}"
+                            Foreground="{DynamicResource IconButtonForegroundBrush}"
+                            MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
+                            PressedBrush="{DynamicResource IconButtonPressedBrush}"
+                            Path="{DynamicResource Octicons.Clippy}"
                             Margin="7 0 0 0"
+                            Width="25"
+                            Height="25"
                             ToolTip="Copy to clipboard"
-                            Command="{Binding CopyCommand}">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type controls:IconButton}">
-                                <iconPacks:PackIconOcticons
-                                    x:Name="clippyTxIdIcon"
-                                    Kind="Clippy"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    Background="{StaticResource AlmostTransparentBrush}"
-                                    Width="25"
-                                    Height="25"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center"/>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="clippyTxIdIcon"
-                                            Property="Foreground"
-                                            Value="{Binding MouseOverBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:IconButton}}}" />
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter TargetName="clippyTxIdIcon"
-                                            Property="Foreground"
-                                            Value="{Binding PressedBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:IconButton}}}" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </controls:IconButton>
+                            Command="{Binding CopyCommand}"
+                            Style="{StaticResource PathButtonStyle}"/>
                 </StackPanel>
 
                 <TextBlock Text="{Binding Warning}"
-                           Foreground="{StaticResource WarningForegroundBrush}"
-                           FontFamily="{StaticResource RobotoLight}"
+                           Foreground="{DynamicResource WarningForegroundBrush}"
+                           FontFamily="{DynamicResource DefaultLightFontFamily}"
                            FontSize="13"
                            Margin="20 5 20 0"
                            TextWrapping="Wrap"

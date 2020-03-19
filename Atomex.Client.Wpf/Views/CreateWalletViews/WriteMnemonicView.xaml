@@ -16,22 +16,22 @@
                     Margin="10 30 10 20"
                     HorizontalAlignment="Center">
             <TextBlock Text="Step "
-                       Foreground="{StaticResource DefaultForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="25"/>
             <TextBlock Text="{Binding Step}"
-                       Foreground="{StaticResource DefaultForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="25"/>
             <TextBlock Text=": Mnemonic phrase"
-                       Foreground="{StaticResource DefaultForegroundBrush}"
-                       FontFamily="{StaticResource RobotoLight}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
                        FontSize="25"/>
         </StackPanel>
 
         <TextBlock Text="Please enter a mnemonic phrase for your wallet."
-                   Foreground="{StaticResource DefaultForegroundBrush}"
-                   FontFamily="{StaticResource RobotoLight}"
+                   Foreground="{DynamicResource DefaultForegroundBrush}"
+                   FontFamily="{DynamicResource DefaultLightFontFamily}"
                    FontSize="15"
                    Margin="40 0 40 20"
                    TextWrapping="Wrap"
@@ -40,12 +40,12 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Border Width="90"
                     Height="40"
-                    Background="{StaticResource DefaultBackgroundBrush}"
+                    Background="{DynamicResource DefaultBackgroundBrush}"
                     CornerRadius="20 0 0 20">
                 <TextBlock Text="Language:"
                            Margin="0 0 7 0"
-                           Foreground="{StaticResource DefaultForegroundBrush}"
-                           FontFamily="{StaticResource RobotoMedium}"
+                           Foreground="{DynamicResource DefaultForegroundBrush}"
+                           FontFamily="{DynamicResource DefaultMediumFontFamily}"
                            FontSize="13"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Right"/>
@@ -78,8 +78,8 @@
         </StackPanel>
 
         <TextBlock Text="{Binding Warning}"
-                   Foreground="{StaticResource WarningForegroundBrush}"
-                   FontFamily="{StaticResource RobotoLight}"
+                   Foreground="{DynamicResource WarningForegroundBrush}"
+                   FontFamily="{DynamicResource DefaultLightFontFamily}"
                    FontSize="13"
                    Margin="20 5 20 0"
                    TextWrapping="Wrap"

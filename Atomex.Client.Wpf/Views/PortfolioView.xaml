@@ -6,9 +6,10 @@
              xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
              xmlns:abstractViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.Abstract"
+             FocusVisualStyle="{x:Null}"
              mc:Ignorable="d" 
              UseLayoutRounding="True"
-             d:DesignHeight="500"
+             d:DesignHeight="600"
              d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=viewModels:PortfolioViewModel, IsDesignTimeCreatable=True}">
     <Grid>
@@ -19,32 +20,32 @@
 
         <Grid Grid.Row="0"
               Margin="0 30 0 30">
+
             <oxy:PlotView Background="Transparent"
                           Model="{Binding PlotModel}"
                           Opacity="1">
 
                 <oxy:PlotView.DefaultTrackerTemplate>
                     <ControlTemplate>
-                        <oxy:TrackerControl Position="{Binding Position}"
-                                            HorizontalLineVisibility="Collapsed"
-                                            VerticalLineVisibility="Collapsed"
-                                            Background="#80000000"
-                                            BorderEdgeMode="Aliased"
-                                            BorderThickness="0">
-                            <oxy:TrackerControl.Content>
-                                <Grid>
-                                    <TextBlock Text="{Binding}"
-                                               Margin="10"/>
-                                </Grid>
-                            </oxy:TrackerControl.Content>
-                        </oxy:TrackerControl>
+                        <Canvas>
+                            <Border Canvas.Left="{Binding Position.X}"
+                                    Canvas.Top="{Binding Position.Y}"
+                                    CornerRadius="5"
+                                    Background="{DynamicResource DefaultTooltipBackgroundBrush}">
+                                <TextBlock Text="{Binding}"
+                                           Padding="16 8"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{DynamicResource DefaultFontFamily}"
+                                           FontSize="12"/>
+                            </Border>
+                        </Canvas>
                     </ControlTemplate>
                 </oxy:PlotView.DefaultTrackerTemplate>
-                
-            </oxy:PlotView> 
+
+            </oxy:PlotView>
             <TextBlock Foreground="White"
                        Text="{Binding PortfolioValue, StringFormat=$0.00}"
-                       FontFamily="{StaticResource Roboto}"
+                       FontFamily="{DynamicResource DefaultFontFamily}"
                        FontSize="30"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"/>
@@ -72,14 +73,13 @@
                                        Grid.Column="0"/>
 
                                 <TextBlock Text="{Binding Header, Converter={StaticResource StringToUpperCaseConverter}}"
-                                           FontFamily="{StaticResource RobotoBold}"
+                                           FontFamily="{DynamicResource DefaultBoldFontFamily}"
                                            FontWeight="Bold"
                                            FontSize="14"
                                            Margin="7 0 0 0"
                                            VerticalAlignment="Center"
                                            Grid.Column="1"
                                            Style="{StaticResource BaseTextBlockStyle}"/>
-
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -90,7 +90,7 @@
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center"
                                         Margin="0 0 10 0">
-                                <TextBlock FontFamily="{StaticResource Roboto}"
+                                <TextBlock FontFamily="{DynamicResource DefaultFontFamily}"
                                            VerticalAlignment="Bottom"
                                            HorizontalAlignment="Left">
                                     <TextBlock.Text>
@@ -112,7 +112,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type abstractViewModels:CurrencyViewModel}">
                             <TextBlock Margin="0 0 10 0"
-                                       FontFamily="{StaticResource Roboto}"
+                                       FontFamily="{DynamicResource DefaultFontFamily}"
                                        VerticalAlignment="Bottom"
                                        HorizontalAlignment="Center">
                                 <TextBlock.Text>
@@ -125,7 +125,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="% in Portfolio" Binding="{Binding PortfolioPercent, StringFormat=0.00%, Mode=TwoWay}">
+                <DataGridTextColumn Header="% in Portfolio"
+                                    Binding="{Binding PortfolioPercent, StringFormat=0.00%, Mode=TwoWay}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -136,119 +137,3 @@
         </DataGrid>
     </Grid>
 </UserControl>
-
-
-<!--<Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <DataGrid Margin="10"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  ItemsSource="{Binding AllCurrencies}"
-                  Grid.Column="0"
-                  Style="{StaticResource CustomDataGrid}">
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Currency" Width="*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:CurrencyViewModel}">
-                            <Grid Margin="5 5 5 5" Background="Transparent">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="48"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Image Width="48"
-                                       Height="48"
-                                       Source="{Binding IconPath}"
-                                       Grid.Column="0"/>
-
-                                <TextBlock Text="{Binding Header, Converter={StaticResource StringToUpperCaseConverter}}"
-                                           FontFamily="{StaticResource Roboto}"
-                                           FontWeight="Bold"
-                                           FontSize="14"
-                                           Margin="7 0 0 0"
-                                           VerticalAlignment="Center"
-                                           Grid.Column="1"
-                                           Style="{StaticResource BaseTextBlockStyle}"/>
-
-                            </Grid>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Balance">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:CurrencyViewModel}">
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="0 0 10 0">
-                                <TextBlock Foreground="{StaticResource BalanceBackgroundBrush}"
-                                       FontFamily="{StaticResource Roboto}"
-                                       VerticalAlignment="Bottom"
-                                       HorizontalAlignment="Left">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                            <Binding Path="AvailableAmount" Mode="OneWay"/>
-                                            <Binding Path="CurrencyFormat" Mode="OneWay"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                                <TextBlock Margin="3 0 0 2"
-                                           Text="{Binding CurrencyCode}"
-                                           FontSize="10"
-                                           VerticalAlignment="Bottom"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Value">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:CurrencyViewModel}">
-                            <TextBlock Foreground="{StaticResource BalanceBackgroundBrush}"
-                                       Margin="0 0 10 0"
-                                       FontFamily="{StaticResource Roboto}"
-                                       VerticalAlignment="Bottom"
-                                       HorizontalAlignment="Left">
-                                <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                                        <Binding Path="AvailableAmountInBase" Mode="OneWay"/>
-                                        <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="%" Binding="{Binding AvailableAmountInBase, StringFormat=0.00%}"/>
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <Grid Grid.Column="1">
-            <oxy:PlotView Background="Transparent"
-                          Model="{Binding PlotModel}"
-                          MinWidth="300"
-                          MaxWidth="500"
-                          Opacity="1">
-                -->
-    <!--<oxy:PlotView.DefaultTrackerTemplate>
-                    <ControlTemplate>
-                        <oxy:TrackerControl Position="{Binding PlotModel}">
-                            <oxy:TrackerControl.Content>
-                                <Grid>
-                                    <TextBlock Text="Test"></TextBlock>
-                                </Grid>
-                            </oxy:TrackerControl.Content>
-                        </oxy:TrackerControl>
-                    </ControlTemplate>
-                </oxy:PlotView.DefaultTrackerTemplate>-->
-    <!--
-            </oxy:PlotView> 
-            <TextBlock Foreground="White"
-                       Text="{Binding PortfolioValue, StringFormat=$0.00}"
-                       FontFamily="{StaticResource Roboto}"
-                       FontSize="30"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"/>
-        </Grid>
-    </Grid>-->
