@@ -308,7 +308,11 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 return;
             }
 
-            if (Amount + Currency.GetFeeAmount(Fee, FeePrice) > CurrencyViewModel.AvailableAmount)
+            var isToken = Currency.FeeCurrencyName != Currency.Name;
+
+            var feeAmount = !isToken ? Currency.GetFeeAmount(Fee, FeePrice) : 0;
+
+            if (Amount + feeAmount > CurrencyViewModel.AvailableAmount)
             {
                 Warning = Resources.SvAvailableFundsError;
                 return;

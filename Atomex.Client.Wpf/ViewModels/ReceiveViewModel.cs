@@ -49,10 +49,14 @@ namespace Atomex.Client.Wpf.ViewModels
                         .GetFreeExternalAddressAsync(_currency.Name)
                         .WaitForResult();
 
-                    FromAddressList = activeAddresses
+                    var receiveAddresses = activeAddresses
                         .Select(wa => new WalletAddressViewModel(wa, _currency.Format))
-                        .ToList()
-                        .AddEx(new WalletAddressViewModel(freeAddress, _currency.Format, isFreeAddress: true));
+                        .ToList();
+
+                    if (activeAddresses.FirstOrDefault(w => w.Address == freeAddress.Address) == null)
+                        receiveAddresses.AddEx(new WalletAddressViewModel(freeAddress, _currency.Format, isFreeAddress: true));
+
+                    FromAddressList = receiveAddresses;
 #if DEBUG
                 }
 #endif
