@@ -183,6 +183,8 @@ namespace Atomex.Client.Wpf.ViewModels
 
                     PriceFormat = $"F{quoteCurrency.Digits}";
                 }
+
+                UpdateRedeemAndRewardFeesAsync();
             }
         }
 
@@ -340,13 +342,38 @@ namespace Atomex.Client.Wpf.ViewModels
             set { _estimatedRedeemFee = value; OnPropertyChanged(nameof(EstimatedRedeemFee)); }
         }
 
-        private bool _useRewardForRedeem;
-
         private decimal _estimatedRedeemFeeInBase;
         public decimal EstimatedRedeemFeeInBase
         {
             get => _estimatedRedeemFeeInBase;
             set { _estimatedRedeemFeeInBase = value; OnPropertyChanged(nameof(EstimatedRedeemFeeInBase)); }
+        }
+
+        private decimal _rewardForRedeem;
+        public decimal RewardForRedeem
+        {
+            get => _rewardForRedeem;
+            set
+            {
+                _rewardForRedeem = value;
+                OnPropertyChanged(nameof(RewardForRedeem));
+
+                HasRewardForRedeem = _rewardForRedeem != 0;
+            }
+        }
+
+        private decimal _rewardForRedeemInBase;
+        public decimal RewardForRedeemInBase
+        {
+            get => _rewardForRedeemInBase;
+            set { _rewardForRedeemInBase = value; OnPropertyChanged(nameof(RewardForRedeemInBase)); }
+        }
+
+        private bool _hasRewardForRedeem;
+        public bool HasRewardForRedeem
+        {
+            get => _hasRewardForRedeem;
+            set { _hasRewardForRedeem = value; OnPropertyChanged(nameof(HasRewardForRedeem)); }
         }
 
         private ObservableCollection<SwapViewModel> _swaps;
@@ -455,18 +482,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     }
                 }
 
-                var walletAddress = await App.Account
-                    .GetRedeemAddressAsync(ToCurrency.FeeCurrencyName);
-
-                _estimatedPaymentFee = estimatedPaymentFee.Value;
-                _estimatedRedeemFee = ToCurrency.GetDefaultRedeemFee(walletAddress);
-                _useRewardForRedeem = false;
-
-                if (walletAddress.AvailableBalance() < _estimatedRedeemFee && !(ToCurrency is BitcoinBasedCurrency))
-                {
-                    _estimatedRedeemFee *= 2; // todo: show hint or tool tip
-                    _useRewardForRedeem = true;
-                }
+                EstimatedPaymentFee = estimatedPaymentFee.Value;
 
                 if (_amount + (includeFeeToAmount ? _estimatedPaymentFee : 0) > availableAmount)
                     _amount = Math.Max(availableAmount - (includeFeeToAmount ? _estimatedPaymentFee : 0), 0);
@@ -474,8 +490,20 @@ namespace Atomex.Client.Wpf.ViewModels
                 OnPropertyChanged(nameof(CurrencyFormat));
                 OnPropertyChanged(nameof(TargetCurrencyFormat));
                 OnPropertyChanged(nameof(Amount));
-                OnPropertyChanged(nameof(EstimatedPaymentFee));
-                OnPropertyChanged(nameof(EstimatedRedeemFee));
+
+                UpdateRedeemAndRewardFeesAsync();
+
+                //var walletAddress = await App.Account
+                //    .GetRedeemAddressAsync(ToCurrency.FeeCurrencyName);
+                //EstimatedRedeemFee = ToCurrency.GetRedeemFee(walletAddress);
+
+                //RewardForRedeem = walletAddress.AvailableBalance() < EstimatedRedeemFee && !(ToCurrency is BitcoinBasedCurrency)
+                //    ? ToCurrency.GetRewardForRedeem()
+                //    : 0;
+
+                //OnPropertyChanged(nameof(EstimatedPaymentFee));
+                //OnPropertyChanged(nameof(EstimatedRedeemFee));
+                //OnPropertyChanged(nameof(RewardForRedeem));
 
 #if DEBUG
                 if (!Env.IsInDesignerMode())
@@ -491,6 +519,34 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 IsAmountUpdating = false;
             }
+        }
+
+        private void UpdateTargetAmountInBase(ICurrencyQuotesProvider provider)
+        {
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+
+            if (TargetCurrencyCode == null)
+                return;
+
+            if (BaseCurrencyCode == null)
+                return;
+
+            var quote = provider.GetQuote(TargetCurrencyCode, BaseCurrencyCode);
+
+            TargetAmountInBase = _targetAmount * (quote?.Bid ?? 0m);
+        }
+
+        private async void UpdateRedeemAndRewardFeesAsync()
+        {
+            var walletAddress = await App.Account
+                .GetRedeemAddressAsync(ToCurrency.FeeCurrencyName);
+
+            EstimatedRedeemFee = ToCurrency.GetRedeemFee(walletAddress);
+
+            RewardForRedeem = walletAddress.AvailableBalance() < EstimatedRedeemFee && !(ToCurrency is BitcoinBasedCurrency)
+                ? ToCurrency.GetRewardForRedeem()
+                : 0;
         }
 
         private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs args)
@@ -532,23 +588,10 @@ namespace Atomex.Client.Wpf.ViewModels
             var toCurrencyFeePrice = provider.GetQuote(ToCurrency.FeeCurrencyName, BaseCurrencyCode)?.Bid ?? 0m;
             EstimatedRedeemFeeInBase = _estimatedRedeemFee * toCurrencyFeePrice;
 
+            var toCurrencyPrice = provider.GetQuote(TargetCurrencyCode, BaseCurrencyCode)?.Bid ?? 0m;
+            RewardForRedeemInBase = _rewardForRedeem * toCurrencyPrice;
+
             UpdateTargetAmountInBase(provider);
-        }
-
-        private void UpdateTargetAmountInBase(ICurrencyQuotesProvider provider)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-
-            if (TargetCurrencyCode == null)
-                return;
-
-            if (BaseCurrencyCode == null)
-                return;
-
-            var quote = provider.GetQuote(TargetCurrencyCode, BaseCurrencyCode);
-
-            TargetAmountInBase = _targetAmount * (quote?.Bid ?? 0m);
         }
 
         private async void OnQuotesUpdatedEventHandler(object sender, MarketDataEventArgs args)
@@ -583,7 +626,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     baseCurrency.DigitsMultiplier);
 
                 _estimatedMaxAmount = orderBook.EstimateMaxAmount(side, FromCurrency.DigitsMultiplier);
-                EstimatedRedeemFee = ToCurrency.GetDefaultRedeemFee(walletAddress);
+                EstimatedRedeemFee = ToCurrency.GetRedeemFee(walletAddress);
 
                 _isNoLiquidity = Amount != 0 && _estimatedOrderPrice == 0;
 
@@ -720,7 +763,9 @@ namespace Atomex.Client.Wpf.ViewModels
                 EstimatedPaymentFeeInBase = EstimatedPaymentFeeInBase,
                 EstimatedRedeemFeeInBase = EstimatedRedeemFeeInBase,
 
-                UseRewardForRedeem = _useRewardForRedeem
+                RewardForRedeem = RewardForRedeem,
+                RewardForRedeemInBase = RewardForRedeemInBase,
+                HasRewardForRedeem = HasRewardForRedeem
             };
 
             viewModel.OnSuccess += OnSuccessConvertion;

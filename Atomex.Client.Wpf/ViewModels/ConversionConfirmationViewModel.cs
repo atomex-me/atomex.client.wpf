@@ -51,7 +51,10 @@ namespace Atomex.Client.Wpf.ViewModels
         public decimal EstimatedPaymentFeeInBase { get; set; }
         public decimal EstimatedRedeemFee { get; set; }
         public decimal EstimatedRedeemFeeInBase { get; set; }
-        public bool UseRewardForRedeem { get; set; }
+
+        public decimal RewardForRedeem { get; set; }
+        public decimal RewardForRedeemInBase { get; set; }
+        public bool HasRewardForRedeem { get; set; }
 
         private ICommand _backCommand;
         public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>

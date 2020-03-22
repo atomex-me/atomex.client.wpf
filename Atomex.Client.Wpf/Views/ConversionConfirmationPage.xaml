@@ -199,6 +199,7 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
 
             <TextBlock Text="with price:"
@@ -208,6 +209,7 @@
                        HorizontalAlignment="Right"
                        Grid.Column="0"
                        Grid.Row="0"/>
+
             <StackPanel Orientation="Horizontal"
                         Grid.Column="1"
                         Grid.Row="0">
@@ -229,6 +231,7 @@
                        HorizontalAlignment="Right"
                        Grid.Column="0"
                        Grid.Row="1"/>
+
             <StackPanel Orientation="Horizontal"
                         Grid.Column="1"
                         Grid.Row="1">
@@ -268,6 +271,7 @@
                        HorizontalAlignment="Right"
                        Grid.Column="0"
                        Grid.Row="2"/>
+
             <StackPanel Orientation="Horizontal"
                         Grid.Column="1"
                         Grid.Row="2">
@@ -292,6 +296,48 @@
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
                             <Binding Path="EstimatedRedeemFeeInBase" Mode="OneWay"/>
+                            <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text=")"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+            </StackPanel>
+
+            <TextBlock Text="with reward for redeem:"
+                       FontSize="15"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                       HorizontalAlignment="Right"
+                       Grid.Column="0"
+                       Grid.Row="3"
+                       Visibility="{Binding HasRewardForRedeem, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="1"
+                        Grid.Row="3"
+                        Visibility="{Binding HasRewardForRedeem, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                <TextBlock Margin="5 0 0 0"
+                           Style="{StaticResource AmountTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="RewardForRedeem" Mode="OneWay"/>
+                            <Binding Path="TargetCurrencyFormat" Mode="OneWay"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Text="{Binding TargetCurrencyCode}"
+                           Margin="3 0 0 1"
+                           FontSize="11"
+                           VerticalAlignment="Bottom"
+                           Style="{StaticResource AmountTextBlock}"/>
+                <TextBlock Text="("
+                           Margin="5 0 0 0"
+                           Style="{StaticResource AmountInBaseTextBlock}"/>
+                <TextBlock Style="{StaticResource AmountInBaseTextBlock}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                            <Binding Path="RewardForRedeemInBase" Mode="OneWay"/>
                             <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                         </MultiBinding>
                     </TextBlock.Text>
