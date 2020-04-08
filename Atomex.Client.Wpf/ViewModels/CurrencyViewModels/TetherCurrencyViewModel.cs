@@ -16,7 +16,7 @@ namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
         {
             ChainCurrency = new Ethereum();
             Header = Currency.Description;
-            IconBrush = new ImageBrush(new BitmapImage(new Uri(PathToImage("tether.png"))));
+            IconBrush = new ImageBrush(new BitmapImage(new Uri(PathToImage("tether_90x90.png"))));
             IconMaskBrush = new ImageBrush(new BitmapImage(new Uri(PathToImage("tether_mask.png"))));
             AccentColor = Color.FromRgb(r: 0, g: 162, b: 122);
             AmountColor = Color.FromRgb(r: 183, g: 208, b: 225);

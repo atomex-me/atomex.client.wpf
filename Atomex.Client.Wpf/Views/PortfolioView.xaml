@@ -69,7 +69,7 @@
 
                                 <Image Width="48"
                                        Height="48"
-                                       Source="{Binding IconPath}"
+                                       Source="{Binding LargeIconPath}"
                                        Grid.Column="0"/>
 
                                 <TextBlock Text="{Binding Header, Converter={StaticResource StringToUpperCaseConverter}}"

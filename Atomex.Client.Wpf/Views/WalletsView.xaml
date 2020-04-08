@@ -37,9 +37,10 @@
                                         HorizontalAlignment="Center"
                                         VerticalContentAlignment="Center"
                                         HorizontalContentAlignment="Center"
-                                        Width="70"
+                                        Width="64"
                                         Height="64"
-                                        Opacity="0.4">
+                                        Opacity="0.4"
+                                        Margin="3 0 3 0">
                             <Canvas Width="48"
                                     Height="48"
                                     Background="{Binding Background}"

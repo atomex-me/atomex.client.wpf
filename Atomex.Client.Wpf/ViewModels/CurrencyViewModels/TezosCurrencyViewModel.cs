@@ -13,7 +13,7 @@ namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
             : base(currency)
         {
             Header = Currency.Description;
-            IconBrush = new ImageBrush(new BitmapImage(new Uri(PathToImage("tezos.png"))));
+            IconBrush = new ImageBrush(new BitmapImage(new Uri(PathToImage("tezos_90x90.png"))));
             IconMaskBrush = new ImageBrush(new BitmapImage(new Uri(PathToImage("tezos_mask.png"))));
             AccentColor = Color.FromRgb(r: 44, g: 125, b: 247);
             AmountColor = Color.FromRgb(r: 188, g: 212, b: 247);

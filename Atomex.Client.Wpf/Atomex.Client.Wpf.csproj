@@ -897,6 +897,11 @@
     <Resource Include="Resources\Images\tether_90x90.png" />
     <Resource Include="Resources\Images\tether_mask.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\tzbtc_90x90_dark.png" />
+    <Resource Include="Resources\Images\tzbtc_dark.png" />
+    <Resource Include="Resources\Images\tzbtc_mask.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

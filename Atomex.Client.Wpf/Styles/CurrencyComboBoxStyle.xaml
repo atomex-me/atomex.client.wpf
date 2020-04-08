@@ -17,7 +17,7 @@
 
             <Image Width="48"
                    Height="48"
-                   Source="{Binding IconPath}"
+                   Source="{Binding LargeIconPath}"
                    UseLayoutRounding="True"
                    Grid.Column="0"
                    Grid.RowSpan="2"/>
