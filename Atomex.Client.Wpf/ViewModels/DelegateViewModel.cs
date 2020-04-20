@@ -242,7 +242,7 @@ namespace Atomex.Client.Wpf.ViewModels
                         Tx = _tx,
                         From = WalletAddress.Address,
                         To = Address,
-                        IsAmountLessThanMin = WalletAddress.Balance < BakerViewModel.MinDelegation, 
+                        IsAmountLessThanMin = WalletAddress.Balance < (BakerViewModel?.MinDelegation ?? 0), 
                         BaseCurrencyCode = BaseCurrencyCode,
                         BaseCurrencyFormat = BaseCurrencyFormat,
                         Fee = Fee,
