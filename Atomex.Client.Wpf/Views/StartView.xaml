@@ -6,7 +6,6 @@
                     xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
                     xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
                     xmlns:common="clr-namespace:Atomex.Client.Wpf.Common"
-                    xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
                     mc:Ignorable="d" 
 
                     ShowTitleBar="False"
@@ -127,12 +126,20 @@
                 </StackPanel>
 
                 <TextBlock Foreground="{DynamicResource CopyrightForegroundBrush}"
-                           Text="© 2018 Igor Matsak, All rights reserved"
+                           Text="© 2020 Atomex OÜ, All rights reserved"
                            Margin="0 0 0 7"
                            FontSize="11"
                            FontFamily="{DynamicResource DefaultFontFamily}"
                            VerticalAlignment="Bottom"
-                           HorizontalAlignment="Center"/>
+                           HorizontalAlignment="Center">
+                    <TextBlock.ToolTip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="© 2020 Atomex OÜ" Margin="0 1"/>
+                            <TextBlock Text="© 2018-2020 Igor Matcak" Margin="0 1"/>
+                            <TextBlock Text="All rights reserved" Margin="0 1"/>
+                        </StackPanel>
+                    </TextBlock.ToolTip>
+                </TextBlock>
             </Grid>
         </Grid>
     </Border>
