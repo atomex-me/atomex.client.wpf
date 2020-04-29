@@ -5,7 +5,7 @@ using Atomex.Client.Wpf.Common;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {
-    public class TezosTransactionViewModel : TransactionViewModel
+    public class TezosFA12TransactionViewModel : TransactionViewModel
     {
         public string From { get; set; }
         public string To { get; set; }
@@ -14,7 +14,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
         public string FromExplorerUri => $"{Currency.AddressExplorerUri}{From}";
         public string ToExplorerUri => $"{Currency.AddressExplorerUri}{To}";
 
-        public TezosTransactionViewModel()
+        public TezosFA12TransactionViewModel()
         {
 #if DEBUG
             if (Env.IsInDesignerMode())
@@ -22,8 +22,8 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 #endif
         }
 
-        public TezosTransactionViewModel(TezosTransaction tx)
-            : base(tx, GetAmount(tx), GetFee(tx))
+        public TezosFA12TransactionViewModel(TezosTransaction tx)
+            : base(tx, GetAmount(tx), 0)
         {
             From = tx.From;
             To = tx.To;
@@ -34,16 +34,16 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
         private static decimal GetAmount(TezosTransaction tx)
         {
+            var Erc20 = tx.Currency as EthereumTokens.ERC20;
+
             var result = 0m;
 
-            if (tx.Type.HasFlag(BlockchainTransactionType.Input))
-                result += tx.Amount / tx.Currency.DigitsMultiplier;
-
-            var includeFee = tx.Currency.Name == tx.Currency.FeeCurrencyName;
-            var fee = includeFee ? tx.Fee : 0;
-
-            if (tx.Type.HasFlag(BlockchainTransactionType.Output))
-                result += -(tx.Amount + fee) / tx.Currency.DigitsMultiplier;
+            if (tx.Type.HasFlag(BlockchainTransactionType.Input) ||
+                tx.Type.HasFlag(BlockchainTransactionType.SwapRedeem) ||
+                tx.Type.HasFlag(BlockchainTransactionType.SwapRefund))
+                result += tx.Amount.FromTokenDigits(tx.Currency.DigitsMultiplier);
+            else if (tx.Type.HasFlag(BlockchainTransactionType.Output))
+                result += -tx.Amount.FromTokenDigits(tx.Currency.DigitsMultiplier);
 
             tx.InternalTxs?.ForEach(t => result += GetAmount(t));
 
@@ -61,7 +61,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
             return result;
         }
-               
+
         private void DesignerMode()
         {
             Id = "1234567890abcdefgh1234567890abcdefgh";

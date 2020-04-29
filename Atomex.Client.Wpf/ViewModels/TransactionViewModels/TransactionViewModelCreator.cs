@@ -17,8 +17,8 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
                 BitcoinBasedCurrency _ => (TransactionViewModel)new BitcoinBasedTransactionViewModel((IBitcoinBasedTransaction)tx),
                 Tether _ => (TransactionViewModel)new EthereumERC20TransactionViewModel((EthereumTransaction)tx),
                 Ethereum _ => (TransactionViewModel)new EthereumTransactionViewModel((EthereumTransaction)tx),
-                TZBTC _ => (TransactionViewModel)new TezosTransactionViewModel((TezosTransaction)tx),
-                FA12 _ => (TransactionViewModel)new TezosTransactionViewModel((TezosTransaction)tx),
+                TZBTC _ => (TransactionViewModel)new TezosFA12TransactionViewModel((TezosTransaction)tx),
+                FA12 _ => (TransactionViewModel)new TezosFA12TransactionViewModel((TezosTransaction)tx),
                 Tezos _ => (TransactionViewModel)new TezosTransactionViewModel((TezosTransaction)tx),
                 _ => throw new NotSupportedException("Not supported transaction type."),
             };

@@ -15,6 +15,7 @@ namespace Atomex.Client.Wpf.Controls
         public DataTemplate SentTemplate { get; set; }
         public DataTemplate ReceivedTemplate { get; set; }
         public DataTemplate TokenApproveTemplate { get; set; }
+        public DataTemplate TokenCallTemplate { get; set; }
         public DataTemplate SwapPaymentTemplate { get; set; }
         public DataTemplate SwapRedeemTemplate { get; set; }
         public DataTemplate SwapRefundTemplate { get; set; }
@@ -36,10 +37,16 @@ namespace Atomex.Client.Wpf.Controls
             if (tx.Type.HasFlag(BlockchainTransactionType.TokenApprove))
                 return TokenApproveTemplate;
 
-            if (tx.Amount < 0) //tx.Type.HasFlag(BlockchainTransactionType.Output))
+            if (tx.Type.HasFlag(BlockchainTransactionType.TokenCall))
+                return TokenApproveTemplate;
+
+            if (tx.Type.HasFlag(BlockchainTransactionType.SwapCall))
+                return TokenApproveTemplate;
+
+            if (tx.Amount <= 0) //tx.Type.HasFlag(BlockchainTransactionType.Output))
                 return SentTemplate;
 
-            if (tx.Amount >= 0) //tx.Type.HasFlag(BlockchainTransactionType.Input))
+            if (tx.Amount > 0) //tx.Type.HasFlag(BlockchainTransactionType.Input))
                 return ReceivedTemplate;
 
             return UnknownTemplate;

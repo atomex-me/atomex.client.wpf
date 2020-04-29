@@ -25,11 +25,11 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
         }
 
         public EthereumERC20TransactionViewModel(EthereumTransaction tx)
-            : base(tx, GetAmount(tx))
+            : base(tx, GetAmount(tx), 0)
         {
             From = tx.From;
             To = tx.To;
-            GasPrice = (decimal)tx.GasPrice;
+            GasPrice = Ethereum.WeiToGwei((decimal)tx.GasPrice);
             GasLimit = (decimal)tx.GasLimit;
             GasUsed = (decimal)tx.GasUsed;
             IsInternal = tx.IsInternal;
@@ -41,10 +41,11 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
             var result = 0m;
 
-            if (tx.Type.HasFlag(BlockchainTransactionType.Input))
+            if (tx.Type.HasFlag(BlockchainTransactionType.Input) ||
+                tx.Type.HasFlag(BlockchainTransactionType.SwapRedeem) ||
+                tx.Type.HasFlag(BlockchainTransactionType.SwapRefund))
                 result += Erc20.TokenDigitsToTokens(tx.Amount);
-
-            if (tx.Type.HasFlag(BlockchainTransactionType.Output))
+            else if (tx.Type.HasFlag(BlockchainTransactionType.Output))
                 result += -Erc20.TokenDigitsToTokens(tx.Amount);
 
             tx.InternalTxs?.ForEach(t => result += GetAmount(t));

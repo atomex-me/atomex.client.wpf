@@ -49,7 +49,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 #endif
         }
 
-        public TransactionViewModel(IBlockchainTransaction tx, decimal amount)
+        public TransactionViewModel(IBlockchainTransaction tx, decimal amount, decimal fee)
         {
             Transaction = tx ?? throw new ArgumentNullException(nameof(tx));
             Id = Transaction.Id;
@@ -57,6 +57,8 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
             State = Transaction.State;
             Type = Transaction.Type;
             Amount = amount;
+
+            var netAmount = amount + fee;
 
             var currencyViewModel = CurrencyViewModelCreator.CreateViewModel(tx.Currency, false);
             AmountFormat = currencyViewModel.CurrencyFormat;
@@ -67,27 +69,35 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
             if (tx.Type.HasFlag(BlockchainTransactionType.SwapPayment))
             {
-                Description = $"Swap payment {Math.Abs(Amount).ToString(CultureInfo.InvariantCulture)} {tx.Currency.Name}";
+                Description = $"Swap payment {Math.Abs(netAmount).ToString("0." + new String('#', tx.Currency.Digits))} {tx.Currency.Name}";
             }
             else if (tx.Type.HasFlag(BlockchainTransactionType.SwapRefund))
             {
-                Description = $"Swap refund {Math.Abs(Amount).ToString(CultureInfo.InvariantCulture)} {tx.Currency.Name}";
+                Description = $"Swap refund {Math.Abs(netAmount).ToString("0." + new String('#', tx.Currency.Digits))} {tx.Currency.Name}";
             }
             else if (tx.Type.HasFlag(BlockchainTransactionType.SwapRedeem))
             {
-                Description = $"Swap redeem {Math.Abs(Amount).ToString(CultureInfo.InvariantCulture)} {tx.Currency.Name}";
+                Description = $"Swap redeem {Math.Abs(netAmount).ToString("0." + new String('#', tx.Currency.Digits))} {tx.Currency.Name}";
             }
             else if (tx.Type.HasFlag(BlockchainTransactionType.TokenApprove))
             {
                 Description = $"Token approve";
             }
+            else if (tx.Type.HasFlag(BlockchainTransactionType.TokenCall))
+            {
+                Description = $"Token call";
+            }
+            else if (tx.Type.HasFlag(BlockchainTransactionType.SwapCall))
+            {
+                Description = $"Token swap call";
+            }
             else if (Amount < 0) //tx.Type.HasFlag(BlockchainTransactionType.Output))
             {
-                Description = $"Sent {Math.Abs(Amount).ToString(CultureInfo.InvariantCulture)} {tx.Currency.Name}";
+                Description = $"Sent {Math.Abs(netAmount).ToString("0." + new String('#', tx.Currency.Digits))} {tx.Currency.Name}";
             }
-            else if (Amount >= 0) //tx.Type.HasFlag(BlockchainTransactionType.Input)) // has outputs
+            else if (Amount > 0) //tx.Type.HasFlag(BlockchainTransactionType.Input)) // has outputs
             {
-                Description = $"Received {Math.Abs(Amount).ToString(CultureInfo.InvariantCulture)} {tx.Currency.Name}";
+                Description = $"Received {Math.Abs(netAmount).ToString("0." + new String('#', tx.Currency.Digits))} {tx.Currency.Name}";
             }
             else
             {
