@@ -157,25 +157,25 @@ namespace Atomex.Client.Wpf.Controls
 
         private static Task<TResult> OpenDialogAsync<TResult>(ChildWindow dialog, Panel container)
         {
-            void DialogOnMouseUp(object sender, MouseButtonEventArgs args)
-            {
-                var elementOnTop = container.Children.OfType<UIElement>().OrderBy(c => c.GetValue(Panel.ZIndexProperty)).LastOrDefault();
-                if (elementOnTop != null && !Equals(elementOnTop, dialog))
-                {
-                    var zIndex = (int) elementOnTop.GetValue(Panel.ZIndexProperty);
-                    elementOnTop.SetCurrentValue(Panel.ZIndexProperty, zIndex - 1);
-                    dialog.SetCurrentValue(Panel.ZIndexProperty, zIndex);
-                }
-            }
+            //void DialogOnMouseUp(object sender, MouseButtonEventArgs args)
+            //{
+            //    var elementOnTop = container.Children.OfType<UIElement>().OrderBy(c => c.GetValue(Panel.ZIndexProperty)).LastOrDefault();
+            //    if (elementOnTop != null && !Equals(elementOnTop, dialog))
+            //    {
+            //        var zIndex = (int) elementOnTop.GetValue(Panel.ZIndexProperty);
+            //        elementOnTop.SetCurrentValue(Panel.ZIndexProperty, zIndex - 1);
+            //        dialog.SetCurrentValue(Panel.ZIndexProperty, zIndex);
+            //    }
+            //}
 
-            dialog.PreviewMouseDown += DialogOnMouseUp;
+            //dialog.PreviewMouseDown += DialogOnMouseUp;
 
             var tcs = new TaskCompletionSource<TResult>();
 
             void Handler(object sender, RoutedEventArgs args)
             {
                 dialog.ClosingFinished -= Handler;
-                dialog.PreviewMouseDown -= DialogOnMouseUp;
+                //dialog.PreviewMouseDown -= DialogOnMouseUp;
                 container.Children.Remove(dialog);
                 tcs.TrySetResult(dialog.ChildWindowResult is TResult result ? result : default(TResult));
             }
