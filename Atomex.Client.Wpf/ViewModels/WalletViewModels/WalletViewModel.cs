@@ -260,7 +260,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         protected virtual void DesignerMode()
         {
-            CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(DesignTime.Currencies[3], subscribeToUpdates: false);
+            var currencies = DesignTime.Currencies.ToList();
+
+            CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currencies[3], subscribeToUpdates: false);
             CurrencyViewModel.TotalAmount = 0.01012345m;
             CurrencyViewModel.TotalAmountInBase = 16.51m;
             CurrencyViewModel.AvailableAmount = 0.01010005m;

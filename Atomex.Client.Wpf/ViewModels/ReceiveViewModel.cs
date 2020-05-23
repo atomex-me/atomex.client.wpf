@@ -123,7 +123,9 @@ namespace Atomex.Client.Wpf.ViewModels
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
 
-            Currency = currency;
+            Currency = FromCurrencies
+                .FirstOrDefault(c => c.Currency.Name == currency.Name)
+                .Currency;
         }
 
         private async Task CreateQrCodeAsync()

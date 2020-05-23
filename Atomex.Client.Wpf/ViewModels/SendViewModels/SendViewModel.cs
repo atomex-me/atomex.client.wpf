@@ -292,7 +292,9 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
 
-            Currency = currency;
+            Currency = FromCurrencies
+                .FirstOrDefault(c => c.Currency.Name == currency.Name)
+                .Currency;
 
             UseDefaultFee = true; // use default fee by default
 

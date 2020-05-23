@@ -236,7 +236,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            var currencies = DesignTime.Currencies;
+            var currencies = DesignTime.Currencies.ToList();
 
             FromCurrency = currencies[0];
             ToCurrency = currencies[1];

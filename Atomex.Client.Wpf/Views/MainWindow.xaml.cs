@@ -88,7 +88,7 @@ namespace Atomex.Client.Wpf.Views
             _pagesFactory = new Dictionary<int, PageConstructor>
             {
                 { Pages.Message, () => new MessagePage() },
-                { Pages.SendBitcoinBased, () => new SendPage() },
+                { Pages.SendBitcoinBased, () => new BitcoinBasedSendPage() },
                 { Pages.SendEthereum, () => new EthereumSendPage() },
                 { Pages.SendTezos, () => new SendPage() },
                 { Pages.SendErc20, () => new EthereumSendPage() },

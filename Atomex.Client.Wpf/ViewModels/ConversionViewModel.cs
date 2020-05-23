@@ -77,7 +77,10 @@ namespace Atomex.Client.Wpf.ViewModels
             get => _fromCurrency;
             set
             {
-                _fromCurrency = value;
+                _fromCurrency = FromCurrencies
+                    .FirstOrDefault(c => c.Currency.Name == value?.Name)
+                    ?.Currency;
+
                 OnPropertyChanged(nameof(FromCurrency));
 
                 if (_fromCurrency == null)
@@ -90,14 +93,18 @@ namespace Atomex.Client.Wpf.ViewModels
                     .ToList();
 
                 if (oldToCurrency != null &&
-                    oldToCurrency != _fromCurrency &&
+                    oldToCurrency.Name != _fromCurrency.Name &&
                     ToCurrencies.FirstOrDefault(c => c.Currency.Name == oldToCurrency.Name) != null)
                 {
-                    ToCurrency = oldToCurrency;
+                    ToCurrency = ToCurrencies
+                        .FirstOrDefault(c => c.Currency.Name ==  oldToCurrency.Name)
+                        .Currency;
                 }
                 else
                 {
-                    ToCurrency = ToCurrencies.First().Currency;
+                    ToCurrency = ToCurrencies
+                        .First()
+                        .Currency;
                 }
 
                 FromCurrencyViewModel = _currencyViewModels
