@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
@@ -28,7 +29,10 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             IsAmountUpdating = true;
 
             var previousAmount = _amount;
+            var availableAmount = CurrencyViewModel.AvailableAmount;
             _amount = amount;
+
+            Warning = string.Empty;
 
             try
             {
@@ -37,18 +41,17 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     var (maxAmount, maxFeeAmount, _) = await App.Account
                         .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, true);
 
-                    var availableAmount = Currency is BitcoinBasedCurrency
-                        ? CurrencyViewModel.AvailableAmount
-                        : maxAmount;
-
                     var estimatedFeeAmount = _amount != 0
-                        ? (_amount < availableAmount
+                        ? (_amount <= maxAmount
                             ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
                             : null)
                         : 0;
 
                     if (estimatedFeeAmount == null)
                     {
+                        if (maxAmount < availableAmount)
+                            Warning = string.Format(CultureInfo.InvariantCulture, Resources.CvInsufficientChainFunds, Currency.FeeCurrencyName);
+                        
                         if (maxAmount > 0)
                         {
                             _amount = maxAmount;
@@ -57,7 +60,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         else
                         {
                             _amount = previousAmount;
-                            Warning = Resources.CvInsufficientFunds;
                             return;
                         }
                     }
@@ -72,27 +74,26 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                     _fee = Currency.GetFeeFromFeeAmount(estimatedFeeAmount.Value, Currency.GetDefaultFeePrice());
                     OnPropertyChanged(nameof(FeeString));
-
-                    Warning = string.Empty;
                 }
                 else
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
+                    var (maxAmount, _, _) = await App.Account
                         .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, false);
 
-                    var availableAmount = Currency is BitcoinBasedCurrency
-                        ? CurrencyViewModel.AvailableAmount
-                        : maxAmount;
+                    if (_amount > maxAmount)
+                    {
+                        if (maxAmount < availableAmount)
+                            Warning = string.Format(CultureInfo.InvariantCulture, Resources.CvInsufficientChainFunds, Currency.FeeCurrencyName);
+                        _amount = Math.Max(maxAmount, 0);
+                    }
 
-                    if (_amount > availableAmount)
-                        _amount = Math.Max(availableAmount , 0);
+                    if (_amount > maxAmount)
+                        _amount = Math.Max(maxAmount, 0);
 
                     OnPropertyChanged(nameof(AmountString));
 
                     if (_fee != 0)
                         Fee = _fee;
-
-                    Warning = string.Empty;
                 }
 
                 OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
@@ -122,6 +123,9 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     var estimatedFeeAmount = _amount != 0
                         ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
                         : 0;
+
+                    if (estimatedFeeAmount == null)
+                        estimatedFeeAmount = 0;
 
                     var feeAmount = _fee;
 

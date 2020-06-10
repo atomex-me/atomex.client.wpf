@@ -26,7 +26,7 @@ namespace Atomex.Client.Wpf.ViewModels
 {
     public class ConversionViewModel : BaseViewModel, IConversionViewModel
     {
-        private IAtomexApp App { get; }
+        protected IAtomexApp App { get; }
         private IDialogViewer DialogViewer { get; }
 
         private decimal _estimatedOrderPrice;
@@ -71,8 +71,8 @@ namespace Atomex.Client.Wpf.ViewModels
             private set { _toCurrencies = value; OnPropertyChanged(nameof(ToCurrencies)); }
         }
 
-        private Currency _fromCurrency;
-        public Currency FromCurrency
+        protected Currency _fromCurrency;
+        public virtual Currency FromCurrency
         {
             get => _fromCurrency;
             set
@@ -230,7 +230,7 @@ namespace Atomex.Client.Wpf.ViewModels
             set { _baseCurrencyFormat = value; OnPropertyChanged(nameof(BaseCurrencyFormat)); }
         }
 
-        private decimal _amount;
+        protected decimal _amount;
         public decimal Amount
         {
             get => _amount;
@@ -328,7 +328,7 @@ namespace Atomex.Client.Wpf.ViewModels
             set { _estimatedMaxAmount = value; OnPropertyChanged(nameof(EstimatedMaxAmount)); }
         }
 
-        private decimal _estimatedPaymentFee;
+        protected decimal _estimatedPaymentFee;
         public decimal EstimatedPaymentFee
         {
             get => _estimatedPaymentFee;
@@ -383,6 +383,13 @@ namespace Atomex.Client.Wpf.ViewModels
             set { _hasRewardForRedeem = value; OnPropertyChanged(nameof(HasRewardForRedeem)); }
         }
 
+        protected string _warning;
+        public string Warning
+        {
+            get => _warning;
+            set { _warning = value; OnPropertyChanged(nameof(Warning)); }
+        }
+
         private ObservableCollection<SwapViewModel> _swaps;
         public ObservableCollection<SwapViewModel> Swaps
         {
@@ -432,8 +439,10 @@ namespace Atomex.Client.Wpf.ViewModels
                 App.QuotesProvider.QuotesUpdated += OnBaseQuotesUpdatedEventHandler;
         }
 
-        private async void UpdateAmount(decimal value)
+        protected virtual async void UpdateAmount(decimal value)
         {
+            Warning = string.Empty;
+
             try
             {
                 IsAmountUpdating = true;
@@ -482,8 +491,13 @@ namespace Atomex.Client.Wpf.ViewModels
                         _amount = 0; // previousAmount;
                         OnPropertyChanged(nameof(Amount));
 
+                        if(FromCurrency.Name != FromCurrency.FeeCurrencyName && FromCurrencyViewModel.AvailableAmount > 0)                        
+                            Warning = string.Format(CultureInfo.InvariantCulture, Resources.CvInsufficientChainFunds, FromCurrency.FeeCurrencyName);
+
                         IsAmountUpdating = false;
                         return;
+
+                        
                         // todo: insufficient funds warning
                         // 
                     }
@@ -544,7 +558,7 @@ namespace Atomex.Client.Wpf.ViewModels
             TargetAmountInBase = _targetAmount * (quote?.Bid ?? 0m);
         }
 
-        private async void UpdateRedeemAndRewardFeesAsync()
+        protected async void UpdateRedeemAndRewardFeesAsync()
         {
             var walletAddress = await App.Account
                 .GetRedeemAddressAsync(ToCurrency.FeeCurrencyName);
@@ -578,7 +592,7 @@ namespace Atomex.Client.Wpf.ViewModels
             OnSwapEventHandler(this, null);
         }
 
-        private void OnBaseQuotesUpdatedEventHandler(object sender, EventArgs args)
+        protected void OnBaseQuotesUpdatedEventHandler(object sender, EventArgs args)
         {
             if (!(sender is ICurrencyQuotesProvider provider))
                 return;
@@ -601,7 +615,7 @@ namespace Atomex.Client.Wpf.ViewModels
             UpdateTargetAmountInBase(provider);
         }
 
-        private async void OnQuotesUpdatedEventHandler(object sender, MarketDataEventArgs args)
+        protected async void OnQuotesUpdatedEventHandler(object sender, MarketDataEventArgs args)
         {
             try
             {

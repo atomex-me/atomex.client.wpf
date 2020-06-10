@@ -10,8 +10,8 @@
              xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
              UseLayoutRounding="True"
              mc:Ignorable="d" 
-             d:DesignHeight="800"
-             d:DesignWidth="800"
+             d:DesignHeight="830"
+             d:DesignWidth="830"
              d:DataContext="{d:DesignInstance Type=viewModels:ConversionViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <Style x:Key="HeaderFieldTextBlockStyle" TargetType="{x:Type TextBlock}">
@@ -479,10 +479,19 @@
                     </Border>
                 </Grid>
             </Border>
+            
+            <TextBlock Text="{Binding Warning}"
+                       Foreground="{DynamicResource WarningForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
+                       FontSize="13"
+                       Margin="20 15 20 0"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"/>
 
             <controls:RoundedButton Width="150"
                                     Height="40"
-                                    Margin="0 5 0 5"
+                                    Margin="0 20 0 5"
                                     CornerRadius="20"
                                     Content="Convert"
                                     Command="{Binding ConvertCommand}"

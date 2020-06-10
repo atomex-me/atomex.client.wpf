@@ -88,6 +88,15 @@ namespace Atomex.Client.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Insufficient {0} to cover token transfer fee.
+        /// </summary>
+        public static string CvInsufficientChainFunds {
+            get {
+                return ResourceManager.GetString("CvInsufficientChainFunds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Insufficient funds.
         /// </summary>
         public static string CvInsufficientFunds {
