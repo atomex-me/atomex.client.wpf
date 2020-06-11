@@ -479,15 +479,16 @@
                     </Border>
                 </Grid>
             </Border>
-            
+
             <TextBlock Text="{Binding Warning}"
-                       Foreground="{DynamicResource WarningForegroundBrush}"
-                       FontFamily="{DynamicResource DefaultLightFontFamily}"
-                       FontSize="13"
-                       Margin="20 15 20 0"
-                       TextWrapping="Wrap"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Bottom"/>
+                        Foreground="{DynamicResource WarningForegroundBrush}"
+                        FontFamily="{DynamicResource DefaultLightFontFamily}"
+                        FontSize="13"
+                        Margin="20 15 20 0"
+                        TextWrapping="Wrap"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Visibility="{Binding Warning, Converter={StaticResource StringToVisibilityConverter}}"/>
 
             <controls:RoundedButton Width="150"
                                     Height="40"

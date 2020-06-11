@@ -560,14 +560,21 @@ namespace Atomex.Client.Wpf.ViewModels
 
         protected async void UpdateRedeemAndRewardFeesAsync()
         {
-            var walletAddress = await App.Account
-                .GetRedeemAddressAsync(ToCurrency.FeeCurrencyName);
+#if DEBUG
+            if (!Env.IsInDesignerMode())
+            {
+#endif
+                var walletAddress = await App.Account
+                    .GetRedeemAddressAsync(ToCurrency.FeeCurrencyName);
 
-            EstimatedRedeemFee = ToCurrency.GetRedeemFee(walletAddress);
+                EstimatedRedeemFee = ToCurrency.GetRedeemFee(walletAddress);
 
-            RewardForRedeem = walletAddress.AvailableBalance() < EstimatedRedeemFee && !(ToCurrency is BitcoinBasedCurrency)
-                ? ToCurrency.GetRewardForRedeem()
-                : 0;
+                RewardForRedeem = walletAddress.AvailableBalance() < EstimatedRedeemFee && !(ToCurrency is BitcoinBasedCurrency)
+                    ? ToCurrency.GetRewardForRedeem()
+                    : 0;
+#if DEBUG
+            }
+#endif
         }
 
         private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs args)
@@ -841,6 +848,8 @@ namespace Atomex.Client.Wpf.ViewModels
             };
 
             Swaps = new ObservableCollection<SwapViewModel>(swapViewModels);
+
+            Warning = string.Format(CultureInfo.InvariantCulture, Resources.CvInsufficientChainFunds, FromCurrency.FeeCurrencyName);
         }
     }
 }
