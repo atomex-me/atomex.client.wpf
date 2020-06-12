@@ -145,6 +145,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
+
                 if (UseDefaultFee)
                 {
                     var (maxAmount, maxFeeAmount, _) = await App.Account
@@ -213,6 +214,11 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                     if (_fee != 0)
                         Fee = _fee;
+                    else if(_amount > 0)
+                    {
+                        var estimatedFeeAmount = await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output);
+                        Fee = Currency.GetFeeFromFeeAmount(estimatedFeeAmount.Value, Currency.GetDefaultFeePrice());
+                    }
 
                     OnPropertyChanged(nameof(TotalFeeString));
 

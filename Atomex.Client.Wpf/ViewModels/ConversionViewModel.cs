@@ -451,7 +451,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 _amount = value;
 
                 var (maxAmount, maxFee, reserve) = await App.Account
-                    .EstimateMaxAmountToSendAsync(FromCurrency.Name, null, BlockchainTransactionType.SwapPayment);
+                    .EstimateMaxAmountToSendAsync(FromCurrency.Name, null, BlockchainTransactionType.SwapPayment, true);
 
                 var swaps = await App.Account
                     .GetSwapsAsync();

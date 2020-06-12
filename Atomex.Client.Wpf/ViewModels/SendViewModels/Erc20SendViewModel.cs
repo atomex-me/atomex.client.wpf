@@ -123,7 +123,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 if (UseDefaultFee)
                 {
                     var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, true);
+                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, false);
 
                     var estimatedFeeAmount = _amount != 0
                         ? (_amount <= maxAmount
