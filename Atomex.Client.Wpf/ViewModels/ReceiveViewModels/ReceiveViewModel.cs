@@ -20,7 +20,7 @@ namespace Atomex.Client.Wpf.ViewModels
     {
         private const int PixelsPerModule = 20;
 
-        private IAtomexApp App { get; }
+        protected IAtomexApp App { get; }
 
         private List<CurrencyViewModel> _fromCurrencies;
         public List<CurrencyViewModel> FromCurrencies
@@ -29,8 +29,8 @@ namespace Atomex.Client.Wpf.ViewModels
             private set { _fromCurrencies = value; OnPropertyChanged(nameof(FromCurrencies)); }
         }
 
-        private Currency _currency;
-        public Currency Currency
+        protected Currency _currency;
+        public virtual Currency Currency
         {
             get => _currency;
             set
@@ -67,7 +67,7 @@ namespace Atomex.Client.Wpf.ViewModels
         public List<WalletAddressViewModel> FromAddressList
         {
             get => _fromAddressList;
-            private set
+            protected set
             {
                 _fromAddressList = value;
                 OnPropertyChanged(nameof(FromAddressList));
@@ -152,7 +152,7 @@ namespace Atomex.Client.Wpf.ViewModels
             }
         }
 
-        private WalletAddress GetDefaultAddress()
+        protected virtual WalletAddress GetDefaultAddress()
         {
             if (Currency is Tezos || Currency is Ethereum)
             {

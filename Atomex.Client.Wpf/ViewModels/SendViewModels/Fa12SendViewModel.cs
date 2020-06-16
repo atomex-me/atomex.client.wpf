@@ -24,6 +24,20 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         {
         }
 
+        public override bool UseDefaultFee
+        {
+            get => _useDefaultFee;
+            set
+            {
+                Warning = string.Empty;
+
+                _useDefaultFee = value;
+                OnPropertyChanged(nameof(UseDefaultFee));
+
+                Amount = _amount; // recalculate amount
+            }
+        }
+
         protected override async void UpdateAmount(decimal amount)
         {
             IsAmountUpdating = true;
@@ -138,7 +152,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     OnPropertyChanged(nameof(AmountString));
 
                     OnPropertyChanged(nameof(FeeString));
-                    Warning = string.Empty;
                 }
 
                 OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);

@@ -149,8 +149,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             }
         }
 
-        private bool _useDefaultFee;
-        public bool UseDefaultFee
+        protected bool _useDefaultFee;
+        public virtual bool UseDefaultFee
         {
             get => _useDefaultFee;
             set

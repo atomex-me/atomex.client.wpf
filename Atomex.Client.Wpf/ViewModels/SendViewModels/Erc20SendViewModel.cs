@@ -73,7 +73,21 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         {
         }
 
-        protected virtual async void UpdateFeePrice(decimal value)
+        public override bool UseDefaultFee
+        {
+            get => _useDefaultFee;
+            set
+            {
+                Warning = string.Empty;
+
+                _useDefaultFee = value;
+                OnPropertyChanged(nameof(UseDefaultFee));
+
+                Amount = _amount; // recalculate amount
+            }
+        }
+
+        private async void UpdateFeePrice(decimal value)
         {
             Warning = string.Empty;
 
@@ -83,25 +97,17 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 var feeAmount = Currency.GetFeeAmount(_fee, _feePrice);
 
-                var ethAvailiableBalance = (await App.Account
-                    .GetUnspentAddressesAsync(Currency.FeeCurrencyName))
-                    .ToList()
-                    ?.Sum(w => w.AvailableBalance());
-
-                if (ethAvailiableBalance != null)
+                var ethAvailiableBalance = await App.Account
+                    .EstimateMaxFeeAsync(_currency.Name, _to, _amount, BlockchainTransactionType.Output);
+                   
+                if (feeAmount > ethAvailiableBalance || ethAvailiableBalance == 0)
                 {
-                    if (feeAmount > ethAvailiableBalance.Value || ethAvailiableBalance == 0)
-                    {
-                        Warning = string.Format(CultureInfo.InvariantCulture, Resources.CvInsufficientChainFunds, Currency.FeeCurrencyName);
-                        feeAmount = ethAvailiableBalance.Value;
-                    }
-
-                    _feePrice = Currency.GetFeePriceFromFeeAmount(feeAmount, _fee);
+                    Warning = string.Format(CultureInfo.InvariantCulture, Resources.CvInsufficientChainFunds, Currency.FeeCurrencyName);
+                    _feePrice = Currency.GetFeePriceFromFeeAmount(ethAvailiableBalance, _fee);
                 }
 
                 OnPropertyChanged(nameof(FeePriceString));
-
-
+                
                 OnPropertyChanged(nameof(TotalFeeString));
             }
 
@@ -196,9 +202,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
         protected override async void UpdateFee(decimal fee)
         {
-            if (Warning == null)
-                Warning = string.Empty;
-
             if (_amount == 0)
             {
                 _fee = 0;
@@ -213,6 +216,17 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 if (!UseDefaultFee)
                 {
+                    var feeAmount = Currency.GetFeeAmount(_fee, _feePrice);
+
+                    var ethAvailiableBalance = await App.Account
+                        .EstimateMaxFeeAsync(_currency.Name, _to, _amount, BlockchainTransactionType.Output);
+
+                    if (feeAmount > ethAvailiableBalance || ethAvailiableBalance == 0)
+                    {
+                        Warning = string.Format(CultureInfo.InvariantCulture, Resources.CvInsufficientChainFunds, Currency.FeeCurrencyName);
+                        _fee = Currency.GetFeeFromFeeAmount(ethAvailiableBalance, _feePrice);
+                    }
+
                     var estimatedFeeAmount = _amount != 0
                         ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
                         : 0;
@@ -224,9 +238,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                     if (_amount == 0)
                         _fee = 0;
-
-                    if (_feePrice != 0)
-                        FeePrice = _feePrice;
 
                     OnPropertyChanged(nameof(AmountString));
                     OnPropertyChanged(nameof(GasString));
