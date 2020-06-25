@@ -23,6 +23,7 @@
     <Color x:Key="DefaultButtonPressedLightColor">#122d4f</Color>
     <Color x:Key="DefaultTextBoxBackgroundColor">#b6cadc</Color>
     <Color x:Key="DefaultTextBoxForegroundColor">#2e5185</Color>
+    <Color x:Key="DefaultTextBoxCuretColor">#1388ba</Color>
     <Color x:Key="DefaultSubstrateColor">#2f000000</Color>
     <Color x:Key="DefaultMenuItemSelectedColor">#1183b5</Color>
     <Color x:Key="DefaultMenuItemMouseOverColor">#0f4d6d</Color>
@@ -32,6 +33,7 @@
     <SolidColorBrush x:Key="DefaultButtonBackgroundBrush" Color="{DynamicResource DefaultButtonBackgroundColor}"/>
     <SolidColorBrush x:Key="DefaultTextBoxBackgroundBrush" Color="{DynamicResource DefaultTextBoxBackgroundColor}"/>
     <SolidColorBrush x:Key="DefaultTextBoxForegroundBrush" Color="{DynamicResource DefaultTextBoxForegroundColor}"/>
+    <SolidColorBrush x:Key="DefaultTextBoxCuretBrush" Color="{DynamicResource DefaultTextBoxCuretColor}"/>
     <SolidColorBrush x:Key="DefaultSubstrateBrush" Color="{DynamicResource DefaultSubstrateColor}"/>
     <SolidColorBrush x:Key="WarningForegroundBrush" Color="Gold"/>
     <SolidColorBrush x:Key="FieldHeaderBackgroundBrush" Color="#214174"/>
@@ -39,7 +41,6 @@
     <SolidColorBrush x:Key="DefaultAmountInBaseForegroundBrush" Color="DarkGray"/>
     <SolidColorBrush x:Key="DefaultAddressForegroundBrush" Color="Orange"/>
     <SolidColorBrush x:Key="DefaultTooltipBackgroundBrush" Color="#80000000"/>
-
     <SolidColorBrush x:Key="DefaultMenuItemSelectedBrush" Color="{DynamicResource DefaultMenuItemSelectedColor}"/>
     <SolidColorBrush x:Key="DefaultMenuItemMouseOverBrush" Color="{DynamicResource DefaultMenuItemMouseOverColor}"/>
 
@@ -112,7 +113,7 @@
     <SolidColorBrush x:Key="CustomTextBoxBackgroundBrush" Color="{DynamicResource DefaultTextBoxBackgroundColor}"/>
     <SolidColorBrush x:Key="CustomTextBoxForegroundBrush" Color="{DynamicResource DefaultTextBoxForegroundColor}"/>
     <SolidColorBrush x:Key="CustomTextBoxBorderBrush" Color="{DynamicResource DefaultTextBoxBackgroundColor}"/>
-    <SolidColorBrush x:Key="CustomTextBoxCaretBrush" Color="{DynamicResource DefaultTextBoxForegroundColor}"/>
+    <SolidColorBrush x:Key="CustomTextBoxCaretBrush" Color="#1388ba"/>
 
     <!-- Custom ComboBox -->
 

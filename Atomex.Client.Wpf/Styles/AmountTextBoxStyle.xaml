@@ -6,6 +6,7 @@
         <Setter Property="helpers:AmountTextBoxHelper.CurrencyCodeFontSize" Value="12"/>
         <Setter Property="helpers:AmountTextBoxHelper.BaseCurrencyCodeFontSize" Value="10"/>
         <Setter Property="helpers:AmountTextBoxHelper.AmountInBaseFontSize" Value="15"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource DefaultTextBoxCuretBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">

@@ -110,6 +110,17 @@
 
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
+                        Margin="410 5 0 5">
+                <controls:RoundedButton Width="60"
+                                        Height="20"
+                                        Margin="0 0 0 0"
+                                        CornerRadius="10 10 10 10"
+                                        Content="Max"
+                                        Command="{Binding MaxCommand}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
                         IsEnabled="{Binding UseDefaultFee, Converter={StaticResource InverseBooleanConverter}}"
                         Style="{StaticResource BaseDisabledStyle}">
                 <Border Style="{StaticResource FieldHeader}">
