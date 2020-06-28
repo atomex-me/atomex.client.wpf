@@ -61,7 +61,7 @@ namespace Atomex.Client.Wpf.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на You have active swaps. Closing the application or sign out may result in loss of funds as a result of the failore of the refund operation. Are you sure you want to close the application?.
+        ///   Ищет локализованную строку, похожую на You have active swaps. Closing the application or sign out may result in loss of funds as a result of the failure of the refund or redeem operations. Are you sure you want to close the application?.
         /// </summary>
         public static string ActiveSwapsWarning {
             get {
@@ -102,6 +102,15 @@ namespace Atomex.Client.Wpf.Properties {
         public static string CvInsufficientFunds {
             get {
                 return ResourceManager.GetString("CvInsufficientFunds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Warning: too low fees.
+        /// </summary>
+        public static string CvLowFees {
+            get {
+                return ResourceManager.GetString("CvLowFees", resourceCulture);
             }
         }
         

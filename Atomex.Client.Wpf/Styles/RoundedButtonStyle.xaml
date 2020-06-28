@@ -60,4 +60,5 @@
     </Style>
     
     <Style TargetType="{x:Type controls:RoundedButton}" BasedOn="{StaticResource DefaultRoundedButtonStyle}"/>
+
 </ResourceDictionary>
