@@ -18,8 +18,7 @@ namespace Atomex.Client.Wpf.ViewModels.ReceiveViewModels
                 FA12 _ => new ReceiveViewModel(app, currency),
                 ERC20 _ => new ReceiveViewModel(app, currency),
                 Ethereum _ => new EthereumReceiveViewModel(app, currency),
-                Tezos _ => new ReceiveViewModel(app, currency),
-                //Tezos _ => new TezosReceiveViewModel(app, currency), 
+                Tezos _ => new TezosReceiveViewModel(app, currency), 
                 _ => throw new NotSupportedException($"Can't create receive view model for {currency.Name}. This currency is not supported."),
             };
         }
