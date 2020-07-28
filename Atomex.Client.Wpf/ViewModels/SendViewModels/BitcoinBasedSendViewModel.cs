@@ -1,11 +1,13 @@
-﻿using Atomex.Blockchain.Abstract;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Core;
-using System;
-using System.ServiceModel.Channels;
-using System.Threading.Tasks;
+using Atomex.Wallet.BitcoinBased;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
@@ -41,16 +43,14 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         {
             IsAmountUpdating = true;
 
-            var previousAmount = _amount;
             _amount = amount;
-
             Warning = string.Empty;
 
             try
             {
                 if (UseDefaultFee)
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
+                    var (maxAmount, _, _) = await App.Account
                         .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output);
 
                     if (_amount > maxAmount)
@@ -59,8 +59,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         IsAmountUpdating = false;
                         return;
                     }
-
-                    var availableAmount = CurrencyViewModel.AvailableAmount;
 
                     var estimatedFeeAmount = _amount != 0
                         ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
@@ -75,16 +73,9 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 }
                 else
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output);
+                    var availableAmount = CurrencyViewModel.AvailableAmount;
 
-                    var availableAmount = Currency is BitcoinBasedCurrency
-                        ? CurrencyViewModel.AvailableAmount
-                        : maxAmount + maxFeeAmount;
-
-                    var feeAmount = Currency.GetFeeAmount(_fee, Currency.GetDefaultFeePrice());
-
-                    if (_amount + feeAmount > availableAmount)
+                    if (_amount + _fee > availableAmount)
                     {
                         Warning = Resources.CvInsufficientFunds;
                         IsAmountUpdating = false;
@@ -112,7 +103,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             IsFeeUpdating = true;
 
             _fee = Math.Min(fee, Currency.GetMaximumFee());
-
             Warning = string.Empty;
 
             try
@@ -123,30 +113,39 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 {
                     if (Currency.GetFeeAmount(_fee, Currency.GetDefaultFeePrice()) > availableAmount)
                         Warning = Resources.CvInsufficientFunds;
+
+                    IsFeeUpdating = true;
                     return;
                 }
+                else if (_amount + _fee > availableAmount)
+                {
+                    Warning = Resources.CvInsufficientFunds;
+                    IsFeeUpdating = false;
+                    return;
+                }
+
+                var estimatedTxSize = await EstimateTxSizeAsync(_amount, _fee);
                 
-                var estimatedTxSize = await EstimateTxSizeAsync();
+                if (estimatedTxSize == null || estimatedTxSize.Value == 0)
+                {
+                    Warning = Resources.CvInsufficientFunds;
+                    IsFeeUpdating = false;
+                    return;
+                }
 
                 if (!UseDefaultFee)
                 {
-                    var minimumFeeSatoshi = BtcBased.GetMinimumFee(estimatedTxSize);
+                    var minimumFeeSatoshi = BtcBased.GetMinimumFee(estimatedTxSize.Value);
                     var minimumFee = BtcBased.SatoshiToCoin(minimumFeeSatoshi);
 
-                    if (_amount + _fee > availableAmount)
-                    {
-                        Warning = Resources.CvInsufficientFunds;
-                        IsAmountUpdating = false;
-                        return;
-                    }
                     if (_fee < minimumFee)
                         Warning = Resources.CvLowFees;
-
-                    OnPropertyChanged(nameof(AmountString));
-                    OnPropertyChanged(nameof(FeeString));
                 }
 
-                FeeRate = BtcBased.CoinToSatoshi(_fee) / estimatedTxSize;
+                FeeRate = BtcBased.CoinToSatoshi(_fee) / estimatedTxSize.Value;
+
+                OnPropertyChanged(nameof(AmountString));
+                OnPropertyChanged(nameof(FeeString));
 
                 OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
             }
@@ -162,7 +161,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 return;
 
             IsAmountUpdating = true;
-
             Warning = string.Empty;
 
             try
@@ -170,7 +168,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 if (CurrencyViewModel.AvailableAmount == 0)
                     return;
 
-                if (UseDefaultFee)
+                if (UseDefaultFee) // auto fee
                 {
                     var (maxAmount, maxFeeAmount, _) = await App.Account
                         .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output);
@@ -185,50 +183,39 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                     FeeRate = BtcBased.FeeRate;
                 }
-                else
+                else // manual fee
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output);
+                    var availableAmount = CurrencyViewModel.AvailableAmount;
 
-                    var availableAmount = Currency is BitcoinBasedCurrency
-                        ? CurrencyViewModel.AvailableAmount
-                        : maxAmount + maxFeeAmount;
-
-                    var feeAmount = Currency.GetFeeAmount(_fee, Currency.GetDefaultFeePrice());
-
-                    if (availableAmount - feeAmount > 0)
+                    if (availableAmount - _fee > 0)
                     {
-                        _amount = availableAmount - feeAmount;
-
-                        var estimatedFeeAmount = _amount != 0
-                            ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
-                            : 0;
-
-                        if (estimatedFeeAmount == null || feeAmount < estimatedFeeAmount.Value)
-                        {
-                            Warning = Resources.CvLowFees;
-                            if (_fee == 0)
-                            {
-                                _amount = 0;
-                                OnPropertyChanged(nameof(AmountString));
-                                return;
-                            }
-                        }
+                        _amount = availableAmount - _fee;
                     }
                     else
                     {
                         _amount = 0;
-
                         Warning = Resources.CvInsufficientFunds;
+                        IsAmountUpdating = false;
+
+                        OnPropertyChanged(nameof(AmountString));
+
+                        return;
                     }
 
-                    OnPropertyChanged(nameof(AmountString));
+                    var estimatedTxSize = await EstimateTxSizeAsync(_amount, _fee);
 
-                    OnPropertyChanged(nameof(FeeString));
+                    if (estimatedTxSize == null || estimatedTxSize.Value == 0)
+                    {
+                        Warning = Resources.CvInsufficientFunds;
+                        IsAmountUpdating = false;
+                        return;
+                    }
+
+                    FeeRate = BtcBased.CoinToSatoshi(_fee) / estimatedTxSize.Value;
                 }
 
-                var estimatedTxSize = await EstimateTxSizeAsync();
-                FeeRate = BtcBased.CoinToSatoshi(_fee) / estimatedTxSize;
+                OnPropertyChanged(nameof(AmountString));
+                OnPropertyChanged(nameof(FeeString));
 
                 OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
             }
@@ -238,15 +225,14 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             }
         }
 
-        private async Task<int> EstimateTxSizeAsync()
+        private async Task<int?> EstimateTxSizeAsync(
+            decimal amount,
+            decimal fee,
+            CancellationToken cancellationToken = default)
         {
-            var estimatedFee = await App.Account
-                .EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output);
-
-            if (estimatedFee == null)
-                return 0;
-
-            return (int)(BtcBased.CoinToSatoshi(estimatedFee.Value) / BtcBased.FeeRate);
+            return await App.Account
+                .GetCurrencyAccount<BitcoinBasedAccount>(Currency.Name)
+                .EstimateTxSizeAsync(amount, fee, cancellationToken);
         }
 
         private void BitcoinBasedDesignerMode()
