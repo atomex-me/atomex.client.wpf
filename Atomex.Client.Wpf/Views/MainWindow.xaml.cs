@@ -93,6 +93,8 @@ namespace Atomex.Client.Wpf.Views
                 { Pages.SendTezos, () => new SendPage() },
                 { Pages.SendErc20, () => new EthereumSendPage() },
                 { Pages.SendFa12, () => new SendPage() },
+                { Pages.SendNYX, () => new SendPage() },
+                { Pages.SendFA2, () => new SendPage() },
                 { Pages.SendConfirmation, () => new SendConfirmationPage() },
                 { Pages.Sending, () => new SendingPage() },
                 { Pages.Delegate, () => new DelegatePage() },

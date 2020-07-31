@@ -23,8 +23,9 @@ namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
                 Litecoin _ => (CurrencyViewModel)new LitecoinCurrencyViewModel(currency),
                 Tether _ => (CurrencyViewModel)new TetherCurrencyViewModel(currency),
                 Ethereum _ => (CurrencyViewModel)new EthereumCurrencyViewModel(currency),
+                NYX _ => (CurrencyViewModel)new NYXCurrencyViewModel(currency),
+                FA2 _ => (CurrencyViewModel)new FA2CurrencyViewModel(currency),
                 TZBTC _ => (CurrencyViewModel)new TzbtcCurrencyViewModel(currency),
-                FA12 _ => (CurrencyViewModel)new Fa12CurrencyViewModel(currency),
                 Tezos _ => (CurrencyViewModel)new TezosCurrencyViewModel(currency),
                 _ => throw new NotSupportedException(
                     $"Can't create currency view model for {currency.Name}. This currency is not supported.")

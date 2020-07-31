@@ -7,9 +7,9 @@ using Atomex.Core;
 
 namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
 {
-    public class Fa12CurrencyViewModel : CurrencyViewModel
+    public class NYXCurrencyViewModel : CurrencyViewModel
     {
-        public Fa12CurrencyViewModel(Currency currency)
+        public NYXCurrencyViewModel(Currency currency)
             : base(currency)
         {
             Header = Currency.Description;

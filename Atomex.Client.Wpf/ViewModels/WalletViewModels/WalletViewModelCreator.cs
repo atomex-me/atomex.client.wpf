@@ -19,7 +19,6 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             switch (currency)
             {
                 case BitcoinBasedCurrency _:
-                case FA12 _:
                 case ERC20 _:
                 case Ethereum _:
                     return new WalletViewModel(
@@ -28,6 +27,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                         menuSelector: menuSelector,
                         conversionViewModel: conversionViewModel,
                         currency: currency);
+                case NYX _:
+                case FA2 _:
+                case FA12 _:
                 case Tezos _:
                     return new TezosWalletViewModel(
                         app: app,
