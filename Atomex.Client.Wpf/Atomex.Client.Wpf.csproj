@@ -349,7 +349,8 @@
     <Compile Include="Helpers\ComboBoxHelper.cs" />
     <Compile Include="ViewModels\ConversionConfirmationViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WalletTypeViewModel.cs" />
-    <Compile Include="ViewModels\CurrencyViewModels\Fa12CurrencyViewModel.cs" />
+    <Compile Include="ViewModels\CurrencyViewModels\FA2CurrencyViewModel.cs" />
+    <Compile Include="ViewModels\CurrencyViewModels\NYXCurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\TzbtcCurrencyViewModel.cs" />
     <Compile Include="ViewModels\Dialogs.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\TetherCurrencyViewModel.cs" />
@@ -374,11 +375,15 @@
     <Compile Include="ViewModels\SendViewModels\Erc20SendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\EthereumSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\Fa12SendViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\FA2SendViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\NYXSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\TezosSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModelCreator.cs" />
     <Compile Include="ViewModels\TokensConversionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\TezosFA12TransactionViewModel.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\TezosFA2TransactionViewModel.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\TezosNYXTransactionViewModel.cs" />
     <Compile Include="ViewModels\WalletAddressViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModel.cs" />

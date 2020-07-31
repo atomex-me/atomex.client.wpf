@@ -34,8 +34,6 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
         private static decimal GetAmount(TezosTransaction tx)
         {
-            var Erc20 = tx.Currency as EthereumTokens.ERC20;
-
             var result = 0m;
 
             if (tx.Type.HasFlag(BlockchainTransactionType.SwapRedeem) ||
