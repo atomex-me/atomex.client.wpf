@@ -347,6 +347,7 @@
     <Compile Include="Converters\PasswordBoxConverter.cs" />
     <Compile Include="Helpers\AmountTextBoxHelper.cs" />
     <Compile Include="Helpers\ComboBoxHelper.cs" />
+    <Compile Include="ViewModels\AddressesViewModel.cs" />
     <Compile Include="ViewModels\ConversionConfirmationViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WalletTypeViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\FA2CurrencyViewModel.cs" />
@@ -430,6 +431,9 @@
     </Compile>
     <Compile Include="Views\DelegateConfirmationPage.xaml.cs">
       <DependentUpon>DelegateConfirmationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AddressesView.xaml.cs">
+      <DependentUpon>AddressesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SendConfirmationPage.xaml.cs">
       <DependentUpon>SendConfirmationPage.xaml</DependentUpon>
@@ -597,6 +601,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\DelegateConfirmationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AddressesView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

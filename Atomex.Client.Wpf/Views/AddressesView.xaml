@@ -1,0 +1,131 @@
+﻿<controls:ChildWindow x:Class="Atomex.Client.Wpf.Views.AddressesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
+             xmlns:viewModels="clr-namespace:Atomex.Client.Wpf.ViewModels"
+             xmlns:common="clr-namespace:Atomex.Client.Wpf.Common"
+             mc:Ignorable="d" 
+
+             ShowTitleBar="False"
+             Background="Transparent"
+             OverlayBrush="{DynamicResource DefaultSubstrateBrush}"
+             CloseByEscape="True"
+             CloseOnOverlay="False"
+
+             UseLayoutRounding="True"
+             common:ChildWindowHelper.IsOpen="True"
+             d:DesignWidth="630"
+             d:DesignHeight="400"
+             d:DataContext="{d:DesignInstance Type=viewModels:AddressesViewModel, IsDesignTimeCreatable=True}">
+    
+    <Border Style="{StaticResource ChildViewBorder}"
+            Width="630">
+        <Grid>
+            <StackPanel Orientation="Vertical">
+                <Border Margin="0 10 0 20"
+                        Height="33"
+                        Background="{DynamicResource ChildViewHeaderBackgroundBrush}">
+                    <TextBlock Text="Addresses"
+                               Foreground="{DynamicResource ChildViewHeaderForegroundBrush}"
+                               FontFamily="{DynamicResource DefaultLightFontFamily}"
+                               FontSize="25"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Border>
+
+                <DataGrid Margin="10 0 10 10"
+                          ItemsSource="{Binding Addresses}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          MaxHeight="500"
+                          Style="{DynamicResource CustomDataGrid}">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Address" Width="*" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button
+                                            Content="{Binding Address}"
+                                            Margin="5 0 0 0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding OpenInExplorerCommand}"
+                                            CommandParameter="{Binding Address}"
+                                            Style="{StaticResource ExplorerLinkButton}"
+                                            Grid.Column="1"
+                                            Grid.Row="0"/>
+                                        <controls:IconButton
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"
+                                             Foreground="{DynamicResource IconButtonForegroundBrush}"
+                                             MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
+                                             PressedBrush="{DynamicResource IconButtonPressedBrush}"                                     
+                                             Path="{DynamicResource Octicons.Clippy}"
+                                             Margin="7 -2 0 0"
+                                             Width="15"
+                                             Height="15"
+                                             ToolTip="Copy address to clipboard"
+                                             Command="{Binding CopyCommand}"
+                                             CommandParameter="{Binding Address}"
+                                             Style="{StaticResource PathButtonStyle}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Path"
+                                            Binding="{Binding Path}"
+                                            Width="Auto"
+                                            FontSize="12"/>
+                        <DataGridTextColumn Header="Balance"
+                                            Binding="{Binding Balance}"
+                                            Width="Auto"
+                                            Foreground="Gold"
+                                            FontSize="12"/>
+                        <DataGridTemplateColumn Header="Key" Width="60" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <controls:IconButton
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource IconButtonForegroundBrush}"
+                                        MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
+                                        PressedBrush="{DynamicResource IconButtonPressedBrush}"                                     
+                                        Path="{DynamicResource FontAwesome.KeySolid}"
+                                        Margin="7 0 0 0"
+                                        Width="15"
+                                        Height="15"
+                                        ToolTip="Private key export dialog"
+                                        Command="{Binding ExportKeyCommand}"
+                                        CommandParameter="{Binding Id}"
+                                        Style="{StaticResource PathButtonStyle}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <TextBlock Text="{Binding Warning}"
+                       Foreground="{DynamicResource WarningForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
+                       FontSize="13"
+                       Margin="20 5 20 5"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Visibility="{Binding HasWarning, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                
+            </StackPanel>
+
+            <Button Width="24"
+                    Height="24"
+                    Margin="0 -10 -14 0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Command="{Binding CloseButtonCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type controls:ChildWindow}}}"
+                    Style="{DynamicResource ChildViewCloseButtonLight}"
+                    Visibility="Visible"/>
+        </Grid>
+    </Border>
+</controls:ChildWindow>

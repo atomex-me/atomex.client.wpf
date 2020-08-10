@@ -11,6 +11,7 @@
         public const int Send = 7;
         public const int Delegate = 20;
         public const int Convert = 30;
+        public const int Addresses = 40;
     }
 
     public static class Pages

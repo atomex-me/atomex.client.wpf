@@ -82,7 +82,8 @@ namespace Atomex.Client.Wpf.Views
                 { Dialogs.Unlock, ShowDialogAsync<UnlockView> },
                 { Dialogs.Send, ShowDialogAsync<FrameView> },
                 { Dialogs.Delegate, ShowDialogAsync<FrameView> },
-                { Dialogs.Convert, ShowDialogAsync<FrameView> }
+                { Dialogs.Convert, ShowDialogAsync<FrameView> },
+                { Dialogs.Addresses, ShowDialogAsync<AddressesView> }
             };
 
             _pagesFactory = new Dictionary<int, PageConstructor>

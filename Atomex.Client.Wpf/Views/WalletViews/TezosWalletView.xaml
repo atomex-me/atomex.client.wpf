@@ -183,9 +183,14 @@
                                 Style="{StaticResource WalletMenuButton}"/>
                             <controls:RoundedButton
                                 Content="Update"
-                                Margin="2 0 0 0"
+                                Margin="2 0 1 0"
                                 Command="{Binding UpdateCommand}"
                                 IsEnabled="{Binding Currency.IsTransactionsAvailable}"
+                                Style="{StaticResource WalletMenuButton}"/>
+                            <controls:RoundedButton
+                                Content="Addresses"
+                                Margin="2 0 0 0"
+                                Command="{Binding AddressesCommand}"
                                 Style="{StaticResource WalletMenuButton}"/>
                         </StackPanel>
                     </StackPanel>
@@ -264,7 +269,7 @@
 
                     <Button Width="24"
                             Height="24"
-                            Margin="0 5 1 0"
+                            Margin="0 5 2 0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
                             ToolTip="Cancel"

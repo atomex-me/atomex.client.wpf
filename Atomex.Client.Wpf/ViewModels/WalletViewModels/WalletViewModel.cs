@@ -177,6 +177,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         private ICommand _updateCommand;
         public ICommand UpdateCommand => _updateCommand ?? (_updateCommand = new Command(OnUpdateClick));
 
+        private ICommand _addressesCommand;
+        public ICommand AddressesCommand => _addressesCommand ?? (_addressesCommand = new Command(OnAddressesClick));
+
         private ICommand _cancelUpdateCommand;
         public ICommand CancelUpdateCommand => _cancelUpdateCommand ?? (_cancelUpdateCommand = new Command(() =>
         {
@@ -235,6 +238,11 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             }
 
             IsBalanceUpdating = false;
+        }
+
+        private void OnAddressesClick()
+        {
+            DialogViewer.ShowDialog(Dialogs.Addresses, new AddressesViewModel(App, DialogViewer, Currency));
         }
 
         private void UpdateTransactonEventHandler(object sender, TransactionEventArgs args)
