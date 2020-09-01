@@ -69,7 +69,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     _fee = estimatedFeeAmount ?? Currency.GetDefaultFee();
                     OnPropertyChanged(nameof(FeeString));
 
-                    FeeRate = BtcBased.FeeRate;
+                    FeeRate = await BtcBased.GetFeeRateAsync();
                 }
                 else
                 {
@@ -111,7 +111,9 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 if (_amount == 0)
                 {
-                    if (Currency.GetFeeAmount(_fee, Currency.GetDefaultFeePrice()) > availableAmount)
+                    var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+
+                    if (Currency.GetFeeAmount(_fee, defaultFeePrice) > availableAmount)
                         Warning = Resources.CvInsufficientFunds;
 
                     IsFeeUpdating = true;
@@ -178,10 +180,12 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                     OnPropertyChanged(nameof(AmountString));
 
-                    _fee = Currency.GetFeeFromFeeAmount(maxFeeAmount, Currency.GetDefaultFeePrice());
+                    var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+
+                    _fee = Currency.GetFeeFromFeeAmount(maxFeeAmount, defaultFeePrice);
                     OnPropertyChanged(nameof(FeeString));
 
-                    FeeRate = BtcBased.FeeRate;
+                    FeeRate = await BtcBased.GetFeeRateAsync();
                 }
                 else // manual fee
                 {

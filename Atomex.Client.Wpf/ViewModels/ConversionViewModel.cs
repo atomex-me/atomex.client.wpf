@@ -423,13 +423,13 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _convertCommand;
-        public ICommand ConvertCommand => _convertCommand ?? (_convertCommand = new Command(OnConvertClick));
+        public ICommand ConvertCommand => _convertCommand ??= new Command(OnConvertClick);
 
         private ICommand _maxAmountCommand;
-        public ICommand MaxAmountCommand => _maxAmountCommand ?? (_maxAmountCommand = new Command(() =>
+        public ICommand MaxAmountCommand => _maxAmountCommand ??= new Command(() =>
         {
             Amount = EstimatedMaxAmount;
-        }));
+        });
 
         private void SubscribeToServices()
         {
@@ -567,10 +567,10 @@ namespace Atomex.Client.Wpf.ViewModels
                 var walletAddress = await App.Account
                     .GetRedeemAddressAsync(ToCurrency.FeeCurrencyName);
 
-                EstimatedRedeemFee = ToCurrency.GetRedeemFee(walletAddress);
+                EstimatedRedeemFee = await ToCurrency.GetRedeemFeeAsync(walletAddress);
 
                 RewardForRedeem = walletAddress.AvailableBalance() < EstimatedRedeemFee && !(ToCurrency is BitcoinBasedCurrency)
-                    ? ToCurrency.GetRewardForRedeem()
+                    ? await ToCurrency.GetRewardForRedeemAsync()
                     : 0;
 #if DEBUG
             }
@@ -654,7 +654,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     baseCurrency.DigitsMultiplier);
 
                 _estimatedMaxAmount = orderBook.EstimateMaxAmount(side, FromCurrency.DigitsMultiplier);
-                EstimatedRedeemFee = ToCurrency.GetRedeemFee(walletAddress);
+                EstimatedRedeemFee = await ToCurrency.GetRedeemFeeAsync(walletAddress);
 
                 _isNoLiquidity = Amount != 0 && _estimatedOrderPrice == 0;
 

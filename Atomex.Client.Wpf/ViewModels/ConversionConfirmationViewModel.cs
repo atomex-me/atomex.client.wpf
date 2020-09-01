@@ -137,7 +137,7 @@ namespace Atomex.Client.Wpf.ViewModels
                         currency: FromCurrency.Name,
                         amount: Amount,
                         fee: 0,
-                        feePrice: 0,
+                        feePrice: await FromCurrency.GetDefaultFeePriceAsync(),
                         feeUsagePolicy: FeeUsagePolicy.EstimatedFee,
                         addressUsagePolicy: AddressUsagePolicy.UseMinimalBalanceFirst,
                         transactionType: BlockchainTransactionType.SwapPayment))

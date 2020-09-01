@@ -319,6 +319,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
+                var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+
                 if (UseDefaultFee)
                 {
                     var (maxAmount, maxFeeAmount, _) = await App.Account
@@ -337,7 +339,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                     OnPropertyChanged(nameof(AmountString));
 
-                    _fee = Currency.GetFeeFromFeeAmount(estimatedFeeAmount ?? Currency.GetDefaultFee(), Currency.GetDefaultFeePrice());
+                    _fee = Currency.GetFeeFromFeeAmount(estimatedFeeAmount ?? Currency.GetDefaultFee(), defaultFeePrice);
                     OnPropertyChanged(nameof(FeeString));
                 }
                 else
@@ -349,7 +351,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         ? CurrencyViewModel.AvailableAmount
                         : maxAmount + maxFeeAmount;
 
-                    var feeAmount = Currency.GetFeeAmount(_fee, Currency.GetDefaultFeePrice());
+                    var feeAmount = Currency.GetFeeAmount(_fee, defaultFeePrice);
 
                     if (_amount > maxAmount || _amount + feeAmount > availableAmount)
                     {
@@ -384,10 +386,13 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
+                var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+
                 if (_amount == 0)
                 {
-                    if (Currency.GetFeeAmount(_fee, Currency.GetDefaultFeePrice()) > CurrencyViewModel.AvailableAmount)
+                    if (Currency.GetFeeAmount(_fee, defaultFeePrice) > CurrencyViewModel.AvailableAmount)
                         Warning = Resources.CvInsufficientFunds;
+
                     return;
                 }
 
@@ -404,7 +409,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         ? CurrencyViewModel.AvailableAmount
                         : maxAmount + maxFeeAmount;
 
-                    var feeAmount = Currency.GetFeeAmount(_fee, Currency.GetDefaultFeePrice());
+                    var feeAmount = Currency.GetFeeAmount(_fee, defaultFeePrice);
 
                     if (_amount + feeAmount > availableAmount)
                     {
@@ -445,6 +450,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 if (CurrencyViewModel.AvailableAmount == 0)
                     return;
 
+                var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+
                 if (UseDefaultFee)
                 {
                     var (maxAmount, maxFeeAmount, _) = await App.Account
@@ -455,7 +462,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                     OnPropertyChanged(nameof(AmountString));
 
-                    _fee = Currency.GetFeeFromFeeAmount(maxFeeAmount, Currency.GetDefaultFeePrice());
+                    _fee = Currency.GetFeeFromFeeAmount(maxFeeAmount, defaultFeePrice);
                     OnPropertyChanged(nameof(FeeString));
                 }
                 else
@@ -467,7 +474,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         ? CurrencyViewModel.AvailableAmount
                         : maxAmount + maxFeeAmount;
 
-                    var feeAmount = Currency.GetFeeAmount(_fee, Currency.GetDefaultFeePrice());
+                    var feeAmount = Currency.GetFeeAmount(_fee, defaultFeePrice);
 
                     if (availableAmount - feeAmount > 0)
                     {
