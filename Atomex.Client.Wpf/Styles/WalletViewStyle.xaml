@@ -149,6 +149,24 @@
                     SwapRedeemTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
                     SwapRefundTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"/>
                 <controls:TransactionDataTemplateSelector
+                    Currency="TBTC"
+                    UnknownTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SentTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    ReceivedTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SwapPaymentTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SwapRedeemTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SwapRefundTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"/>
+                <controls:TransactionDataTemplateSelector
+                    Currency="WBTC"
+                    UnknownTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SentTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    ReceivedTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SwapPaymentTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SwapRedeemTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"
+                    SwapRefundTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"/>
+                <controls:TransactionDataTemplateSelector
                     Currency="TZBTC"
                     UnknownTemplate="{StaticResource TezosTransactionDetailsTemplate}"
                     SentTemplate="{StaticResource TezosTransactionDetailsTemplate}"

@@ -22,6 +22,8 @@ namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
                 Bitcoin _ => (CurrencyViewModel)new BitcoinCurrencyViewModel(currency),
                 Litecoin _ => (CurrencyViewModel)new LitecoinCurrencyViewModel(currency),
                 Tether _ => (CurrencyViewModel)new TetherCurrencyViewModel(currency),
+                TBTC _ => (CurrencyViewModel)new TbtcCurrencyViewModel(currency),
+                WBTC _ => (CurrencyViewModel)new WbtcCurrencyViewModel(currency),
                 Ethereum _ => (CurrencyViewModel)new EthereumCurrencyViewModel(currency),
                 NYX _ => (CurrencyViewModel)new NYXCurrencyViewModel(currency),
                 FA2 _ => (CurrencyViewModel)new FA2CurrencyViewModel(currency),

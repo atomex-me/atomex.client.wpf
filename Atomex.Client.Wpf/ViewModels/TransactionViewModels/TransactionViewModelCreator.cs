@@ -16,6 +16,8 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
             {
                 BitcoinBasedCurrency _ => (TransactionViewModel)new BitcoinBasedTransactionViewModel((IBitcoinBasedTransaction)tx),
                 Tether _ => (TransactionViewModel)new EthereumERC20TransactionViewModel((EthereumTransaction)tx),
+                TBTC _ => (TransactionViewModel)new EthereumERC20TransactionViewModel((EthereumTransaction)tx),
+                WBTC _ => (TransactionViewModel)new EthereumERC20TransactionViewModel((EthereumTransaction)tx),
                 Ethereum _ => (TransactionViewModel)new EthereumTransactionViewModel((EthereumTransaction)tx),
                 NYX _ => (TransactionViewModel)new TezosNYXTransactionViewModel((TezosTransaction)tx),
                 FA2 _ => (TransactionViewModel)new TezosFA2TransactionViewModel((TezosTransaction)tx),
