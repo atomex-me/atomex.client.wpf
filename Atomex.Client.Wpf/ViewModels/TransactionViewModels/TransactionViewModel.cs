@@ -64,8 +64,10 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
             AmountFormat = currencyViewModel.CurrencyFormat;
             CurrencyCode = currencyViewModel.CurrencyCode;
             Time = tx.CreationTime ?? DateTime.UtcNow;
-            CanBeRemoved = tx.State == BlockchainTransactionState.Failed ||
-                           tx.State == BlockchainTransactionState.Pending;
+            CanBeRemoved = tx.State == BlockchainTransactionState.Unknown ||
+                           tx.State == BlockchainTransactionState.Failed ||
+                           tx.State == BlockchainTransactionState.Pending ||
+                           tx.State == BlockchainTransactionState.Unconfirmed;
 
             if (tx.Type.HasFlag(BlockchainTransactionType.SwapPayment))
             {
