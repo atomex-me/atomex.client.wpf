@@ -2,16 +2,17 @@
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using Atomex.MarketData.Bitfinex;
+using Microsoft.Extensions.Configuration;
+using Serilog;
+
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels;
 using Atomex.Client.Wpf.Views;
 using Atomex.Common.Configuration;
 using Atomex.Core;
+using Atomex.MarketData.Bitfinex;
 using Atomex.Updates;
 using Atomex.Subsystems;
-using Microsoft.Extensions.Configuration;
-using Serilog;
 
 namespace Atomex.Client.Wpf
 {

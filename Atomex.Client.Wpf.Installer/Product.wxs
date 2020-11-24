@@ -3,7 +3,7 @@
 <?define Name = "Atomex Client" ?>
 <?define Manufacturer = "Atomex.me" ?>
 <?define Description = "Multicurrency HD wallet with built-in hybrid exchange based on atomic swap." ?>
-<?define Version = "1.0.65" ?>
+<?define Version = "1.0.66" ?>
 <?define UpgradeCode = "DB7FCF8D-E0C6-4C99-A6B1-3FB6D703F97E" ?>
 <?define ExeName = "Atomex.Client.Wpf.exe" ?>
 
