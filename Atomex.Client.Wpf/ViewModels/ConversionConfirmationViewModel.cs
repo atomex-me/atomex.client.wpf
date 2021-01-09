@@ -3,6 +3,8 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Serilog;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
@@ -11,7 +13,6 @@ using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Common;
 using Atomex.Core;
-using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -57,13 +58,13 @@ namespace Atomex.Client.Wpf.ViewModels
         public bool HasRewardForRedeem { get; set; }
 
         private ICommand _backCommand;
-        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
+        public ICommand BackCommand => _backCommand ??= new Command(() =>
         {
             DialogViewer.HideDialog(Dialogs.Convert);
-        }));
+        });
 
         private ICommand _nextCommand;
-        public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(Send));
+        public ICommand NextCommand => _nextCommand ??= new Command(Send);
 
 #if DEBUG
         public ConversionConfirmationViewModel()

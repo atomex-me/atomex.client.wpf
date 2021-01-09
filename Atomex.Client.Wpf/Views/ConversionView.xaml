@@ -329,20 +329,41 @@
                                        FontFamily="{DynamicResource DefaultFontFamily}"
                                        Grid.Column="0"
                                        Grid.Row="0"/>
+                            <StackPanel Orientation="Horizontal"
+                                        Grid.Column="2"
+                                        Grid.Row="0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center">
                                 <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
-                                           FontFamily="{DynamicResource DefaultFontFamily}"
-                                           HorizontalAlignment="Left"
-                                           VerticalAlignment="Center"
-                                           Grid.Column="2"
-                                           Grid.Row="0">
-                                <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                       FontFamily="{DynamicResource DefaultFontFamily}"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Grid.Column="2"
+                                       Grid.Row="0">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}"
                                                   UpdateSourceTrigger="PropertyChanged">
-                                        <Binding Path="EstimatedPrice" Mode="TwoWay"/>
-                                        <Binding Path="PriceFormat" Mode="OneWay"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
+                                            <Binding Path="EstimatedPrice" Mode="TwoWay"/>
+                                            <Binding Path="PriceFormat" Mode="OneWay"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
+                                       FontFamily="{DynamicResource DefaultFontFamily}"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Margin="10 0 0 0"
+                                       Grid.Column="2"
+                                       Grid.Row="0">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                  UpdateSourceTrigger="PropertyChanged">
+                                            <Binding Path="EstimatedPriceWithMakerFee" Mode="TwoWay"/>
+                                            <Binding Path="PriceFormat" Mode="OneWay"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
 
                             <TextBlock Margin="0 3"
                                        HorizontalAlignment="Right"
