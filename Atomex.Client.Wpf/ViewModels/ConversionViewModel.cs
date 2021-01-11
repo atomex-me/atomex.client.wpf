@@ -323,20 +323,18 @@ namespace Atomex.Client.Wpf.ViewModels
             set { _estimatedPrice = value; OnPropertyChanged(nameof(EstimatedPrice)); }
         }
 
-        private decimal _estimatedMakerFee;
-        private decimal _estimatedPriceWithMakerFee;
-
-        public decimal EstimatedPriceWithMakerFee
-        {
-            get => _estimatedPriceWithMakerFee;
-            set { _estimatedPriceWithMakerFee = value; OnPropertyChanged(nameof(EstimatedPriceWithMakerFee)); }
-        }
-
         private decimal _estimatedMaxAmount;
         public decimal EstimatedMaxAmount
         {
             get => _estimatedMaxAmount;
             set { _estimatedMaxAmount = value; OnPropertyChanged(nameof(EstimatedMaxAmount)); }
+        }
+
+        private decimal _estimatedMakerFee;
+        public decimal EstimatedMakerFee
+        {
+            get => _estimatedMakerFee;
+            set { _estimatedMakerFee = value; OnPropertyChanged(nameof(EstimatedMakerFee)); }
         }
 
         protected decimal _estimatedPaymentFee;
@@ -458,72 +456,70 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 IsAmountUpdating = true;
 
-                _amount = value;
+                //// esitmate max payment amount and max fee
+                //var (maxAmount, maxFee, _) = await App.Account
+                //    .EstimateMaxAmountToSendAsync(
+                //        currency: FromCurrency.Name,
+                //        to: null,
+                //        type: BlockchainTransactionType.SwapPayment,
+                //        fee: 0,
+                //        feePrice: 0,
+                //        reserve: true);
 
-                // esitmate max payment amount and max fee
-                var (maxAmount, maxFee, _) = await App.Account
-                    .EstimateMaxAmountToSendAsync(
-                        currency: FromCurrency.Name,
-                        to: null,
-                        type: BlockchainTransactionType.SwapPayment,
-                        fee: 0,
-                        feePrice: 0,
-                        reserve: true);
+                //// get amount reserved for active swaps
+                //var reservedForSwapsAmount = await GetAmountReservedForSwapsAsync(FromCurrency);
 
-                // get amount reserved for active swaps
-                var reservedForSwapsAmount = await GetAmountReservedForSwapsAsync(FromCurrency);
+                //// estimate maker fee
+                //_estimatedMakerFee = await EstimateMakerFeeAsync();
 
-                // estimate maker fee
-                _estimatedMakerFee = await EstimateMakerFeeAsync();
+                //// max available amount is max amount without reserved for swaps amount and maker fee
+                //var maxNetAmount = Math.Max(maxAmount - reservedForSwapsAmount - _estimatedMakerFee, 0);
 
-                // max available amount is max amount without reserved for swaps amount and maker fee
-                maxAmount = Math.Max(maxAmount - reservedForSwapsAmount - _estimatedMakerFee, 0);
+                //var includeFeeToAmount = FromCurrency.FeeCurrencyName == FromCurrency.Name;
 
-                var includeFeeToAmount = FromCurrency.FeeCurrencyName == FromCurrency.Name;
+                //var availableAmount = FromCurrency is BitcoinBasedCurrency
+                //    ? FromCurrencyViewModel.AvailableAmount
+                //    : maxNetAmount + (includeFeeToAmount ? maxFee : 0);
 
-                var availableAmount = FromCurrency is BitcoinBasedCurrency
-                    ? FromCurrencyViewModel.AvailableAmount
-                    : maxAmount + (includeFeeToAmount ? maxFee : 0);
+                //var estimatedPaymentFee = value != 0
+                //    ? (value < availableAmount
+                //        ? await App.Account
+                //            .EstimateFeeAsync(FromCurrency.Name, null, value, BlockchainTransactionType.SwapPayment)
+                //        : null)
+                //    : 0;
 
-                var estimatedPaymentFee = _amount != 0
-                    ? (_amount < availableAmount
-                        ? await App.Account
-                            .EstimateFeeAsync(FromCurrency.Name, null, _amount, BlockchainTransactionType.SwapPayment)
-                        : null)
-                    : 0;
+                //if (estimatedPaymentFee == null)
+                //{
+                //    if (maxNetAmount > 0)
+                //    {
+                //        _amount = maxNetAmount;
+                //        estimatedPaymentFee = maxFee;
+                //    }
+                //    else
+                //    {
+                //        _amount = 0;
+                //        OnPropertyChanged(nameof(Amount));
 
-                if (estimatedPaymentFee == null)
-                {
-                    if (maxAmount > 0)
-                    {
-                        _amount = maxAmount;
-                        estimatedPaymentFee = maxFee;
-                    }
-                    else
-                    {
-                        _amount = 0;
-                        OnPropertyChanged(nameof(Amount));
+                //        if(FromCurrency.Name != FromCurrency.FeeCurrencyName && FromCurrencyViewModel.AvailableAmount > 0)                        
+                //            Warning = string.Format(CultureInfo.InvariantCulture, Resources.CvInsufficientChainFunds, FromCurrency.FeeCurrencyName);
 
-                        if(FromCurrency.Name != FromCurrency.FeeCurrencyName && FromCurrencyViewModel.AvailableAmount > 0)                        
-                            Warning = string.Format(CultureInfo.InvariantCulture, Resources.CvInsufficientChainFunds, FromCurrency.FeeCurrencyName);
+                //        IsAmountUpdating = false;
+                //        return;
 
-                        IsAmountUpdating = false;
-                        return;
 
-                        
-                        // todo: insufficient funds warning
-                        // 
-                    }
-                }
+                //        // todo: insufficient funds warning
+                //        // 
+                //    }
+                //}
 
-                EstimatedPaymentFee = estimatedPaymentFee.Value;
+                //EstimatedPaymentFee = estimatedPaymentFee.Value;
 
-                if (_amount + (includeFeeToAmount ? _estimatedPaymentFee : 0) > availableAmount)
-                    _amount = Math.Max(availableAmount - (includeFeeToAmount ? _estimatedPaymentFee : 0), 0);
+                //if (_amount + (includeFeeToAmount ? _estimatedPaymentFee : 0) > availableAmount)
+                //    _amount = Math.Max(availableAmount - (includeFeeToAmount ? _estimatedPaymentFee : 0), 0);
 
-                OnPropertyChanged(nameof(CurrencyFormat));
-                OnPropertyChanged(nameof(TargetCurrencyFormat));
-                OnPropertyChanged(nameof(Amount));
+                //OnPropertyChanged(nameof(CurrencyFormat));
+                //OnPropertyChanged(nameof(TargetCurrencyFormat));
+                //OnPropertyChanged(nameof(Amount));
 
                 UpdateRedeemAndRewardFeesAsync();
 
@@ -578,67 +574,67 @@ namespace Atomex.Client.Wpf.ViewModels
 #endif
         }
 
-        private async Task<decimal> GetAmountReservedForSwapsAsync(Currency currency)
-        {
-            var swaps = await App.Account
-                .GetSwapsAsync();
+        //private async Task<decimal> GetAmountReservedForSwapsAsync(Currency currency)
+        //{
+        //    var swaps = await App.Account
+        //        .GetSwapsAsync();
 
-            var reservedAmount = swaps.Sum(s => (s.IsActive && s.SoldCurrency == currency.Name && !s.StateFlags.HasFlag(SwapStateFlags.IsPaymentBroadcast))
-                ? s.Symbol.IsBaseCurrency(currency.Name)
-                    ? s.Qty
-                    : s.Qty * s.Price
-                : 0);
+        //    var reservedAmount = swaps.Sum(s => (s.IsActive && s.SoldCurrency == currency.Name && !s.StateFlags.HasFlag(SwapStateFlags.IsPaymentBroadcast))
+        //        ? s.Symbol.IsBaseCurrency(currency.Name)
+        //            ? s.Qty
+        //            : s.Qty * s.Price
+        //        : 0);
 
-            // todo: add maker fee
+        //    // todo: add maker fee
 
-            return AmountHelper.RoundDown(reservedAmount, currency.DigitsMultiplier);
-        }
+        //    return AmountHelper.RoundDown(reservedAmount, currency.DigitsMultiplier);
+        //}
 
-        private async Task<decimal> EstimateMakerFeeAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var makerPaymentFee = await ToCurrency
-                .GetPaymentFeeAsync(cancellationToken);
+        //private async Task<decimal> EstimateMakerFeeAsync(
+        //    CancellationToken cancellationToken = default)
+        //{
+        //    var makerPaymentFee = await ToCurrency
+        //        .GetPaymentFeeAsync(cancellationToken);
 
-            // if ToCurrency.Name is not equal ToCurrency.FeeCurrencyName convert makerPaymentFee from ToCurrency.FeeCurrencyName to ToCurrency.Name
-            if (ToCurrency.Name != ToCurrency.FeeCurrencyName)
-                makerPaymentFee = ConvertAmount(makerPaymentFee, ToCurrency.FeeCurrencyName, ToCurrency.Name) ?? 0;
+        //    // if ToCurrency.Name is not equal ToCurrency.FeeCurrencyName convert makerPaymentFee from ToCurrency.FeeCurrencyName to ToCurrency.Name
+        //    if (ToCurrency.Name != ToCurrency.FeeCurrencyName)
+        //        makerPaymentFee = ConvertAmount(makerPaymentFee, ToCurrency.FeeCurrencyName, ToCurrency.Name) ?? 0;
 
-            var makerRedeemFee = await FromCurrency
-                .GetRedeemFeeAsync(toAddress: null, cancellationToken: cancellationToken);
+        //    var makerRedeemFee = await FromCurrency
+        //        .GetRedeemFeeAsync(toAddress: null, cancellationToken: cancellationToken);
 
-            // if FromCurrency.Name is not equal FromCurrency.FeeCurrencyName convert makerRedeemFee from FromCurrency.FeeCurrencyName to FromCurrency.Name
-            if (FromCurrency.Name != FromCurrency.FeeCurrencyName)
-                makerRedeemFee = ConvertAmount(makerRedeemFee, FromCurrency.FeeCurrencyName, FromCurrency.Name) ?? 0;
+        //    // if FromCurrency.Name is not equal FromCurrency.FeeCurrencyName convert makerRedeemFee from FromCurrency.FeeCurrencyName to FromCurrency.Name
+        //    if (FromCurrency.Name != FromCurrency.FeeCurrencyName)
+        //        makerRedeemFee = ConvertAmount(makerRedeemFee, FromCurrency.FeeCurrencyName, FromCurrency.Name) ?? 0;
 
-            // convert makerPaymentFee from ToCurrency to FromCurrency
-            makerPaymentFee = ConvertAmount(makerPaymentFee, ToCurrency.Name, FromCurrency.Name) ?? 0;
+        //    // convert makerPaymentFee from ToCurrency to FromCurrency
+        //    makerPaymentFee = ConvertAmount(makerPaymentFee, ToCurrency.Name, FromCurrency.Name) ?? 0;
 
-            return makerPaymentFee + makerRedeemFee;
-        }
+        //    return makerPaymentFee + makerRedeemFee;
+        //}
 
-        private decimal? ConvertAmount(decimal amount, string from, string to)
-        {
-            var symbol = App.Account.Symbols.SymbolByCurrencies(from, to);
+        //private decimal? ConvertAmount(decimal amount, string from, string to)
+        //{
+        //    var symbol = App.Account.Symbols.SymbolByCurrencies(from, to);
 
-            var toCurrency = App.Account.Currencies.GetByName(to);
+        //    var toCurrency = App.Account.Currencies.GetByName(to);
 
-            if (symbol == null)
-                throw new Exception($"Can't find symbol for {from} and {to}");
+        //    if (symbol == null)
+        //        throw new Exception($"Can't find symbol for {from} and {to}");
 
-            var quote = App.Terminal
-                .GetOrderBook(symbol)
-                ?.TopOfBook();
+        //    var quote = App.Terminal
+        //        .GetOrderBook(symbol)
+        //        ?.TopOfBook();
 
-            if (quote == null || !quote.IsValid())
-                return null;
+        //    if (quote == null || !quote.IsValid())
+        //        return null;
 
-            var middlePrice = (quote.Ask + quote.Bid) / 2;
+        //    var middlePrice = (quote.Ask + quote.Bid) / 2;
 
-            return symbol.IsBaseCurrency(from)
-                ? AmountHelper.RoundDown(amount * middlePrice, toCurrency.DigitsMultiplier)
-                : AmountHelper.RoundDown(amount / middlePrice, toCurrency.DigitsMultiplier);
-        }
+        //    return symbol.IsBaseCurrency(from)
+        //        ? AmountHelper.RoundDown(amount * middlePrice, toCurrency.DigitsMultiplier)
+        //        : AmountHelper.RoundDown(amount / middlePrice, toCurrency.DigitsMultiplier);
+        //}
 
         private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs args)
         {
@@ -664,7 +660,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
         protected void OnBaseQuotesUpdatedEventHandler(object sender, EventArgs args)
         {
-            if (sender is not ICurrencyQuotesProvider provider)
+            if (!(sender is ICurrencyQuotesProvider provider))
                 return;
 
             if (CurrencyCode == null || TargetCurrencyCode == null || BaseCurrencyCode == null)
@@ -689,7 +685,7 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             try
             {
-                if (sender is not IAtomexClient terminal)
+                if (!(sender is IAtomexClient terminal))
                     return;
 
                 if (ToCurrency == null)
@@ -726,20 +722,10 @@ namespace Atomex.Client.Wpf.ViewModels
                     _targetAmount = _estimatedPrice != 0
                         ? AmountHelper.RoundDown(Amount / _estimatedPrice, ToCurrency.DigitsMultiplier)
                         : 0m;
-
-                    // estimated price including maker fee
-                    _estimatedPriceWithMakerFee = _targetAmount != 0
-                        ? (Amount + _estimatedMakerFee) / _targetAmount
-                        : 0m;
                 }
                 else if (symbol.IsQuoteCurrency(ToCurrency.Name))
                 {
                     _targetAmount = AmountHelper.RoundDown(Amount * _estimatedPrice, ToCurrency.DigitsMultiplier);
-
-                    // estimated price including maker fee
-                    _estimatedPriceWithMakerFee = Amount + _estimatedMakerFee != 0
-                        ? _targetAmount / (Amount + _estimatedMakerFee)
-                        : 0m;
                 }
 
                 if (Application.Current.Dispatcher != null)
@@ -747,7 +733,6 @@ namespace Atomex.Client.Wpf.ViewModels
                     await Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         OnPropertyChanged(nameof(EstimatedPrice));
-                        OnPropertyChanged(nameof(EstimatedPriceWithMakerFee));
                         OnPropertyChanged(nameof(EstimatedMaxAmount));
                         OnPropertyChanged(nameof(PriceFormat));
                         OnPropertyChanged(nameof(IsNoLiquidity));
