@@ -362,7 +362,6 @@
                                         Grid.Row="1"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center">
-
                                 <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
                                            FontFamily="{DynamicResource DefaultFontFamily}">
                                     <TextBlock.Text>
@@ -372,10 +371,181 @@
                                             <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
-                                    <TextBlock.ToolTip>
-                                        <TextBlock Text="Hello!"/>
-                                    </TextBlock.ToolTip>
                                 </TextBlock>
+                                <controls:IconButton
+                                        Margin="5 0 0 0"
+                                        Width="10"
+                                        Height="10"
+                                        Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                        Path="{DynamicResource FontAwesome.QuestionCircleSolid}"
+                                        Style="{DynamicResource PathButtonStyle}"
+                                        ToolTipService.InitialShowDelay="0"
+                                        ToolTipService.ShowDuration="60000">
+                                    <controls:IconButton.ToolTip>
+                                        <ToolTip>
+                                            <StackPanel Orientation="Vertical">
+                                                <!-- Payment Fee -->
+                                                <StackPanel Orientation="Horizontal"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Center">
+                                                    <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               Text="Payment fee:"/>
+
+                                                    <TextBlock Margin="5 0 0 0"
+                                                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                                                               FontFamily="{DynamicResource DefaultFontFamily}">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                                          UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding Path="EstimatedPaymentFee" Mode="TwoWay"/>
+                                                                <Binding Path="FromFeeCurrencyFormat" Mode="OneWay"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+
+                                                    <TextBlock Text="{Binding FromFeeCurrencyCode}"
+                                                               Margin="3 0 0 2"
+                                                               FontSize="9"
+                                                               VerticalAlignment="Bottom"
+                                                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                                                               FontFamily="{DynamicResource DefaultFontFamily}"/>
+
+                                                    <TextBlock Margin="5 0 0 0"
+                                                               Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               Text="("/>
+
+                                                    <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               FontFamily="{DynamicResource DefaultFontFamily}">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                                          UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding Path="EstimatedPaymentFeeInBase" Mode="TwoWay"/>
+                                                                <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+
+                                                    <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               Text=")"/>
+
+                                                    <TextBlock Margin="3 0 0 0" Text="+"/>
+                                                </StackPanel>
+                                                <!-- Redeem Fee -->
+                                                <StackPanel Orientation="Horizontal"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Center">
+                                                    <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               Text="Redeem fee:"/>
+
+                                                    <TextBlock Margin="5 0 0 0"
+                                                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                                                               FontFamily="{DynamicResource DefaultFontFamily}">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                                          UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding Path="EstimatedRedeemFee" Mode="TwoWay"/>
+                                                                <Binding Path="TargetFeeCurrencyFormat" Mode="OneWay"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+
+                                                    <TextBlock Text="{Binding TargetFeeCurrencyCode}"
+                                                               Margin="3 0 0 2"
+                                                               FontSize="9"
+                                                               VerticalAlignment="Bottom"
+                                                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                                                               FontFamily="{DynamicResource DefaultFontFamily}"/>
+
+                                                    <TextBlock Margin="5 0 0 0"
+                                                               Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               Text="("/>
+
+                                                    <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               FontFamily="{DynamicResource DefaultFontFamily}">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                                          UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding Path="EstimatedRedeemFeeInBase" Mode="TwoWay"/>
+                                                                <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+
+                                                    <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               Text=")"/>
+
+                                                    <TextBlock Margin="3 0 0 0" Text="+"/>
+                                                </StackPanel>
+                                                <!-- Maker Miner Fee -->
+                                                <StackPanel Orientation="Horizontal"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Center">
+                                                    <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               Text="Maker fee:"/>
+
+                                                    <TextBlock Margin="5 0 0 0"
+                                                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                                                               FontFamily="{DynamicResource DefaultFontFamily}">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                                          UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding Path="EstimatedMakerMinerFee" Mode="TwoWay"/>
+                                                                <Binding Path="FromFeeCurrencyFormat" Mode="OneWay"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+
+                                                    <TextBlock Text="{Binding FromFeeCurrencyCode}"
+                                                               Margin="3 0 0 2"
+                                                               FontSize="9"
+                                                               VerticalAlignment="Bottom"
+                                                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                                                               FontFamily="{DynamicResource DefaultFontFamily}"/>
+
+                                                    <TextBlock Margin="5 0 0 0"
+                                                               Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               Text="("/>
+
+                                                    <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               FontFamily="{DynamicResource DefaultFontFamily}">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                                          UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding Path="EstimatedMakerMinerFeeInBase" Mode="TwoWay"/>
+                                                                <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+
+                                                    <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               Text=")"/>
+
+                                                    <TextBlock Margin="3 0 0 0" Text="="/>
+                                                </StackPanel>
+                                                <!-- Total Fee -->
+                                                <StackPanel Margin="0 7 0 0"
+                                                            Orientation="Horizontal"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Center">
+                                                    <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                               Text="Total miner fee:"/>
+
+                                                    <TextBlock Margin="5 0 0 0"
+                                                               Foreground="{DynamicResource DefaultAmountForegroundBrush}"
+                                                               FontFamily="{DynamicResource DefaultFontFamily}">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                                                                          UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding Path="EstimatedTotalMinerFeeInBase" Mode="TwoWay"/>
+                                                                <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </controls:IconButton.ToolTip>
+                                </controls:IconButton>
                             </StackPanel>
                            
                             <TextBlock Margin="0 3"

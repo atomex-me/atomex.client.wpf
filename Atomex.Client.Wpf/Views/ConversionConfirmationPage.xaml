@@ -199,7 +199,6 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
-                <RowDefinition/>
             </Grid.RowDefinitions>
 
             <TextBlock Text="with price:"
@@ -224,7 +223,7 @@
                 </TextBlock>
             </StackPanel>
 
-            <TextBlock Text="with payment fee:"
+            <TextBlock Text="with total miner fee:"
                        FontSize="15"
                        FontFamily="{DynamicResource DefaultLightFontFamily}"
                        Foreground="{DynamicResource DefaultForegroundBrush}"
@@ -236,72 +235,14 @@
                         Grid.Column="1"
                         Grid.Row="1">
                 <TextBlock Margin="5 0 0 0"
-                           Style="{StaticResource AmountTextBlock}">
+                           Style="{StaticResource AmountInBaseTextBlock}">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="EstimatedPaymentFee" Mode="OneWay"/>
-                            <Binding Path="FromFeeCurrencyFormat" Mode="OneWay"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <TextBlock Text="{Binding FromFeeCurrencyCode}"
-                           Margin="3 0 0 1"
-                           FontSize="11"
-                           VerticalAlignment="Bottom"
-                           Style="{StaticResource AmountTextBlock}"/>
-                <TextBlock Text="("
-                           Margin="5 0 0 0"
-                           Style="{StaticResource AmountInBaseTextBlock}"/>
-                <TextBlock Style="{StaticResource AmountInBaseTextBlock}">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="EstimatedPaymentFeeInBase" Mode="OneWay"/>
+                            <Binding Path="EstimatedTotalMinerFeeInBase" Mode="OneWay"/>
                             <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <TextBlock Text=")"
-                           Style="{StaticResource AmountInBaseTextBlock}"/>
-            </StackPanel>
-
-            <TextBlock Text="with redeem fee:"
-                       FontSize="15"
-                       FontFamily="{DynamicResource DefaultLightFontFamily}"
-                       Foreground="{DynamicResource DefaultForegroundBrush}"
-                       HorizontalAlignment="Right"
-                       Grid.Column="0"
-                       Grid.Row="2"/>
-
-            <StackPanel Orientation="Horizontal"
-                        Grid.Column="1"
-                        Grid.Row="2">
-                <TextBlock Margin="5 0 0 0"
-                           Style="{StaticResource AmountTextBlock}">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="EstimatedRedeemFee" Mode="OneWay"/>
-                            <Binding Path="TargetFeeCurrencyFormat" Mode="OneWay"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <TextBlock Text="{Binding TargetFeeCurrencyCode}"
-                           Margin="3 0 0 1"
-                           FontSize="11"
-                           VerticalAlignment="Bottom"
-                           Style="{StaticResource AmountTextBlock}"/>
-                <TextBlock Text="("
-                           Margin="5 0 0 0"
-                           Style="{StaticResource AmountInBaseTextBlock}"/>
-                <TextBlock Style="{StaticResource AmountInBaseTextBlock}">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="EstimatedRedeemFeeInBase" Mode="OneWay"/>
-                            <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <TextBlock Text=")"
-                           Style="{StaticResource AmountInBaseTextBlock}"/>
             </StackPanel>
 
             <TextBlock Text="with reward for redeem:"
@@ -310,12 +251,12 @@
                        Foreground="{DynamicResource DefaultForegroundBrush}"
                        HorizontalAlignment="Right"
                        Grid.Column="0"
-                       Grid.Row="3"
+                       Grid.Row="2"
                        Visibility="{Binding HasRewardForRedeem, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
 
             <StackPanel Orientation="Horizontal"
                         Grid.Column="1"
-                        Grid.Row="3"
+                        Grid.Row="2"
                         Visibility="{Binding HasRewardForRedeem, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <TextBlock Margin="5 0 0 0"
                            Style="{StaticResource AmountTextBlock}">

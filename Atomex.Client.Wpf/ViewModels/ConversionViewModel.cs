@@ -743,9 +743,12 @@ namespace Atomex.Client.Wpf.ViewModels
                 EstimatedOrderPrice = _estimatedOrderPrice,
                 EstimatedPaymentFee = EstimatedPaymentFee,
                 EstimatedRedeemFee = EstimatedRedeemFee,
+                EstimatedMakerMinerFee = EstimatedMakerMinerFee,
                 
                 EstimatedPaymentFeeInBase = EstimatedPaymentFeeInBase,
                 EstimatedRedeemFeeInBase = EstimatedRedeemFeeInBase,
+                EstimatedMakerMinerFeeInBase = EstimatedMakerMinerFeeInBase,
+                EstimatedTotalMinerFeeInBase = EstimatedTotalMinerFeeInBase,
 
                 RewardForRedeem = RewardForRedeem,
                 RewardForRedeemInBase = RewardForRedeemInBase,

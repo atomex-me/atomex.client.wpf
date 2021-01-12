@@ -54,7 +54,7 @@ namespace Atomex.Client.Wpf.ViewModels
         public decimal EstimatedRedeemFeeInBase { get; set; }
         public decimal EstimatedMakerMinerFee { get; set; }
         public decimal EstimatedMakerMinerFeeInBase { get; set; }
-        public decimal EstimatedTotalFeeInBase { get; set; }
+        public decimal EstimatedTotalMinerFeeInBase { get; set; }
 
         public decimal RewardForRedeem { get; set; }
         public decimal RewardForRedeemInBase { get; set; }
@@ -153,12 +153,12 @@ namespace Atomex.Client.Wpf.ViewModels
                 if (Amount > 0 && !fromWallets.Any())
                     return new Error(Errors.SwapError, Resources.CvInsufficientFunds);
 
-                var symbol     = App.Account.Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
+                var symbol       = App.Account.Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
                 var baseCurrency = App.Account.Currencies.GetByName(symbol.Base);
-                var side       = symbol.OrderSideForBuyCurrency(ToCurrency);
-                var terminal   = App.Terminal;
-                var price      = EstimatedPrice;
-                var orderPrice = EstimatedOrderPrice;
+                var side         = symbol.OrderSideForBuyCurrency(ToCurrency);
+                var terminal     = App.Terminal;
+                var price        = EstimatedPrice;
+                var orderPrice   = EstimatedOrderPrice;
 
                 if (price == 0)
                     return new Error(Errors.NoLiquidity, Resources.CvNoLiquidity);
@@ -175,13 +175,14 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 var order = new Order
                 {
-                    Symbol = symbol.Name,
-                    TimeStamp = DateTime.UtcNow,
-                    Price = orderPrice,
-                    Qty = qty,
-                    Side = side,
-                    Type = OrderType.FillOrKill,
-                    FromWallets = fromWallets.ToList()
+                    Symbol        = symbol.Name,
+                    TimeStamp     = DateTime.UtcNow,
+                    Price         = orderPrice,
+                    Qty           = qty,
+                    Side          = side,
+                    Type          = OrderType.FillOrKill,
+                    FromWallets   = fromWallets.ToList(),
+                    MakerMinerFee = EstimatedMakerMinerFee
                 };
 
                 await order.CreateProofOfPossessionAsync(account);
