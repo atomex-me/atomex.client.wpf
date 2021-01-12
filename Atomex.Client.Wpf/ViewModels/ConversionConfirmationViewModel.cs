@@ -52,6 +52,9 @@ namespace Atomex.Client.Wpf.ViewModels
         public decimal EstimatedPaymentFeeInBase { get; set; }
         public decimal EstimatedRedeemFee { get; set; }
         public decimal EstimatedRedeemFeeInBase { get; set; }
+        public decimal EstimatedMakerMinerFee { get; set; }
+        public decimal EstimatedMakerMinerFeeInBase { get; set; }
+        public decimal EstimatedTotalFeeInBase { get; set; }
 
         public decimal RewardForRedeem { get; set; }
         public decimal RewardForRedeemInBase { get; set; }
