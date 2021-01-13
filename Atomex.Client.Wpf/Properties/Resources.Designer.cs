@@ -169,6 +169,24 @@ namespace Atomex.Client.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Sufficient network fee for this amount ({0} is {1})..
+        /// </summary>
+        public static string CvSufficientNetworkFee {
+            get {
+                return ResourceManager.GetString("CvSufficientNetworkFee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Too high network fee for this amount ({0} is {1})!.
+        /// </summary>
+        public static string CvTooHighNetworkFee {
+            get {
+                return ResourceManager.GetString("CvTooHighNetworkFee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Wallet locked. Please unlock the wallet to continue..
         /// </summary>
         public static string CvWalletLocked {

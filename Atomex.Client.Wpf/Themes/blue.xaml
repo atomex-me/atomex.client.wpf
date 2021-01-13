@@ -36,6 +36,7 @@
     <SolidColorBrush x:Key="DefaultTextBoxCuretBrush" Color="{DynamicResource DefaultTextBoxCuretColor}"/>
     <SolidColorBrush x:Key="DefaultSubstrateBrush" Color="{DynamicResource DefaultSubstrateColor}"/>
     <SolidColorBrush x:Key="WarningForegroundBrush" Color="Gold"/>
+    <SolidColorBrush x:Key="CriticalWarningForegroundBrush" Color="#ef6a41"/>
     <SolidColorBrush x:Key="FieldHeaderBackgroundBrush" Color="#214174"/>
     <SolidColorBrush x:Key="DefaultAmountForegroundBrush" Color="#eeff00"/>
     <SolidColorBrush x:Key="DefaultAmountInBaseForegroundBrush" Color="DarkGray"/>

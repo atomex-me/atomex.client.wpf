@@ -334,11 +334,11 @@
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center">
                                 <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
-                                       FontFamily="{DynamicResource DefaultFontFamily}"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Center"
-                                       Grid.Column="2"
-                                       Grid.Row="0">
+                                           FontFamily="{DynamicResource DefaultFontFamily}"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Grid.Column="2"
+                                           Grid.Row="0">
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource AmountToStringConverter}"
                                                   UpdateSourceTrigger="PropertyChanged">
@@ -490,12 +490,12 @@
                                                             <MultiBinding Converter="{StaticResource AmountToStringConverter}"
                                                                           UpdateSourceTrigger="PropertyChanged">
                                                                 <Binding Path="EstimatedMakerMinerFee" Mode="TwoWay"/>
-                                                                <Binding Path="FromFeeCurrencyFormat" Mode="OneWay"/>
+                                                                <Binding Path="CurrencyFormat" Mode="OneWay"/>
                                                             </MultiBinding>
                                                         </TextBlock.Text>
                                                     </TextBlock>
 
-                                                    <TextBlock Text="{Binding FromFeeCurrencyCode}"
+                                                    <TextBlock Text="{Binding CurrencyCode}"
                                                                Margin="3 0 0 2"
                                                                FontSize="9"
                                                                VerticalAlignment="Bottom"
@@ -565,7 +565,7 @@
                                         Grid.Row="2"
                                         Visibility="{Binding HasRewardForRedeem, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                                 <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
-                                               FontFamily="{DynamicResource DefaultFontFamily}">
+                                           FontFamily="{DynamicResource DefaultFontFamily}">
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource AmountToStringConverter}"
                                                       UpdateSourceTrigger="PropertyChanged">
@@ -597,15 +597,39 @@
                 </Grid>
             </Border>
 
-            <TextBlock Text="{Binding Warning}"
-                        Foreground="{DynamicResource WarningForegroundBrush}"
-                        FontFamily="{DynamicResource DefaultLightFontFamily}"
-                        FontSize="13"
-                        Margin="20 15 20 0"
-                        TextWrapping="Wrap"
+            <StackPanel Margin="20 15 20 0"
+                        Orientation="Horizontal"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        Visibility="{Binding Warning, Converter={StaticResource StringToVisibilityConverter}}"/>
+                        Visibility="{Binding Warning, Converter={StaticResource StringToVisibilityConverter}}">
+                <Path Margin="0 0 0 1"
+                      Stretch="Uniform"
+                      SnapsToDevicePixels="False"
+                      UseLayoutRounding="False"
+                      Width="17"
+                      Height="17"
+                      Fill="{DynamicResource WarningForegroundBrush}"
+                      Data="{DynamicResource Octicons.Alert}"/>
+                <TextBlock Margin="6 0 0 0"
+                           Text="{Binding Warning}"
+                           Foreground="{DynamicResource WarningForegroundBrush}"
+                           FontFamily="{DynamicResource DefaultLightFontFamily}"
+                           FontSize="13"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Bottom"
+                           Visibility="{Binding IsCriticalWarning, Converter={StaticResource InverseBoolToVisibilityCollapsedConverter}}">
+                </TextBlock>
+                <TextBlock Margin="6 0 0 0"
+                           Text="{Binding Warning}"
+                           Foreground="{DynamicResource CriticalWarningForegroundBrush}"
+                           FontFamily="{DynamicResource DefaultLightFontFamily}"
+                           FontSize="13"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Bottom"
+                           Visibility="{Binding IsCriticalWarning, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                </TextBlock>
+            </StackPanel>
 
             <controls:RoundedButton Width="150"
                                     Height="40"
@@ -613,7 +637,8 @@
                                     CornerRadius="20"
                                     Content="Convert"
                                     Command="{Binding ConvertCommand}"
-                                    Style="{StaticResource ConvertButtonStyle}"/>
+                                    Style="{StaticResource ConvertButtonStyle}"
+                                    IsEnabled="{Binding CanConvert}"/>
         </StackPanel>
 
         <DataGrid x:Name="DgConversions"

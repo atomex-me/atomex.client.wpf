@@ -410,6 +410,20 @@ namespace Atomex.Client.Wpf.ViewModels
             set { _warning = value; OnPropertyChanged(nameof(Warning)); }
         }
 
+        protected bool _isCriticalWarning;
+        public bool IsCriticalWarning
+        {
+            get => _isCriticalWarning;
+            set { _isCriticalWarning = value; OnPropertyChanged(nameof(IsCriticalWarning)); }
+        }
+
+        private bool _canConvert = true;
+        public bool CanConvert
+        {
+            get => _canConvert;
+            set { _canConvert = value; OnPropertyChanged(nameof(CanConvert)); }
+        }
+
         private ObservableCollection<SwapViewModel> _swaps;
         public ObservableCollection<SwapViewModel> Swaps
         {
@@ -475,6 +489,8 @@ namespace Atomex.Client.Wpf.ViewModels
                         toCurrency: ToCurrency,
                         account: App.Account,
                         atomexClient: App.Terminal);
+
+                IsCriticalWarning = false;
 
                 if (swapParams.Error != null)
                 {
@@ -598,6 +614,27 @@ namespace Atomex.Client.Wpf.ViewModels
                 EstimatedPaymentFeeInBase +
                 EstimatedRedeemFeeInBase +
                 EstimatedMakerMinerFeeInBase;
+
+            if (AmountInBase != 0 && EstimatedTotalMinerFeeInBase / AmountInBase > 0.3m)
+            {
+                IsCriticalWarning = true;
+                Warning = string.Format(
+                    CultureInfo.InvariantCulture,
+                    Resources.CvTooHighNetworkFee,
+                    FormattableString.Invariant($"{EstimatedTotalMinerFeeInBase:$0.00}"),
+                    FormattableString.Invariant($"{EstimatedTotalMinerFeeInBase / AmountInBase:0.00%}"));
+            }
+            else if (AmountInBase != 0 && EstimatedTotalMinerFeeInBase / AmountInBase > 0.1m)
+            {
+                IsCriticalWarning = false;
+                Warning = string.Format(
+                    CultureInfo.InvariantCulture,
+                    Resources.CvSufficientNetworkFee,
+                    FormattableString.Invariant($"{EstimatedTotalMinerFeeInBase:$0.00}"),
+                    FormattableString.Invariant($"{EstimatedTotalMinerFeeInBase / AmountInBase:0.00%}"));
+            }
+
+            CanConvert = AmountInBase == 0 || EstimatedTotalMinerFeeInBase / AmountInBase <= 0.75m;
 
             var toCurrencyPrice = provider.GetQuote(TargetCurrencyCode, BaseCurrencyCode)?.Bid ?? 0m;
             RewardForRedeemInBase = _rewardForRedeem * toCurrencyPrice;
