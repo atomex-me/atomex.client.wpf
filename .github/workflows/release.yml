@@ -1,0 +1,30 @@
+name: Build release
+
+on:
+  push:
+    tags:
+     - "*.*.*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    steps:
+    - uses: actions/checkout@master
+      with:
+        submodules: true
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0.2
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.2
+    - name: Restore NuGet Packages
+      run: nuget restore Atomex.Client.Wpf.sln
+    - name: Build
+      run: msbuild /p:Configuration="Release" /clp:ErrorsOnly
+    - name: Release
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        draft: true

@@ -290,4 +290,10 @@ NOTE: Do not sign out or close the application until the swap is completed, othe
   <data name="CvLowFees" xml:space="preserve">
     <value>Warning: too low fees</value>
   </data>
+  <data name="CvSufficientNetworkFee" xml:space="preserve">
+    <value>Sufficient network fee for this amount ({0} is {1}).</value>
+  </data>
+  <data name="CvTooHighNetworkFee" xml:space="preserve">
+    <value>Too high network fee for this amount ({0} is {1})!</value>
+  </data>
 </root>

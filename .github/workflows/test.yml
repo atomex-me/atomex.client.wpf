@@ -1,0 +1,21 @@
+name: Build and run tests
+
+on: push
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0.2
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.2
+    - name: Restore NuGet Packages
+      run: nuget restore Atomex.Client.Wpf.sln
+    - name: Build
+      run: msbuild /p:Configuration="Release" /clp:ErrorsOnly
