@@ -9,7 +9,7 @@
         xmlns:customControls="clr-namespace:Atomex.Client.Wpf.Controls"
         mc:Ignorable="d"
         Title="atomex"
-        Width="1000"
+        Width="1100"
         Height="800"
         Icon="pack://application:,,,/Atomex.Client.Wpf;component/Resources/Images/logo.png"
         Style="{StaticResource MainWindowStyle}"

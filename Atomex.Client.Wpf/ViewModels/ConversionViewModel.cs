@@ -608,7 +608,7 @@ namespace Atomex.Client.Wpf.ViewModels
             var toCurrencyFeePrice = provider.GetQuote(ToCurrency.FeeCurrencyName, BaseCurrencyCode)?.Bid ?? 0m;
             EstimatedRedeemFeeInBase = _estimatedRedeemFee * toCurrencyFeePrice;
 
-            EstimatedMakerMinerFeeInBase = _estimatedMakerMinerFee * fromCurrencyFeePrice;
+            EstimatedMakerMinerFeeInBase = _estimatedMakerMinerFee * fromCurrencyPrice;
 
             EstimatedTotalMinerFeeInBase = 
                 EstimatedPaymentFeeInBase +
