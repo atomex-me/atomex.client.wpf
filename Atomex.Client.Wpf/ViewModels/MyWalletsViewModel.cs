@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Core;
@@ -36,7 +37,7 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _selectWalletCommand;
-        public ICommand SelectWalletCommand => _selectWalletCommand ?? (_selectWalletCommand = new RelayCommand<WalletInfo>(info =>
+        public ICommand SelectWalletCommand => _selectWalletCommand ??= new RelayCommand<WalletInfo>(info =>
         {
             IAccount account = null;
 
@@ -45,13 +46,18 @@ namespace Atomex.Client.Wpf.ViewModels
                 account = Account.LoadFromFile(
                     pathToAccount: info.Path,
                     password: password,
-                    currenciesProvider: AtomexApp.CurrenciesProvider,
-                    symbolsProvider: AtomexApp.SymbolsProvider);
+                    currenciesProvider: AtomexApp.CurrenciesProvider);
             });
 
             unlockViewModel.Unlocked += (sender, args) =>
             {
-                AtomexApp.UseTerminal(new WebSocketAtomexClient(App.Configuration, account), restart: true);
+                var atomexClient = new WebSocketAtomexClient(
+                    configuration: App.Configuration,
+                    account: account,
+                    symbolsProvider: AtomexApp.SymbolsProvider,
+                    quotesProvider: AtomexApp.QuotesProvider);
+
+                AtomexApp.UseTerminal(atomexClient, restart: true);
 
                 DialogViewer.HideDialog(Dialogs.MyWallets);
                 DialogViewer.HideDialog(Dialogs.Start);
@@ -59,7 +65,7 @@ namespace Atomex.Client.Wpf.ViewModels
             };
 
             DialogViewer.ShowDialog(Dialogs.Unlock, unlockViewModel);
-        }));
+        });
 
 
         private void DesignerMode()

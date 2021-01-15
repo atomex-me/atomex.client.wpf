@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
+
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Subsystems;
@@ -38,13 +39,13 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _myWalletsCommand;
-        public ICommand MyWalletsCommand => _myWalletsCommand ?? (_myWalletsCommand = new Command(() =>
+        public ICommand MyWalletsCommand => _myWalletsCommand ??= new Command(() =>
         {
             DialogViewer.ShowDialog(Dialogs.MyWallets, new MyWalletsViewModel(AtomexApp, DialogViewer));
-        }));
+        });
 
         private ICommand _createNewCommand;
-        public ICommand CreateNewCommand => _createNewCommand ?? (_createNewCommand = new Command(() =>
+        public ICommand CreateNewCommand => _createNewCommand ??= new Command(() =>
         {
             DialogViewer.ShowDialog(Dialogs.CreateWallet,
                 new CreateWalletViewModel(
@@ -52,10 +53,10 @@ namespace Atomex.Client.Wpf.ViewModels
                     scenario: CreateWalletScenario.CreateNew,
                     onAccountCreated: OnAccountCreated,
                     onCanceled: OnCanceled));
-        }));
+        });
 
         private ICommand _restoreByMnemonicCommand;
-        public ICommand RestoreByMnemonicCommand => _restoreByMnemonicCommand ?? (_restoreByMnemonicCommand = new Command(() =>
+        public ICommand RestoreByMnemonicCommand => _restoreByMnemonicCommand ??= new Command(() =>
         {
             DialogViewer.ShowDialog(Dialogs.CreateWallet,
                 new CreateWalletViewModel(
@@ -63,26 +64,25 @@ namespace Atomex.Client.Wpf.ViewModels
                     scenario: CreateWalletScenario.Restore,
                     onAccountCreated: OnAccountCreated,
                     onCanceled: OnCanceled));
-        }));
-
+        });
 
         private ICommand _twitterCommand;
-        public ICommand TwitterCommand => _twitterCommand ?? (_twitterCommand = new Command(() =>
+        public ICommand TwitterCommand => _twitterCommand ??= new Command(() =>
         {
             Process.Start("https://twitter.com/atomex_official");
-        }));
+        });
 
         private ICommand _telegramCommand;
-        public ICommand TelegramCommand => _telegramCommand ?? (_telegramCommand = new Command(() =>
+        public ICommand TelegramCommand => _telegramCommand ??= new Command(() =>
         {
             Process.Start("tg://resolve?domain=atomex_official");
-        }));
+        });
 
         private ICommand _githubCommand;
-        public ICommand GithubCommand => _githubCommand ?? (_githubCommand = new Command(() =>
+        public ICommand GithubCommand => _githubCommand ??= new Command(() =>
         {
             Process.Start("https://github.com/atomex-me");
-        }));
+        });
 
         private void OnCanceled()
         {
@@ -91,7 +91,13 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void OnAccountCreated(IAccount account)
         {
-            AtomexApp.UseTerminal(new WebSocketAtomexClient(App.Configuration, account), restart: true);
+            var atomexClient = new WebSocketAtomexClient(
+                configuration: App.Configuration,
+                account: account,
+                symbolsProvider: AtomexApp.SymbolsProvider,
+                quotesProvider: AtomexApp.QuotesProvider);
+
+            AtomexApp.UseTerminal(atomexClient, restart: true);
 
             DialogViewer?.HideDialog(Dialogs.CreateWallet);
             DialogViewer?.HideDialog(Dialogs.Start);

@@ -37,7 +37,8 @@ namespace Atomex.Client.Wpf.ViewModels
                 if (Env.IsInDesignerMode())
                     return DesignTime.Symbols;
 #endif
-                return App.Account.Symbols;
+                return App.SymbolsProvider
+                    .GetSymbols(App.Account.Network);
             }
         }
 
@@ -488,7 +489,8 @@ namespace Atomex.Client.Wpf.ViewModels
                         fromCurrency: FromCurrency,
                         toCurrency: ToCurrency,
                         account: App.Account,
-                        atomexClient: App.Terminal);
+                        atomexClient: App.Terminal,
+                        symbolsProvider: App.SymbolsProvider);
 
                 IsCriticalWarning = false;
 
@@ -651,7 +653,8 @@ namespace Atomex.Client.Wpf.ViewModels
                     fromCurrency: FromCurrency,
                     toCurrency: ToCurrency,
                     account: App.Account,
-                    atomexClient: App.Terminal);
+                    atomexClient: App.Terminal,
+                    symbolsProvider: App.SymbolsProvider);
 
                 if (swapPriceEstimation == null)
                     return;
