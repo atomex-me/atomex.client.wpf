@@ -52,9 +52,9 @@ namespace Atomex.Client.Wpf.ViewModels
         public decimal EstimatedPaymentFeeInBase { get; set; }
         public decimal EstimatedRedeemFee { get; set; }
         public decimal EstimatedRedeemFeeInBase { get; set; }
-        public decimal EstimatedMakerMinerFee { get; set; }
-        public decimal EstimatedMakerMinerFeeInBase { get; set; }
-        public decimal EstimatedTotalMinerFeeInBase { get; set; }
+        public decimal EstimatedMakerNetworkFee { get; set; }
+        public decimal EstimatedMakerNetworkFeeInBase { get; set; }
+        public decimal EstimatedTotalNetworkFeeInBase { get; set; }
 
         public decimal RewardForRedeem { get; set; }
         public decimal RewardForRedeemInBase { get; set; }
@@ -175,14 +175,14 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 var order = new Order
                 {
-                    Symbol        = symbol.Name,
-                    TimeStamp     = DateTime.UtcNow,
-                    Price         = orderPrice,
-                    Qty           = qty,
-                    Side          = side,
-                    Type          = OrderType.FillOrKill,
-                    FromWallets   = fromWallets.ToList(),
-                    MakerMinerFee = EstimatedMakerMinerFee
+                    Symbol          = symbol.Name,
+                    TimeStamp       = DateTime.UtcNow,
+                    Price           = orderPrice,
+                    Qty             = qty,
+                    Side            = side,
+                    Type            = OrderType.FillOrKill,
+                    FromWallets     = fromWallets.ToList(),
+                    MakerNetworkFee = EstimatedMakerNetworkFee
                 };
 
                 await order.CreateProofOfPossessionAsync(account);

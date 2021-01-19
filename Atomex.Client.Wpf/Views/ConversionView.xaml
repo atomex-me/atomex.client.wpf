@@ -352,7 +352,7 @@
                             <TextBlock Margin="0 3"
                                        HorizontalAlignment="Right"
                                        VerticalAlignment="Center"
-                                       Text="Estimated miner fees:"
+                                       Text="Estimated network fees:"
                                        Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
                                        FontFamily="{DynamicResource DefaultFontFamily}"
                                        Grid.Column="0"
@@ -367,7 +367,7 @@
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource AmountToStringConverter}"
                                                       UpdateSourceTrigger="PropertyChanged">
-                                            <Binding Path="EstimatedTotalMinerFeeInBase" Mode="TwoWay"/>
+                                            <Binding Path="EstimatedTotalNetworkFeeInBase" Mode="TwoWay"/>
                                             <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
@@ -476,7 +476,7 @@
 
                                                     <TextBlock Margin="3 0 0 0" Text="+"/>
                                                 </StackPanel>
-                                                <!-- Maker Miner Fee -->
+                                                <!-- Maker Network Fee -->
                                                 <StackPanel Orientation="Horizontal"
                                                             HorizontalAlignment="Left"
                                                             VerticalAlignment="Center">
@@ -489,7 +489,7 @@
                                                         <TextBlock.Text>
                                                             <MultiBinding Converter="{StaticResource AmountToStringConverter}"
                                                                           UpdateSourceTrigger="PropertyChanged">
-                                                                <Binding Path="EstimatedMakerMinerFee" Mode="TwoWay"/>
+                                                                <Binding Path="EstimatedMakerNetworkFee" Mode="TwoWay"/>
                                                                 <Binding Path="CurrencyFormat" Mode="OneWay"/>
                                                             </MultiBinding>
                                                         </TextBlock.Text>
@@ -511,7 +511,7 @@
                                                         <TextBlock.Text>
                                                             <MultiBinding Converter="{StaticResource AmountToStringConverter}"
                                                                           UpdateSourceTrigger="PropertyChanged">
-                                                                <Binding Path="EstimatedMakerMinerFeeInBase" Mode="TwoWay"/>
+                                                                <Binding Path="EstimatedMakerNetworkFeeInBase" Mode="TwoWay"/>
                                                                 <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                                                             </MultiBinding>
                                                         </TextBlock.Text>
@@ -528,7 +528,7 @@
                                                             HorizontalAlignment="Left"
                                                             VerticalAlignment="Center">
                                                     <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
-                                                               Text="Total miner fee:"/>
+                                                               Text="Total network fees:"/>
 
                                                     <TextBlock Margin="5 0 0 0"
                                                                Foreground="{DynamicResource DefaultAmountForegroundBrush}"
@@ -536,7 +536,7 @@
                                                         <TextBlock.Text>
                                                             <MultiBinding Converter="{StaticResource AmountToStringConverter}"
                                                                           UpdateSourceTrigger="PropertyChanged">
-                                                                <Binding Path="EstimatedTotalMinerFeeInBase" Mode="TwoWay"/>
+                                                                <Binding Path="EstimatedTotalNetworkFeeInBase" Mode="TwoWay"/>
                                                                 <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                                                             </MultiBinding>
                                                         </TextBlock.Text>
