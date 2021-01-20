@@ -384,8 +384,12 @@
                                     <controls:IconButton.ToolTip>
                                         <ToolTip>
                                             <StackPanel Orientation="Vertical">
+                                                <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                                           Text="Network fees for atomic swap:"/>
+
                                                 <!-- Payment Fee -->
-                                                <StackPanel Orientation="Horizontal"
+                                                <StackPanel Margin="0 7 0 0"
+                                                            Orientation="Horizontal"
                                                             HorizontalAlignment="Left"
                                                             VerticalAlignment="Center">
                                                     <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
@@ -428,7 +432,7 @@
                                                     <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
                                                                Text=")"/>
 
-                                                    <TextBlock Margin="3 0 0 0" Text="+"/>
+                                                    <!--<TextBlock Margin="3 0 0 0" Text="+"/>-->
                                                 </StackPanel>
                                                 <!-- Redeem Fee -->
                                                 <StackPanel Orientation="Horizontal"
@@ -474,7 +478,7 @@
                                                     <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
                                                                Text=")"/>
 
-                                                    <TextBlock Margin="3 0 0 0" Text="+"/>
+                                                    <!--<TextBlock Margin="3 0 0 0" Text="+"/>-->
                                                 </StackPanel>
                                                 <!-- Maker Network Fee -->
                                                 <StackPanel Orientation="Horizontal"
@@ -520,7 +524,7 @@
                                                     <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
                                                                Text=")"/>
 
-                                                    <TextBlock Margin="3 0 0 0" Text="="/>
+                                                    <!--<TextBlock Margin="3 0 0 0" Text="="/>-->
                                                 </StackPanel>
                                                 <!-- Total Fee -->
                                                 <StackPanel Margin="0 7 0 0"
