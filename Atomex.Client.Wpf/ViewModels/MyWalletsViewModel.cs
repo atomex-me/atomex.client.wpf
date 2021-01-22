@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
+using Atomex.Common;
 using Atomex.Core;
 using Atomex.Subsystems;
 using Atomex.Wallet;
@@ -36,7 +38,7 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _selectWalletCommand;
-        public ICommand SelectWalletCommand => _selectWalletCommand ?? (_selectWalletCommand = new RelayCommand<WalletInfo>(info =>
+        public ICommand SelectWalletCommand => _selectWalletCommand ?? new RelayCommand<WalletInfo>(info =>
         {
             IAccount account = null;
 
@@ -46,7 +48,8 @@ namespace Atomex.Client.Wpf.ViewModels
                     pathToAccount: info.Path,
                     password: password,
                     currenciesProvider: AtomexApp.CurrenciesProvider,
-                    symbolsProvider: AtomexApp.SymbolsProvider);
+                    symbolsProvider: AtomexApp.SymbolsProvider,
+                    clientType: ClientType.Wpf);
             });
 
             unlockViewModel.Unlocked += (sender, args) =>
@@ -59,8 +62,7 @@ namespace Atomex.Client.Wpf.ViewModels
             };
 
             DialogViewer.ShowDialog(Dialogs.Unlock, unlockViewModel);
-        }));
-
+        });
 
         private void DesignerMode()
         {

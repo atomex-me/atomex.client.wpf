@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Input;
+
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
+using Atomex.Common;
 using Atomex.Wallet;
 using Atomex.Wallet.Abstract;
 
@@ -26,7 +28,7 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _applyCommand;
-        public ICommand ApplyCommand => _applyCommand ?? (_applyCommand = new Command(Apply));
+        public ICommand ApplyCommand => _applyCommand ??= new Command(Apply);
 
         public SettingsViewModel()
         {
@@ -61,7 +63,8 @@ namespace Atomex.Client.Wpf.ViewModels
                     pathToAccount: _account.Wallet.PathToWallet,
                     password: password,
                     currenciesProvider: AtomexApp.CurrenciesProvider,
-                    symbolsProvider: AtomexApp.SymbolsProvider);
+                    symbolsProvider: AtomexApp.SymbolsProvider,
+                    clientType: ClientType.Wpf);
 
                 var pathToUserSettings =
                     $"{Path.GetDirectoryName(_account.Wallet.PathToWallet)}/{Account.DefaultUserSettingsFileName}";
