@@ -4,6 +4,7 @@ using System.Windows.Input;
 
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
+using Atomex.Common;
 using Atomex.Core;
 using Atomex.Subsystems;
 using Atomex.Wallet;
@@ -46,7 +47,9 @@ namespace Atomex.Client.Wpf.ViewModels
                 account = Account.LoadFromFile(
                     pathToAccount: info.Path,
                     password: password,
-                    currenciesProvider: AtomexApp.CurrenciesProvider);
+                    currenciesProvider: AtomexApp.CurrenciesProvider,
+                    symbolsProvider: AtomexApp.SymbolsProvider,
+                    clientType: ClientType.Wpf);
             });
 
             unlockViewModel.Unlocked += (sender, args) =>
@@ -66,7 +69,6 @@ namespace Atomex.Client.Wpf.ViewModels
 
             DialogViewer.ShowDialog(Dialogs.Unlock, unlockViewModel);
         });
-
 
         private void DesignerMode()
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security;
 using System.Windows.Input;
+
 using Serilog;
 
 using Atomex.Common;
@@ -58,8 +59,7 @@ namespace Atomex.Client.Wpf.ViewModels.CreateWalletViewModels
             PasswordScore = (int)PasswordAdvisor.CheckStrength(Password);
         }
 
-        public override void Initialize(
-            object o)
+        public override void Initialize(object o)
         {
             Wallet = (HdWallet) o;
         }
@@ -99,7 +99,9 @@ namespace Atomex.Client.Wpf.ViewModels.CreateWalletViewModels
                 var account = new Account(
                     wallet: Wallet,
                     password: Password,
-                    currenciesProvider: App.CurrenciesProvider);
+                    currenciesProvider: App.CurrenciesProvider,
+                    symbolsProvider: App.SymbolsProvider,
+                    clientType: ClientType.Wpf);
 
                 Password = null;
                 PasswordConfirmation = null;

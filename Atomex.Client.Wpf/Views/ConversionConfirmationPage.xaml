@@ -223,7 +223,7 @@
                 </TextBlock>
             </StackPanel>
 
-            <TextBlock Text="with total miner fee:"
+            <TextBlock Text="with total network fees:"
                        FontSize="15"
                        FontFamily="{DynamicResource DefaultLightFontFamily}"
                        Foreground="{DynamicResource DefaultForegroundBrush}"
@@ -238,7 +238,7 @@
                            Style="{StaticResource AmountInBaseTextBlock}">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
-                            <Binding Path="EstimatedTotalMinerFeeInBase" Mode="OneWay"/>
+                            <Binding Path="EstimatedTotalNetworkFeeInBase" Mode="OneWay"/>
                             <Binding Path="BaseCurrencyFormat" Mode="OneWay"/>
                         </MultiBinding>
                     </TextBlock.Text>

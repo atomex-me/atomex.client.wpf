@@ -9,6 +9,7 @@ using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
+using Atomex.Common;
 using Atomex.MarketData;
 using Atomex.MarketData.Abstract;
 using Atomex.Subsystems;
@@ -205,7 +206,7 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _updateCommand;
-        public ICommand UpdateCommand => _updateCommand ?? (_updateCommand = new Command(OnUpdateClick));
+        public ICommand UpdateCommand => _updateCommand ??= new Command(OnUpdateClick);
 
         private void OnUpdateClick()
         {
@@ -213,7 +214,7 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _signOutCommand;
-        public ICommand SignOutCommand => _signOutCommand ?? (_signOutCommand = new Command(SignOut));
+        public ICommand SignOutCommand => _signOutCommand ??= new Command(SignOut);
 
         private async void SignOut()
         {
@@ -307,7 +308,8 @@ namespace Atomex.Client.Wpf.ViewModels
                     pathToAccount: pathToAccount,
                     password: password,
                     currenciesProvider: AtomexApp.CurrenciesProvider,
-                    symbolsProvider: AtomexApp.SymbolsProvider);
+                    symbolsProvider: AtomexApp.SymbolsProvider,
+                    clientType: ClientType.Wpf);
             });
 
             unlockViewModel.Unlocked += (s, a) =>
