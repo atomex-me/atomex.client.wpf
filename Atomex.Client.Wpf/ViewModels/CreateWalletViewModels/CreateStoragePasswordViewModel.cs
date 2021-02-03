@@ -100,7 +100,6 @@ namespace Atomex.Client.Wpf.ViewModels.CreateWalletViewModels
                     wallet: Wallet,
                     password: Password,
                     currenciesProvider: App.CurrenciesProvider,
-                    symbolsProvider: App.SymbolsProvider,
                     clientType: ClientType.Wpf);
 
                 Password = null;
