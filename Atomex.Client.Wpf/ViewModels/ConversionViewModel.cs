@@ -559,7 +559,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 .GetRedeemAddressAsync(ToCurrency.Name);
 
             _estimatedRedeemFee = await ToCurrency
-                .GetRedeemFeeAsync(walletAddress);
+                .GetEstimatedRedeemFeeAsync(walletAddress, withRewardForRedeem: false);
 
             _rewardForRedeem = await RewardForRedeemHelper
                 .EstimateAsync(
