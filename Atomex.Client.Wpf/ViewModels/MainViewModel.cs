@@ -308,7 +308,6 @@ namespace Atomex.Client.Wpf.ViewModels
                     pathToAccount: pathToAccount,
                     password: password,
                     currenciesProvider: AtomexApp.CurrenciesProvider,
-                    symbolsProvider: AtomexApp.SymbolsProvider,
                     clientType: ClientType.Wpf);
             });
 

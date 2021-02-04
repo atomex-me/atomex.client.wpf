@@ -153,7 +153,10 @@ namespace Atomex.Client.Wpf.ViewModels
                 if (Amount > 0 && !fromWallets.Any())
                     return new Error(Errors.SwapError, Resources.CvInsufficientFunds);
 
-                var symbol       = App.Account.Symbols.SymbolByCurrencies(FromCurrency, ToCurrency);
+                var symbol = App.SymbolsProvider
+                    .GetSymbols(App.Account.Network)
+                    .SymbolByCurrencies(FromCurrency, ToCurrency);
+
                 var baseCurrency = App.Account.Currencies.GetByName(symbol.Base);
                 var side         = symbol.OrderSideForBuyCurrency(ToCurrency);
                 var terminal     = App.Terminal;

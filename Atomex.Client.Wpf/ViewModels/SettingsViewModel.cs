@@ -63,7 +63,6 @@ namespace Atomex.Client.Wpf.ViewModels
                     pathToAccount: _account.Wallet.PathToWallet,
                     password: password,
                     currenciesProvider: AtomexApp.CurrenciesProvider,
-                    symbolsProvider: AtomexApp.SymbolsProvider,
                     clientType: ClientType.Wpf);
 
                 var pathToUserSettings =
