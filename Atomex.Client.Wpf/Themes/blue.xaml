@@ -233,6 +233,7 @@
     <SolidColorBrush x:Key="NoLiquidityForegroundBrush" Color="#e25b5b"/>
     <SolidColorBrush x:Key="MarketVolumeForegroundBrush" Color="AliceBlue"/>
     <SolidColorBrush x:Key="ConversionArrowBrush" Color="LightGray"/>
+    <SolidColorBrush x:Key="InvalidAmountForegroundBrush" Color="#e25b5b"/>
 
     <SolidColorBrush x:Key="SwapStateCanceledBackgroundBrush" Color="{DynamicResource UnconfirmedColor}"/>
     <SolidColorBrush x:Key="SwapStateCompletedBackgroundBrush" Color="{DynamicResource ConfirmedColor}"/>

@@ -483,10 +483,35 @@ namespace Atomex.Client.Wpf.ViewModels
         public ICommand ConvertCommand => _convertCommand ??= new Command(OnConvertClick);
 
         private ICommand _maxAmountCommand;
-        public ICommand MaxAmountCommand => _maxAmountCommand ??= new Command(() =>
+        public ICommand MaxAmountCommand => _maxAmountCommand ??= new Command(async () =>
         {
-            _amount = EstimatedMaxAmount;
-            _ = UpdateAmountAsync(_amount, updateUi: true);
+            try
+            {
+                var swapParams = await Atomex.ViewModels.Helpers
+                    .EstimateSwapPaymentParamsAsync(
+                        amount: EstimatedMaxAmount,
+                        fromCurrency: FromCurrency,
+                        toCurrency: ToCurrency,
+                        account: App.Account,
+                        atomexClient: App.Terminal,
+                        symbolsProvider: App.SymbolsProvider);
+
+                _amount = Math.Min(swapParams.Amount, EstimatedMaxAmount);
+                _ = UpdateAmountAsync(_amount, updateUi: true);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Max amount command error.");
+            }
+        });
+
+
+        private ICommand _swapCurrenciesCommand;
+        public ICommand SwapCurrenciesCommand => _swapCurrenciesCommand ??= new Command(() =>
+        {
+            var temp = _toCurrency;
+            _toCurrency = _fromCurrency;
+            FromCurrency = temp;
         });
 
         private void SubscribeToServices()
@@ -540,7 +565,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 OnPropertyChanged(nameof(EstimatedMakerNetworkFee));
                 OnPropertyChanged(nameof(FromAmountString));
 
-                IsAmountValid = _amount <= swapParams.Amount;
+                IsAmountValid = _amount <= swapParams.Amount.TruncateByFormat(CurrencyFormat);
 
                 if (updateUi)
                     OnPropertyChanged(nameof(AmountString));

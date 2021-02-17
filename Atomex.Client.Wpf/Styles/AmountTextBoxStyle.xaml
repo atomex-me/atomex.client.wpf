@@ -129,4 +129,17 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="ConversionAmountTextBox"
+           BasedOn="{StaticResource AmountTextBox}"
+           TargetType="{x:Type TextBox}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsAmountValid}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource DefaultForegroundBrush}"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsAmountValid}" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource InvalidAmountForegroundBrush}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>
