@@ -43,6 +43,7 @@
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
+                    <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="From:"
@@ -75,6 +76,31 @@
                           Grid.Column="1"
                           Grid.Row="1"/>
 
+                <controls:RoundedButton
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Width="40"
+                    Height="40"
+                    CornerRadius="20"
+                    HorizontalAlignment="Right"
+                    Margin="0 0 20 0"
+                    Command="{Binding SwapCurrenciesCommand}">
+                    <controls:RoundedButton.Content>
+                        <Path Stretch="Uniform"
+                            SnapsToDevicePixels="False"
+                            UseLayoutRounding="False"
+                            Width="24"
+                            Height="24"
+                            Fill="{DynamicResource ConversionArrowBrush}"
+                            Data="{DynamicResource Unicons.ExchangeAlt}">
+                            <Path.LayoutTransform>
+                                <RotateTransform CenterX="0.5" CenterY="0.5" Angle="90"/>
+                            </Path.LayoutTransform>
+                        </Path>
+                    </controls:RoundedButton.Content>
+                </controls:RoundedButton>
+
                 <TextBlock Text="Amount:"
                            Grid.Column="0"
                            Grid.Row="2"
@@ -84,20 +110,13 @@
                          Margin="0 5 0 5"
                          FontSize="18"
                          Background="{DynamicResource DefaultSubstrateBrush}"
-                         Foreground="{DynamicResource DefaultForegroundBrush}"
+                         Text="{Binding AmountString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          helpers:TextBoxHelper.CornerRadius="20"
                          helpers:AmountTextBoxHelper.CurrencyCode="{Binding CurrencyCode}"
                          helpers:AmountTextBoxHelper.BaseCurrencyCode="{Binding BaseCurrencyCode}"
-                         Style="{StaticResource AmountTextBox}"
+                         Style="{StaticResource ConversionAmountTextBox}"
                          Grid.Column="1"
                          Grid.Row="2">
-                    <TextBox.Text>
-                        <MultiBinding Converter="{StaticResource AmountToStringConverter}"
-                                      UpdateSourceTrigger="PropertyChanged">
-                            <Binding Path="Amount" Mode="TwoWay"/>
-                            <Binding Path="CurrencyFormat" Mode="OneWay"/>
-                        </MultiBinding>
-                    </TextBox.Text>
                     <helpers:AmountTextBoxHelper.AmountInBase>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
                             <Binding Path="AmountInBase" Mode="OneWay"/>
@@ -111,42 +130,44 @@
                     </i:Interaction.Behaviors>
                 </TextBox>
 
-                <controls:RoundedButton Height="25"
+                <controls:RoundedButton Height="27"
                                         Margin="7 0 0 0"
                                         Padding="15 0 15 0"
                                         CornerRadius="12"
                                         HorizontalAlignment="Left"
-                                        Opacity="0.8"
                                         ToolTip="Use the maximum currently available amount"
                                         Command="{Binding MaxAmountCommand}"
                                         Grid.Column="2"
-                                        Grid.Row="2">
+                                        Grid.Row="2"
+                                        Content="Max"
+                                        Style="{DynamicResource ConvertButtonStyle}"/>
 
-                    <controls:RoundedButton.Content>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="{DynamicResource MarketVolumeForegroundBrush}"
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Grid.Row="3"
+                            Grid.Column="1">
+                    <TextBlock Foreground="{DynamicResource MarketVolumeForegroundBrush}"
                                        FontSize="11"
                                        Text="Available:  "
                                        FontFamily="{DynamicResource DefaultButtonFontFamily}"/>
-                            <TextBlock Foreground="{DynamicResource MarketVolumeForegroundBrush}"
+                    <TextBlock Foreground="{DynamicResource MarketVolumeForegroundBrush}"
                                        FontSize="11"
                                        FontFamily="{DynamicResource DefaultButtonFontFamily}">
-                                <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource AmountToStringConverter}"
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource AmountToStringConverter}"
                                                   UpdateSourceTrigger="PropertyChanged">
-                                        <Binding Path="EstimatedMaxAmount" Mode="OneWay"/>
-                                        <Binding Path="CurrencyFormat" Mode="OneWay"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                            <TextBlock Foreground="{DynamicResource MarketVolumeForegroundBrush}"
+                                <Binding Path="EstimatedMaxAmount" Mode="OneWay"/>
+                                <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Foreground="{DynamicResource MarketVolumeForegroundBrush}"
                                        FontSize="9"
                                        Margin="3 0 0 1"
                                        VerticalAlignment="Bottom"
                                        Text="{Binding CurrencyCode}"/>
-                        </StackPanel>
-                    </controls:RoundedButton.Content>
-                </controls:RoundedButton>
+                </StackPanel>
             </Grid>
 
             <Border Height="Auto"
@@ -177,14 +198,8 @@
                         <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
                                    FontSize="18"
                                    FontFamily="{DynamicResource DefaultFontFamily}"
+                                   Text="{Binding FromAmountString}"
                                    VerticalAlignment="Bottom">
-                            <TextBlock.Text>
-                                <MultiBinding Converter="{StaticResource AmountToStringConverter}"
-                                              UpdateSourceTrigger="PropertyChanged">
-                                    <Binding Path="Amount" Mode="TwoWay"/>
-                                    <Binding Path="CurrencyFormat" Mode="OneWay"/>
-                                </MultiBinding>
-                            </TextBlock.Text>
                         </TextBlock>
                         <TextBlock Margin="4 0 0 2"
                                    Foreground="{DynamicResource DefaultForegroundBrush}"

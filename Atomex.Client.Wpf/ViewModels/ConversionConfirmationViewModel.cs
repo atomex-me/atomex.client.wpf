@@ -148,7 +148,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     .ToList();
 
                 if (Amount == 0)
-                    return new Error(Errors.SwapError, Resources.CvWrongAmount);
+                    return new Error(Errors.SwapError, Resources.CvZeroAmount);
 
                 if (Amount > 0 && !fromWallets.Any())
                     return new Error(Errors.SwapError, Resources.CvInsufficientFunds);
