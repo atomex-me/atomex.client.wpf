@@ -85,19 +85,13 @@
                          FontSize="18"
                          Background="{DynamicResource DefaultSubstrateBrush}"
                          Foreground="{DynamicResource DefaultForegroundBrush}"
+                         Text="{Binding AmountString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          helpers:TextBoxHelper.CornerRadius="20"
                          helpers:AmountTextBoxHelper.CurrencyCode="{Binding CurrencyCode}"
                          helpers:AmountTextBoxHelper.BaseCurrencyCode="{Binding BaseCurrencyCode}"
                          Style="{StaticResource AmountTextBox}"
                          Grid.Column="1"
                          Grid.Row="2">
-                    <TextBox.Text>
-                        <MultiBinding Converter="{StaticResource AmountToStringConverter}"
-                                      UpdateSourceTrigger="PropertyChanged">
-                            <Binding Path="Amount" Mode="TwoWay"/>
-                            <Binding Path="CurrencyFormat" Mode="OneWay"/>
-                        </MultiBinding>
-                    </TextBox.Text>
                     <helpers:AmountTextBoxHelper.AmountInBase>
                         <MultiBinding Converter="{StaticResource AmountToStringConverter}">
                             <Binding Path="AmountInBase" Mode="OneWay"/>
@@ -177,14 +171,8 @@
                         <TextBlock Foreground="{DynamicResource DefaultForegroundBrush}"
                                    FontSize="18"
                                    FontFamily="{DynamicResource DefaultFontFamily}"
+                                   Text="{Binding FromAmountString}"
                                    VerticalAlignment="Bottom">
-                            <TextBlock.Text>
-                                <MultiBinding Converter="{StaticResource AmountToStringConverter}"
-                                              UpdateSourceTrigger="PropertyChanged">
-                                    <Binding Path="Amount" Mode="TwoWay"/>
-                                    <Binding Path="CurrencyFormat" Mode="OneWay"/>
-                                </MultiBinding>
-                            </TextBlock.Text>
                         </TextBlock>
                         <TextBlock Margin="4 0 0 2"
                                    Foreground="{DynamicResource DefaultForegroundBrush}"

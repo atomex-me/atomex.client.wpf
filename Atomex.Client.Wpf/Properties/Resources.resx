@@ -237,8 +237,8 @@
   <data name="CvWarning" xml:space="preserve">
     <value>Warning</value>
   </data>
-  <data name="CvWrongAmount" xml:space="preserve">
-    <value>Amount to convert must be greater than zero.</value>
+  <data name="CvBigAmount" xml:space="preserve">
+    <value>Amount is greater than the available. Please use the Max button to get the maximum available value.</value>
   </data>
   <data name="CvNoLiquidity" xml:space="preserve">
     <value>Not enough liquidity to convert a specified amount.</value>
@@ -295,5 +295,8 @@ NOTE: Do not sign out or close the application until the swap is completed, othe
   </data>
   <data name="CvTooHighNetworkFee" xml:space="preserve">
     <value>Too high network fee for this amount ({0} is {1})!</value>
+  </data>
+  <data name="CvZeroAmount" xml:space="preserve">
+    <value>Amount must be greater than zero.</value>
   </data>
 </root>

@@ -70,6 +70,15 @@ namespace Atomex.Client.Wpf.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Amount is greater than the available. Please use the Max button to get the maximum available value..
+        /// </summary>
+        public static string CvBigAmount {
+            get {
+                return ResourceManager.GetString("CvBigAmount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Conversion error. Please contant technical support..
         /// </summary>
         public static string CvConversionError {
@@ -205,11 +214,11 @@ namespace Atomex.Client.Wpf.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Amount to convert must be greater than zero..
+        ///   Ищет локализованную строку, похожую на Amount must be greater than zero..
         /// </summary>
-        public static string CvWrongAmount {
+        public static string CvZeroAmount {
             get {
-                return ResourceManager.GetString("CvWrongAmount", resourceCulture);
+                return ResourceManager.GetString("CvZeroAmount", resourceCulture);
             }
         }
         

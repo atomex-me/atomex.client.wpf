@@ -110,7 +110,8 @@ namespace Atomex.Client.Wpf.ViewModels
                 FromCurrencyViewModel = _currencyViewModels
                     .First(c => c.Currency.Name == _fromCurrency.Name);
 
-                Amount = 0;
+                _amount = 0;
+                _ = UpdateAmountAsync(_amount, updateUi: true);
             }
         }
 
@@ -233,10 +234,27 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         protected decimal _amount;
-        public decimal Amount
+
+        public string AmountString
         {
-            get => _amount;
-            set { _ = UpdateAmountAsync(value); }
+            get => _amount.ToString(CurrencyFormat, CultureInfo.InvariantCulture);
+            set
+            {
+                if (!decimal.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var amount))
+                    return;
+
+                _amount = amount.TruncateByFormat(CurrencyFormat);
+
+                if (_amount > long.MaxValue)
+                    _amount = long.MaxValue;
+
+                _ = UpdateAmountAsync(_amount, updateUi: false);
+            }
+        }
+
+        public string FromAmountString
+        {
+            get => _amount.ToString(CurrencyFormat, CultureInfo.InvariantCulture);
         }
 
         private decimal _amountInBase;
@@ -251,6 +269,13 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             get => _isAmountUpdating;
             set { _isAmountUpdating = value; OnPropertyChanged(nameof(IsAmountUpdating)); }
+        }
+
+        private bool _isAmountValid = true;
+        public bool IsAmountValid
+        {
+            get => _isAmountValid;
+            set { _isAmountValid = value; OnPropertyChanged(nameof(IsAmountValid)); }
         }
 
         private decimal _targetAmount;
@@ -460,7 +485,8 @@ namespace Atomex.Client.Wpf.ViewModels
         private ICommand _maxAmountCommand;
         public ICommand MaxAmountCommand => _maxAmountCommand ??= new Command(() =>
         {
-            Amount = EstimatedMaxAmount;
+            _amount = EstimatedMaxAmount;
+            _ = UpdateAmountAsync(_amount, updateUi: true);
         });
 
         private void SubscribeToServices()
@@ -471,7 +497,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 App.QuotesProvider.QuotesUpdated += OnBaseQuotesUpdatedEventHandler;
         }
 
-        protected virtual async Task UpdateAmountAsync(decimal value)
+        protected virtual async Task UpdateAmountAsync(decimal value, bool updateUi = false)
         {
             Warning = string.Empty;
 
@@ -505,15 +531,19 @@ namespace Atomex.Client.Wpf.ViewModels
                     Warning = string.Empty;
                 }
 
-                _amount = swapParams.Amount;
                 _estimatedPaymentFee = swapParams.PaymentFee;
                 _estimatedMakerNetworkFee = swapParams.MakerNetworkFee;
 
                 OnPropertyChanged(nameof(CurrencyFormat));
                 OnPropertyChanged(nameof(TargetCurrencyFormat));
-                OnPropertyChanged(nameof(Amount));
                 OnPropertyChanged(nameof(EstimatedPaymentFee));
                 OnPropertyChanged(nameof(EstimatedMakerNetworkFee));
+                OnPropertyChanged(nameof(FromAmountString));
+
+                IsAmountValid = _amount <= swapParams.Amount;
+
+                if (updateUi)
+                    OnPropertyChanged(nameof(AmountString));
 
                 await UpdateRedeemAndRewardFeesAsync();
 
@@ -681,7 +711,7 @@ namespace Atomex.Client.Wpf.ViewModels
             try
             {
                 var swapPriceEstimation = await Atomex.ViewModels.Helpers.EstimateSwapPriceAsync(
-                    amount: Amount,
+                    amount: _amount,
                     fromCurrency: FromCurrency,
                     toCurrency: ToCurrency,
                     account: App.Account,
@@ -749,9 +779,15 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void OnConvertClick()
         {
-            if (Amount == 0)
+            if (_amount == 0)
             {
-                DialogViewer.ShowMessage(Resources.CvWarning, Resources.CvWrongAmount);
+                DialogViewer.ShowMessage(Resources.CvWarning, Resources.CvZeroAmount);
+                return;
+            }
+
+            if (!IsAmountValid)
+            {
+                DialogViewer.ShowMessage(Resources.CvWarning, Resources.CvBigAmount);
                 return;
             }
 
@@ -777,7 +813,7 @@ namespace Atomex.Client.Wpf.ViewModels
             var side = symbol.OrderSideForBuyCurrency(ToCurrency);
             var price = EstimatedPrice;
             var baseCurrency = Currencies.GetByName(symbol.Base);
-            var qty = AmountHelper.AmountToQty(side, Amount, price, baseCurrency.DigitsMultiplier);
+            var qty = AmountHelper.AmountToQty(side, _amount, price, baseCurrency.DigitsMultiplier);
 
             if (qty < symbol.MinimumQty)
             {
@@ -808,7 +844,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 TargetFeeCurrencyCode = TargetFeeCurrencyCode,
                 TargetFeeCurrencyFormat = TargetFeeCurrencyFormat,
 
-                Amount = Amount,
+                Amount = _amount,
                 AmountInBase = AmountInBase,
                 TargetAmount = TargetAmount,
                 TargetAmountInBase = TargetAmountInBase,
@@ -836,7 +872,8 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void OnSuccessConvertion(object sender, EventArgs e)
         {
-            Amount = _amount; // recalculate amount
+            _amount = Math.Min(_amount, EstimatedMaxAmount); // recalculate amount
+            _ = UpdateAmountAsync(_amount, updateUi: true);
         }
 
         private void DesignerMode()
