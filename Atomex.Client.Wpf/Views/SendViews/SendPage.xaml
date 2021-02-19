@@ -67,7 +67,25 @@
                          Background="{DynamicResource DefaultSubstrateBrush}"
                          Foreground="{DynamicResource DefaultForegroundBrush}"
                          helpers:TextBoxHelper.CornerRadius="0 20 20 0"
-                         Style="{StaticResource CustomTextBox}"/>
+                         Style="{StaticResource CustomTextBox}"
+                         
+                         />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        >
+                <TextBlock Width="100"
+                         Height="10"
+                         Margin="0 5 0 5"
+                         FontSize="10"
+                         Background="{DynamicResource DefaultSubstrateBrush}"
+                         Foreground="{DynamicResource DefaultForegroundBrush}"
+                         Text="{Binding MaxAmountString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                           >
+
+                </TextBlock>
+
             </StackPanel>
 
             <StackPanel Orientation="Horizontal"

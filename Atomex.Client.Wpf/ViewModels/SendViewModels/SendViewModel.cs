@@ -85,6 +85,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 _to = value;
                 OnPropertyChanged(nameof(To));
                 Warning = string.Empty;
+                UpdateMaxAmount();
             }
         }
 
@@ -121,6 +122,32 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     return;
 
                 Amount = amount.TruncateByFormat(CurrencyFormat);
+            }
+        }
+
+        protected decimal _maxAmount;
+        public decimal MaxAmount
+        {
+            get => _maxAmount;
+            set { _maxAmount = value; OnPropertyChanged(nameof(MaxAmount)); }
+        }
+
+        private bool _isMaxAmountUpdating;
+        public bool IsMaxAmountUpdating
+        {
+            get => _isMaxAmountUpdating;
+            set { _isMaxAmountUpdating = value; OnPropertyChanged(nameof(IsMaxAmountUpdating)); }
+        }
+
+        public string MaxAmountString
+        {
+            get => MaxAmount.ToString(CurrencyFormat, CultureInfo.InvariantCulture);
+            set
+            {
+                if (!decimal.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var maxAmount))
+                    return;
+
+                MaxAmount = maxAmount.TruncateByFormat(CurrencyFormat);
             }
         }
 
@@ -298,6 +325,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             UseDefaultFee = true; // use default fee by default
 
+            MaxAmount = 0;
+
             SubscribeToServices();
         }
         private void SubscribeToServices()
@@ -435,6 +464,86 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
         protected ICommand _maxCommand;
         public ICommand MaxCommand => _maxCommand ?? (_maxCommand = new Command(OnMaxClick));
+        
+        protected virtual async void UpdateMaxAmount()
+        {
+            if (IsMaxAmountUpdating)
+                return;
+
+            IsMaxAmountUpdating = true;
+
+            Warning = string.Empty;
+
+            try
+            {
+                if (CurrencyViewModel.AvailableAmount == 0)
+                    return;
+
+                var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+
+                if (UseDefaultFee)
+                {
+                    var (maxAmount, maxFeeAmount, _) = await App.Account
+                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, true);
+
+                    if (maxAmount > 0)
+                        _maxAmount = maxAmount;
+
+                    OnPropertyChanged(nameof(MaxAmountString));
+
+                    _fee = Currency.GetFeeFromFeeAmount(maxFeeAmount, defaultFeePrice);
+                    OnPropertyChanged(nameof(FeeString));
+                }
+                else
+                {
+                    var (maxAmount, maxFeeAmount, _) = await App.Account
+                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
+
+                    var availableAmount = Currency is BitcoinBasedCurrency
+                        ? CurrencyViewModel.AvailableAmount
+                        : maxAmount + maxFeeAmount;
+
+                    var feeAmount = Currency.GetFeeAmount(_fee, defaultFeePrice);
+
+                    if (availableAmount - feeAmount > 0)
+                    {
+                        _maxAmount = availableAmount - feeAmount;
+
+                        var estimatedFeeAmount = _maxAmount != 0
+                            ? await App.Account.EstimateFeeAsync(Currency.Name, To, _maxAmount, BlockchainTransactionType.Output)
+                            : 0;
+
+                        if (estimatedFeeAmount == null || feeAmount < estimatedFeeAmount.Value)
+                        {
+                            Warning = Resources.CvLowFees;
+                            if (_fee == 0)
+                            {
+                                _maxAmount = 0;
+                                OnPropertyChanged(nameof(MaxAmountString));
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _maxAmount = 0;
+
+                        Warning = Resources.CvInsufficientFunds;
+                    }
+
+                    OnPropertyChanged(nameof(MaxAmountString));
+
+                    OnPropertyChanged(nameof(FeeString));
+                }
+
+                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+            }
+            finally
+            {
+                IsMaxAmountUpdating = false;
+            }
+
+        }
 
         protected virtual async void OnMaxClick()
         {
@@ -536,6 +645,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             _to = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
             _amount = 0.00001234m;
             _amountInBase = 10.23m;
+            _maxAmount = 100.12000123m;
             _fee = 0.0001m;
             _feeInBase = 8.43m;
         }
