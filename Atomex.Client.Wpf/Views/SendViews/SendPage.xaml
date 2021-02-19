@@ -75,16 +75,39 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
                         >
-                <TextBlock Width="100"
-                         Height="10"
-                         Margin="0 5 0 5"
-                         FontSize="10"
-                         Background="{DynamicResource DefaultSubstrateBrush}"
-                         Foreground="{DynamicResource DefaultForegroundBrush}"
-                         Text="{Binding MaxAmountString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                           >
 
-                </TextBlock>
+                <TextBlock Text="Currency:"
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
+                       FontSize="15"
+                       Margin="20 20 10 5"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"/>
+
+                <Button Content="{Binding MaxAmountString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Margin="0 5 0 0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        Command="{Binding MaxCommand}"
+                        Style="{StaticResource LinkButton}"/>
+
+                <TextBlock Text="Max Fuuuuuck:."
+                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                       FontFamily="{DynamicResource DefaultLightFontFamily}"
+                       FontSize="15"
+                       Margin="30 20 10 15"
+                       TextWrapping="Wrap"
+                       ToolTip="Max amount"                               
+                       HorizontalAlignment="Center"/>
+                
+                <Button Content="{Binding MaxAmountString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Margin="0 5 0 0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        Command="{Binding MaxCommand}"
+                        Style="{StaticResource LinkButton}"/>
 
             </StackPanel>
 
