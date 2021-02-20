@@ -352,6 +352,7 @@
     <Compile Include="ViewModels\CreateWalletViewModels\WalletTypeViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\FA2CurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\NYXCurrencyViewModel.cs" />
+    <Compile Include="ViewModels\CurrencyViewModels\KusdCurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\WbtcCurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\TbtcCurrencyViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\TzbtcCurrencyViewModel.cs" />
@@ -940,7 +941,11 @@
     <Resource Include="Resources\Images\wbtc.png" />
     <Resource Include="Resources\Images\wbtc_mask.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Images\kusd.png" />
+    <Resource Include="Resources\Images\kusd_90x90.png" />
+    <Resource Include="Resources\Images\kusd_mask.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -168,7 +168,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 {
                     var quoteCurrency = Currencies.GetByName(symbol.Quote);
 
-                    PriceFormat = $"F{quoteCurrency.Digits}";
+                    PriceFormat = quoteCurrency.Format;
                 }
             }
         }
@@ -193,7 +193,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 {
                     var quoteCurrency = Currencies.GetByName(symbol.Quote);
 
-                    PriceFormat = $"F{quoteCurrency.Digits}";
+                    PriceFormat = quoteCurrency.Format;
                 }
             }
         }

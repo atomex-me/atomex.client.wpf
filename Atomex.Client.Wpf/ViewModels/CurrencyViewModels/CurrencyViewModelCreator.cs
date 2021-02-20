@@ -17,18 +17,20 @@ namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
             Currency currency,
             bool subscribeToUpdates)
         {
-            var result = currency switch
+            var result = currency.Name switch
             {
-                Bitcoin _ => (CurrencyViewModel)new BitcoinCurrencyViewModel(currency),
-                Litecoin _ => (CurrencyViewModel)new LitecoinCurrencyViewModel(currency),
-                Tether _ => (CurrencyViewModel)new TetherCurrencyViewModel(currency),
-                TBTC _ => (CurrencyViewModel)new TbtcCurrencyViewModel(currency),
-                WBTC _ => (CurrencyViewModel)new WbtcCurrencyViewModel(currency),
-                Ethereum _ => (CurrencyViewModel)new EthereumCurrencyViewModel(currency),
-                NYX _ => (CurrencyViewModel)new NYXCurrencyViewModel(currency),
-                FA2 _ => (CurrencyViewModel)new FA2CurrencyViewModel(currency),
-                TZBTC _ => (CurrencyViewModel)new TzbtcCurrencyViewModel(currency),
-                Tezos _ => (CurrencyViewModel)new TezosCurrencyViewModel(currency),
+                "BTC"   => (CurrencyViewModel)new BitcoinCurrencyViewModel(currency),
+                "LTC"   => new LitecoinCurrencyViewModel(currency),
+                "USDT"  => new TetherCurrencyViewModel(currency),
+                "TBTC"  => new TbtcCurrencyViewModel(currency),
+                "WBTC"  => new WbtcCurrencyViewModel(currency),
+                "ETH"   => new EthereumCurrencyViewModel(currency),
+                "NYX"   => new NYXCurrencyViewModel(currency),
+                "FA2"   => new FA2CurrencyViewModel(currency),
+                "TZBTC" => new TzbtcCurrencyViewModel(currency),
+                "KUSD"  => new KusdCurrencyViewModel(currency),
+                "XTZ"   => new TezosCurrencyViewModel(currency),
+                "FA12"  => new TzbtcCurrencyViewModel(currency),
                 _ => throw new NotSupportedException(
                     $"Can't create currency view model for {currency.Name}. This currency is not supported.")
             };

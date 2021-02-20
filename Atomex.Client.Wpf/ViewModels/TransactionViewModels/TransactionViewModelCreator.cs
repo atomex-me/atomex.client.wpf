@@ -1,10 +1,9 @@
 ﻿using System;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Blockchain.BitcoinBased;
 using Atomex.Blockchain.Ethereum;
 using Atomex.Blockchain.Tezos;
-using Atomex.EthereumTokens;
-using Atomex.TezosTokens;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {
@@ -12,17 +11,20 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
     {
         public static TransactionViewModel CreateViewModel(IBlockchainTransaction tx)
         {
-            return tx.Currency switch
+            return tx.Currency.Name switch
             {
-                BitcoinBasedCurrency _ => (TransactionViewModel)new BitcoinBasedTransactionViewModel((IBitcoinBasedTransaction)tx),
-                Tether _ => (TransactionViewModel)new EthereumERC20TransactionViewModel((EthereumTransaction)tx),
-                TBTC _ => (TransactionViewModel)new EthereumERC20TransactionViewModel((EthereumTransaction)tx),
-                WBTC _ => (TransactionViewModel)new EthereumERC20TransactionViewModel((EthereumTransaction)tx),
-                Ethereum _ => (TransactionViewModel)new EthereumTransactionViewModel((EthereumTransaction)tx),
-                NYX _ => (TransactionViewModel)new TezosNYXTransactionViewModel((TezosTransaction)tx),
-                FA2 _ => (TransactionViewModel)new TezosFA2TransactionViewModel((TezosTransaction)tx),
-                FA12 _ => (TransactionViewModel)new TezosFA12TransactionViewModel((TezosTransaction)tx),
-                Tezos _ => (TransactionViewModel)new TezosTransactionViewModel((TezosTransaction)tx),
+                "BTC"   => (TransactionViewModel)new BitcoinBasedTransactionViewModel((IBitcoinBasedTransaction)tx),
+                "LTC"   => new BitcoinBasedTransactionViewModel((IBitcoinBasedTransaction)tx),
+                "USDT"  => new EthereumERC20TransactionViewModel((EthereumTransaction)tx),
+                "TBTC"  => new EthereumERC20TransactionViewModel((EthereumTransaction)tx),
+                "WBTC"  => new EthereumERC20TransactionViewModel((EthereumTransaction)tx),
+                "ETH"   => new EthereumTransactionViewModel((EthereumTransaction)tx),
+                "NYX"   => new TezosNYXTransactionViewModel((TezosTransaction)tx),
+                "FA2"   => new TezosFA2TransactionViewModel((TezosTransaction)tx),
+                "FA12"  => new TezosFA12TransactionViewModel((TezosTransaction)tx),
+                "TZBTC" => new TezosFA12TransactionViewModel((TezosTransaction)tx),
+                "KUSD"  => new TezosFA12TransactionViewModel((TezosTransaction)tx),
+                "XTZ"   => new TezosTransactionViewModel((TezosTransaction)tx),
                 _ => throw new NotSupportedException("Not supported transaction type."),
             };
         }      

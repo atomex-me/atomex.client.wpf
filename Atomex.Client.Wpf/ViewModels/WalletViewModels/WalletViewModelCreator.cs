@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Core;
@@ -21,15 +22,15 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 case BitcoinBasedCurrency _:
                 case ERC20 _:
                 case Ethereum _:
+                case NYX _:
+                case FA2 _:
+                case FA12 _:
                     return new WalletViewModel(
                         app: app,
                         dialogViewer: dialogViewer,
                         menuSelector: menuSelector,
                         conversionViewModel: conversionViewModel,
                         currency: currency);
-                case NYX _:
-                case FA2 _:
-                case FA12 _:
                 case Tezos _:
                     return new TezosWalletViewModel(
                         app: app,

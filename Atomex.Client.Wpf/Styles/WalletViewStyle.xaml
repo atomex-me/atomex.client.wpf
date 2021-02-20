@@ -176,6 +176,15 @@
                     SwapRedeemTemplate="{StaticResource TezosTransactionDetailsTemplate}"
                     SwapRefundTemplate="{StaticResource TezosTransactionDetailsTemplate}"/>
                 <controls:TransactionDataTemplateSelector
+                    Currency="KUSD"
+                    UnknownTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    ReceivedTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SwapPaymentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SwapRedeemTemplate="{StaticResource TezosTransactionDetailsTemplate}"
+                    SwapRefundTemplate="{StaticResource TezosTransactionDetailsTemplate}"/>
+                <controls:TransactionDataTemplateSelector
                     Currency="NYX"
                     UnknownTemplate="{StaticResource TezosTransactionDetailsTemplate}"
                     SentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
