@@ -52,7 +52,7 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center">
                 <Border Style="{StaticResource FieldHeader}">
-                    <TextBlock Text="To Address:"
+                    <TextBlock Text="To Address"
                                Margin="0 0 7 0"
                                Foreground="{DynamicResource DefaultForegroundBrush}"
                                FontFamily="{DynamicResource DefaultMediumFontFamily}"
@@ -74,29 +74,32 @@
 
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
                         >
 
-                <TextBlock Text="Currency:"
+                <TextBlock Text="Availiable (safe max):"
                        Foreground="{DynamicResource DefaultForegroundBrush}"
                        FontFamily="{DynamicResource DefaultLightFontFamily}"
-                       FontSize="15"
-                       Margin="20 20 10 5"
+                       Opacity="0.7"
+                       FontSize="11"
+                       Margin="10 20 10 0"
                        TextWrapping="Wrap"
                        HorizontalAlignment="Center"/>
 
-                <Button Content="{Binding MaxAmountString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                <Button Content="{Binding SafeMaxAmountString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         Margin="0 5 0 0"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="15"
-                        Command="{Binding MaxCommand}"
-                        Style="{StaticResource LinkButton}"/>
+                        VerticalAlignment="Bottom"
+                        FontSize="11"
+                        Command="{Binding SafeMaxCommand}"
+                        Style="{StaticResource LinkButtonDark}"/>
 
-                <TextBlock Text="Max Fuuuuuck:."
+                <TextBlock Text="(max):"
                        Foreground="{DynamicResource DefaultForegroundBrush}"
                        FontFamily="{DynamicResource DefaultLightFontFamily}"
-                       FontSize="15"
-                       Margin="30 20 10 15"
+                       Opacity="0.7"
+                       FontSize="11"
+                       Margin="20 20 10 0"
                        TextWrapping="Wrap"
                        ToolTip="Max amount"                               
                        HorizontalAlignment="Center"/>
@@ -104,17 +107,17 @@
                 <Button Content="{Binding MaxAmountString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         Margin="0 5 0 0"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="15"
+                        VerticalAlignment="Bottom"
+                        FontSize="11"
                         Command="{Binding MaxCommand}"
-                        Style="{StaticResource LinkButton}"/>
+                        Style="{StaticResource LinkButtonDark}"/>
 
             </StackPanel>
 
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center">
                 <Border Style="{StaticResource FieldHeader}">
-                    <TextBlock Text="Amount:"
+                    <TextBlock Text="Amount"
                                Margin="0 0 7 0"
                                Foreground="{DynamicResource DefaultForegroundBrush}"
                                FontFamily="{DynamicResource DefaultMediumFontFamily}"
@@ -165,7 +168,7 @@
                         IsEnabled="{Binding UseDefaultFee, Converter={StaticResource InverseBooleanConverter}}"
                         Style="{StaticResource BaseDisabledStyle}">
                 <Border Style="{StaticResource FieldHeader}">
-                    <TextBlock Text="Fee:"
+                    <TextBlock Text="Fee"
                                Margin="0 0 7 0"
                                Foreground="{DynamicResource DefaultForegroundBrush}"
                                FontFamily="{DynamicResource DefaultMediumFontFamily}"
