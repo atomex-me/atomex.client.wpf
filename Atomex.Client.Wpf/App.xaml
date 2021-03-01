@@ -19,6 +19,7 @@
                 
                 <ResourceDictionary Source="Styles/RoundedButtonStyle.xaml"/>
                 <ResourceDictionary Source="Styles/LinkButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles/LinkButtonDarkStyle.xaml"/>
                 <ResourceDictionary Source="Styles/GenerateButtonStyle.xaml"/>
                 <ResourceDictionary Source="Styles/IconButtonStyle.xaml"/>
                 <ResourceDictionary Source="Styles/ConvertButtonStyle.xaml"/>

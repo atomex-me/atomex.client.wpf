@@ -167,6 +167,11 @@
 
     <SolidColorBrush x:Key="DefaultLinkButtonForegroundBrush" Color="#2e5185"/>
     <SolidColorBrush x:Key="DefaultLinkButtonMouseOverBrush" Color="Black"/>
+    
+    <!-- Link Button Dark -->
+    
+    <SolidColorBrush x:Key="DarkLinkButtonForegroundBrush" Color="#6bbaff"/>
+    <SolidColorBrush x:Key="DarkLinkButtonMouseOverBrush" Color="#cfe4f7"/>
 
     <!-- Start View -->
 
