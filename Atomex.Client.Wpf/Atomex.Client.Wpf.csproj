@@ -443,6 +443,9 @@
     <Compile Include="Views\DelegatePage.xaml.cs">
       <DependentUpon>DelegatePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SendViews\Erc20SendPage.xaml.cs">
+      <DependentUpon>Erc20SendPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SendViews\EthereumSendPage.xaml.cs">
       <DependentUpon>EthereumSendPage.xaml</DependentUpon>
     </Compile>
@@ -454,6 +457,9 @@
     </Compile>
     <Compile Include="Views\SendingPage.xaml.cs">
       <DependentUpon>SendingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SendViews\TezosSendPage.xaml.cs">
+      <DependentUpon>TezosSendPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
@@ -618,6 +624,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\SendViews\Erc20SendPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\SendViews\EthereumSendPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -631,6 +641,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SendingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SendViews\TezosSendPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
