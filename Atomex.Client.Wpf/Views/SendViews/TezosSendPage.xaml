@@ -14,7 +14,7 @@
       Focusable="False"
       d:DesignHeight="500"
       d:DesignWidth="560"   
-      d:DataContext="{d:DesignInstance Type=viewModels:SendViewModel, IsDesignTimeCreatable=True}">
+      d:DataContext="{d:DesignInstance Type=viewModels:TezosSendViewModel, IsDesignTimeCreatable=True}">
 
     <Grid Width="560">
         <StackPanel Orientation="Vertical">
@@ -74,17 +74,16 @@
 
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        >
+                        VerticalAlignment="Bottom">
 
-                <TextBlock Text="Availiable (safe max):"
-                       Foreground="{DynamicResource DefaultForegroundBrush}"
-                       FontFamily="{DynamicResource DefaultLightFontFamily}"
-                       Opacity="0.7"
-                       FontSize="11"
-                       Margin="10 20 10 0"
-                       TextWrapping="Wrap"
-                       HorizontalAlignment="Center"/>
+                <TextBlock Text="Available (safe max):"
+                           Foreground="{DynamicResource DefaultForegroundBrush}"
+                           FontFamily="{DynamicResource DefaultLightFontFamily}"
+                           Opacity="0.7"
+                           FontSize="11"
+                           Margin="10 20 10 0"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center" />
 
                 <Button Content="{Binding SafeMaxAmountString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         Margin="0 5 0 0"
@@ -92,25 +91,25 @@
                         VerticalAlignment="Bottom"
                         FontSize="11"
                         Command="{Binding SafeMaxCommand}"
-                        Style="{StaticResource LinkButtonDark}"/>
+                        Style="{StaticResource LinkButtonDark}" />
 
                 <TextBlock Text="(max):"
-                       Foreground="{DynamicResource DefaultForegroundBrush}"
-                       FontFamily="{DynamicResource DefaultLightFontFamily}"
-                       Opacity="0.7"
-                       FontSize="11"
-                       Margin="20 20 10 0"
-                       TextWrapping="Wrap"
-                       ToolTip="Max amount"                               
-                       HorizontalAlignment="Center"/>
-                
+                           Foreground="{DynamicResource DefaultForegroundBrush}"
+                           FontFamily="{DynamicResource DefaultLightFontFamily}"
+                           Opacity="0.7"
+                           FontSize="11"
+                           Margin="20 20 10 0"
+                           TextWrapping="Wrap"
+                           ToolTip="Max amount"
+                           HorizontalAlignment="Center" />
+
                 <Button Content="{Binding MaxAmountString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         Margin="0 5 0 0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
                         FontSize="11"
                         Command="{Binding MaxCommand}"
-                        Style="{StaticResource LinkButtonDark}"/>
+                        Style="{StaticResource LinkButtonDark}" />
 
             </StackPanel>
 

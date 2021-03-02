@@ -132,7 +132,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         }
 
         protected decimal _fee;
-        public decimal Fee
+        public virtual decimal Fee
         {
             get => _fee;
             set { UpdateFee(value); }
