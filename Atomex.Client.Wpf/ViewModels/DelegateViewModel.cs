@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+
+using Newtonsoft.Json.Linq;
+using Serilog;
+
 using Atomex.Blockchain.Tezos;
 using Atomex.Blockchain.Tezos.Internal;
 using Atomex.Client.Wpf.Common;
@@ -16,8 +20,6 @@ using Atomex.Common;
 using Atomex.Core;
 using Atomex.MarketData.Abstract;
 using Atomex.Wallet;
-using Newtonsoft.Json.Linq;
-using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -352,6 +354,7 @@ namespace Atomex.Client.Wpf.ViewModels
             var rpc = new Rpc(_tezos.RpcNodeUri);
 
             JObject delegateData;
+
             try
             {
                 delegateData = await rpc
@@ -374,18 +377,19 @@ namespace Atomex.Client.Wpf.ViewModels
             var tx = new TezosTransaction
             {
                 StorageLimit = _tezos.StorageLimit,
-                GasLimit = _tezos.GasLimit,
-                From = _walletAddress.Address,
-                To = _address,
-                Fee = Fee.ToMicroTez(),
-                Currency = _tezos,
+                GasLimit     = _tezos.GasLimit,
+                From         = _walletAddress.Address,
+                To           = _address,
+                Fee          = Fee.ToMicroTez(),
+                Currency     = _tezos,
                 CreationTime = DateTime.UtcNow,
             };
 
             try
             {
-                var calculatedFee = await tx.AutoFillAsync(keyStorage, _walletAddress, UseDefaultFee);
-                if(!calculatedFee)
+                var isSuccess = await tx.AutoFillDelegationFeeAsync(keyStorage, _walletAddress, UseDefaultFee);
+
+                if(!isSuccess)
                     return new Error(Errors.TransactionCreationError, $"Autofill transaction failed");
 
                 Fee = tx.Fee;
