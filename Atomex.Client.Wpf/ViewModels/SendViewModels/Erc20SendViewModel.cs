@@ -52,6 +52,17 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
         public override string TotalFeeCurrencyCode => Currency.FeeCurrencyName;
 
+        public override string To
+        {
+            get => _to;
+            set 
+            {
+                _to = value;
+                OnPropertyChanged(nameof(To));
+                Warning = string.Empty;
+            }
+        }
+        
         public override decimal FeePrice
         {
             get => _feePrice;
