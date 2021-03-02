@@ -298,10 +298,10 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             if (_safeMaxAmount == 0)
                 return;
             
-            if (IsSafeMaxAmountUpdating)
+            if (IsAmountUpdating)
                 return;
 
-            IsSafeMaxAmountUpdating = true;
+            IsAmountUpdating = true;
 
             Warning = string.Empty;
 
@@ -326,7 +326,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             }
             finally
             {
-                IsSafeMaxAmountUpdating = false;
+                IsAmountUpdating = false;
             }
         }
 
