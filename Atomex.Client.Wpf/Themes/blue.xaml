@@ -42,6 +42,7 @@
     <SolidColorBrush x:Key="DefaultAmountInBaseForegroundBrush" Color="DarkGray"/>
     <SolidColorBrush x:Key="DefaultAddressForegroundBrush" Color="Orange"/>
     <SolidColorBrush x:Key="DefaultTooltipBackgroundBrush" Color="#80000000"/>
+    <SolidColorBrush x:Key="LessTransparentTooltipBackgroundBrush" Color="#f0000000"/>
     <SolidColorBrush x:Key="DefaultMenuItemSelectedBrush" Color="{DynamicResource DefaultMenuItemSelectedColor}"/>
     <SolidColorBrush x:Key="DefaultMenuItemMouseOverBrush" Color="{DynamicResource DefaultMenuItemMouseOverColor}"/>
 

@@ -36,10 +36,22 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 OnPropertyChanged(nameof(To));
                 Warning = string.Empty;
                 UpdateMaxAmount();
+                UpdateSafeMaxAmount();
             }
         }
         
-        protected decimal _maxAmount;
+        public override decimal Fee
+        {
+            get => _fee;
+            set
+            {
+                UpdateFee(value);
+                UpdateMaxAmount();
+                UpdateSafeMaxAmount();
+            }
+        }
+
+        private decimal _maxAmount;
         public decimal MaxAmount
         {
             get => _maxAmount;
@@ -64,8 +76,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 MaxAmount = maxAmount.TruncateByFormat(CurrencyFormat);
             }
         }
-        
-        protected decimal _safeMaxAmount;
+
+        private decimal _safeMaxAmount;
         public decimal SafeMaxAmount
         {
             get => _safeMaxAmount;
@@ -90,11 +102,11 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 SafeMaxAmount = safeAmount.TruncateByFormat(CurrencyFormat);
             }
         }
+
+        private ICommand _safeMaxCommand;
+        public ICommand SafeMaxCommand => _safeMaxCommand ??= new Command(OnSafeMaxClick);
         
-        protected ICommand _safeMaxCommand;
-        public ICommand SafeMaxCommand => _safeMaxCommand ?? (_safeMaxCommand = new Command(OnSafeMaxClick));
-        
-        protected virtual async void UpdateMaxAmount()
+        private async void UpdateMaxAmount()
         {
             if (IsMaxAmountUpdating)
                 return;
@@ -109,28 +121,24 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     return;
 
                 var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+                
+                var (maxAmount, maxFeeAmount, _) = await App.Account
+                    .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
 
                 if (UseDefaultFee)
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, true);
-
                     if (maxAmount > 0)
+                    {
                         _maxAmount = maxAmount;
-
-                    OnPropertyChanged(nameof(MaxAmountString));
+                        OnPropertyChanged(nameof(MaxAmountString));
+                    }
 
                     _fee = Currency.GetFeeFromFeeAmount(maxFeeAmount, defaultFeePrice);
                     OnPropertyChanged(nameof(FeeString));
                 }
                 else
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
-
-                    var availableAmount = Currency is BitcoinBasedCurrency
-                        ? CurrencyViewModel.AvailableAmount
-                        : maxAmount + maxFeeAmount;
+                    var availableAmount = maxAmount + maxFeeAmount;
 
                     var feeAmount = Currency.GetFeeAmount(_fee, defaultFeePrice);
 
@@ -145,12 +153,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         if (estimatedFeeAmount == null || feeAmount < estimatedFeeAmount.Value)
                         {
                             Warning = Resources.CvLowFees;
-                            if (_fee == 0)
-                            {
-                                _maxAmount = 0;
-                                OnPropertyChanged(nameof(MaxAmountString));
-                                return;
-                            }
                         }
                     }
                     else
@@ -174,7 +176,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
         }
         
-                protected virtual async void UpdateSafeMaxAmount()
+        private async void UpdateSafeMaxAmount()
         {
             if (IsSafeMaxAmountUpdating)
                 return;
@@ -253,8 +255,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             }
 
         }
-                
-               protected virtual async void OnMaxClick()
+
+        protected override void OnMaxClick()
         {
             if (_maxAmount == 0)
                 return;
@@ -274,14 +276,14 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 _amount = _maxAmount;
                 OnPropertyChanged(nameof(AmountString));
 
-                if (UseDefaultFee)
+                /*if (UseDefaultFee)
                 {
                     var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
                     var (maxAmount, maxFeeAmount, _) = await App.Account
                         .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
                     _fee = Currency.GetFeeFromFeeAmount(maxFeeAmount, defaultFeePrice);
                     OnPropertyChanged(nameof(FeeString));
-                }
+                }*/
 
                 OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
             }
@@ -291,15 +293,15 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             }
         }
 
-        protected virtual async void OnSafeMaxClick()
+        private void OnSafeMaxClick()
         {
             if (_safeMaxAmount == 0)
                 return;
             
-            if (IsAmountUpdating)
+            if (IsSafeMaxAmountUpdating)
                 return;
 
-            IsAmountUpdating = true;
+            IsSafeMaxAmountUpdating = true;
 
             Warning = string.Empty;
 
@@ -307,55 +309,24 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 if (CurrencyViewModel.AvailableAmount == 0)
                     return;
-
-                var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
-
-
-                var (maxAmount, maxFeeAmount, _) = await App.Account
-                    .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, true);
-
-                var availableAmount = Currency is BitcoinBasedCurrency
-                    ? CurrencyViewModel.AvailableAmount
-                    : maxAmount + maxFeeAmount;
-
-                var feeAmount = Currency.GetFeeAmount(_fee, defaultFeePrice);
-
-                if (availableAmount - feeAmount > 0)
-                {
-                    _amount = availableAmount - feeAmount;
-
-                    var estimatedFeeAmount = _amount != 0
-                        ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
-                        : 0;
-
-                    if (estimatedFeeAmount == null || feeAmount < estimatedFeeAmount.Value)
-                    {
-                        Warning = Resources.CvLowFees;
-                        if (_fee == 0)
-                        {
-                            _amount = 0;
-                            OnPropertyChanged(nameof(AmountString));
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    _amount = 0;
-
-                    Warning = Resources.CvInsufficientFunds;
-                }
-
+                
+                _amount = _safeMaxAmount;
                 OnPropertyChanged(nameof(AmountString));
 
-                OnPropertyChanged(nameof(FeeString));
-                
+                /*if (UseDefaultFee)
+                {
+                    var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+                    var (maxAmount, maxFeeAmount, _) = await App.Account
+                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
+                    _fee = Currency.GetFeeFromFeeAmount(maxFeeAmount, defaultFeePrice);
+                    OnPropertyChanged(nameof(FeeString));
+                }*/
 
                 OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
-                IsAmountUpdating = false;
+                IsSafeMaxAmountUpdating = false;
             }
         }
 

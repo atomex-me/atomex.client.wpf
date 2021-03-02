@@ -76,14 +76,32 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom">
 
-                <TextBlock Text="Available (safe max):"
+                <TextBlock Text="Available (safe max)"
                            Foreground="{DynamicResource DefaultForegroundBrush}"
                            FontFamily="{DynamicResource DefaultLightFontFamily}"
                            Opacity="0.7"
                            FontSize="11"
-                           Margin="10 20 10 0"
+                           Margin="10 20 5 0"
                            TextWrapping="Wrap"
                            HorizontalAlignment="Center" />
+                
+                <controls:IconButton
+                    Margin="0 5 5 2"
+                    VerticalAlignment="Bottom"
+                    Width="10"
+                    Height="10"
+                    Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                    Path="{DynamicResource FontAwesome.QuestionCircleSolid}"
+                    Style="{DynamicResource PathButtonStyle}"
+                    ToolTipService.InitialShowDelay="0"
+                    ToolTipService.ShowDuration="60000">
+                    <controls:IconButton.ToolTip>
+                        <ToolTip Background="{DynamicResource LessTransparentTooltipBackgroundBrush}">
+                            <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
+                                       Text="We will leave on your wallet funds for one more redeem for tokens swap" />
+                        </ToolTip>
+                    </controls:IconButton.ToolTip>
+                </controls:IconButton>
 
                 <Button Content="{Binding SafeMaxAmountString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         Margin="0 5 0 0"
@@ -93,7 +111,8 @@
                         Command="{Binding SafeMaxCommand}"
                         Style="{StaticResource LinkButtonDark}" />
 
-                <TextBlock Text="(max):"
+
+                <TextBlock Text="Available (max)"
                            Foreground="{DynamicResource DefaultForegroundBrush}"
                            FontFamily="{DynamicResource DefaultLightFontFamily}"
                            Opacity="0.7"
@@ -125,13 +144,14 @@
                                HorizontalAlignment="Right"/>
                 </Border>
 
-                <TextBox Width="318"
+                <TextBox Width="380"
                          Height="40"
                          Margin="0 5 0 5"
                          FontSize="18"
                          Background="{DynamicResource DefaultSubstrateBrush}"
                          Foreground="{DynamicResource DefaultForegroundBrush}"
                          Text="{Binding AmountString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         helpers:TextBoxHelper.CornerRadius="0 20 20 0"
                          helpers:AmountTextBoxHelper.CurrencyCode="{Binding CurrencyCode}"
                          helpers:AmountTextBoxHelper.BaseCurrencyCode="{Binding BaseCurrencyCode}"
                          Style="{StaticResource AmountTextBox}">
@@ -148,12 +168,12 @@
                                                         JustPositiveDecimalInput="True"/>
                     </i:Interaction.Behaviors>
                 </TextBox>
-                <controls:RoundedButton Width="60"
+                <!--<controls:RoundedButton Width="60"
                                         Height="40"
                                         Margin="2 0 0 0"
                                         CornerRadius="0 20 20 0"
                                         Content="Max"
-                                        Command="{Binding MaxCommand}"/>
+                                        Command="{Binding MaxCommand}"/>-->
             </StackPanel>
 
             <!--<StackPanel Orientation="Horizontal"
