@@ -93,7 +93,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
         public string SafeMaxAmountString
         {
-            get => SafeMaxAmount.ToString(CurrencyFormat, CultureInfo.InvariantCulture);
+            get => SafeMaxAmount.ToString(CurrencyFormat, CultureInfo.InvariantCulture) + ",";
             set
             {
                 if (!decimal.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var safeAmount))

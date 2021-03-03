@@ -71,15 +71,15 @@
             </StackPanel>
             
             <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom">
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom" Margin="140,0,0,0">
 
-                <TextBlock Text="Available (safe max)"
+                <TextBlock Text="Available: (safe max)"
                            Foreground="{DynamicResource DefaultForegroundBrush}"
                            FontFamily="{DynamicResource DefaultLightFontFamily}"
                            Opacity="0.7"
                            FontSize="11"
-                           Margin="10 20 5 0"
+                           Margin="0 20 5 0"
                            TextWrapping="Wrap"
                            HorizontalAlignment="Center" />
                 
@@ -96,7 +96,7 @@
                     <controls:IconButton.ToolTip>
                         <ToolTip Background="{DynamicResource LessTransparentTooltipBackgroundBrush}">
                             <TextBlock Foreground="{DynamicResource DefaultAmountInBaseForegroundBrush}"
-                                       Text="We will leave on your wallet funds for one more redeem for tokens swap" />
+                                       Text="Leave some funds for swaps processing" />
                         </ToolTip>
                     </controls:IconButton.ToolTip>
                 </controls:IconButton>
@@ -110,12 +110,12 @@
                         Style="{StaticResource LinkButtonDark}" />
 
 
-                <TextBlock Text="Available (max)"
+                <TextBlock Text="(max)"
                            Foreground="{DynamicResource DefaultForegroundBrush}"
                            FontFamily="{DynamicResource DefaultLightFontFamily}"
                            Opacity="0.7"
                            FontSize="11"
-                           Margin="20 20 10 0"
+                           Margin="10 20 10 0"
                            TextWrapping="Wrap"
                            ToolTip="Max amount"
                            HorizontalAlignment="Center" />
