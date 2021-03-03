@@ -39,7 +39,24 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 UpdateSafeMaxAmount();
             }
         }
-        
+
+        public override bool UseDefaultFee 
+        {
+            get => _useDefaultFee;
+            set
+            {
+                _useDefaultFee = value;
+                OnPropertyChanged(nameof(UseDefaultFee));
+
+                if (_useDefaultFee)
+                {
+                    Amount = _amount; // recalculate amount and fee using default fee
+                    UpdateMaxAmount();
+                    UpdateSafeMaxAmount();
+                }
+            }
+        }
+
         public override decimal Fee
         {
             get => _fee;

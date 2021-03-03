@@ -153,7 +153,11 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 OnPropertyChanged(nameof(UseDefaultFee));
 
                 if (_useDefaultFee)
+                {
                     Amount = _amount; // recalculate amount and fee using default fee
+                    UpdateMaxAmount();
+                    UpdateSafeMaxAmount();
+                }
             }
         }
 
