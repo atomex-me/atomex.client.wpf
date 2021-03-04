@@ -64,7 +64,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 DialogViewer.PushPage(Dialogs.Delegate, Pages.Delegating);
 
                 var signResult = await Tx
-                    .SignDelegationOperationAsync(keyStorage, WalletAddress, default);
+                    .SignAsync(keyStorage, WalletAddress, default);
 
                 if (!signResult)
                 {

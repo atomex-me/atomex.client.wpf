@@ -233,24 +233,26 @@ namespace Atomex.Client.Wpf.ViewModels
                 var result = await GetDelegate();
 
                 if (result.HasError)
+                {
                     Warning = result.Error.Description;
+                }
                 else
                 {
                     var confirmationViewModel = new DelegateConfirmationViewModel(DialogViewer, _onDelegate)
                     {
-                        Currency = _tezos,
-                        WalletAddress = WalletAddress,
-                        UseDefaultFee = UseDefaultFee,
-                        Tx = _tx,
-                        From = WalletAddress.Address,
-                        To = Address,
+                        Currency            = _tezos,
+                        WalletAddress       = WalletAddress,
+                        UseDefaultFee       = UseDefaultFee,
+                        Tx                  = _tx,
+                        From                = WalletAddress.Address,
+                        To                  = Address,
                         IsAmountLessThanMin = WalletAddress.Balance < (BakerViewModel?.MinDelegation ?? 0), 
-                        BaseCurrencyCode = BaseCurrencyCode,
-                        BaseCurrencyFormat = BaseCurrencyFormat,
-                        Fee = Fee,
-                        FeeInBase = FeeInBase,
-                        CurrencyCode = _tezos.FeeCode,
-                        CurrencyFormat = _tezos.FeeFormat
+                        BaseCurrencyCode    = BaseCurrencyCode,
+                        BaseCurrencyFormat  = BaseCurrencyFormat,
+                        Fee                 = Fee,
+                        FeeInBase           = FeeInBase,
+                        CurrencyCode        = _tezos.FeeCode,
+                        CurrencyFormat      = _tezos.FeeFormat
                     };
 
                     DialogViewer.PushPage(Dialogs.Delegate, Pages.DelegateConfirmation, confirmationViewModel);
@@ -305,11 +307,11 @@ namespace Atomex.Client.Wpf.ViewModels
                         .ConfigureAwait(false))
                         .Select(x => new BakerViewModel
                         {
-                            Address = x.Address,
-                            Logo = x.Logo,
-                            Name = x.Name,
-                            Fee = x.Fee,
-                            MinDelegation = x.MinDelegation,
+                            Address          = x.Address,
+                            Logo             = x.Logo,
+                            Name             = x.Name,
+                            Fee              = x.Fee,
+                            MinDelegation    = x.MinDelegation,
                             StakingAvailable = x.StakingAvailable
                         })
                         .ToList();
@@ -346,12 +348,12 @@ namespace Atomex.Client.Wpf.ViewModels
         private async Task<Result<string>> GetDelegate(
             CancellationToken cancellationToken = default)
         {
-            if(_walletAddress == null)
+            if (_walletAddress == null)
                 return new Error(Errors.InvalidWallets, "You don't have non-empty accounts");
             
-            var wallet = (HdWallet) App.Account.Wallet;
+            var wallet     = (HdWallet) App.Account.Wallet;
             var keyStorage = wallet.KeyStorage;
-            var rpc = new Rpc(_tezos.RpcNodeUri);
+            var rpc        = new Rpc(_tezos.RpcNodeUri);
 
             JObject delegateData;
 
@@ -376,20 +378,29 @@ namespace Atomex.Client.Wpf.ViewModels
             
             var tx = new TezosTransaction
             {
-                StorageLimit = _tezos.StorageLimit,
-                GasLimit     = _tezos.GasLimit,
-                From         = _walletAddress.Address,
-                To           = _address,
-                Fee          = Fee.ToMicroTez(),
-                Currency     = _tezos,
-                CreationTime = DateTime.UtcNow,
+                StorageLimit      = _tezos.StorageLimit,
+                GasLimit          = _tezos.GasLimit,
+                From              = _walletAddress.Address,
+                To                = _address,
+                Fee               = Fee.ToMicroTez(),
+                Currency          = _tezos,
+                CreationTime      = DateTime.UtcNow,
+                UseRun            = true,
+                UseOfflineCounter = true,
             };
 
             try
             {
-                var isSuccess = await tx.AutoFillDelegationFeeAsync(keyStorage, _walletAddress, UseDefaultFee);
+                var head = await rpc
+                    .GetHeader()
+                    .ConfigureAwait(false);
 
-                if(!isSuccess)
+                using var securePublicKey = keyStorage
+                    .GetPublicKey(_tezos, _walletAddress.KeyIndex);
+
+                var isSuccess = await tx.FillOperationsAsync(head, securePublicKey);
+
+                if (!isSuccess)
                     return new Error(Errors.TransactionCreationError, $"Autofill transaction failed");
 
                 Fee = tx.Fee;
