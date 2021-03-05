@@ -89,9 +89,9 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             get => _fee;
             set
             {
-                UpdateFee(value);
                 UpdateMaxAmount();
                 UpdateSafeMaxAmount();
+                UpdateFee(value);
             }
         }
 
@@ -101,9 +101,9 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             get => _feePrice;
             set
             {
-                UpdateFeePrice(value);
                 UpdateMaxAmount();
                 UpdateSafeMaxAmount();
+                UpdateFeePrice(value);
             }
         }
 
