@@ -42,6 +42,7 @@
     <SolidColorBrush x:Key="DefaultAmountInBaseForegroundBrush" Color="DarkGray"/>
     <SolidColorBrush x:Key="DefaultAddressForegroundBrush" Color="Orange"/>
     <SolidColorBrush x:Key="DefaultTooltipBackgroundBrush" Color="#80000000"/>
+    <SolidColorBrush x:Key="LessTransparentTooltipBackgroundBrush" Color="#f0000000"/>
     <SolidColorBrush x:Key="DefaultMenuItemSelectedBrush" Color="{DynamicResource DefaultMenuItemSelectedColor}"/>
     <SolidColorBrush x:Key="DefaultMenuItemMouseOverBrush" Color="{DynamicResource DefaultMenuItemMouseOverColor}"/>
 
@@ -167,6 +168,11 @@
 
     <SolidColorBrush x:Key="DefaultLinkButtonForegroundBrush" Color="#2e5185"/>
     <SolidColorBrush x:Key="DefaultLinkButtonMouseOverBrush" Color="Black"/>
+    
+    <!-- Link Button Dark -->
+    
+    <SolidColorBrush x:Key="DarkLinkButtonForegroundBrush" Color="#6bbaff"/>
+    <SolidColorBrush x:Key="DarkLinkButtonMouseOverBrush" Color="#cfe4f7"/>
 
     <!-- Start View -->
 

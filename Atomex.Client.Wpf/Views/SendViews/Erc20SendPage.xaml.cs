@@ -1,10 +1,10 @@
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace Atomex.Client.Wpf.Views.SendViews
 {
-    public partial class EthereumSendPage : Page
+    public partial class Erc20SendPage : Page
     {
-        public EthereumSendPage()
+        public Erc20SendPage()
         {
             InitializeComponent();
         }

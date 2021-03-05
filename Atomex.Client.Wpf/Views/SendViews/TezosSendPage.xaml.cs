@@ -2,9 +2,9 @@ using System.Windows.Controls;
 
 namespace Atomex.Client.Wpf.Views.SendViews
 {
-    public partial class EthereumSendPage : Page
+    public partial class TezosSendPage : Page
     {
-        public EthereumSendPage()
+        public TezosSendPage()
         {
             InitializeComponent();
         }

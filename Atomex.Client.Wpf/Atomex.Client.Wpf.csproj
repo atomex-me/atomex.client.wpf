@@ -446,6 +446,12 @@
     <Compile Include="Views\SendViews\EthereumSendPage.xaml.cs">
       <DependentUpon>EthereumSendPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SendViews\Erc20SendPage.xaml.cs">
+      <DependentUpon>Erc20SendPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SendViews\TezosSendPage.xaml.cs">
+      <DependentUpon>TezosSendPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SendViews\BitcoinBasedSendPage.xaml.cs">
       <DependentUpon>BitcoinBasedSendPage.xaml</DependentUpon>
     </Compile>
@@ -622,6 +628,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\SendViews\Erc20SendPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\SendViews\BitcoinBasedSendPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -631,6 +641,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SendingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SendViews\TezosSendPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -718,6 +732,10 @@
     <Page Include="Styles\LinkButtonStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\LinkButtonDarkStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\RoundedButtonStyle.xaml">
       <SubType>Designer</SubType>
