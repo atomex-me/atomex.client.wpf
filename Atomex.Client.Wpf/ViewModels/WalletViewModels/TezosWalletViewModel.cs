@@ -64,7 +64,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             Delegations = new List<Delegation>();
 
             // update delegation info
-            LoadDelegationInfoAsync().FireAndForget();
+            _ = LoadDelegationInfoAsync();
         }
 
         protected override async void OnBalanceUpdatedEventHandler(object sender, CurrencyEventArgs args)
@@ -136,9 +136,13 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 },
                 DispatcherPriority.Background);
             }
+            catch (OperationCanceledException)
+            {
+                Log.Debug("LoadDelegationInfoAsync canceled.");
+            }
             catch (Exception e)
             {
-                Log.Error(e, "LoadDelegationInfoAsync error");
+                Log.Error(e, "LoadDelegationInfoAsync error.");
             }
         }
 

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Windows.Input;
+
+using Serilog;
+
 using Atomex.Blockchain.Tezos;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Core;
 using Atomex.Wallet;
-using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -28,13 +30,13 @@ namespace Atomex.Client.Wpf.ViewModels
         public string BaseCurrencyCode { get; set; }
 
         private ICommand _backCommand;
-        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
+        public ICommand BackCommand => _backCommand ??= new Command(() =>
         {
             DialogViewer.Back(Dialogs.Delegate);
-        }));
+        });
 
         private ICommand _nextCommand;
-        public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(Send));
+        public ICommand NextCommand => _nextCommand ??= new Command(Send);
 
         private readonly Action _onDelegate;
 

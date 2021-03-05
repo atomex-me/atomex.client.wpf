@@ -184,10 +184,10 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _backCommand;
-        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
+        public ICommand BackCommand => _backCommand ??= new Command(() =>
         {
             DialogViewer?.HideDialog(Dialogs.Delegate);
-        }));
+        });
 
         private bool _delegationCheck;
         public bool DelegationCheck
@@ -197,7 +197,7 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _nextCommand;
-        public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(async () =>
+        public ICommand NextCommand => _nextCommand ??= new Command(async () =>
         {
             if (DelegationCheck)
                 return;
@@ -262,7 +262,7 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 DelegationCheck = false;
             }
-        }));
+        });
 
         private readonly Action _onDelegate;
 
@@ -290,7 +290,9 @@ namespace Atomex.Client.Wpf.ViewModels
             UseDefaultFee = true;
 
             SubscribeToServices();
-            LoadBakerList().FireAndForget();
+
+            _ = LoadBakerList();
+
             PrepareWallet().WaitForResult();
         }
 
@@ -325,6 +327,7 @@ namespace Atomex.Client.Wpf.ViewModels
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 FromBakersList = bakers;
+
             }, DispatcherPriority.Background);
         }
 
@@ -351,14 +354,14 @@ namespace Atomex.Client.Wpf.ViewModels
             if (_walletAddress == null)
                 return new Error(Errors.InvalidWallets, "You don't have non-empty accounts");
             
-            var wallet     = (HdWallet) App.Account.Wallet;
-            var keyStorage = wallet.KeyStorage;
-            var rpc        = new Rpc(_tezos.RpcNodeUri);
+
 
             JObject delegateData;
 
             try
             {
+                var rpc = new Rpc(_tezos.RpcNodeUri);
+
                 delegateData = await rpc
                     .GetDelegate(_address)
                     .ConfigureAwait(false);
@@ -375,30 +378,30 @@ namespace Atomex.Client.Wpf.ViewModels
 
             if (delegators.Contains(_walletAddress.Address))
                 return new Error(Errors.AlreadyDelegated, $"Already delegated from {_walletAddress.Address} to {_address}");
-            
-            var tx = new TezosTransaction
-            {
-                StorageLimit      = _tezos.StorageLimit,
-                GasLimit          = _tezos.GasLimit,
-                From              = _walletAddress.Address,
-                To                = _address,
-                Fee               = Fee.ToMicroTez(),
-                Currency          = _tezos,
-                CreationTime      = DateTime.UtcNow,
-                UseRun            = true,
-                UseOfflineCounter = true,
-            };
 
             try
             {
-                var head = await rpc
-                    .GetHeader()
-                    .ConfigureAwait(false);
+                var tx = new TezosTransaction
+                {
+                    StorageLimit      = _tezos.StorageLimit,
+                    GasLimit          = _tezos.GasLimit,
+                    From              = _walletAddress.Address,
+                    To                = _address,
+                    Fee               = Fee.ToMicroTez(),
+                    Currency          = _tezos,
+                    CreationTime      = DateTime.UtcNow,
 
-                using var securePublicKey = keyStorage
+                    UseRun            = true,
+                    UseOfflineCounter = true,
+                };
+
+                using var securePublicKey = App.Account.Wallet
                     .GetPublicKey(_tezos, _walletAddress.KeyIndex);
 
-                var isSuccess = await tx.FillOperationsAsync(head, securePublicKey);
+                var isSuccess = await tx.FillOperationsAsync(
+                    securePublicKey: securePublicKey,
+                    headOffset: Tezos.HeadOffset,
+                    cancellationToken: cancellationToken);
 
                 if (!isSuccess)
                     return new Error(Errors.TransactionCreationError, $"Autofill transaction failed");

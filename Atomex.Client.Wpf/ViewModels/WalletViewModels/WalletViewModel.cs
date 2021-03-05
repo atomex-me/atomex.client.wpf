@@ -107,7 +107,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             SubscribeToServices();
 
             // update transactions list
-            LoadTransactionsAsync().FireAndForget();
+            _ = LoadTransactionsAsync();
         }
 
         private void SubscribeToServices()
@@ -158,6 +158,10 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                             }));
                 },
                 DispatcherPriority.Background);
+            }
+            catch (OperationCanceledException)
+            {
+                Log.Debug("LoadTransactionsAsync canceled.");
             }
             catch (Exception e)
             {

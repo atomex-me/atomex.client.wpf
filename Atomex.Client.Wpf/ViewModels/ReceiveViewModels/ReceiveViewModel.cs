@@ -86,7 +86,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 OnPropertyChanged(nameof(SelectedAddress));
 
                 if (_selectedAddress != null)
-                    CreateQrCodeAsync().FireAndForget();
+                   _ =  CreateQrCodeAsync();
 
                 Warning = string.Empty;
             }
@@ -132,7 +132,7 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             Bitmap qrCodeBitmap = null;
 
-            await Task.Factory.StartNew(() =>
+            await Task.Run(() =>
             {
                 using var qrGenerator = new QRCodeGenerator();
                 using var qrData = qrGenerator.CreateQrCode(_selectedAddress.Address, QRCodeGenerator.ECCLevel.Q);
