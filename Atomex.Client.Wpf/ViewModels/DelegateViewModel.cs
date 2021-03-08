@@ -19,7 +19,6 @@ using Atomex.Client.Wpf.Properties;
 using Atomex.Common;
 using Atomex.Core;
 using Atomex.MarketData.Abstract;
-using Atomex.Wallet;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -30,7 +29,6 @@ namespace Atomex.Client.Wpf.ViewModels
         
         private readonly Tezos _tezos;
         private WalletAddress _walletAddress;
-        private TezosTransaction _tx;
 
         public WalletAddress WalletAddress
         {
@@ -238,12 +236,11 @@ namespace Atomex.Client.Wpf.ViewModels
                 }
                 else
                 {
-                    var confirmationViewModel = new DelegateConfirmationViewModel(DialogViewer, _onDelegate)
+                    var confirmationViewModel = new DelegateConfirmationViewModel(App, DialogViewer, _onDelegate)
                     {
                         Currency            = _tezos,
                         WalletAddress       = WalletAddress,
                         UseDefaultFee       = UseDefaultFee,
-                        Tx                  = _tx,
                         From                = WalletAddress.Address,
                         To                  = Address,
                         IsAmountLessThanMin = WalletAddress.Balance < (BakerViewModel?.MinDelegation ?? 0), 
@@ -281,13 +278,14 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
-            _onDelegate = onDelegate;
 
-            _tezos = App.Account.Currencies.Get<Tezos>("XTZ");
-            FeeCurrencyCode = _tezos.FeeCode;
-            BaseCurrencyCode = "USD";
+            _onDelegate = onDelegate;
+            _tezos      = App.Account.Currencies.Get<Tezos>("XTZ");
+
+            FeeCurrencyCode    = _tezos.FeeCode;
+            BaseCurrencyCode   = "USD";
             BaseCurrencyFormat = "$0.00";
-            UseDefaultFee = true;
+            UseDefaultFee      = true;
 
             SubscribeToServices();
 
@@ -354,8 +352,6 @@ namespace Atomex.Client.Wpf.ViewModels
             if (_walletAddress == null)
                 return new Error(Errors.InvalidWallets, "You don't have non-empty accounts");
             
-
-
             JObject delegateData;
 
             try
@@ -392,7 +388,8 @@ namespace Atomex.Client.Wpf.ViewModels
                     CreationTime      = DateTime.UtcNow,
 
                     UseRun            = true,
-                    UseOfflineCounter = true,
+                    UseOfflineCounter = false,
+                    OperationType     = OperationType.Delegation
                 };
 
                 using var securePublicKey = App.Account.Wallet
@@ -407,11 +404,11 @@ namespace Atomex.Client.Wpf.ViewModels
                     return new Error(Errors.TransactionCreationError, $"Autofill transaction failed");
 
                 Fee = tx.Fee;
-                _tx = tx;
             }
             catch (Exception e)
             {
                 Log.Error(e, "Autofill delegation error");
+
                 return new Error(Errors.TransactionCreationError, $"Autofill delegation error. Try again later");
             }
             
@@ -441,19 +438,19 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 new BakerViewModel()
                 {
-                    Logo = "https://api.baking-bad.org/logos/tezoshodl.png",
-                    Name = "TezosHODL",
-                    Address = "tz1sdfldjsflksjdlkf123sfa",
-                    Fee = 5,
-                    MinDelegation = 10,
+                    Logo             = "https://api.baking-bad.org/logos/tezoshodl.png",
+                    Name             = "TezosHODL",
+                    Address          = "tz1sdfldjsflksjdlkf123sfa",
+                    Fee              = 5,
+                    MinDelegation    = 10,
                     StakingAvailable = 10000.000000m
                 }
             };
 
             BakerViewModel = FromBakersList.FirstOrDefault();
 
-            _address = "tz1sdfldjsflksjdlkf123sfa";
-            _fee = 5;
+            _address   = "tz1sdfldjsflksjdlkf123sfa";
+            _fee       = 5;
             _feeInBase = 123m;
         }
     }
