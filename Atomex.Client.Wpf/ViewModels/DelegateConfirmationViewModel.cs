@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Windows.Input;
+
+using Serilog;
+
 using Atomex.Blockchain.Tezos;
+using Atomex.Blockchain.Tezos.Internal;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Core;
 using Atomex.Wallet;
-using Serilog;
+using Atomex.Wallet.Tezos;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
     public class DelegateConfirmationViewModel : BaseViewModel
     {
+        private IAtomexApp App { get; }
         public IDialogViewer DialogViewer { get; }
-        public Currency Currency { get; set; }
+        public Tezos Currency { get; set; }
         
-        public TezosTransaction Tx { get; set; }
         public WalletAddress WalletAddress { get; set; }
         public bool UseDefaultFee { get; set; }
         public string From { get; set; }
@@ -28,13 +32,13 @@ namespace Atomex.Client.Wpf.ViewModels
         public string BaseCurrencyCode { get; set; }
 
         private ICommand _backCommand;
-        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
+        public ICommand BackCommand => _backCommand ??= new Command(() =>
         {
             DialogViewer.Back(Dialogs.Delegate);
-        }));
+        });
 
         private ICommand _nextCommand;
-        public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(Send));
+        public ICommand NextCommand => _nextCommand ??= new Command(Send);
 
         private readonly Action _onDelegate;
 
@@ -46,25 +50,56 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 #endif
         public DelegateConfirmationViewModel(
+            IAtomexApp app,
             IDialogViewer dialogViewer,
             Action onDelegate = null)
         {
+            App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+
             _onDelegate = onDelegate;
         }
 
         private async void Send()
         {
-            var wallet = (HdWallet) App.AtomexApp.Account.Wallet;
+            var wallet     = (HdWallet) App.Account.Wallet;
             var keyStorage = wallet.KeyStorage;
-            var tezos = (Tezos)Currency;
-            
+            var tezos      = Currency;
+
+            var tezosAccount = App.Account
+                .GetCurrencyAccount<TezosAccount>("XTZ");
+
             try
             {
                 DialogViewer.PushPage(Dialogs.Delegate, Pages.Delegating);
 
-                var signResult = await Tx
-                    .SignDelegationOperationAsync(keyStorage, WalletAddress, default);
+                await tezosAccount.AddressLocker
+                    .LockAsync(WalletAddress.Address);
+
+                var tx = new TezosTransaction
+                {
+                    StorageLimit      = Currency.StorageLimit,
+                    GasLimit          = Currency.GasLimit,
+                    From              = WalletAddress.Address,
+                    To                = To,
+                    Fee               = Fee.ToMicroTez(),
+                    Currency          = Currency,
+                    CreationTime      = DateTime.UtcNow,
+
+                    UseRun            = true,
+                    UseOfflineCounter = true,
+                    OperationType     = OperationType.Delegation
+                };
+
+                using var securePublicKey = App.Account.Wallet
+                    .GetPublicKey(Currency, WalletAddress.KeyIndex);
+
+                await tx.FillOperationsAsync(
+                    securePublicKey: securePublicKey,
+                    headOffset: Tezos.HeadOffset);
+
+                var signResult = await tx
+                    .SignAsync(keyStorage, WalletAddress, default);
 
                 if (!signResult)
                 {
@@ -78,7 +113,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 }
 
                 var result = await tezos.BlockchainApi
-                    .TryBroadcastAsync(Tx);
+                    .TryBroadcastAsync(tx);
 
                 if (result.Error != null)
                 {
@@ -108,6 +143,10 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 Log.Error(e, "delegation send error.");
             }
+            finally
+            {
+                tezosAccount.AddressLocker.Unlock(WalletAddress.Address);
+            }
         }
 
         private void BackToConfirmation()
@@ -118,10 +157,9 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            From = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
-            To = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
-            Fee = 0.0001m;
-            //FeePrice = 1m;
+            From      = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
+            To        = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
+            Fee       = 0.0001m;
             FeeInBase = 8.43m;
         }
     }
