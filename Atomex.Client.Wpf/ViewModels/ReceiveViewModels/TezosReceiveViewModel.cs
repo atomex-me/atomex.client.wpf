@@ -38,7 +38,9 @@ namespace Atomex.Client.Wpf.ViewModels.ReceiveViewModels
                         .GetFreeExternalAddressAsync(_currency.Name)
                         .WaitForResult();
 
-                    var receiveAddresses = activeTokenAddresses.Select(w => new WalletAddressViewModel(w, _currency.Format))
+                    var receiveAddresses = activeTokenAddresses
+                        .DistinctBy(wa => wa.Address)
+                        .Select(w => new WalletAddressViewModel(w, _currency.Format))
                         .Concat(activeAddresses.Select(w => new WalletAddressViewModel(w, _currency.Format)))
                         .ToList();
 
