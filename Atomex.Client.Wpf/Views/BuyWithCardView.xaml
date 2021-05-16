@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="Atomex.Client.Wpf.Views.BuyWithCardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodels="clr-namespace:Atomex.Client.Wpf.ViewModels"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"            
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewmodels:BuyWithCardViewModel}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <DockPanel>
+            <TabControl Style="{StaticResource WalletTabControl}"
+                        ItemsSource="{Binding Currencies}"
+                        SelectedItem="{Binding Selected}"
+                        Margin="0 5 0 5"
+                        DockPanel.Dock="Top">
+                <TabControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:CurrencyItemViewModel}">
+                        <StackPanel x:Name="walletTabItem"
+                                    Orientation="Vertical"
+                                    Background="Transparent" >
+                            <ContentControl x:Name="ContentControl"
+                                            HorizontalAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            HorizontalContentAlignment="Center"
+                                            Width="64"
+                                            Height="64"
+                                            Opacity="0.4"
+                                            Margin="3 0 3 0">
+                                <Canvas Width="48"
+                                        Height="48"
+                                        Background="{Binding Background}"
+                                        OpacityMask="{Binding OpacityMask}"/>
+                            </ContentControl>
+
+                            <TextBlock x:Name="HeaderTextBlock"
+                                       Text="{Binding Header}"
+                                       Foreground="{DynamicResource DefaultForegroundBrush}"
+                                       FontFamily="{StaticResource AgencyFb}"
+                                       FontSize="20"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       Opacity="0.4"/>
+                        </StackPanel>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=walletTabItem, Path=IsMouseOver}" Value="True">
+                                <Setter TargetName="ContentControl" Property="Opacity" Value="1"/>
+                                <Setter TargetName="HeaderTextBlock" Property="Opacity" Value="1"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter TargetName="ContentControl" Property="Opacity" Value="1"/>
+                                <Setter TargetName="HeaderTextBlock" Property="Opacity" Value="1"/>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate/>
+                </TabControl.ContentTemplate>
+            </TabControl>
+
+            <controls:WebBrowserWrapper
+                DockPanel.Dock="Bottom"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Margin="10"
+                Source="{Binding Url}"
+                NavigationCompleted="{Binding NavigationCompletedCommand}"
+                NavigationStarting="{Binding NavigatingStartingCommand}"
+                Visibility="{Binding IsReady, Converter={StaticResource BoolToVisibilityHiddenConverter}}"/>
+        </DockPanel>
+
+        <mah:ProgressRing Width="50"
+                          Height="50"
+                          IsActive="{Binding IsLoading}"/>
+    </Grid>
+</UserControl>

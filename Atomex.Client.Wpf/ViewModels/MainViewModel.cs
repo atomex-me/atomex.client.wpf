@@ -5,6 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+
+using MahApps.Metro.Controls.Dialogs;
+using Serilog;
+
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
@@ -17,8 +21,6 @@ using Atomex.Subsystems.Abstract;
 using Atomex.Updates;
 using Atomex.Wallet;
 using Atomex.Wallet.Abstract;
-using MahApps.Metro.Controls.Dialogs;
-using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -31,6 +33,7 @@ namespace Atomex.Client.Wpf.ViewModels
         public WalletsViewModel WalletsViewModel { get; set; }
         public ConversionViewModel ConversionViewModel { get; set; }
         public SettingsViewModel SettingsViewModel { get; set; }
+        public BuyWithCardViewModel BuyWithCardViewModel { get; set; }
 
         private int _selectedMenuIndex;
         public int SelectedMenuIndex
@@ -108,10 +111,11 @@ namespace Atomex.Client.Wpf.ViewModels
             AtomexApp = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
-            PortfolioViewModel = new PortfolioViewModel(AtomexApp);
-            ConversionViewModel = new ConversionViewModel(AtomexApp, DialogViewer);
-            WalletsViewModel = new WalletsViewModel(AtomexApp, DialogViewer, this, ConversionViewModel);
-            SettingsViewModel = new SettingsViewModel(AtomexApp, DialogViewer);
+            PortfolioViewModel   = new PortfolioViewModel(AtomexApp);
+            ConversionViewModel  = new ConversionViewModel(AtomexApp, DialogViewer);
+            WalletsViewModel     = new WalletsViewModel(AtomexApp, DialogViewer, this, ConversionViewModel);
+            SettingsViewModel    = new SettingsViewModel(AtomexApp, DialogViewer);
+            BuyWithCardViewModel = new BuyWithCardViewModel(AtomexApp);
 
             InstalledVersion = App.Updater.InstalledVersion.ToString();
 

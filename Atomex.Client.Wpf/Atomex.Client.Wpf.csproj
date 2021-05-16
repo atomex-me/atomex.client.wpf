@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Atomex.Client.Wpf</RootNamespace>
     <AssemblyName>Atomex.Client.Wpf</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -31,6 +31,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <LangVersion>preview</LangVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -128,6 +129,15 @@
     </Reference>
     <Reference Include="Microsoft.Extensions.Primitives, Version=3.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.3.1.1\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.818.41, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.818.41\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.818.41, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.818.41\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.818.41, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.818.41\lib\net45\Microsoft.Web.WebView2.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="NBitcoin, Version=5.0.13.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NBitcoin.5.0.13\lib\net461\NBitcoin.dll</HintPath>
@@ -337,6 +347,9 @@
     <Compile Include="Controls\TransactionStateDataTemplateSelector.cs" />
     <Compile Include="Controls\TransactionDataTemplateSelector.cs" />
     <Compile Include="Controls\WalletDataTemplateSelector.cs" />
+    <Compile Include="Controls\WebBrowserWrapper.xaml.cs">
+      <DependentUpon>WebBrowserWrapper.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\AmountToStringConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityCollapsedConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
@@ -348,6 +361,7 @@
     <Compile Include="Helpers\AmountTextBoxHelper.cs" />
     <Compile Include="Helpers\ComboBoxHelper.cs" />
     <Compile Include="ViewModels\AddressesViewModel.cs" />
+    <Compile Include="ViewModels\BuyWithCardViewModel.cs" />
     <Compile Include="ViewModels\ConversionConfirmationViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WalletTypeViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\FA2CurrencyViewModel.cs" />
@@ -409,6 +423,9 @@
     <Compile Include="Common\WalletInfo.cs" />
     <Compile Include="ViewModels\WalletViewModels\TezosWalletViewModel.cs" />
     <Compile Include="ViewModels\WalletViewModels\WalletViewModelCreator.cs" />
+    <Compile Include="Views\BuyWithCardView.xaml.cs">
+      <DependentUpon>BuyWithCardView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ConversionView.xaml.cs">
       <DependentUpon>ConversionView.xaml</DependentUpon>
     </Compile>
@@ -522,6 +539,10 @@
     <Compile Include="Views\WalletViews\WalletView.xaml.cs">
       <DependentUpon>WalletView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\WebBrowserWrapper.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Icons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -571,6 +592,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\light.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BuyWithCardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -953,10 +978,12 @@
       <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.818.41\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.818.41\build\Microsoft.Web.WebView2.targets'))" />
   </Target>
   <ProjectExtensions />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.818.41\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.818.41\build\Microsoft.Web.WebView2.targets')" />
 </Project>
