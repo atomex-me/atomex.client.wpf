@@ -1,9 +1,8 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Atomex.Client.Wpf.Common;
-using Microsoft.Web.WebView2.Core;
+
+using CefSharp;
 
 namespace Atomex.Client.Wpf.Controls
 {
@@ -20,7 +19,9 @@ namespace Atomex.Client.Wpf.Controls
                         return;
 
                     if (e.NewValue is string uri && uri != null)
-                        webBrowserWrapper.webBrowser.Source = new Uri(uri);
+                    {
+                        webBrowserWrapper.webBrowser.Address = uri;
+                    }
                 })));
 
         public static readonly DependencyProperty NavigationStartingProperty =
@@ -83,29 +84,33 @@ namespace Atomex.Client.Wpf.Controls
 
         public WebBrowserWrapper()
         {
-#if DEBUG
-            if (Env.IsInDesignerMode())
-                Source = "https://sandbox.wert.io?partner_id=01F298K3HP4DY326AH1NS3MM3M&theme=dark";
-#endif
-
             InitializeComponent();
 
-            webBrowser.NavigationStarting += NavigationStartingHandler;
-            webBrowser.NavigationCompleted += NavigationCompletedHandler;
+            webBrowser.LoadingStateChanged += WebBrowserLoadingStateChanged;
+            webBrowser.FrameLoadEnd += WebBrowser_FrameLoadEnd;
         }
 
-        private void NavigationCompletedHandler(
-            object sender,
-            CoreWebView2NavigationCompletedEventArgs e)
+        private void WebBrowser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
-            NavigationCompleted?.Execute(NavigationCompletedParameter);
+            int a = 1;
         }
 
-        private void NavigationStartingHandler(
-            object sender,
-            CoreWebView2NavigationStartingEventArgs e)
+        private void WebBrowserLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
-            NavigationStarting?.Execute(NavigationStartingParameter);
+            if (e.IsLoading)
+            {
+                _ = Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    NavigationStarting?.Execute(NavigationStartingParameter);
+                });
+            }
+            else
+            {
+                _ = Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    NavigationCompleted?.Execute(NavigationCompletedParameter);
+                });
+            }
         }
     }
 }

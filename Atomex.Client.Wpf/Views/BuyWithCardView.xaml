@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewmodels="clr-namespace:Atomex.Client.Wpf.ViewModels"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"            
+             xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=viewmodels:BuyWithCardViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">

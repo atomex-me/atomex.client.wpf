@@ -85,14 +85,13 @@ namespace Atomex.Client.Wpf.ViewModels
             }
         }
 
-
         private ICommand _navigationCompletedCommand;
         public ICommand NavigationCompletedCommand => _navigationCompletedCommand ??= new Command(() =>
         {
             IsLoading = false;
 
-            OnPropertyChanged(nameof(IsLoading));
             OnPropertyChanged(nameof(IsReady));
+            OnPropertyChanged(nameof(IsLoading));
         });
 
         private ICommand _navigatingStartingCommand;
@@ -100,8 +99,8 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             IsLoading = true;
 
-            OnPropertyChanged(nameof(IsLoading));
             OnPropertyChanged(nameof(IsReady));
+            OnPropertyChanged(nameof(IsLoading));
         });
 
         public BuyWithCardViewModel(IAtomexApp app)
