@@ -87,12 +87,6 @@ namespace Atomex.Client.Wpf.Controls
             InitializeComponent();
 
             webBrowser.LoadingStateChanged += WebBrowserLoadingStateChanged;
-            webBrowser.FrameLoadEnd += WebBrowser_FrameLoadEnd;
-        }
-
-        private void WebBrowser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
-        {
-            int a = 1;
         }
 
         private void WebBrowserLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)

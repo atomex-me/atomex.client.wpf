@@ -19,6 +19,8 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <LangVersion>preview</LangVersion>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -33,8 +35,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <LangVersion>preview</LangVersion>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -54,6 +54,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>logo_dark_256x256.ico</ApplicationIcon>
@@ -988,8 +989,7 @@
   </Target>
   <ProjectExtensions />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file $(SolutionDir)\reduce_output.ps1 $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\CefSharp.Common.90.6.50\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.90.6.50\build\CefSharp.Common.targets')" />
 </Project>
