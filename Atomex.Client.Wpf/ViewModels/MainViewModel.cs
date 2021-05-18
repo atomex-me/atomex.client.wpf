@@ -218,25 +218,31 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _signOutCommand;
-        public ICommand SignOutCommand => _signOutCommand ??= new Command(SignOut);
+        public ICommand SignOutCommand => _signOutCommand ??= new Command(() => {
+            _ = SignOutAsync();
+        });
 
-        private async void SignOut()
+        private async Task<bool> SignOutAsync()
         {
             try
             {
                 if (await WhetherToCancelClosingAsync())
-                    return;
+                    return false;
 
                 DialogViewer.HideAllDialogs();
 
                 AtomexApp.UseTerminal(null);
 
                 DialogViewer.ShowDialog(Dialogs.Start, new StartViewModel(AtomexApp, DialogViewer));
+
+                return true;
             }
             catch (Exception e)
             {
                 Log.Error(e, "Sign Out error");
             }
+
+            return false;
         }
 
         private bool _forcedClose;
@@ -295,6 +301,13 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void InactivityHandler(object sender, EventArgs args)
         {
+            MainView.StopInactivityControl();
+
+            ShowUnlockAfterInactivityDialog();
+        }
+
+        private void ShowUnlockAfterInactivityDialog()
+        {
             if (AtomexApp?.Account == null)
                 return;
 
@@ -317,10 +330,15 @@ namespace Atomex.Client.Wpf.ViewModels
 
             unlockViewModel.Unlocked += (s, a) =>
             {
+                MainView.StartInactivityControl(TimeSpan.FromMinutes(AtomexApp.Account.UserSettings.PeriodOfInactivityInMin));
                 DialogViewer?.HideDialog(Dialogs.Unlock);
             };
 
-            DialogViewer?.ShowDialog(Dialogs.Unlock, unlockViewModel, canceled: () => SignOut());
+            DialogViewer?.ShowDialog(Dialogs.Unlock, unlockViewModel, canceled: async () =>
+            {
+                if (!await SignOutAsync())
+                    ShowUnlockAfterInactivityDialog();
+            });
         }
 
         private void DesignerMode()
