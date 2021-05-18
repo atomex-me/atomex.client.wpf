@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
+
+using Serilog;
+
 using Atomex.Blockchain;
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Core;
-using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {
@@ -71,15 +72,15 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
             if (tx.Type.HasFlag(BlockchainTransactionType.SwapPayment))
             {
-                Description = $"Swap payment {Math.Abs(netAmount).ToString("0." + new String('#', tx.Currency.Digits))} {tx.Currency.Name}";
+                Description = $"Swap payment {Math.Abs(netAmount).ToString("0." + new string('#', tx.Currency.Digits))} {tx.Currency.Name}";
             }
             else if (tx.Type.HasFlag(BlockchainTransactionType.SwapRefund))
             {
-                Description = $"Swap refund {Math.Abs(netAmount).ToString("0." + new String('#', tx.Currency.Digits))} {tx.Currency.Name}";
+                Description = $"Swap refund {Math.Abs(netAmount).ToString("0." + new string('#', tx.Currency.Digits))} {tx.Currency.Name}";
             }
             else if (tx.Type.HasFlag(BlockchainTransactionType.SwapRedeem))
             {
-                Description = $"Swap redeem {Math.Abs(netAmount).ToString("0." + new String('#', tx.Currency.Digits))} {tx.Currency.Name}";
+                Description = $"Swap redeem {Math.Abs(netAmount).ToString("0." + new string('#', tx.Currency.Digits))} {tx.Currency.Name}";
             }
             else if (tx.Type.HasFlag(BlockchainTransactionType.TokenApprove))
             {
@@ -95,11 +96,11 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
             }
             else if (Amount <= 0) //tx.Type.HasFlag(BlockchainTransactionType.Output))
             {
-                Description = $"Sent {Math.Abs(netAmount).ToString("0." + new String('#', tx.Currency.Digits))} {tx.Currency.Name}";
+                Description = $"Sent {Math.Abs(netAmount).ToString("0." + new string('#', tx.Currency.Digits))} {tx.Currency.Name}";
             }
             else if (Amount > 0) //tx.Type.HasFlag(BlockchainTransactionType.Input)) // has outputs
             {
-                Description = $"Received {Math.Abs(netAmount).ToString("0." + new String('#', tx.Currency.Digits))} {tx.Currency.Name}";
+                Description = $"Received {Math.Abs(netAmount).ToString("0." + new string('#', tx.Currency.Digits))} {tx.Currency.Name}";
             }
             else
             {
@@ -108,25 +109,25 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
         }
 
         private ICommand _openTxInExplorerCommand;
-        public ICommand OpenTxInExplorerCommand => _openTxInExplorerCommand ?? (_openTxInExplorerCommand = new RelayCommand<string>((id) =>
+        public ICommand OpenTxInExplorerCommand => _openTxInExplorerCommand ??= new RelayCommand<string>((id) =>
         {
             if (Uri.TryCreate($"{Currency.TxExplorerUri}{id}", UriKind.Absolute, out var uri))      
                 Process.Start(uri.ToString());        
             else
                 Log.Error("Invalid uri for transaction explorer");
-        }));
+        });
 
         private ICommand _openAddressInExplorerCommand;
-        public ICommand OpenAddressInExplorerCommand => _openAddressInExplorerCommand ?? (_openAddressInExplorerCommand = new RelayCommand<string>((address) =>
+        public ICommand OpenAddressInExplorerCommand => _openAddressInExplorerCommand ??= new RelayCommand<string>((address) =>
         {
             if (Uri.TryCreate($"{Currency.AddressExplorerUri}{address}", UriKind.Absolute, out var uri))
                 Process.Start(uri.ToString());
             else
                 Log.Error("Invalid uri for address explorer");
-        }));
+        });
 
         private ICommand _copyCommand;
-        public ICommand CopyCommand => _copyCommand ?? (_copyCommand = new RelayCommand<string>((s) =>
+        public ICommand CopyCommand => _copyCommand ??= new RelayCommand<string>((s) =>
         {
             try
             {
@@ -136,19 +137,19 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
             {
                 Log.Error(e, "Copy to clipboard error");
             }
-        }));
+        });
 
         private ICommand _updateCommand;
-        public ICommand UpdateCommand => _updateCommand ?? (_updateCommand = new Command(() =>
+        public ICommand UpdateCommand => _updateCommand ??= new Command(() =>
         {
             UpdateClicked?.Invoke(this, new TransactionEventArgs(Transaction));
-        }));
+        });
 
         private ICommand _removeCommand;
-        public ICommand RemoveCommand => _removeCommand ?? (_removeCommand = new Command(() =>
+        public ICommand RemoveCommand => _removeCommand ??= new Command(() =>
         {
             RemoveClicked?.Invoke(this, new TransactionEventArgs(Transaction));
-        }));
+        });
 
         private void DesignerMode()
         {

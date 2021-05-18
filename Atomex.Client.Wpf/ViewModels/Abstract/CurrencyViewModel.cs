@@ -37,8 +37,6 @@ namespace Atomex.Client.Wpf.ViewModels.Abstract
         public decimal AvailableAmountInBase { get; set; }
         public decimal UnconfirmedAmount { get; set; }
         public decimal UnconfirmedAmountInBase { get; set; }
-        //public decimal LockedAmount { get; set; }
-        //public decimal LockedAmountInBase { get; set; }
         public string CurrencyCode => Currency.Name;
         public string FeeCurrencyCode => Currency.FeeCode;
         public string BaseCurrencyCode => "USD"; // todo: use base currency from settings

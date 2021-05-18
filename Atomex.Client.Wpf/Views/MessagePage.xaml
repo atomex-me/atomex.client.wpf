@@ -43,7 +43,7 @@
                     Visibility="{Binding IsLinkVisible, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
 
             <Button Content="{Binding Id}"
-                    ToolTip="{Binding TxExplorerUri}"
+                    ToolTip="{Binding ExplorerUri}"
                     Margin="20 20 20 0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

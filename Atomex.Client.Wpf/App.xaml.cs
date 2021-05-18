@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+
 using Microsoft.Extensions.Configuration;
 using Serilog;
 

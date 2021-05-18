@@ -11,10 +11,11 @@
     "WriteTo": [
       { "Name": "Console" },
       {
-        "Name": "RollingFile",
+        "Name": "File",
         "Args": {
-          "pathFormat": "logs/log-{Date}.txt",
-          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff K} [{Level:u3}] [{Class}] {Message:lj} (at {Caller}){NewLine}{Exception}"
+          "path": "logs/log-.txt",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff K} [{Level:u3}] [{Class}] {Message:lj} (at {Caller}){NewLine}{Exception}",
+          "rollingInterval": "Day"
         }
       }
     ],

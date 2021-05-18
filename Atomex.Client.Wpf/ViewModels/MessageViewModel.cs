@@ -2,9 +2,11 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+
+using Serilog;
+
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Properties;
-using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -23,11 +25,14 @@ namespace Atomex.Client.Wpf.ViewModels
         public bool IsLinkVisible { get; }
         public bool IsNextVisible { get; }
 
+        public string ExplorerUri => $"{BaseUrl}{Id}";
+
+
         private ICommand _backCommand;
-        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(_backAction));
+        public ICommand BackCommand => _backCommand ??= new Command(_backAction);
 
         private ICommand _nextCommand;
-        public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(_nextAction));
+        public ICommand NextCommand => _nextCommand ??= new Command(_nextAction);
 
         public MessageViewModel()
         {
@@ -119,16 +124,16 @@ namespace Atomex.Client.Wpf.ViewModels
                 nextAction: nextAction);
         
         private ICommand _openTxInExplorerCommand;
-        public ICommand OpenTxInExplorerCommand => _openTxInExplorerCommand ?? (_openTxInExplorerCommand = new RelayCommand<string>((id) =>
+        public ICommand OpenTxInExplorerCommand => _openTxInExplorerCommand ??= new RelayCommand<string>((id) =>
         {
             if (Uri.TryCreate($"{BaseUrl}{Id}", UriKind.Absolute, out var uri))      
                 Process.Start(uri.ToString());        
             else
                 Log.Error("Invalid uri for transaction explorer");
-        }));
+        });
         
         private ICommand _copyCommand;
-        public ICommand CopyCommand => _copyCommand ?? (_copyCommand = new RelayCommand<string>((s) =>
+        public ICommand CopyCommand => _copyCommand ??= new RelayCommand<string>((s) =>
         {
             try
             {
@@ -138,6 +143,6 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 Log.Error(e, "Copy to clipboard error");
             }
-        }));
+        });
     }
 }

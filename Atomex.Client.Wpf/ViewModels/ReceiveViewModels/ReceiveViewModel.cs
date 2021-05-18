@@ -1,17 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Windows.Input;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+
+using QRCoder;
+using Serilog;
+
 using Atomex.Core;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Common;
-using QRCoder;
-using System;
-using System.Windows.Input;
-using Serilog;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 
 namespace Atomex.Client.Wpf.ViewModels

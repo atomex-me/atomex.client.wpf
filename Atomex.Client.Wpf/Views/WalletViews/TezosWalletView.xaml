@@ -326,7 +326,7 @@
                                     <Image Width="30"
                                            Height="30"
                                            Margin="2"
-                                           Source="{Binding Baker.Logo}"
+                                           Source="{Binding Baker.Logo, TargetNullValue={x:Null}}"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Center"
                                            Grid.Column="0"/>

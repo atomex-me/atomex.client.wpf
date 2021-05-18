@@ -98,7 +98,7 @@
                                         Height="15"
                                         ToolTip="Private key export dialog"
                                         Command="{Binding ExportKeyCommand}"
-                                        CommandParameter="{Binding Id}"
+                                        CommandParameter="{Binding Address}"
                                         Style="{StaticResource PathButtonStyle}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
