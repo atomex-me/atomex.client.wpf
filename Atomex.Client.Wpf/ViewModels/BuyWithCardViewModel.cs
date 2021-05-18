@@ -131,10 +131,11 @@ namespace Atomex.Client.Wpf.ViewModels
         public void Open(string currency, string address, Network network)
         {
             var baseUri = network == Network.MainNet
-                ? "https://widget.wert.io?partner_id=atomex&theme=dark"
-                : "https://sandbox.wert.io?partner_id=01F298K3HP4DY326AH1NS3MM3M&theme=dark";
+                ? "https://widget.wert.io/atomex"
+                : "https://sandbox.wert.io/01F298K3HP4DY326AH1NS3MM3M";
 
-            Url = $"{baseUri}" +
+            Url = $"{baseUri}/widget" +
+                $"?theme=dark" +
                 $"&commodity={currency}" +
                 $"&address={address}" +
                 $"&click_id=user:{_account.GetUserId()}/network:{network}";
