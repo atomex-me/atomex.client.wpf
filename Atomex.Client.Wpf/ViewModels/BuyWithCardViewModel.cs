@@ -134,7 +134,10 @@ namespace Atomex.Client.Wpf.ViewModels
                 ? "https://widget.wert.io?partner_id=atomex&theme=dark"
                 : "https://sandbox.wert.io?partner_id=01F298K3HP4DY326AH1NS3MM3M&theme=dark";
 
-            Url = $"{baseUri}&commodity={currency}&address={address}";
+            Url = $"{baseUri}" +
+                $"&commodity={currency}" +
+                $"&address={address}" +
+                $"&click_id=user:{_account.GetUserId()}/network:{network}";
 
             OnPropertyChanged(nameof(Url));
             OnPropertyChanged(nameof(IsReady));
