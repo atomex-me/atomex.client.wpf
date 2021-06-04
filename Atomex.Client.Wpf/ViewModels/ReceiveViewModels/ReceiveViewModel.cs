@@ -31,8 +31,8 @@ namespace Atomex.Client.Wpf.ViewModels
             private set { _fromCurrencies = value; OnPropertyChanged(nameof(FromCurrencies)); }
         }
 
-        protected Currency _currency;
-        public virtual Currency Currency
+        protected CurrencyConfig _currency;
+        public virtual CurrencyConfig Currency
         {
             get => _currency;
             set
@@ -116,7 +116,7 @@ namespace Atomex.Client.Wpf.ViewModels
         {
         }
 
-        public ReceiveViewModel(IAtomexApp app, Currency currency)
+        public ReceiveViewModel(IAtomexApp app, CurrencyConfig currency)
         {
             App = app ?? throw new ArgumentNullException(nameof(app));
 
@@ -156,7 +156,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
         protected virtual WalletAddress GetDefaultAddress()
         {
-            if (Currency is Tezos || Currency is Ethereum)
+            if (Currency is TezosConfig || Currency is EthereumConfig)
             {
                 var activeAddressViewModel = FromAddressList
                     .FirstOrDefault(vm => vm.WalletAddress.HasActivity && vm.WalletAddress.AvailableBalance() > 0);

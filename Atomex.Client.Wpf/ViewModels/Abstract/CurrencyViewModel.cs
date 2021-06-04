@@ -20,8 +20,8 @@ namespace Atomex.Client.Wpf.ViewModels.Abstract
 
         public event EventHandler AmountUpdated;
 
-        public Currency Currency { get; set; }
-        public Currency ChainCurrency { get; set; }
+        public CurrencyConfig Currency { get; set; }
+        public CurrencyConfig ChainCurrency { get; set; }
         public string Header { get; set; }
         public Brush IconBrush { get; set; }
         public Brush UnselectedIconBrush { get; set; }
@@ -54,7 +54,7 @@ namespace Atomex.Client.Wpf.ViewModels.Abstract
             set { _portfolioPercent = value; OnPropertyChanged(nameof(PortfolioPercent)); }
         }
 
-        protected CurrencyViewModel(Currency currency)
+        protected CurrencyViewModel(CurrencyConfig currency)
         {
             Currency = currency ?? throw new ArgumentNullException(nameof(currency));
         }

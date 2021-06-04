@@ -13,7 +13,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public TezosSendViewModel(
             IAtomexApp app,
             IDialogViewer dialogViewer,
-            Currency currency)
+            CurrencyConfig currency)
             : base(app, dialogViewer, currency)
         {
         }

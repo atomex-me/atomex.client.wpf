@@ -71,8 +71,8 @@ namespace Atomex.Client.Wpf.ViewModels
             private set { _toCurrencies = value; OnPropertyChanged(nameof(ToCurrencies)); }
         }
 
-        protected Currency _fromCurrency;
-        public virtual Currency FromCurrency
+        protected CurrencyConfig _fromCurrency;
+        public virtual CurrencyConfig FromCurrency
         {
             get => _fromCurrency;
             set
@@ -115,8 +115,8 @@ namespace Atomex.Client.Wpf.ViewModels
             }
         }
 
-        private Currency _toCurrency;
-        public Currency ToCurrency
+        private CurrencyConfig _toCurrency;
+        public CurrencyConfig ToCurrency
         {
             get => _toCurrency;
             set
@@ -903,8 +903,8 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            var btc = DesignTime.Currencies.Get<Bitcoin>("BTC");
-            var ltc = DesignTime.Currencies.Get<Litecoin>("LTC");
+            var btc = DesignTime.Currencies.Get<BitcoinConfig>("BTC");
+            var ltc = DesignTime.Currencies.Get<LitecoinConfig>("LTC");
 
             _currencyViewModels = new List<CurrencyViewModel>
             {

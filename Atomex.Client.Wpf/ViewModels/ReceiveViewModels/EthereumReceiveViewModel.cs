@@ -7,7 +7,7 @@ namespace Atomex.Client.Wpf.ViewModels.ReceiveViewModels
 {
     public class EthereumReceiveViewModel : ReceiveViewModel
     {
-        public override Currency Currency
+        public override CurrencyConfig Currency
         {
             get => _currency;
             set
@@ -57,7 +57,7 @@ namespace Atomex.Client.Wpf.ViewModels.ReceiveViewModels
         {
         }
 
-        public EthereumReceiveViewModel(IAtomexApp app, Currency currency)
+        public EthereumReceiveViewModel(IAtomexApp app, CurrencyConfig currency)
             : base(app, currency)
         {
         }

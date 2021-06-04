@@ -50,7 +50,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         private IConversionViewModel ConversionViewModel { get; }
 
         public string Header => CurrencyViewModel.Header;
-        public Currency Currency => CurrencyViewModel.Currency;
+        public CurrencyConfig Currency => CurrencyViewModel.Currency;
 
         public Brush Background => IsSelected
             ? CurrencyViewModel.IconBrush
@@ -95,7 +95,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             IDialogViewer dialogViewer,
             IMenuSelector menuSelector,
             IConversionViewModel conversionViewModel,
-            Currency currency)
+            CurrencyConfig currency)
         {
             App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
@@ -289,7 +289,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             var transactions = new List<TransactionViewModel>
             {
-                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<Bitcoin>("BTC"), Transaction.Create(Network.TestNet)))
+                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<BitcoinConfig>("BTC"), Transaction.Create(Network.TestNet)))
                 {
                     Description  = "Sent 0.00124 BTC",
                     Amount       = -0.00124m,
@@ -297,7 +297,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     CurrencyCode = CurrencyViewModel.CurrencyCode,
                     Time         = DateTime.Now,
                 },
-                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<Bitcoin>("BTC"), Transaction.Create(Network.TestNet)))
+                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<BitcoinConfig>("BTC"), Transaction.Create(Network.TestNet)))
                 {
                     Description  = "Received 1.00666 BTC",
                     Amount       = 1.00666m,

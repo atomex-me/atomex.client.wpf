@@ -15,23 +15,23 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             IDialogViewer dialogViewer,
             IMenuSelector menuSelector,
             IConversionViewModel conversionViewModel,
-            Currency currency)
+            CurrencyConfig currency)
         {
             switch (currency)
             {
-                case BitcoinBasedCurrency _:
-                case ERC20 _:
-                case Ethereum _:
-                case NYX _:
-                case FA2 _:
-                case FA12 _:
+                case BitcoinBasedConfig _:
+                case Erc20Config _:
+                case EthereumConfig _:
+                case NyxConfig _:
+                case Fa2Config _:
+                case Fa12Config _:
                     return new WalletViewModel(
                         app: app,
                         dialogViewer: dialogViewer,
                         menuSelector: menuSelector,
                         conversionViewModel: conversionViewModel,
                         currency: currency);
-                case Tezos _:
+                case TezosConfig _:
                     return new TezosWalletViewModel(
                         app: app,
                         dialogViewer: dialogViewer,

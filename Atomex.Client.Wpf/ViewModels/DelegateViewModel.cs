@@ -27,7 +27,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private IAtomexApp App { get; }
         private IDialogViewer DialogViewer { get; }
         
-        private readonly Tezos _tezos;
+        private readonly TezosConfig _tezos;
         private WalletAddress _walletAddress;
 
         public WalletAddress WalletAddress
@@ -280,7 +280,7 @@ namespace Atomex.Client.Wpf.ViewModels
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
             _onDelegate = onDelegate;
-            _tezos      = App.Account.Currencies.Get<Tezos>("XTZ");
+            _tezos      = App.Account.Currencies.Get<TezosConfig>("XTZ");
 
             FeeCurrencyCode    = _tezos.FeeCode;
             BaseCurrencyCode   = "USD";
@@ -397,7 +397,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 var isSuccess = await tx.FillOperationsAsync(
                     securePublicKey: securePublicKey,
-                    headOffset: Tezos.HeadOffset,
+                    headOffset: TezosConfig.HeadOffset,
                     cancellationToken: cancellationToken);
 
                 if (!isSuccess)

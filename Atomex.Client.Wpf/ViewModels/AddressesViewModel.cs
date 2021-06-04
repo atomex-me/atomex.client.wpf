@@ -48,7 +48,7 @@ namespace Atomex.Client.Wpf.ViewModels
     {
         private readonly IAtomexApp _app;
         private readonly IDialogViewer _dialogViewer;
-        private Currency _currency;
+        private CurrencyConfig _currency;
 
         public IEnumerable<AddressInfo> Addresses { get; set; }
 
@@ -72,7 +72,7 @@ namespace Atomex.Client.Wpf.ViewModels
 #endif
         }
 
-        public AddressesViewModel(IAtomexApp app, IDialogViewer dialogViewer, Currency currency)
+        public AddressesViewModel(IAtomexApp app, IDialogViewer dialogViewer, CurrencyConfig currency)
         {
             _app = app ?? throw new ArgumentNullException(nameof(app));
             _dialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));

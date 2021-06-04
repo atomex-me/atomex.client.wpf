@@ -11,7 +11,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
     public class Erc20SendViewModel : EthereumSendViewModel
     {
-        public override Currency Currency
+        public override CurrencyConfig Currency
         {
             get => _currency;
             set
@@ -66,7 +66,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public Erc20SendViewModel(
             IAtomexApp app,
             IDialogViewer dialogViewer,
-            Currency currency)
+            CurrencyConfig currency)
             : base(app, dialogViewer, currency)
         {
         }

@@ -28,7 +28,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
             From = tx.From;
             To = tx.To;
             GasLimit = tx.GasLimit;
-            Fee = Tezos.MtzToTz(tx.Fee);
+            Fee = TezosConfig.MtzToTz(tx.Fee);
             IsInternal = tx.IsInternal;
         }
 
@@ -55,7 +55,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
             var result = 0m;
 
             if (tx.Type.HasFlag(BlockchainTransactionType.Output))
-                result += Tezos.MtzToTz(tx.Fee);
+                result += TezosConfig.MtzToTz(tx.Fee);
 
             tx.InternalTxs?.ForEach(t => result += GetFee(t));
 

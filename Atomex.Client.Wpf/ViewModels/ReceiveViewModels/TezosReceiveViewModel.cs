@@ -7,7 +7,7 @@ namespace Atomex.Client.Wpf.ViewModels.ReceiveViewModels
 {
     public class TezosReceiveViewModel : ReceiveViewModel
     {
-        public override Currency Currency
+        public override CurrencyConfig Currency
         {
             get => _currency;
             set
@@ -57,7 +57,7 @@ namespace Atomex.Client.Wpf.ViewModels.ReceiveViewModels
         {
         }
 
-        public TezosReceiveViewModel(IAtomexApp app, Currency currency)
+        public TezosReceiveViewModel(IAtomexApp app, CurrencyConfig currency)
             : base(app, currency)
         {
         }

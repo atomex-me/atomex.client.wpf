@@ -20,7 +20,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             set { _feeRate = value; OnPropertyChanged(nameof(FeeRate)); }
         }
 
-        private BitcoinBasedCurrency BtcBased => Currency as BitcoinBasedCurrency;
+        private BitcoinBasedConfig BtcBased => Currency as BitcoinBasedConfig;
 
         public BitcoinBasedSendViewModel()
             : base()
@@ -34,7 +34,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public BitcoinBasedSendViewModel(
             IAtomexApp app,
             IDialogViewer dialogViewer,
-            Currency currency)
+            CurrencyConfig currency)
             : base(app, dialogViewer, currency)
         {
         }

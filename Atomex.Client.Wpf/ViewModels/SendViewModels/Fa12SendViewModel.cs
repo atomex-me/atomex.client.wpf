@@ -19,7 +19,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public Fa12SendViewModel(
             IAtomexApp app,
             IDialogViewer dialogViewer,
-            Currency currency)
+            CurrencyConfig currency)
             : base(app, dialogViewer, currency)
         {
         }

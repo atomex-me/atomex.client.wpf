@@ -21,7 +21,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
         public IBlockchainTransaction Transaction { get; }
         public string Id { get; set; }
-        public Currency Currency { get; set; }
+        public CurrencyConfig Currency { get; set; }
         public BlockchainTransactionState State { get; set; }
         public BlockchainTransactionType Type { get; set; }
 

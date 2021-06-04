@@ -8,13 +8,13 @@ namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
 {
     public static class CurrencyViewModelCreator
     {
-        public static CurrencyViewModel CreateViewModel(Currency currency)
+        public static CurrencyViewModel CreateViewModel(CurrencyConfig currency)
         {
             return CreateViewModel(currency, subscribeToUpdates: true);
         }
 
         public static CurrencyViewModel CreateViewModel(
-            Currency currency,
+            CurrencyConfig currency,
             bool subscribeToUpdates)
         {
             var result = currency.Name switch

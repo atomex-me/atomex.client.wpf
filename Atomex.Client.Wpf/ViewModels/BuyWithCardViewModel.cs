@@ -19,7 +19,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private readonly CurrencyViewModel _currencyViewModel;
 
         public string Header => _currencyViewModel.Header;
-        public Currency Currency => _currencyViewModel.Currency;
+        public CurrencyConfig Currency => _currencyViewModel.Currency;
 
         public Brush Background => IsSelected
             ? _currencyViewModel.IconBrush
@@ -45,7 +45,7 @@ namespace Atomex.Client.Wpf.ViewModels
             }
         }
 
-        public CurrencyItemViewModel(Currency currency)
+        public CurrencyItemViewModel(CurrencyConfig currency)
         {
             _currencyViewModel = CurrencyViewModelCreator.CreateViewModel(currency);
         }

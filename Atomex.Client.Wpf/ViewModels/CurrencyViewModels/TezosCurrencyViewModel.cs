@@ -10,7 +10,7 @@ namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
 {
     public class TezosCurrencyViewModel : CurrencyViewModel
     {
-        public TezosCurrencyViewModel(Currency currency)
+        public TezosCurrencyViewModel(CurrencyConfig currency)
             : base(currency)
         {
             Header              = Currency.Description;

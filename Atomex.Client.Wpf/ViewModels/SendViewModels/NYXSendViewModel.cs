@@ -13,7 +13,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public NYXSendViewModel(
             IAtomexApp app,
             IDialogViewer dialogViewer,
-            Currency currency)
+            CurrencyConfig currency)
             : base(app, dialogViewer, currency)
         {
         }

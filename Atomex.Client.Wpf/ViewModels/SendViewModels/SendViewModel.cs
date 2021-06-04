@@ -26,8 +26,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             set { _fromCurrencies = value; OnPropertyChanged(nameof(FromCurrencies)); }
         }
 
-        protected Currency _currency;
-        public virtual Currency Currency
+        protected CurrencyConfig _currency;
+        public virtual CurrencyConfig Currency
         {
             get => _currency;
             set
@@ -282,7 +282,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public SendViewModel(
             IAtomexApp app,
             IDialogViewer dialogViewer,
-            Currency currency)
+            CurrencyConfig currency)
         {
             App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
@@ -347,7 +347,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     var (maxAmount, maxFeeAmount, _) = await App.Account
                         .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
 
-                    var availableAmount = Currency is BitcoinBasedCurrency
+                    var availableAmount = Currency is BitcoinBasedConfig
                         ? CurrencyViewModel.AvailableAmount
                         : maxAmount + maxFeeAmount;
 
@@ -405,7 +405,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     var (maxAmount, maxFeeAmount, _) = await App.Account
                         .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
 
-                    var availableAmount = Currency is BitcoinBasedCurrency
+                    var availableAmount = Currency is BitcoinBasedConfig
                         ? CurrencyViewModel.AvailableAmount
                         : maxAmount + maxFeeAmount;
 
@@ -470,7 +470,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     var (maxAmount, maxFeeAmount, _) = await App.Account
                         .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
 
-                    var availableAmount = Currency is BitcoinBasedCurrency
+                    var availableAmount = Currency is BitcoinBasedConfig
                         ? CurrencyViewModel.AvailableAmount
                         : maxAmount + maxFeeAmount;
 

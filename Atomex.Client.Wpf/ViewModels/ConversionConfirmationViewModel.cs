@@ -25,8 +25,8 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private IAtomexApp App { get; }
         private IDialogViewer DialogViewer { get; }
-        public Currency FromCurrency { get; set; }
-        public Currency ToCurrency { get; set; }
+        public CurrencyConfig FromCurrency { get; set; }
+        public CurrencyConfig ToCurrency { get; set; }
         public CurrencyViewModel FromCurrencyViewModel { get; set; }
         public CurrencyViewModel ToCurrencyViewModel { get; set; }
         public string PriceFormat { get; set; }

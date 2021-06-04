@@ -58,7 +58,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             IDialogViewer dialogViewer,
             IMenuSelector menuSelector,
             IConversionViewModel conversionViewModel,
-            Currency currency)
+            CurrencyConfig currency)
             : base(app, dialogViewer, menuSelector, conversionViewModel, currency)
         {
             Delegations = new List<Delegation>();
@@ -90,7 +90,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         {
             try
             {
-                var tezos = Currency as Tezos;
+                var tezos = Currency as TezosConfig;
 
                 var balance = await App.Account
                     .GetBalanceAsync(tezos.Name)

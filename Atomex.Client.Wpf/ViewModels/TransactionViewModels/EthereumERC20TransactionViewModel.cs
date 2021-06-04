@@ -29,7 +29,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
         {
             From = tx.From;
             To = tx.To;
-            GasPrice = Ethereum.WeiToGwei((decimal)tx.GasPrice);
+            GasPrice = EthereumConfig.WeiToGwei((decimal)tx.GasPrice);
             GasLimit = (decimal)tx.GasLimit;
             GasUsed = (decimal)tx.GasUsed;
             IsInternal = tx.IsInternal;
@@ -37,7 +37,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
         public static decimal GetAmount(EthereumTransaction tx)
         {
-            var Erc20 = tx.Currency as EthereumTokens.ERC20;
+            var Erc20 = tx.Currency as EthereumTokens.Erc20Config;
 
             var result = 0m;
             

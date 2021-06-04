@@ -12,7 +12,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private readonly int _dialogId;
         private readonly IDialogViewer _dialogViewer;
 
-        public Currency Currency { get; set; }
+        public CurrencyConfig Currency { get; set; }
         public string To { get; set; }
         public string CurrencyFormat { get; set; }
         public string BaseCurrencyFormat { get; set; }
