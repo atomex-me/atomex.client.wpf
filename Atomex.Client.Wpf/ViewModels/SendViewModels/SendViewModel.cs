@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
@@ -206,13 +207,13 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         }
 
         private ICommand _backCommand;
-        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
+        public ICommand BackCommand => _backCommand ??= new Command(() =>
         {
             DialogViewer.HideDialog(Dialogs.Send);
-        }));
+        });
 
         private ICommand _nextCommand;
-        public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(OnNextCommand));
+        public ICommand NextCommand => _nextCommand ??= new Command(OnNextCommand);
 
         protected virtual void OnNextCommand()
         {
@@ -252,19 +253,19 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             var confirmationViewModel = new SendConfirmationViewModel(DialogViewer, Dialogs.Send)
             {
-                Currency = Currency,
-                To = To,
-                Amount = Amount,
-                AmountInBase = AmountInBase,
-                BaseCurrencyCode = BaseCurrencyCode,
+                Currency           = Currency,
+                To                 = To,
+                Amount             = Amount,
+                AmountInBase       = AmountInBase,
+                BaseCurrencyCode   = BaseCurrencyCode,
                 BaseCurrencyFormat = BaseCurrencyFormat,
-                Fee = Fee,
-                UseDeafultFee = UseDefaultFee,
-                FeeInBase = FeeInBase,
-                CurrencyCode = CurrencyCode,
-                CurrencyFormat = CurrencyFormat,
+                Fee                = Fee,
+                UseDeafultFee      = UseDefaultFee,
+                FeeInBase          = FeeInBase,
+                CurrencyCode       = CurrencyCode,
+                CurrencyFormat     = CurrencyFormat,
 
-                FeeCurrencyCode = FeeCurrencyCode,
+                FeeCurrencyCode   = FeeCurrencyCode,
                 FeeCurrencyFormat = FeeCurrencyFormat
             };
 
@@ -288,7 +289,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
             FromCurrencies = App.Account.Currencies
-                .Where(c => c.IsTransactionsAvailable)
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
 
@@ -434,7 +434,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         }
 
         protected ICommand _maxCommand;
-        public ICommand MaxCommand => _maxCommand ?? (_maxCommand = new Command(OnMaxClick));
+        public ICommand MaxCommand => _maxCommand ??= new Command(OnMaxClick));
 
         protected virtual async void OnMaxClick()
         {

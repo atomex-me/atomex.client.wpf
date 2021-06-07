@@ -121,7 +121,6 @@ namespace Atomex.Client.Wpf.ViewModels
             App = app ?? throw new ArgumentNullException(nameof(app));
 
             FromCurrencies = app.Account.Currencies
-                .Where(c => c.IsTransactionsAvailable)
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
 
@@ -169,7 +168,7 @@ namespace Atomex.Client.Wpf.ViewModels
         }
 
         private ICommand _copyCommand;
-        public ICommand CopyCommand => _copyCommand ?? (_copyCommand = new RelayCommand<string>((s) =>
+        public ICommand CopyCommand => _copyCommand ??= new RelayCommand<string>((s) =>
         {
             try
             {
