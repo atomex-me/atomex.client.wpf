@@ -22,7 +22,6 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 case BitcoinBasedConfig _:
                 case Erc20Config _:
                 case EthereumConfig _:
-                case NyxConfig _:
                 case Fa2Config _:
                 case Fa12Config _:
                     return new WalletViewModel(

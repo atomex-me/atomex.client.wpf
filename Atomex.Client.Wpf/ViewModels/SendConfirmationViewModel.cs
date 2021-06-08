@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Windows.Input;
+
+using Serilog;
+
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Core;
-using Serilog;
+using Atomex.Wallet.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -29,13 +32,13 @@ namespace Atomex.Client.Wpf.ViewModels
         public string FeeCurrencyFormat { get; set; }
 
         private ICommand _backCommand;
-        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
+        public ICommand BackCommand => _backCommand ??= new Command(() =>
         {
             _dialogViewer.Back(_dialogId);
-        }));
+        });
 
         private ICommand _nextCommand;
-        public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(Send));
+        public ICommand NextCommand => _nextCommand ??= new Command(Send);
 
 #if DEBUG
         public SendConfirmationViewModel()
@@ -52,14 +55,15 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private async void Send()
         {
-            var account = App.AtomexApp.Account;
+            var account = App.AtomexApp.Account
+                .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
             try
             {
                 _dialogViewer.PushPage(_dialogId, Pages.Sending);
 
                 var error = await account
-                    .SendAsync(Currency.Name, To, Amount, Fee, FeePrice, UseDeafultFee);
+                    .SendAsync(To, Amount, Fee, FeePrice, UseDeafultFee);
 
                 if (error != null)
                 {

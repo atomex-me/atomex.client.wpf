@@ -180,7 +180,7 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 Log.Error(e, "Copy to clipboard error");
             }
-        }));
+        });
 
         private void DesignerMode()
         {

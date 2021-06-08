@@ -148,8 +148,11 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             if (currency == "ETH" || currency == "XTZ")
             {
-                var activeTokenAddresses = _account
-                    .GetUnspentTokenAddressesAsync(currency)
+                var account = _account
+                    .GetCurrencyAccount<ILegacyCurrencyAccount>(currency);
+
+                var activeTokenAddresses = account
+                    .GetUnspentTokenAddressesAsync()
                     .WaitForResult()
                     .ToList();
 

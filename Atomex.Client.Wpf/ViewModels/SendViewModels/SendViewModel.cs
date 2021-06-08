@@ -12,6 +12,7 @@ using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Core;
 using Atomex.MarketData.Abstract;
+using Atomex.Wallet.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
@@ -321,10 +322,18 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
 
+                var account = App.Account
+                    .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
+
                 if (UseDefaultFee)
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, true);
+                    var (maxAmount, _, _) = await account
+                        .EstimateMaxAmountToSendAsync(
+                            to: To,
+                            type: BlockchainTransactionType.Output,
+                            fee: 0,
+                            feePrice: 0,
+                            reserve: true);
 
                     if (_amount > maxAmount)
                     {
@@ -334,7 +343,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     }
 
                     var estimatedFeeAmount = _amount != 0
-                        ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
+                        ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output)
                         : 0;
 
                     OnPropertyChanged(nameof(AmountString));
@@ -344,8 +353,13 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 }
                 else
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
+                    var (maxAmount, maxFeeAmount, _) = await account
+                        .EstimateMaxAmountToSendAsync(
+                            to: To,
+                            type: BlockchainTransactionType.Output,
+                            fee: 0,
+                            feePrice: 0,
+                            reserve: false);
 
                     var availableAmount = Currency is BitcoinBasedConfig
                         ? CurrencyViewModel.AvailableAmount
@@ -398,12 +412,20 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 if (!UseDefaultFee)
                 {
+                    var account = App.Account
+                        .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
+
                     var estimatedFeeAmount = _amount != 0
-                        ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
+                        ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output)
                         : 0;
 
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
+                    var (maxAmount, maxFeeAmount, _) = await account
+                        .EstimateMaxAmountToSendAsync(
+                            to: To,
+                            type: BlockchainTransactionType.Output,
+                            fee: 0,
+                            feePrice: 0,
+                            reserve: false);
 
                     var availableAmount = Currency is BitcoinBasedConfig
                         ? CurrencyViewModel.AvailableAmount
@@ -434,7 +456,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         }
 
         protected ICommand _maxCommand;
-        public ICommand MaxCommand => _maxCommand ??= new Command(OnMaxClick));
+        public ICommand MaxCommand => _maxCommand ??= new Command(OnMaxClick);
 
         protected virtual async void OnMaxClick()
         {
@@ -450,12 +472,16 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 if (CurrencyViewModel.AvailableAmount == 0)
                     return;
 
-                var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+                var defaultFeePrice = await Currency
+                    .GetDefaultFeePriceAsync();
+
+                var account = App.Account
+                    .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                 if (UseDefaultFee)
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, true);
+                    var (maxAmount, maxFeeAmount, _) = await account
+                        .EstimateMaxAmountToSendAsync(To, BlockchainTransactionType.Output, 0, 0, true);
 
                     if (maxAmount > 0)
                         _amount = maxAmount;
@@ -467,8 +493,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 }
                 else
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
+                    var (maxAmount, maxFeeAmount, _) = await account
+                        .EstimateMaxAmountToSendAsync( To, BlockchainTransactionType.Output, 0, 0, false);
 
                     var availableAmount = Currency is BitcoinBasedConfig
                         ? CurrencyViewModel.AvailableAmount
@@ -481,7 +507,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         _amount = availableAmount - feeAmount;
 
                         var estimatedFeeAmount = _amount != 0
-                            ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
+                            ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output)
                             : 0;
 
                         if (estimatedFeeAmount == null || feeAmount < estimatedFeeAmount.Value)

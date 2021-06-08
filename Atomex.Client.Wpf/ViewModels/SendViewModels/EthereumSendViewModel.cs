@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Input;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Core;
 using Atomex.MarketData.Abstract;
+using Atomex.Wallet.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
@@ -160,10 +161,13 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
+                var account = App.Account
+                    .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
+
                 if (UseDefaultFee)
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
+                    var (maxAmount, _, _) = await account
+                        .EstimateMaxAmountToSendAsync(To, BlockchainTransactionType.Output, 0, 0, false);
 
                     _fee = Currency.GetDefaultFee();
                     OnPropertyChanged(nameof(GasString));
@@ -185,8 +189,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 }
                 else
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, _fee, _feePrice, false);
+                    var (maxAmount, _, _) = await account
+                        .EstimateMaxAmountToSendAsync(To, BlockchainTransactionType.Output, _fee, _feePrice, false);
 
                     if (_amount > maxAmount)
                     {
@@ -239,8 +243,11 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 if (!UseDefaultFee)
                 {
-                    var (maxAmount, maxFee, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, _fee, _feePrice, false);
+                    var account = App.Account
+                        .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
+
+                    var (maxAmount, _, _) = await account
+                        .EstimateMaxAmountToSendAsync(To, BlockchainTransactionType.Output, _fee, _feePrice, false);
 
                     if (_amount > maxAmount)
                     {
@@ -295,8 +302,11 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 if (!UseDefaultFee)
                 {
-                    var (maxAmount, maxFee, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, _fee, _feePrice, false);
+                    var account = App.Account
+                        .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
+
+                    var (maxAmount, _, _) = await account
+                        .EstimateMaxAmountToSendAsync(To, BlockchainTransactionType.Output, _fee, _feePrice, false);
 
                     if (_amount > maxAmount)
                     {
@@ -324,10 +334,13 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
+                var account = App.Account
+                    .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
+
                 var feeAmount = totalFeeAmount > 0
                     ? totalFeeAmount
                     : Currency.GetFeeAmount(_fee, _feePrice) > 0
-                        ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output, _fee, _feePrice)
+                        ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output, _fee, _feePrice)
                         : 0;
 
                 if (feeAmount != null)
@@ -355,10 +368,13 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 if (availableAmount == 0)
                     return;
 
+                var account = App.Account
+                    .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
+
                 if (UseDefaultFee)
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
+                    var (maxAmount, maxFeeAmount, _) = await account
+                        .EstimateMaxAmountToSendAsync(To, BlockchainTransactionType.Output, 0, 0, false);
 
                     if (maxAmount > 0)
                         _amount = maxAmount;
@@ -387,8 +403,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         }
                     }
 
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, _fee, _feePrice, false);
+                    var (maxAmount, maxFeeAmount, _) = await account
+                        .EstimateMaxAmountToSendAsync(To, BlockchainTransactionType.Output, _fee, _feePrice, false);
 
                     _amount = maxAmount;
 
@@ -447,21 +463,21 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             var confirmationViewModel = new SendConfirmationViewModel(DialogViewer, Dialogs.Send)
             {
-                Currency = Currency,
-                To = To,
-                Amount = Amount,
-                AmountInBase = AmountInBase,
-                BaseCurrencyCode = BaseCurrencyCode,
+                Currency           = Currency,
+                To                 = To,
+                Amount             = Amount,
+                AmountInBase       = AmountInBase,
+                BaseCurrencyCode   = BaseCurrencyCode,
                 BaseCurrencyFormat = BaseCurrencyFormat,
-                Fee = Fee,
-                UseDeafultFee = UseDefaultFee,
-                FeeInBase = FeeInBase,
-                FeePrice = FeePrice,
-                CurrencyCode = CurrencyCode,
-                CurrencyFormat = CurrencyFormat,
+                Fee                = Fee,
+                UseDeafultFee      = UseDefaultFee,
+                FeeInBase          = FeeInBase,
+                FeePrice           = FeePrice,
+                CurrencyCode       = CurrencyCode,
+                CurrencyFormat     = CurrencyFormat,
 
-                FeeCurrencyCode = FeeCurrencyCode,
-                FeeCurrencyFormat = FeeCurrencyFormat
+                FeeCurrencyCode    = FeeCurrencyCode,
+                FeeCurrencyFormat  = FeeCurrencyFormat
             };
 
             DialogViewer.PushPage(Dialogs.Send, Pages.SendConfirmation, confirmationViewModel);

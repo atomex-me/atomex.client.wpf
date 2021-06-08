@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+
 using Serilog;
 
 using Atomex.Blockchain.Abstract;
@@ -13,6 +14,7 @@ using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Common;
 using Atomex.Core;
+using Atomex.Wallet.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -134,11 +136,12 @@ namespace Atomex.Client.Wpf.ViewModels
             try
             {
                 var account = App.Account;
+                var currencyAccount = account
+                    .GetCurrencyAccount<ILegacyCurrencyAccount>(FromCurrency.Name);
 
-                var fromWallets = (await account
+                var fromWallets = (await currencyAccount
                     .GetUnspentAddressesAsync(
                         toAddress: null,
-                        currency: FromCurrency.Name,
                         amount: Amount,
                         fee: 0,
                         feePrice: await FromCurrency.GetDefaultFeePriceAsync(),

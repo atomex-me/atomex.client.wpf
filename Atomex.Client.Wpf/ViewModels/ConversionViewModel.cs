@@ -22,6 +22,7 @@ using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Swaps.Helpers;
+using Atomex.Wallet.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -611,7 +612,8 @@ namespace Atomex.Client.Wpf.ViewModels
                 return;
 #endif
             var walletAddress = await App.Account
-                .GetRedeemAddressAsync(ToCurrency.Name);
+                .GetCurrencyAccount<ILegacyCurrencyAccount>(ToCurrency.Name)
+                .GetRedeemAddressAsync();
 
             _estimatedRedeemFee = await ToCurrency
                 .GetEstimatedRedeemFeeAsync(walletAddress, withRewardForRedeem: false);

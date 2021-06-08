@@ -1,7 +1,9 @@
 ﻿using System.Linq;
+
 using Atomex.Core;
 using Atomex.Client.Wpf.Common;
 using Atomex.Common;
+using Atomex.Wallet.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels.ReceiveViewModels
 {
@@ -19,7 +21,8 @@ namespace Atomex.Client.Wpf.ViewModels.ReceiveViewModels
                 {
 #endif
                     var activeTokenAddresses = App.Account
-                        .GetUnspentTokenAddressesAsync(_currency.Name)
+                        .GetCurrencyAccount<ILegacyCurrencyAccount>(_currency.Name)
+                        .GetUnspentTokenAddressesAsync()
                         .WaitForResult()
                         .ToList();
 
