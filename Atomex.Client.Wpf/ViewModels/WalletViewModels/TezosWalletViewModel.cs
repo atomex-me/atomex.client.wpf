@@ -4,15 +4,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+
+using Serilog;
+
 using Atomex.Blockchain.Tezos;
 using Atomex.Blockchain.Tezos.Internal;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
-using Atomex.Common;
 using Atomex.Core;
 using Atomex.Wallet;
-using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
@@ -147,10 +148,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         }
 
         private ICommand _delegateCommand;
-        public ICommand DelegateCommand => _delegateCommand ?? (_delegateCommand = new Command(OnDelegateClick));
-
-        //private ICommand _undelegateCommand;
-        //public ICommand UndelegateCommand => _undelegateCommand ?? (_undelegateCommand = new Command(OnUndelegateClick));
+        public ICommand DelegateCommand => _delegateCommand ??= new Command(OnDelegateClick);
 
         private void OnDelegateClick()
         {
@@ -164,10 +162,6 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             DialogViewer.ShowDialog(Dialogs.Delegate, viewModel, defaultPageId: Pages.Delegate);
         }
-
-        //private void OnUndelegateClick()
-        //{
-        //}
 
         protected override void DesignerMode()
         {

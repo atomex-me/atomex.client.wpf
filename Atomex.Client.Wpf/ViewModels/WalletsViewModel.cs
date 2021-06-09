@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using Atomex.Subsystems;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
@@ -17,15 +18,15 @@ namespace Atomex.Client.Wpf.ViewModels
         private IMenuSelector MenuSelector { get; }
         private IConversionViewModel ConversionViewModel { get; }
 
-        private ObservableCollection<WalletViewModel> _wallets;
-        public ObservableCollection<WalletViewModel> Wallets
+        private ObservableCollection<IWalletViewModel> _wallets;
+        public ObservableCollection<IWalletViewModel> Wallets
         {
             get => _wallets;
             set { _wallets = value; OnPropertyChanged(nameof(Wallets)); }
         }
 
-        private WalletViewModel _selected;
-        public WalletViewModel Selected
+        private IWalletViewModel _selected;
+        public IWalletViewModel Selected
         {
             get => _selected;
             set
@@ -56,9 +57,9 @@ namespace Atomex.Client.Wpf.ViewModels
             IMenuSelector menuSelector,
             IConversionViewModel conversionViewModel)
         {
-            App = app ?? throw new ArgumentNullException(nameof(app));
-            DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
-            MenuSelector = menuSelector ?? throw new ArgumentNullException(nameof(menuSelector));
+            App                 = app ?? throw new ArgumentNullException(nameof(app));
+            DialogViewer        = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+            MenuSelector        = menuSelector ?? throw new ArgumentNullException(nameof(menuSelector));
             ConversionViewModel = conversionViewModel ?? throw new ArgumentNullException(nameof(conversionViewModel));
 
             SubscribeToServices();
@@ -72,14 +73,14 @@ namespace Atomex.Client.Wpf.ViewModels
         private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs e)
         {
             Wallets = e.Terminal?.Account != null
-                ? new ObservableCollection<WalletViewModel>(
+                ? new ObservableCollection<IWalletViewModel>(
                     e.Terminal.Account.Currencies.Select(currency => WalletViewModelCreator.CreateViewModel(
                         app: App,
                         dialogViewer: DialogViewer,
                         menuSelector: MenuSelector,
                         conversionViewModel: ConversionViewModel,
                         currency: currency)))
-                : new ObservableCollection<WalletViewModel>();
+                : new ObservableCollection<IWalletViewModel>();
 
             Selected = Wallets.FirstOrDefault();
         }
@@ -88,10 +89,20 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             var currencies = DesignTime.Currencies.ToList();
 
-            Wallets = new ObservableCollection<WalletViewModel>
+            Wallets = new ObservableCollection<IWalletViewModel>
             {
-                new WalletViewModel {CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currencies[0], subscribeToUpdates: false)},
-                new WalletViewModel {CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currencies[1], subscribeToUpdates: false)}
+                new WalletViewModel
+                {
+                    CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(
+                        currencies[0],
+                        subscribeToUpdates: false)
+                },
+                new WalletViewModel
+                {
+                    CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(
+                        currencies[1],
+                        subscribeToUpdates: false)
+                }
             };
         }
     }

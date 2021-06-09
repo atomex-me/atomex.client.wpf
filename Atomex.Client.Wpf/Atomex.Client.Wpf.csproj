@@ -436,6 +436,8 @@
     <Compile Include="ViewModels\TransactionViewModels\TezosTransactionViewModel.cs" />
     <Compile Include="ViewModels\UnlockViewModel.cs" />
     <Compile Include="Common\WalletInfo.cs" />
+    <Compile Include="ViewModels\WalletViewModels\IWalletViewModel.cs" />
+    <Compile Include="ViewModels\WalletViewModels\TezosTokensWalletViewModel.cs" />
     <Compile Include="ViewModels\WalletViewModels\TezosWalletViewModel.cs" />
     <Compile Include="ViewModels\WalletViewModels\WalletViewModelCreator.cs" />
     <Compile Include="Views\BuyWithCardView.xaml.cs">
@@ -547,6 +549,9 @@
     </Compile>
     <Compile Include="Views\WalletsView.xaml.cs">
       <DependentUpon>WalletsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WalletViews\TezosTokensWalletView.xaml.cs">
+      <DependentUpon>TezosTokensWalletView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WalletViews\TezosWalletView.xaml.cs">
       <DependentUpon>TezosWalletView.xaml</DependentUpon>
@@ -818,6 +823,10 @@
     <Page Include="Views\WalletsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WalletViews\TezosTokensWalletView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\WalletViews\TezosWalletView.xaml">
       <Generator>MSBuild:Compile</Generator>

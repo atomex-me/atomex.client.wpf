@@ -1,8 +1,7 @@
 ﻿using System;
+
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Core;
-using Atomex.EthereumTokens;
-using Atomex.TezosTokens;
 
 namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
 {

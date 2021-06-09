@@ -8,6 +8,11 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+
+using NBitcoin;
+using Serilog;
+using Network = NBitcoin.Network;
+
 using Atomex.Blockchain;
 using Atomex.Blockchain.BitcoinBased;
 using Atomex.Client.Wpf.Common;
@@ -20,13 +25,10 @@ using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 using Atomex.Common;
 using Atomex.Core;
 using Atomex.Wallet;
-using NBitcoin;
-using Serilog;
-using Network = NBitcoin.Network;
 
 namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
-    public class WalletViewModel : BaseViewModel
+    public class WalletViewModel : BaseViewModel, IWalletViewModel
     {
         private const int ConversionViewIndex = 2;
 
@@ -67,6 +69,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             set
             {
                 _isSelected = value;
+
                 OnPropertyChanged(nameof(IsSelected));
                 OnPropertyChanged(nameof(Background));
                 OnPropertyChanged(nameof(OpacityMask));
@@ -170,25 +173,25 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         }
 
         private ICommand _sendCommand;
-        public ICommand SendCommand => _sendCommand ?? (_sendCommand = new Command(OnSendClick));
+        public ICommand SendCommand => _sendCommand ??= new Command(OnSendClick);
 
         private ICommand _receiveCommand;
-        public ICommand ReceiveCommand => _receiveCommand ?? (_receiveCommand = new Command(OnReceiveClick));
+        public ICommand ReceiveCommand => _receiveCommand ??= new Command(OnReceiveClick);
 
         private ICommand _convertCommand;
-        public ICommand ConvertCommand => _convertCommand ?? (_convertCommand = new Command(OnConvertClick));
+        public ICommand ConvertCommand => _convertCommand ??= new Command(OnConvertClick);
 
         private ICommand _updateCommand;
-        public ICommand UpdateCommand => _updateCommand ?? (_updateCommand = new Command(OnUpdateClick));
+        public ICommand UpdateCommand => _updateCommand ??= new Command(OnUpdateClick);
 
         private ICommand _addressesCommand;
-        public ICommand AddressesCommand => _addressesCommand ?? (_addressesCommand = new Command(OnAddressesClick));
+        public ICommand AddressesCommand => _addressesCommand ??= new Command(OnAddressesClick);
 
         private ICommand _cancelUpdateCommand;
-        public ICommand CancelUpdateCommand => _cancelUpdateCommand ?? (_cancelUpdateCommand = new Command(() =>
+        public ICommand CancelUpdateCommand => _cancelUpdateCommand ??= new Command(() =>
         {
             Cancellation.Cancel();
-        }));
+        });
 
         private void OnSendClick()
         {
