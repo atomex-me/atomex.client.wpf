@@ -3,13 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:converters="clr-namespace:Atomex.Client.Wpf.Converters"
              xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
              xmlns:walletViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.WalletViewModels"
              xmlns:txViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.TransactionViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="600"
-             d:DesignWidth="800"
+             d:DesignWidth="900"
              d:DataContext="{d:DesignInstance Type=walletViewModels:TezosWalletViewModel, IsDesignTimeCreatable=True}"
              UseLayoutRounding="True">
 
@@ -167,13 +166,11 @@
                                 Content="Send"
                                 Margin="0 0 2 0"
                                 Command="{Binding SendCommand}"
-                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"
                                 Style="{StaticResource WalletMenuButton}"/>
                             <controls:RoundedButton
                                 Content="Receive"
                                 Margin="2 0 2 0"
                                 Command="{Binding ReceiveCommand}"
-                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"
                                 Style="{StaticResource WalletMenuButton}"/>
                             <controls:RoundedButton
                                 Content="Convert"
@@ -185,7 +182,6 @@
                                 Content="Update"
                                 Margin="2 0 1 0"
                                 Command="{Binding UpdateCommand}"
-                                IsEnabled="{Binding Currency.IsTransactionsAvailable}"
                                 Style="{StaticResource WalletMenuButton}"/>
                             <controls:RoundedButton
                                 Content="Addresses"

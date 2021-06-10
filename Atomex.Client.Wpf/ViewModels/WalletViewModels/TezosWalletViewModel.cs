@@ -116,26 +116,26 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     if (string.IsNullOrEmpty(@delegate))
                         continue;
 
-
                     var baker = await BbApi
                         .GetBaker(@delegate, App.Account.Network)
                         .ConfigureAwait(false);
 
                     delegations.Add(new Delegation
                     {
-                        Baker = baker,
+                        Baker   = baker,
                         Address = wa.Address,
                         Balance = wa.Balance
                     });
                 }
 
-                await Application.Current.Dispatcher.InvokeAsync(() =>
-                {
-                    CanDelegate = balance.Available > 0;
-                    Delegations = delegations;
-                    HasDelegations = delegations.Count > 0;
-                },
-                DispatcherPriority.Background);
+                await Application.Current.Dispatcher
+                    .InvokeAsync(() =>
+                    {
+                        CanDelegate    = balance.Available > 0;
+                        Delegations    = delegations;
+                        HasDelegations = delegations.Count > 0;
+                    },
+                    DispatcherPriority.Background);
             }
             catch (OperationCanceledException)
             {
@@ -157,10 +157,14 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 await Task.Delay(TimeSpan.FromSeconds(DelegationCheckIntervalInSec))
                     .ConfigureAwait(false);
 
-                await Application.Current.Dispatcher.InvokeAsync(OnUpdateClick);
+                await Application.Current.Dispatcher
+                    .InvokeAsync(OnUpdateClick);
             });
 
-            DialogViewer.ShowDialog(Dialogs.Delegate, viewModel, defaultPageId: Pages.Delegate);
+            DialogViewer.ShowDialog(
+                Dialogs.Delegate,
+                viewModel,
+                defaultPageId: Pages.Delegate);
         }
 
         protected override void DesignerMode()

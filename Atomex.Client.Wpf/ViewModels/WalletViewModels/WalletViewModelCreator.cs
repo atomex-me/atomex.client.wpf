@@ -28,8 +28,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     conversionViewModel: conversionViewModel,
                     currency: currency),
 
-                Fa2Config _ or
-                Fa12Config _ => new WalletViewModel(
+                Fa12Config _ => new Fa12WalletViewModel(
                     app: app,
                     dialogViewer: dialogViewer,
                     menuSelector: menuSelector,

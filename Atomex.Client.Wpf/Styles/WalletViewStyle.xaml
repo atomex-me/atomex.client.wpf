@@ -16,10 +16,12 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="Foreground" Value="{DynamicResource ExplorerLinkButtonForegroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{DynamicResource ExplorerLinkButtonForegroundBrush}" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Foreground" Value="{DynamicResource ExplorerLinkButtonMouseOverBrush}" />
+                <Setter Property="Foreground"
+                        Value="{DynamicResource ExplorerLinkButtonMouseOverBrush}" />
             </Trigger>
         </Style.Triggers>
     </Style>

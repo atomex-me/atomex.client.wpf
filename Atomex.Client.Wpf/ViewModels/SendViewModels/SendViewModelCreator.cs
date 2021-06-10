@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Atomex.Client.Wpf.Controls;
 using Atomex.Core;
 using Atomex.EthereumTokens;
@@ -15,7 +16,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         {
             return currency switch
             {
-                BitcoinBasedConfig _ => (SendViewModel) new BitcoinBasedSendViewModel(app, dialogViewer, currency),
+                BitcoinBasedConfig _ => (SendViewModel)new BitcoinBasedSendViewModel(app, dialogViewer, currency),
                 Erc20Config _        => (SendViewModel)new Erc20SendViewModel(app, dialogViewer, currency),
                 EthereumConfig _     => (SendViewModel)new EthereumSendViewModel(app, dialogViewer, currency),
                 Fa2Config _          => (SendViewModel)new FA2SendViewModel(app, dialogViewer, currency),

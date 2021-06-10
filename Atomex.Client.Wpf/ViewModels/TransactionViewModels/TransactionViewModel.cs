@@ -53,18 +53,18 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
         public TransactionViewModel(IBlockchainTransaction tx, decimal amount, decimal fee)
         {
             Transaction = tx ?? throw new ArgumentNullException(nameof(tx));
-            Id = Transaction.Id;
-            Currency = Transaction.Currency;
-            State = Transaction.State;
-            Type = Transaction.Type;
-            Amount = amount;
+            Id          = Transaction.Id;
+            Currency    = Transaction.Currency;
+            State       = Transaction.State;
+            Type        = Transaction.Type;
+            Amount      = amount;
 
             var netAmount = amount + fee;
 
             var currencyViewModel = CurrencyViewModelCreator.CreateViewModel(tx.Currency, false);
             AmountFormat = currencyViewModel.CurrencyFormat;
             CurrencyCode = currencyViewModel.CurrencyCode;
-            Time = tx.CreationTime ?? DateTime.UtcNow;
+            Time         = tx.CreationTime ?? DateTime.UtcNow;
             CanBeRemoved = tx.State == BlockchainTransactionState.Unknown ||
                            tx.State == BlockchainTransactionState.Failed ||
                            tx.State == BlockchainTransactionState.Pending ||
@@ -153,7 +153,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
         private void DesignerMode()
         {
-            Id = "1234567890abcdefgh1234567890abcdefgh";
+            Id   = "1234567890abcdefgh1234567890abcdefgh";
             Time = DateTime.UtcNow;
         }
     }
