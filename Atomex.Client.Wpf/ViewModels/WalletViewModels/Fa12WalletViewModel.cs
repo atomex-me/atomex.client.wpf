@@ -4,16 +4,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 using NBitcoin;
 using Serilog;
 using Network = NBitcoin.Network;
 
-using Atomex.Blockchain;
 using Atomex.Blockchain.BitcoinBased;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
@@ -34,12 +31,12 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
     {
         private const int ConversionViewIndex = 2;
 
-        //private ObservableCollection<TransactionViewModel> _transactions;
-        //public ObservableCollection<TransactionViewModel> Transactions
-        //{
-        //    get => _transactions;
-        //    set { _transactions = value; OnPropertyChanged(nameof(Transactions)); }
-        //}
+        private ObservableCollection<TransactionViewModel> _transactions;
+        public ObservableCollection<TransactionViewModel> Transactions
+        {
+            get => _transactions;
+            set { _transactions = value; OnPropertyChanged(nameof(Transactions)); }
+        }
 
         private CurrencyViewModel _currencyViewModel;
         public CurrencyViewModel CurrencyViewModel
@@ -111,8 +108,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             SubscribeToServices();
 
-            // update transfers list
-            _ = LoadTransfersAsync();
+            // update transactions list
+            _ = LoadTransactionsAsync();
         }
 
         private void SubscribeToServices()
@@ -127,7 +124,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 if (Config.Name == args.Currency)
                 {
                     // update transactions list
-                    await LoadTransfersAsync();
+                    await LoadTransactionsAsync();
                 }
             }
             catch (Exception e)
@@ -136,7 +133,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             }
         }
 
-        protected async Task LoadTransfersAsync()
+        protected async Task LoadTransactionsAsync()
         {
             Log.Debug("LoadTransfersAsync for {@currency}", Config.Name);
 
@@ -144,6 +141,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             {
                 if (App.Account == null)
                     return;
+
+                //var transfers = 
 
                 //var transactions = (await App.Account
                 //    .GetTransactionsAsync(Config.Name))
@@ -233,7 +232,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 await new TezosTokensScanner(tezosAccount)
                     .ScanContractAsync(Config.TokenContractAddress, Cancellation.Token);
 
-                await LoadTransfersAsync();
+                await LoadTransactionsAsync();
             }
             catch (OperationCanceledException)
             {
