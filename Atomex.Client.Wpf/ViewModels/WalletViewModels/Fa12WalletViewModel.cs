@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -129,47 +131,43 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             }
             catch (Exception e)
             {
-                Log.Error(e, "Account balance updated event handler error");
+                Log.Error(e, "Account balance updated event handler error.");
             }
         }
 
         protected async Task LoadTransactionsAsync()
         {
-            Log.Debug("LoadTransfersAsync for {@currency}", Config.Name);
+            Log.Debug("LoadTransactionsAsync for {@currency}.", Config.Name);
 
             try
             {
                 if (App.Account == null)
                     return;
 
-                //var transfers = 
+                var transactions = (await App.Account
+                    .GetCurrencyAccount<Fa12Account>(Config.Name)
+                    .DataRepository
+                    .GetTezosTokenTransfersAsync(Config.TokenContractAddress)
+                    .ConfigureAwait(false))
+                    .ToList();
 
-                //var transactions = (await App.Account
-                //    .GetTransactionsAsync(Config.Name))
-                //    .ToList();
-
-                //await Application.Current.Dispatcher.InvokeAsync(() =>
-                //{
-                //    Transactions = new ObservableCollection<TransactionViewModel>(
-                //        transactions.Select(t => TransactionViewModelCreator
-                //            .CreateViewModel(t))
-                //            .ToList()
-                //            .SortList((t1, t2) => t2.Time.CompareTo(t1.Time))
-                //            .ForEachDo(t =>
-                //            {
-                //                t.UpdateClicked += UpdateTransactonEventHandler;
-                //                t.RemoveClicked += RemoveTransactonEventHandler;
-                //            }));
-                //},
-                //DispatcherPriority.Background);
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    Transactions = new ObservableCollection<TransactionViewModel>(
+                        transactions.Select(t => TransactionViewModelCreator
+                            .CreateViewModel(t))
+                            .ToList()
+                            .SortList((t1, t2) => t2.Time.CompareTo(t1.Time)));
+                },
+                DispatcherPriority.Background);
             }
             catch (OperationCanceledException)
             {
-                Log.Debug("LoadTransfersAsync canceled.");
+                Log.Debug("LoadTransactionsAsync canceled.");
             }
             catch (Exception e)
             {
-                Log.Error(e, "LoadTransfersAsync error for {@currency}", Config?.Name);
+                Log.Error(e, "LoadTransactionsAsync error for {@currency}.", Config?.Name);
             }
         }
 
@@ -236,11 +234,11 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             }
             catch (OperationCanceledException)
             {
-                Log.Debug("Wallet update operation canceled");
+                Log.Debug("Wallet update operation canceled.");
             }
             catch (Exception e)
             {
-                Log.Error(e, "WalletViewModel.OnUpdateClick");
+                Log.Error(e, "Fa12WalletViewModel.OnUpdateClick error.");
                 // todo: message to user!?
             }
 

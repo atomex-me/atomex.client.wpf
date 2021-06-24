@@ -11,7 +11,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
     {
         public static TransactionViewModel CreateViewModel(IBlockchainTransaction tx)
         {
-            return tx.Currency.Name switch
+            return tx.Currency switch
             {
                 "BTC"   => (TransactionViewModel)new BitcoinBasedTransactionViewModel((IBitcoinBasedTransaction)tx),
                 "LTC"   => new BitcoinBasedTransactionViewModel((IBitcoinBasedTransaction)tx),

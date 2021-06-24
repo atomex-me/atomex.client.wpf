@@ -264,7 +264,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             try
             {
-                var txId = $"{args.Transaction.Id}:{args.Transaction.Currency.Name}";
+                var txId = $"{args.Transaction.Id}:{args.Transaction.Currency}";
 
                 var isRemoved = await App.Account
                     .RemoveTransactionAsync(txId);
