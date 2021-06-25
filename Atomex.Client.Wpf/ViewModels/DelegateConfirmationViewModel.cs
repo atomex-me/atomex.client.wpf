@@ -83,7 +83,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     From              = WalletAddress.Address,
                     To                = To,
                     Fee               = Fee.ToMicroTez(),
-                    Currency          = Currency,
+                    Currency          = Currency.Name,
                     CreationTime      = DateTime.UtcNow,
 
                     UseRun            = true,
@@ -96,6 +96,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 await tx.FillOperationsAsync(
                     securePublicKey: securePublicKey,
+                    tezosConfig: Currency,
                     headOffset: TezosConfig.HeadOffset);
 
                 var signResult = await tx

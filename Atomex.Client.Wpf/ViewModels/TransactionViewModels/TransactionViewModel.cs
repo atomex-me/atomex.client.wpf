@@ -50,18 +50,23 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 #endif
         }
 
-        public TransactionViewModel(IBlockchainTransaction tx, decimal amount, decimal fee)
+        public TransactionViewModel(
+            IBlockchainTransaction tx,
+            CurrencyConfig currencyConfig,
+            decimal amount,
+            decimal fee)
         {
             Transaction = tx ?? throw new ArgumentNullException(nameof(tx));
             Id          = Transaction.Id;
-            Currency    = Transaction.Currency;
+            Currency    = currencyConfig;
             State       = Transaction.State;
             Type        = Transaction.Type;
             Amount      = amount;
 
             var netAmount = amount + fee;
 
-            var currencyViewModel = CurrencyViewModelCreator.CreateViewModel(tx.Currency, false);
+            var currencyViewModel = CurrencyViewModelCreator.CreateViewModel(currencyConfig, false);
+
             AmountFormat = currencyViewModel.CurrencyFormat;
             CurrencyCode = currencyViewModel.CurrencyCode;
             Time         = tx.CreationTime ?? DateTime.UtcNow;
@@ -69,43 +74,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
                            tx.State == BlockchainTransactionState.Failed ||
                            tx.State == BlockchainTransactionState.Pending ||
                            tx.State == BlockchainTransactionState.Unconfirmed;
-
-            if (tx.Type.HasFlag(BlockchainTransactionType.SwapPayment))
-            {
-                Description = $"Swap payment {Math.Abs(netAmount).ToString("0." + new string('#', tx.Currency.Digits))} {tx.Currency}";
-            }
-            else if (tx.Type.HasFlag(BlockchainTransactionType.SwapRefund))
-            {
-                Description = $"Swap refund {Math.Abs(netAmount).ToString("0." + new string('#', tx.Currency.Digits))} {tx.Currency}";
-            }
-            else if (tx.Type.HasFlag(BlockchainTransactionType.SwapRedeem))
-            {
-                Description = $"Swap redeem {Math.Abs(netAmount).ToString("0." + new string('#', tx.Currency.Digits))} {tx.Currency}";
-            }
-            else if (tx.Type.HasFlag(BlockchainTransactionType.TokenApprove))
-            {
-                Description = $"Token approve";
-            }
-            else if (tx.Type.HasFlag(BlockchainTransactionType.TokenCall))
-            {
-                Description = $"Token call";
-            }
-            else if (tx.Type.HasFlag(BlockchainTransactionType.SwapCall))
-            {
-                Description = $"Token swap call";
-            }
-            else if (Amount <= 0) //tx.Type.HasFlag(BlockchainTransactionType.Output))
-            {
-                Description = $"Sent {Math.Abs(netAmount).ToString("0." + new string('#', tx.Currency.Digits))} {tx.Currency}";
-            }
-            else if (Amount > 0) //tx.Type.HasFlag(BlockchainTransactionType.Input)) // has outputs
-            {
-                Description = $"Received {Math.Abs(netAmount).ToString("0." + new string('#', tx.Currency.Digits))} {tx.Currency}";
-            }
-            else
-            {
-                Description = "Unknown transaction";
-            }
+            Description = GetDescription(tx.Type, Amount, netAmount, currencyConfig);
         }
 
         private ICommand _openTxInExplorerCommand;
@@ -155,6 +124,48 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
         {
             Id   = "1234567890abcdefgh1234567890abcdefgh";
             Time = DateTime.UtcNow;
+        }
+
+        public static string GetDescription(
+            BlockchainTransactionType type,
+            decimal amount,
+            decimal netAmount,
+            CurrencyConfig currencyConfig)
+        {
+            if (type.HasFlag(BlockchainTransactionType.SwapPayment))
+            {
+                return $"Swap payment {Math.Abs(amount).ToString("0." + new string('#', currencyConfig.Digits))} {currencyConfig.Name}";
+            }
+            else if (type.HasFlag(BlockchainTransactionType.SwapRefund))
+            {
+                return $"Swap refund {Math.Abs(netAmount).ToString("0." + new string('#', currencyConfig.Digits))} {currencyConfig.Name}";
+            }
+            else if (type.HasFlag(BlockchainTransactionType.SwapRedeem))
+            {
+                return $"Swap redeem {Math.Abs(netAmount).ToString("0." + new string('#', currencyConfig.Digits))} {currencyConfig.Name}";
+            }
+            else if (type.HasFlag(BlockchainTransactionType.TokenApprove))
+            {
+                return $"Token approve";
+            }
+            else if (type.HasFlag(BlockchainTransactionType.TokenCall))
+            {
+                return $"Token call";
+            }
+            else if (type.HasFlag(BlockchainTransactionType.SwapCall))
+            {
+                return $"Token swap call";
+            }
+            else if (amount <= 0)
+            {
+                return $"Sent {Math.Abs(netAmount).ToString("0." + new string('#', currencyConfig.Digits))} {currencyConfig.Name}";
+            }
+            else if (amount > 0)
+            {
+                return $"Received {Math.Abs(netAmount).ToString("0." + new string('#', currencyConfig.Digits))} {currencyConfig.Name}";
+            }
+
+            return "Unknown transaction";
         }
     }
 }

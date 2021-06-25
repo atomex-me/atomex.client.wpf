@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Blockchain.Tezos;
 using Atomex.Client.Wpf.Common;
@@ -22,30 +23,30 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 #endif
         }
 
-        public TezosTransactionViewModel(TezosTransaction tx)
-            : base(tx, GetAmount(tx), GetFee(tx))
+        public TezosTransactionViewModel(TezosTransaction tx, TezosConfig tezosConfig)
+            : base(tx, tezosConfig, GetAmount(tx, tezosConfig), GetFee(tx))
         {
-            From = tx.From;
-            To = tx.To;
-            GasLimit = tx.GasLimit;
-            Fee = TezosConfig.MtzToTz(tx.Fee);
+            From       = tx.From;
+            To         = tx.To;
+            GasLimit   = tx.GasLimit;
+            Fee        = TezosConfig.MtzToTz(tx.Fee);
             IsInternal = tx.IsInternal;
         }
 
-        private static decimal GetAmount(TezosTransaction tx)
+        private static decimal GetAmount(TezosTransaction tx, TezosConfig tezosConfig)
         {
             var result = 0m;
 
             if (tx.Type.HasFlag(BlockchainTransactionType.Input))
-                result += tx.Amount / tx.Currency.DigitsMultiplier;
+                result += tx.Amount / tezosConfig.DigitsMultiplier;
 
-            var includeFee = tx.Currency.Name == tx.Currency.FeeCurrencyName;
+            var includeFee = tezosConfig.Name == tezosConfig.FeeCurrencyName;
             var fee = includeFee ? tx.Fee : 0;
 
             if (tx.Type.HasFlag(BlockchainTransactionType.Output))
-                result += -(tx.Amount + fee) / tx.Currency.DigitsMultiplier;
+                result += -(tx.Amount + fee) / tezosConfig.DigitsMultiplier;
 
-            tx.InternalTxs?.ForEach(t => result += GetAmount(t));
+            tx.InternalTxs?.ForEach(t => result += GetAmount(t, tezosConfig));
 
             return result;
         }
@@ -64,9 +65,9 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
                
         private void DesignerMode()
         {
-            Id = "1234567890abcdefgh1234567890abcdefgh";
+            Id   = "1234567890abcdefgh1234567890abcdefgh";
             From = "1234567890abcdefgh1234567890abcdefgh";
-            To = "1234567890abcdefgh1234567890abcdefgh";
+            To   = "1234567890abcdefgh1234567890abcdefgh";
             Time = DateTime.UtcNow;
         }
     }

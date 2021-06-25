@@ -151,7 +151,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 {
                     Transactions = new ObservableCollection<TransactionViewModel>(
                         transactions.Select(t => TransactionViewModelCreator
-                            .CreateViewModel(t))
+                            .CreateViewModel(t, Currency))
                             .ToList()
                             .SortList((t1, t2) => t2.Time.CompareTo(t1.Time))
                             .ForEachDo(t =>
@@ -283,16 +283,16 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             var currencies = DesignTime.Currencies.ToList();
 
             CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currencies[3], subscribeToUpdates: false);
-            CurrencyViewModel.TotalAmount = 0.01012345m;
-            CurrencyViewModel.TotalAmountInBase = 16.51m;
-            CurrencyViewModel.AvailableAmount = 0.01010005m;
-            CurrencyViewModel.AvailableAmountInBase = 16.00m;
-            CurrencyViewModel.UnconfirmedAmount = 0.00002m;
+            CurrencyViewModel.TotalAmount             = 0.01012345m;
+            CurrencyViewModel.TotalAmountInBase       = 16.51m;
+            CurrencyViewModel.AvailableAmount         = 0.01010005m;
+            CurrencyViewModel.AvailableAmountInBase   = 16.00m;
+            CurrencyViewModel.UnconfirmedAmount       = 0.00002m;
             CurrencyViewModel.UnconfirmedAmountInBase = 0.5m;
 
             var transactions = new List<TransactionViewModel>
             {
-                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<BitcoinConfig>("BTC"), Transaction.Create(Network.TestNet)))
+                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction("BTC", Transaction.Create(Network.TestNet)), DesignTime.Currencies.Get<BitcoinConfig>("BTC"))
                 {
                     Description  = "Sent 0.00124 BTC",
                     Amount       = -0.00124m,
@@ -300,7 +300,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     CurrencyCode = CurrencyViewModel.CurrencyCode,
                     Time         = DateTime.Now,
                 },
-                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<BitcoinConfig>("BTC"), Transaction.Create(Network.TestNet)))
+                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction("BTC", Transaction.Create(Network.TestNet)), DesignTime.Currencies.Get<BitcoinConfig>("BTC"))
                 {
                     Description  = "Received 1.00666 BTC",
                     Amount       = 1.00666m,

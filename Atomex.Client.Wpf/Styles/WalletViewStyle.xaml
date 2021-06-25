@@ -102,6 +102,11 @@
         <views:EthereumTransactionDetailsView/>
     </DataTemplate>
 
+    <DataTemplate x:Key="TezosTokenTransferDetailsTemplate"
+                  DataType="viewModels:TezosTokenTransferViewModel">
+        <views:TezosTokenTransferDetailsView/>
+    </DataTemplate>
+
     <controls:TransactionDataTemplateByCurrencySelector x:Key="TransactionDetailsDataTemplateSelector">
         <controls:TransactionDataTemplateByCurrencySelector.Selectors>
             <controls:TransactionDataTemplateSelectorList>
@@ -170,40 +175,40 @@
                     SwapRefundTemplate="{StaticResource EthereumERC20TransactionDetailsTemplate}"/>
                 <controls:TransactionDataTemplateSelector
                     Currency="TZBTC"
-                    UnknownTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    ReceivedTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    TokenApproveTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapPaymentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapRedeemTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapRefundTemplate="{StaticResource TezosTransactionDetailsTemplate}"/>
+                    UnknownTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SentTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    ReceivedTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapPaymentTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapRedeemTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapRefundTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"/>
                 <controls:TransactionDataTemplateSelector
                     Currency="KUSD"
-                    UnknownTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    ReceivedTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    TokenApproveTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapPaymentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapRedeemTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapRefundTemplate="{StaticResource TezosTransactionDetailsTemplate}"/>
+                    UnknownTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SentTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    ReceivedTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapPaymentTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapRedeemTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapRefundTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"/>
                 <controls:TransactionDataTemplateSelector
-                    Currency="NYX"
-                    UnknownTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    ReceivedTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    TokenApproveTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapPaymentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapRedeemTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapRefundTemplate="{StaticResource TezosTransactionDetailsTemplate}"/>
+                    Currency="FA12"
+                    UnknownTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SentTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    ReceivedTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapPaymentTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapRedeemTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapRefundTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"/>
                 <controls:TransactionDataTemplateSelector
                     Currency="FA2"
-                    UnknownTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    ReceivedTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    TokenApproveTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapPaymentTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapRedeemTemplate="{StaticResource TezosTransactionDetailsTemplate}"
-                    SwapRefundTemplate="{StaticResource TezosTransactionDetailsTemplate}"/>
+                    UnknownTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SentTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    ReceivedTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    TokenApproveTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapPaymentTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapRedeemTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                    SwapRefundTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"/>
                 <!-- todo: default data template -->
             </controls:TransactionDataTemplateSelectorList>
         </controls:TransactionDataTemplateByCurrencySelector.Selectors>

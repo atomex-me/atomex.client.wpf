@@ -27,7 +27,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private IAtomexApp App { get; }
         private IDialogViewer DialogViewer { get; }
         
-        private readonly TezosConfig _tezos;
+        private readonly TezosConfig _tezosConfig;
         private WalletAddress _walletAddress;
 
         public WalletAddress WalletAddress
@@ -82,13 +82,13 @@ namespace Atomex.Client.Wpf.ViewModels
         
         public string FeeString
         {
-            get => Fee.ToString(_tezos.FeeFormat, CultureInfo.InvariantCulture);
+            get => Fee.ToString(_tezosConfig.FeeFormat, CultureInfo.InvariantCulture);
             set
             {
                 if (!decimal.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var fee))
                     return;
                 
-                Fee = fee.TruncateByFormat(_tezos.FeeFormat);
+                Fee = fee.TruncateByFormat(_tezosConfig.FeeFormat);
             }
         }
 
@@ -210,7 +210,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     return;
                 }
 
-                if (!_tezos.IsValidAddress(Address))
+                if (!_tezosConfig.IsValidAddress(Address))
                 {
                     Warning = Resources.SvInvalidAddressError;
                     return;
@@ -238,7 +238,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 {
                     var confirmationViewModel = new DelegateConfirmationViewModel(App, DialogViewer, _onDelegate)
                     {
-                        Currency            = _tezos,
+                        Currency            = _tezosConfig,
                         WalletAddress       = WalletAddress,
                         UseDefaultFee       = UseDefaultFee,
                         From                = WalletAddress.Address,
@@ -248,8 +248,8 @@ namespace Atomex.Client.Wpf.ViewModels
                         BaseCurrencyFormat  = BaseCurrencyFormat,
                         Fee                 = Fee,
                         FeeInBase           = FeeInBase,
-                        CurrencyCode        = _tezos.FeeCode,
-                        CurrencyFormat      = _tezos.FeeFormat
+                        CurrencyCode        = _tezosConfig.FeeCode,
+                        CurrencyFormat      = _tezosConfig.FeeFormat
                     };
 
                     DialogViewer.PushPage(Dialogs.Delegate, Pages.DelegateConfirmation, confirmationViewModel);
@@ -280,9 +280,9 @@ namespace Atomex.Client.Wpf.ViewModels
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
             _onDelegate = onDelegate;
-            _tezos      = App.Account.Currencies.Get<TezosConfig>("XTZ");
+            _tezosConfig      = App.Account.Currencies.Get<TezosConfig>("XTZ");
 
-            FeeCurrencyCode    = _tezos.FeeCode;
+            FeeCurrencyCode    = _tezosConfig.FeeCode;
             BaseCurrencyCode   = "USD";
             BaseCurrencyFormat = "$0.00";
             UseDefaultFee      = true;
@@ -332,9 +332,9 @@ namespace Atomex.Client.Wpf.ViewModels
         private async Task PrepareWallet(CancellationToken cancellationToken = default)
         {   
             FromAddressList = (await App.Account
-                .GetUnspentAddressesAsync(_tezos.Name, cancellationToken).ConfigureAwait(false))
+                .GetUnspentAddressesAsync(_tezosConfig.Name, cancellationToken).ConfigureAwait(false))
                 .OrderByDescending(x => x.Balance)
-                .Select(w => new WalletAddressViewModel(w, _tezos.Format))
+                .Select(w => new WalletAddressViewModel(w, _tezosConfig.Format))
                 .ToList();
 
             if (!FromAddressList?.Any() ?? false)
@@ -356,7 +356,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
             try
             {
-                var rpc = new Rpc(_tezos.RpcNodeUri);
+                var rpc = new Rpc(_tezosConfig.RpcNodeUri);
 
                 delegateData = await rpc
                     .GetDelegate(_address)
@@ -379,12 +379,12 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 var tx = new TezosTransaction
                 {
-                    StorageLimit      = _tezos.StorageLimit,
-                    GasLimit          = _tezos.GasLimit,
+                    StorageLimit      = _tezosConfig.StorageLimit,
+                    GasLimit          = _tezosConfig.GasLimit,
                     From              = _walletAddress.Address,
                     To                = _address,
                     Fee               = Fee.ToMicroTez(),
-                    Currency          = _tezos,
+                    Currency          = _tezosConfig.Name,
                     CreationTime      = DateTime.UtcNow,
 
                     UseRun            = true,
@@ -393,10 +393,11 @@ namespace Atomex.Client.Wpf.ViewModels
                 };
 
                 using var securePublicKey = App.Account.Wallet
-                    .GetPublicKey(_tezos, _walletAddress.KeyIndex);
+                    .GetPublicKey(_tezosConfig, _walletAddress.KeyIndex);
 
                 var isSuccess = await tx.FillOperationsAsync(
                     securePublicKey: securePublicKey,
+                    tezosConfig: _tezosConfig,
                     headOffset: TezosConfig.HeadOffset,
                     cancellationToken: cancellationToken);
 

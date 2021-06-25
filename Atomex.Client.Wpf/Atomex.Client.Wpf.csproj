@@ -413,9 +413,7 @@
     <Compile Include="ViewModels\SendViewModels\TezosSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModelCreator.cs" />
-    <Compile Include="ViewModels\TransactionViewModels\TezosFA12TransactionViewModel.cs" />
-    <Compile Include="ViewModels\TransactionViewModels\TezosFA2TransactionViewModel.cs" />
-    <Compile Include="ViewModels\TransactionViewModels\TezosNYXTransactionViewModel.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\TezosTokenTransferViewModel.cs" />
     <Compile Include="ViewModels\WalletAddressViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModel.cs" />
@@ -535,6 +533,9 @@
     </Compile>
     <Compile Include="Views\TransactionDetailsViews\EthereumERC20TransactionDetailsView.xaml.cs">
       <DependentUpon>EthereumERC20TransactionDetailsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TransactionDetailsViews\TezosTokenTransferDetailsView.xaml.cs">
+      <DependentUpon>TezosTokenTransferDetailsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TransactionDetailsViews\TezosTransactionDetailsView.xaml.cs">
       <DependentUpon>TezosTransactionDetailsView.xaml</DependentUpon>
@@ -807,6 +808,10 @@
     <Page Include="Views\TransactionDetailsViews\EthereumERC20TransactionDetailsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TransactionDetailsViews\TezosTokenTransferDetailsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\TransactionDetailsViews\TezosTransactionDetailsView.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Blockchain.Ethereum;
 using Atomex.Client.Wpf.Common;
@@ -24,15 +25,15 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 #endif
         }
 
-        public EthereumTransactionViewModel(EthereumTransaction tx)
-            : base(tx, GetAmount(tx), GetFee(tx))
+        public EthereumTransactionViewModel(EthereumTransaction tx, EthereumConfig ethereumConfig)
+            : base(tx, ethereumConfig, GetAmount(tx), GetFee(tx))
         {
-            From = tx.From;
-            To = tx.To;
-            GasPrice = EthereumConfig.WeiToGwei((decimal) tx.GasPrice);
-            GasLimit = (decimal) tx.GasLimit;
-            GasUsed = (decimal) tx.GasUsed;
-            Fee = EthereumConfig.WeiToEth(tx.GasUsed * tx.GasPrice);
+            From       = tx.From;
+            To         = tx.To;
+            GasPrice   = EthereumConfig.WeiToGwei((decimal) tx.GasPrice);
+            GasLimit   = (decimal) tx.GasLimit;
+            GasUsed    = (decimal) tx.GasUsed;
+            Fee        = EthereumConfig.WeiToEth(tx.GasUsed * tx.GasPrice);
             IsInternal = tx.IsInternal;
         }
 
@@ -65,9 +66,9 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
         private void DesignerMode()
         {
-            Id = "0x1234567890abcdefgh1234567890abcdefgh";
+            Id   = "0x1234567890abcdefgh1234567890abcdefgh";
             From = "0x1234567890abcdefgh1234567890abcdefgh";
-            To = "0x1234567890abcdefgh1234567890abcdefgh";
+            To   = "0x1234567890abcdefgh1234567890abcdefgh";
             Time = DateTime.UtcNow;
         }
     }

@@ -53,7 +53,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         private IConversionViewModel ConversionViewModel { get; }
 
         public string Header => CurrencyViewModel.Header;
-        public Fa12Config Config => CurrencyViewModel.Currency as Fa12Config;
+        public Fa12Config Currency => CurrencyViewModel.Currency as Fa12Config;
 
         public Brush Background => IsSelected
             ? CurrencyViewModel.IconBrush
@@ -123,7 +123,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         {
             try
             {
-                if (Config.Name == args.Currency)
+                if (Currency.Name == args.Currency)
                 {
                     // update transactions list
                     await LoadTransactionsAsync();
@@ -137,7 +137,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         protected async Task LoadTransactionsAsync()
         {
-            Log.Debug("LoadTransactionsAsync for {@currency}.", Config.Name);
+            Log.Debug("LoadTransactionsAsync for {@currency}.", Currency.Name);
 
             try
             {
@@ -145,9 +145,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     return;
 
                 var transactions = (await App.Account
-                    .GetCurrencyAccount<Fa12Account>(Config.Name)
+                    .GetCurrencyAccount<Fa12Account>(Currency.Name)
                     .DataRepository
-                    .GetTezosTokenTransfersAsync(Config.TokenContractAddress)
+                    .GetTezosTokenTransfersAsync(Currency.TokenContractAddress)
                     .ConfigureAwait(false))
                     .ToList();
 
@@ -155,7 +155,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 {
                     Transactions = new ObservableCollection<TransactionViewModel>(
                         transactions.Select(t => TransactionViewModelCreator
-                            .CreateViewModel(t))
+                            .CreateViewModel(t, Currency))
                             .ToList()
                             .SortList((t1, t2) => t2.Time.CompareTo(t1.Time)));
                 },
@@ -167,7 +167,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             }
             catch (Exception e)
             {
-                Log.Error(e, "LoadTransactionsAsync error for {@currency}.", Config?.Name);
+                Log.Error(e, "LoadTransactionsAsync error for {@currency}.", Currency?.Name);
             }
         }
 
@@ -194,15 +194,15 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         private void OnSendClick()
         {
-            var sendViewModel = SendViewModelCreator.CreateViewModel(App, DialogViewer, Config);
-            var sendPageId = SendViewModelCreator.GetSendPageId(Config);
+            var sendViewModel = SendViewModelCreator.CreateViewModel(App, DialogViewer, Currency);
+            var sendPageId = SendViewModelCreator.GetSendPageId(Currency);
 
             DialogViewer.ShowDialog(Dialogs.Send, sendViewModel, defaultPageId: sendPageId);
         }
 
         private void OnReceiveClick()
         {
-            var receiveViewModel = ReceiveViewModelCreator.CreateViewModel(App, Config);
+            var receiveViewModel = ReceiveViewModelCreator.CreateViewModel(App, Currency);
 
             DialogViewer.ShowDialog(Dialogs.Receive, receiveViewModel);
         }
@@ -210,7 +210,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         private void OnConvertClick()
         {
             MenuSelector.SelectMenu(ConversionViewIndex);
-            ConversionViewModel.FromCurrency = Config;
+            ConversionViewModel.FromCurrency = Currency;
         }
 
         protected async void OnUpdateClick()
@@ -228,7 +228,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
 
                 await new TezosTokensScanner(tezosAccount)
-                    .ScanContractAsync(Config.TokenContractAddress, Cancellation.Token);
+                    .ScanContractAsync(Currency.TokenContractAddress, Cancellation.Token);
 
                 await LoadTransactionsAsync();
             }
@@ -249,7 +249,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         {
             DialogViewer.ShowDialog(
                 dialogId: Dialogs.Addresses,
-                dataContext: new AddressesViewModel(App, DialogViewer, Config));
+                dataContext: new AddressesViewModel(App, DialogViewer, Currency));
         }
 
         protected virtual void DesignerMode()
@@ -266,7 +266,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             var transactions = new List<TransactionViewModel>
             {
-                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<BitcoinConfig>("BTC"), Transaction.Create(Network.TestNet)))
+                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction("BTC", Transaction.Create(Network.TestNet)), DesignTime.Currencies.Get<BitcoinConfig>("BTC"))
                 {
                     Description  = "Sent 0.00124 BTC",
                     Amount       = -0.00124m,
@@ -274,7 +274,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     CurrencyCode = CurrencyViewModel.CurrencyCode,
                     Time         = DateTime.Now,
                 },
-                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction(DesignTime.Currencies.Get<BitcoinConfig>("BTC"), Transaction.Create(Network.TestNet)))
+                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction("BTC", Transaction.Create(Network.TestNet)), DesignTime.Currencies.Get<BitcoinConfig>("BTC"))
                 {
                     Description  = "Received 1.00666 BTC",
                     Amount       = 1.00666m,
