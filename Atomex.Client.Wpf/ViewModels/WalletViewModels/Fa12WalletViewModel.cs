@@ -224,13 +224,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             try
             {
-                var tezosAccount = App.Account
-                    .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
-
-                await new TezosTokensScanner(tezosAccount)
-                    .ScanContractAsync(Currency.TokenContractAddress, Cancellation.Token);
-
-                await LoadTransactionsAsync();
+                await App.Account
+                    .GetCurrencyAccount<Fa12Account>(Currency.Name)
+                    .UpdateBalanceAsync(Cancellation.Token);
             }
             catch (OperationCanceledException)
             {

@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Input;
+using System.Windows;
+
 using Serilog;
+using MahApps.Metro.Controls.Dialogs;
 
 using Atomex.Core;
-using Atomex.Client.Wpf.Common;
-using System.Windows;
-using System.Diagnostics;
-using Atomex.Client.Wpf.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using Atomex.Wallet;
 using Atomex.Common;
+using Atomex.Client.Wpf.Common;
+using Atomex.Client.Wpf.Controls;
+using Atomex.Wallet;
+using Atomex.TezosTokens;
+using Atomex.Wallet.Tezos;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -85,10 +88,18 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             try
             {
-                var account = _app.Account.GetCurrencyAccount(_currency.Name);
+                var account = _app.Account
+                    .GetCurrencyAccount(_currency.Name);
 
-                var addresses = (await account.GetAddressesAsync())
-                    .ToList();
+                var addresses = (_currency switch
+                {
+                    Fa12Config fa12Config => await (account as Fa12Account).DataRepository
+                        .GetTezosTokenAddressesByContractAsync(fa12Config.TokenContractAddress),
+
+                    _ => await account
+                        .GetAddressesAsync()
+
+                }).ToList();
 
                 addresses.Sort((a1, a2) =>
                 {
@@ -189,19 +200,19 @@ namespace Atomex.Client.Wpf.ViewModels
                 new AddressInfo
                 {
                     Address = "mzztP8VVJYxV93EUiiYrJUbL55MLx7KLoM",
-                    Path = "m/44'/0'/0'/0/0",
+                    Path    = "m/44'/0'/0'/0/0",
                     Balance = 4.0000000.ToString(CultureInfo.InvariantCulture),
                 },
                 new AddressInfo
                 {
                     Address = "mzztP8VVJYxV93EUiiYrJUbL55MLx7KLoM",
-                    Path = "m/44'/0'/0'/0/0",
+                    Path    = "m/44'/0'/0'/0/0",
                     Balance = 100.ToString(CultureInfo.InvariantCulture),
                 },
                 new AddressInfo
                 {
                     Address = "mzztP8VVJYxV93EUiiYrJUbL55MLx7KLoM",
-                    Path = "m/44'/0'/0'/0/0",
+                    Path    = "m/44'/0'/0'/0/0",
                     Balance = 16.0000001.ToString(CultureInfo.InvariantCulture),
                 }
             };
