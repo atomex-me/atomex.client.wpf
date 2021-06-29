@@ -12,7 +12,7 @@
              d:DataContext="{d:DesignInstance Type=walletViewModels:TezosTokensWalletViewModel, IsDesignTimeCreatable=True}"
              UseLayoutRounding="True">
 
-    <Grid>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -22,12 +22,90 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <ListView Width="200"
+        <Border Background="{StaticResource DefaultSubstrateBrush}"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0">
+            <ListBox Width="300"
+                     Margin="5"
+                     ItemsSource="{Binding TokensContracts}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Hidden"    
+                     SelectionMode="Single"
+                     FocusVisualStyle="{x:Null}"
+                     Background="Transparent">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type walletViewModels:TezosTokenContractViewModel}">
+                        <Grid Height="60">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="11"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="11"/>
+                            </Grid.RowDefinitions>
+
+                            <Image Margin="2"
+                                   Source="{Binding IconUrl}"
+                                   Grid.Column="0"
+                                   Grid.Row="0"
+                                   Grid.RowSpan="4"/>
+
+                            <TextBlock Margin="10 0 10 0"
+                                       Text="{Binding Contract.Name}"
+                                       FontSize="13"
+                                       FontFamily="{StaticResource DefaultMediumFontFamily}"
+                                       VerticalAlignment="Center"
+                                       Grid.Column="1"
+                                       Grid.Row="1"/>
+
+                            <TextBlock Margin="10 0 10 0"
+                                       Text="{Binding Contract.Address}"
+                                       FontSize="10"
+                                       FontFamily="{StaticResource DefaultLightFontFamily}"
+                                       VerticalAlignment="Center"
+                                       Grid.Column="1"
+                                       Grid.Row="2"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+        <Border Background="{StaticResource DefaultSubstrateBrush}"
+                Grid.Row="0"
+                Grid.Column="1"/>
+        <!--<ListView Width="200"
+                  ItemsSource="{Binding TokensContracts}"
+                  Background="{StaticResource DefaultBackgroundBrush}"
                   Grid.Row="0"
                   Grid.RowSpan="2"
-                  Grid.Column="0"/>
-        
-        <StackPanel Orientation="Horizontal"
+                  Grid.Column="0">
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="{x:Type walletViewModels:TezosTokenContractViewModel}">
+                    <Grid Height="40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Margin="2"
+                               Source="{Binding IconUrl}"
+                               Grid.Column="0"/>
+                        
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>-->
+
+        <!--<StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     Margin="10 20 10 10"
                     Grid.Row="0"
@@ -284,9 +362,9 @@
                             Visibility="{Binding IsBalanceUpdating, Converter={StaticResource BoolToVisibilityHiddenConverter}}"/>
                 </Grid>
             </Border>
-        </StackPanel>
+        </StackPanel>-->
 
-        <DataGrid x:Name="DgTransactions"
+        <!--<DataGrid x:Name="DgTransactions"
                   Margin="10"
                   MinRowHeight="35"
                   AutoGenerateColumns="False"
@@ -348,6 +426,6 @@
                 <DataGridTemplateColumn Header="State" CellTemplateSelector="{StaticResource TransactionStateDataTemplateSelector}"/>
                 <DataGridTextColumn Header="Time" Binding="{Binding LocalTime, StringFormat=dd MMM yyyy\, HH:mm}"/>
             </DataGrid.Columns>
-        </DataGrid>
+        </DataGrid>-->
     </Grid>
 </UserControl>

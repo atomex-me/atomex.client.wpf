@@ -8,6 +8,7 @@ using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Client.Wpf.ViewModels.WalletViewModels;
+using System.Collections.Generic;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -72,16 +73,28 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs e)
         {
-            Wallets = e.Terminal?.Account != null
-                ? new ObservableCollection<IWalletViewModel>(
-                    e.Terminal.Account.Currencies.Select(currency => WalletViewModelCreator.CreateViewModel(
+            var walletsViewModels = new List<IWalletViewModel>();
+
+            if (e.Terminal?.Account != null)
+            {
+                var currenciesViewModels = e.Terminal.Account.Currencies
+                    .Select(currency => WalletViewModelCreator.CreateViewModel(
                         app: App,
                         dialogViewer: DialogViewer,
                         menuSelector: MenuSelector,
                         conversionViewModel: ConversionViewModel,
-                        currency: currency)))
-                : new ObservableCollection<IWalletViewModel>();
+                        currency: currency));
 
+                walletsViewModels.AddRange(currenciesViewModels);
+
+                walletsViewModels.Add(new TezosTokensWalletViewModel(
+                    app: App,
+                    dialogViewer: DialogViewer,
+                    menuSelector: MenuSelector,
+                    conversionViewModel: ConversionViewModel));
+            }
+
+            Wallets  = new ObservableCollection<IWalletViewModel>(walletsViewModels);
             Selected = Wallets.FirstOrDefault();
         }
 

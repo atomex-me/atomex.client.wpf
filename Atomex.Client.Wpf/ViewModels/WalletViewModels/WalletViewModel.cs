@@ -100,12 +100,11 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             IConversionViewModel conversionViewModel,
             CurrencyConfig currency)
         {
-            App = app ?? throw new ArgumentNullException(nameof(app));
-            DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
-            MenuSelector = menuSelector ?? throw new ArgumentNullException(nameof(menuSelector));
+            App                 = app ?? throw new ArgumentNullException(nameof(app));
+            DialogViewer        = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+            MenuSelector        = menuSelector ?? throw new ArgumentNullException(nameof(menuSelector));
             ConversionViewModel = conversionViewModel ?? throw new ArgumentNullException(nameof(conversionViewModel));
-
-            CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currency);
+            CurrencyViewModel   = CurrencyViewModelCreator.CreateViewModel(currency);
 
             SubscribeToServices();
 
