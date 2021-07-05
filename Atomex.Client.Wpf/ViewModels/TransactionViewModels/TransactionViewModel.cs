@@ -122,7 +122,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
         private void DesignerMode()
         {
-            Id   = "1234567890abcdefgh1234567890abcdefgh";
+            Id = "1234567890abcdefgh1234567890abcdefgh";
             Time = DateTime.UtcNow;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+
 using Atomex.Client.Wpf.ViewModels.Abstract;
 
 namespace Atomex.Client.Wpf.Views.WalletViews

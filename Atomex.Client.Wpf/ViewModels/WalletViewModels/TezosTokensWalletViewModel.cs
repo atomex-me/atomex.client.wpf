@@ -1,22 +1,166 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Runtime.Caching;
+using System.Net;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Input;
+
+using Serilog;
 
 using Atomex.Blockchain.Tezos;
+using Atomex.Common;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
-using Atomex.Core;
+using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 using Atomex.Wallet;
 using Atomex.Wallet.Tezos;
-using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
+    public class TezosTokenViewModel : BaseViewModel
+    {
+        private bool _isPreviewDownloading = false;
+
+        public TokenBalance TokenBalance { get; set; }
+
+        public BitmapImage TokenPreview
+        {
+            get
+            {
+                if (_isPreviewDownloading)
+                    return null;
+
+                foreach (var url in GetTokenPreviewUrls())
+                {
+                    var previewBytesFromCache = MemoryCache.Default.Get(url) as byte[];
+
+                    if (previewBytesFromCache == null)
+                    {
+                        // start async download
+                        _ = Task.Run(async () =>
+                        {
+                            await FromUrlAsync(url)
+                                .ConfigureAwait(false);
+                        });
+
+                        return null;
+                    }
+
+                    // skip url without content
+                    if (!previewBytesFromCache.Any())
+                        continue;
+
+                    using var previewStream = new MemoryStream(previewBytesFromCache);
+
+                    var preview = new BitmapImage();
+
+                    preview.BeginInit();
+                    preview.CacheOption = BitmapCacheOption.OnLoad;
+                    preview.StreamSource = previewStream;
+                    preview.EndInit();
+
+                    return preview;
+                }
+
+
+                return null;
+            }
+        }
+
+        public string Balance => TokenBalance.Balance != "1"
+            ? $"{TokenBalance.Balance}  {TokenBalance.Symbol}"
+            : "";
+
+        private ICommand _openInBrowser;
+        public ICommand OpenInBrowser => _openInBrowser ??= new Command(() =>
+        {
+            var assetUrl = AssetUrl;
+
+            if (assetUrl != null && Uri.TryCreate(assetUrl, UriKind.Absolute, out var uri))
+                Process.Start(uri.ToString());
+            else
+                Log.Error("Invalid uri for ipfs asset");
+        });
+
+        public bool IsIpfsAsset => TokenBalance.ArtifactUri != null && HasIpfsPrefix(TokenBalance.ArtifactUri);
+
+        public string AssetUrl => IsIpfsAsset
+            ? $"http://ipfs.io/ipfs/{RemoveIpfsPrefix(TokenBalance.ArtifactUri)}"
+            : null;
+
+        private async Task FromUrlAsync(string url)
+        {
+            _isPreviewDownloading = true;
+
+            try
+            {
+                var response = await HttpHelper.HttpClient
+                    .GetAsync(url)
+                    .ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var previewBytes = await response.Content
+                        .ReadAsByteArrayAsync()
+                        .ConfigureAwait(false);
+
+                    MemoryCache.Default.Set(url, previewBytes, DateTimeOffset.MaxValue);
+                }
+                else if (response.StatusCode == HttpStatusCode.BadGateway ||
+                         response.StatusCode == HttpStatusCode.GatewayTimeout ||
+                         response.StatusCode == HttpStatusCode.InternalServerError ||
+                         response.StatusCode == HttpStatusCode.ServiceUnavailable)
+                {
+                    MemoryCache.Default.Set(url, new byte[0], DateTimeOffset.Now.AddMinutes(10));
+                }
+                else
+                {
+                    MemoryCache.Default.Set(url, new byte[0], DateTimeOffset.MaxValue);
+                }
+            }
+            catch
+            {
+                MemoryCache.Default.Set(url, new byte[0], DateTimeOffset.Now.AddMinutes(10));
+            }
+
+            _isPreviewDownloading = false;
+
+            await Application
+                .Current
+                .Dispatcher
+                .InvokeAsync(() =>
+                {
+                    OnPropertyChanged(nameof(TokenPreview));
+                });
+        }
+
+        public IEnumerable<string> GetTokenPreviewUrls()
+        {
+            yield return $"https://d38roug276qjor.cloudfront.net/{TokenBalance.Contract}/{TokenBalance.TokenId}.png";
+
+            if (TokenBalance.ArtifactUri != null && HasIpfsPrefix(TokenBalance.ArtifactUri))
+                yield return $"https://api.dipdup.net/thumbnail/{RemoveIpfsPrefix(TokenBalance.ArtifactUri)}";
+
+            yield return $"https://services.tzkt.io/v1/avatars/{TokenBalance.Contract}";
+        }
+
+        public static string RemovePrefix(string s, string prefix) =>
+            s.StartsWith(prefix) ? s.Substring(prefix.Length) : s;
+
+        public static string RemoveIpfsPrefix(string url) => RemovePrefix(url, "ipfs://");
+
+        public static bool HasIpfsPrefix(string url) => url?.StartsWith("ipfs://") ?? false;
+    }
+
     public class TezosTokenContractViewModel : BaseViewModel
     {
         public TokenContract Contract { get; set; }
@@ -26,6 +170,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
     public class TezosTokensWalletViewModel : BaseViewModel, IWalletViewModel
     {
         public ObservableCollection<TezosTokenContractViewModel> TokensContracts { get; set; }
+        public ObservableCollection<TezosTokenViewModel> Tokens { get; set; }
+        public ObservableCollection<TransactionViewModel> Transfers { get; set; }
+        public TezosTokenContractViewModel TokenContract { get; set; }
 
         public string Header => "Tezos Tokens";
 
@@ -72,6 +219,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             SubscribeToUpdates();
 
             _ = LoadAsync();
+
+            DesignerMode();
         }
 
         private void SubscribeToUpdates()
@@ -142,6 +291,73 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                         Name        = "Hedgehoge",
                         Description = "such cute, much hedge!",
                         Interfaces  = new List<string> { "TZIP-007", "TZIP-016" }
+                    }
+                }
+            };
+
+            TokenContract = TokensContracts.First();
+
+            var bcdApi = new BcdApi(new BcdApiSettings
+            {
+                MaxSize = 10,
+                Network = "mainnet",
+                Uri     = "https://api.better-call.dev/v1/"
+            });
+
+            var tokensBalances = bcdApi
+                .GetTokenBalancesAsync(
+                    address: "tz1YS2CmS5o24bDz9XNr84DSczBXuq4oGHxr",
+                    count: 36)
+                .WaitForResult();
+
+            //Tokens = new ObservableCollection<TezosTokenViewModel>(
+            //    tokensBalances.Value.Select(tb => new TezosTokenViewModel { TokenBalance = tb }));
+
+            Tokens = new ObservableCollection<TezosTokenViewModel>
+            {
+                new TezosTokenViewModel
+                {
+                    TokenBalance = new TokenBalance
+                    {
+                        Contract     = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton",
+                        TokenId      = 155458,
+                        Symbol       = "OBJKT",
+                        Name         = "Enter VR Mode",
+                        Description  = "VR Mode Collection 1/6",
+                        ArtifactUri  = "ipfs://QmcxKgcESGphkb6S9k2Mh8jto6kapKtYN52mH1dBSFT6X5",
+                        DisplayUri   = "ipfs://QmQRqbdfz8xGzobjcczGmz31cMHcs2okMw2oFgpjtvggoF",
+                        ThumbnailUri = "ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc",
+                        Balance      = "1"
+                    }
+                },
+                new TezosTokenViewModel
+                {
+                    TokenBalance = new TokenBalance
+                    {
+                        Contract     = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton",
+                        TokenId      = 155265,
+                        Symbol       = "OBJKT",
+                        Name         = "Rooted.",
+                        Description  = "A high hillside with a rooted main character.",
+                        ArtifactUri  = "ipfs://QmapL8cQqVfVfmKNMbzH82kTZVW28qMoagoFCgDXRZmKgU",
+                        DisplayUri   = "ipfs://QmeTWEdhg9gDCavV8tS25fyBfYtXftzjcAFMcBbxaYyyLH",
+                        ThumbnailUri = "ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc",
+                        Balance      = "1000"
+                    }
+                },
+                new TezosTokenViewModel
+                {
+                    TokenBalance = new TokenBalance
+                    {
+                        Contract     = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton",
+                        TokenId      = 154986,
+                        Symbol       = "OBJKT",
+                        Name         = "⭕️ MLNDR Founders Collection: 003/Greg",
+                        Description  = "Meet 12 year old Greg, the family’s firstborn. During his short life, he has gone through so much, yet he stays positive and acts as a pillar to keep his parents and little sister happy and motivated.  Set in a dystopian future where natural resources are scarce and pollution is a global problem, the MLNDR Family Series will portray how I see our future as a species if our hunger for non-renewable natural resources continues to grow at the current pace.   The Founders collection will be comprised of 6 characters who will play as leading actors in my MLNDR Family series.   Holders of this token participate for a chance to win one of 10 NFTs from my props collection.",
+                        ArtifactUri  = "ipfs://Qmd6rNTbeviB4tGruY27z47wAs27yRGHTDyp7b2qhxLHtU",
+                        DisplayUri   = "ipfs://QmaJXJJBpfyMMXA5RvU1du4zGfvytt7VJLHvgCNeHzWEWA",
+                        ThumbnailUri = "ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc",
+                        Balance      = "1"
                     }
                 }
             };

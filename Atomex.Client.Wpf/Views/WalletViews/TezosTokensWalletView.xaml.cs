@@ -15,48 +15,48 @@ namespace Atomex.Client.Wpf.Views.WalletViews
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //foreach (var items in new[] {e.AddedItems, e.RemovedItems})
-            //{
-            //    foreach (var selectedItem in items)
-            //    {
-            //        if (!(selectedItem is IExpandable expandableModel))
-            //            continue;
+            foreach (var items in new[] { e.AddedItems, e.RemovedItems })
+            {
+                foreach (var selectedItem in items)
+                {
+                    if (!(selectedItem is IExpandable expandableModel))
+                        continue;
 
-            //        if (expandableModel.IsExpanded)
-            //        {
-            //            expandableModel.IsExpanded = false;
-            //            var row = GetRowByItem(selectedItem);
+                    if (expandableModel.IsExpanded)
+                    {
+                        expandableModel.IsExpanded = false;
+                        var row = GetRowByItem(selectedItem);
 
-            //            if (row != null)
-            //                row.DetailsVisibility = Visibility.Collapsed;
-            //        }
-            //        else
-            //        {
-            //            expandableModel.IsExpanded = true;
+                        if (row != null)
+                            row.DetailsVisibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        expandableModel.IsExpanded = true;
 
-            //            var row = GetRowByItem(selectedItem);
+                        var row = GetRowByItem(selectedItem);
 
-            //            if (row != null)
-            //                row.DetailsVisibility = Visibility.Visible;
-            //        }
-            //    }
-            //}
+                        if (row != null)
+                            row.DetailsVisibility = Visibility.Visible;
+                    }
+                }
+            }
         }
 
         private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            //if (DgTransactions.SelectedItems.Count != 1)
-            //    return;
+            if (transfersDataGrid.SelectedItems.Count != 1)
+                return;
 
-            //var row = GetRowByItem(DgTransactions.SelectedItem);
+            var row = GetRowByItem(transfersDataGrid.SelectedItem);
 
-            //if (row.IsMouseOver)
-            //    row.IsSelected = false;
+            if (row.IsMouseOver)
+                row.IsSelected = false;
         }
 
-        //private DataGridRow GetRowByItem(object item)
-        //{
-        //    return DgTransactions.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-        //}
+        private DataGridRow GetRowByItem(object item)
+        {
+            return transfersDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+        }
     }
 }
