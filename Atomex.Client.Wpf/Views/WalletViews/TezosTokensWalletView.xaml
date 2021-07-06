@@ -170,6 +170,7 @@
                          AlternationCount="2"
                          Margin="-2"
                          ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                         ScrollViewer.ScrollChanged="TokensScrollChanged"
                          ItemsSource="{Binding Tokens}">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="{x:Type ListBoxItem}">

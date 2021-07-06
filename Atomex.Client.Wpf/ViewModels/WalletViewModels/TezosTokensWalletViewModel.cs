@@ -310,57 +310,57 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     count: 36)
                 .WaitForResult();
 
-            //Tokens = new ObservableCollection<TezosTokenViewModel>(
-            //    tokensBalances.Value.Select(tb => new TezosTokenViewModel { TokenBalance = tb }));
+            Tokens = new ObservableCollection<TezosTokenViewModel>(
+                tokensBalances.Value.Select(tb => new TezosTokenViewModel { TokenBalance = tb }));
 
-            Tokens = new ObservableCollection<TezosTokenViewModel>
-            {
-                new TezosTokenViewModel
-                {
-                    TokenBalance = new TokenBalance
-                    {
-                        Contract     = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton",
-                        TokenId      = 155458,
-                        Symbol       = "OBJKT",
-                        Name         = "Enter VR Mode",
-                        Description  = "VR Mode Collection 1/6",
-                        ArtifactUri  = "ipfs://QmcxKgcESGphkb6S9k2Mh8jto6kapKtYN52mH1dBSFT6X5",
-                        DisplayUri   = "ipfs://QmQRqbdfz8xGzobjcczGmz31cMHcs2okMw2oFgpjtvggoF",
-                        ThumbnailUri = "ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc",
-                        Balance      = "1"
-                    }
-                },
-                new TezosTokenViewModel
-                {
-                    TokenBalance = new TokenBalance
-                    {
-                        Contract     = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton",
-                        TokenId      = 155265,
-                        Symbol       = "OBJKT",
-                        Name         = "Rooted.",
-                        Description  = "A high hillside with a rooted main character.",
-                        ArtifactUri  = "ipfs://QmapL8cQqVfVfmKNMbzH82kTZVW28qMoagoFCgDXRZmKgU",
-                        DisplayUri   = "ipfs://QmeTWEdhg9gDCavV8tS25fyBfYtXftzjcAFMcBbxaYyyLH",
-                        ThumbnailUri = "ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc",
-                        Balance      = "1000"
-                    }
-                },
-                new TezosTokenViewModel
-                {
-                    TokenBalance = new TokenBalance
-                    {
-                        Contract     = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton",
-                        TokenId      = 154986,
-                        Symbol       = "OBJKT",
-                        Name         = "⭕️ MLNDR Founders Collection: 003/Greg",
-                        Description  = "Meet 12 year old Greg, the family’s firstborn. During his short life, he has gone through so much, yet he stays positive and acts as a pillar to keep his parents and little sister happy and motivated.  Set in a dystopian future where natural resources are scarce and pollution is a global problem, the MLNDR Family Series will portray how I see our future as a species if our hunger for non-renewable natural resources continues to grow at the current pace.   The Founders collection will be comprised of 6 characters who will play as leading actors in my MLNDR Family series.   Holders of this token participate for a chance to win one of 10 NFTs from my props collection.",
-                        ArtifactUri  = "ipfs://Qmd6rNTbeviB4tGruY27z47wAs27yRGHTDyp7b2qhxLHtU",
-                        DisplayUri   = "ipfs://QmaJXJJBpfyMMXA5RvU1du4zGfvytt7VJLHvgCNeHzWEWA",
-                        ThumbnailUri = "ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc",
-                        Balance      = "1"
-                    }
-                }
-            };
+            //Tokens = new ObservableCollection<TezosTokenViewModel>
+            //{
+            //    new TezosTokenViewModel
+            //    {
+            //        TokenBalance = new TokenBalance
+            //        {
+            //            Contract     = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton",
+            //            TokenId      = 155458,
+            //            Symbol       = "OBJKT",
+            //            Name         = "Enter VR Mode",
+            //            Description  = "VR Mode Collection 1/6",
+            //            ArtifactUri  = "ipfs://QmcxKgcESGphkb6S9k2Mh8jto6kapKtYN52mH1dBSFT6X5",
+            //            DisplayUri   = "ipfs://QmQRqbdfz8xGzobjcczGmz31cMHcs2okMw2oFgpjtvggoF",
+            //            ThumbnailUri = "ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc",
+            //            Balance      = "1"
+            //        }
+            //    },
+            //    new TezosTokenViewModel
+            //    {
+            //        TokenBalance = new TokenBalance
+            //        {
+            //            Contract     = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton",
+            //            TokenId      = 155265,
+            //            Symbol       = "OBJKT",
+            //            Name         = "Rooted.",
+            //            Description  = "A high hillside with a rooted main character.",
+            //            ArtifactUri  = "ipfs://QmapL8cQqVfVfmKNMbzH82kTZVW28qMoagoFCgDXRZmKgU",
+            //            DisplayUri   = "ipfs://QmeTWEdhg9gDCavV8tS25fyBfYtXftzjcAFMcBbxaYyyLH",
+            //            ThumbnailUri = "ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc",
+            //            Balance      = "1000"
+            //        }
+            //    },
+            //    new TezosTokenViewModel
+            //    {
+            //        TokenBalance = new TokenBalance
+            //        {
+            //            Contract     = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton",
+            //            TokenId      = 154986,
+            //            Symbol       = "OBJKT",
+            //            Name         = "⭕️ MLNDR Founders Collection: 003/Greg",
+            //            Description  = "Meet 12 year old Greg, the family’s firstborn. During his short life, he has gone through so much, yet he stays positive and acts as a pillar to keep his parents and little sister happy and motivated.  Set in a dystopian future where natural resources are scarce and pollution is a global problem, the MLNDR Family Series will portray how I see our future as a species if our hunger for non-renewable natural resources continues to grow at the current pace.   The Founders collection will be comprised of 6 characters who will play as leading actors in my MLNDR Family series.   Holders of this token participate for a chance to win one of 10 NFTs from my props collection.",
+            //            ArtifactUri  = "ipfs://Qmd6rNTbeviB4tGruY27z47wAs27yRGHTDyp7b2qhxLHtU",
+            //            DisplayUri   = "ipfs://QmaJXJJBpfyMMXA5RvU1du4zGfvytt7VJLHvgCNeHzWEWA",
+            //            ThumbnailUri = "ipfs://QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc",
+            //            Balance      = "1"
+            //        }
+            //    }
+            //};
         }
     }
 }

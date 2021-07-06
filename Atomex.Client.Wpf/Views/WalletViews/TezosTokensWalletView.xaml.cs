@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -57,6 +58,14 @@ namespace Atomex.Client.Wpf.Views.WalletViews
         private DataGridRow GetRowByItem(object item)
         {
             return transfersDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+        }
+
+        private void TokensScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (e.VerticalOffset + e.ViewportHeight == e.ExtentHeight)
+            {
+                Console.WriteLine("Can download new data");
+            }
         }
     }
 }
