@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Media;
 using Atomex.Common;
-using Atomex.Subsystems;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using OxyPlot;
@@ -12,6 +11,7 @@ using OxyPlot.Series;
 using OxyPlot.Wpf;
 using PieSeries = OxyPlot.Series.PieSeries;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
+using Atomex.Services;
 
 namespace Atomex.Client.Wpf.ViewModels
 {

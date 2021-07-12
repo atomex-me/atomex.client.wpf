@@ -9,8 +9,8 @@ using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Core;
-using Atomex.Subsystems;
 using Atomex.Wallet.Abstract;
+using Atomex.Services;
 
 namespace Atomex.Client.Wpf.ViewModels
 {

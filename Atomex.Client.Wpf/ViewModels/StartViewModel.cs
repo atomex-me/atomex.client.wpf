@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
-using Atomex.Subsystems;
+using Atomex.Services;
 using Atomex.Wallet.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels

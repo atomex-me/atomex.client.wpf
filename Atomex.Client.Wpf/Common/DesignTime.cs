@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+
+using Microsoft.Extensions.Configuration;
+
 using Atomex.Abstract;
 using Atomex.Common.Configuration;
 using Atomex.Core;
-using Microsoft.Extensions.Configuration;
 
 namespace Atomex.Client.Wpf.Common
 {
@@ -24,10 +26,7 @@ namespace Atomex.Client.Wpf.Common
             .Build()
             .GetSection(Network.TestNet.ToString());
 
-        public static readonly ICurrencies Currencies 
-            = new Currencies(CurrenciesConfiguration);
-
-        public static readonly ISymbols Symbols 
-            = new Symbols(SymbolsConfiguration);
+        public static ICurrencies Currencies => new Currencies(CurrenciesConfiguration);
+        public static ISymbols Symbols => new Symbols(SymbolsConfiguration);
     }
 }
