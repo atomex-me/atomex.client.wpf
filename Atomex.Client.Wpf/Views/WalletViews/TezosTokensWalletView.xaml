@@ -93,27 +93,54 @@
                 Grid.Row="0"
                 Grid.Column="2">
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="15"/>
+                    <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition Height="10"/>
                     <RowDefinition/>
                     <RowDefinition Height="10"/>
                 </Grid.RowDefinitions>
-                
+
                 <Ellipse Width="90"
                          Height="90"
-                         Grid.Row="1">
+                         Grid.Row="1"
+                         Grid.RowSpan="2"
+                         Grid.Column="1">
                     <Ellipse.Fill>
                         <ImageBrush ImageSource="{Binding TokenContract.IconUrl}"/>
                     </Ellipse.Fill>
                 </Ellipse>
 
-                                
+                <TextBlock Text="{Binding TokenContract.Contract.Name}"
+                           Foreground="{DynamicResource BalanceBackgroundBrush}"
+                           FontFamily="{DynamicResource DefaultFontFamily}"
+                           FontSize="30"
+                           VerticalAlignment="Bottom"
+                           Grid.Row="1"
+                           Grid.Column="3"
+                           Style="{StaticResource BaseTextBlockStyle}"/>
+
+                <TextBlock Text="{Binding TokenContract.Contract.Address}"
+                           Foreground="LightGray"
+                           FontFamily="{DynamicResource DefaultFontFamily}"
+                           FontSize="12"
+                           Grid.Row="2"
+                           Grid.Column="3"
+                           Style="{StaticResource BaseTextBlockStyle}"/>
 
                 <StackPanel HorizontalAlignment="Center"
                             Orientation="Horizontal"
-                            Grid.Row="3">
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="5">
                     <controls:RoundedButton 
                         Content="Send"
                         Margin="0 0 2 0"

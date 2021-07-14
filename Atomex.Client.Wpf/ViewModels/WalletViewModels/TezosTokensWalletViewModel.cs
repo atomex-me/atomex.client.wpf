@@ -172,7 +172,19 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         public ObservableCollection<TezosTokenContractViewModel> TokensContracts { get; set; }
         public ObservableCollection<TezosTokenViewModel> Tokens { get; set; }
         public ObservableCollection<TransactionViewModel> Transfers { get; set; }
-        public TezosTokenContractViewModel TokenContract { get; set; }
+
+        private TezosTokenContractViewModel _tokenContract;
+        public TezosTokenContractViewModel TokenContract
+        {
+            get => _tokenContract;
+            set
+            {
+                _tokenContract = value;
+                OnPropertyChanged(nameof(TokenContract));
+
+                TokenContractChanged(_tokenContract);
+            }
+        }
 
         public string Header => "Tezos Tokens";
 
@@ -256,6 +268,11 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             OnPropertyChanged(nameof(TokensContracts));
         }
 
+        private void TokenContractChanged(TezosTokenContractViewModel tokenContractViewModel)
+        {
+
+        }
+
         protected void DesignerMode()
         {
             TokensContracts = new ObservableCollection<TezosTokenContractViewModel>
@@ -291,6 +308,17 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                         Name        = "Hedgehoge",
                         Description = "such cute, much hedge!",
                         Interfaces  = new List<string> { "TZIP-007", "TZIP-016" }
+                    }
+                },
+                new TezosTokenContractViewModel
+                {
+                    Contract = new TokenContract
+                    {
+                        Address     = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton",
+                        Network     = "mainent",
+                        Name        = "hic et nunc NFTs",
+                        Description = "NFT token for digital assets.",
+                        Interfaces  = new List<string> { "TZIP-12" }
                     }
                 }
             };
