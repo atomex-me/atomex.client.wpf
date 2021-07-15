@@ -165,6 +165,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
     {
         public TokenContract Contract { get; set; }
         public string IconUrl => $"https://services.tzkt.io/v1/avatars/{Contract.Address}";
+        public bool IsFa12 => Contract.GetContractType() == "FA12";
+        public bool IsFa2 => Contract.GetContractType() == "FA2";
     }
 
     public class TezosTokensWalletViewModel : BaseViewModel, IWalletViewModel
@@ -270,7 +272,10 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         private void TokenContractChanged(TezosTokenContractViewModel tokenContractViewModel)
         {
-
+            //tokenContractViewModel.
+        
+            //_app.Account.Currencies.GetByName()
+            //CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(
         }
 
         protected void DesignerMode()
