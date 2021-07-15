@@ -156,9 +156,11 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         public static string RemovePrefix(string s, string prefix) =>
             s.StartsWith(prefix) ? s.Substring(prefix.Length) : s;
 
-        public static string RemoveIpfsPrefix(string url) => RemovePrefix(url, "ipfs://");
+        public static string RemoveIpfsPrefix(string url) =>
+            RemovePrefix(url, "ipfs://");
 
-        public static bool HasIpfsPrefix(string url) => url?.StartsWith("ipfs://") ?? false;
+        public static bool HasIpfsPrefix(string url) =>
+            url?.StartsWith("ipfs://") ?? false;
     }
 
     public class TezosTokenContractViewModel : BaseViewModel
@@ -203,6 +205,10 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 OnPropertyChanged(nameof(OpacityMask));
             }
         }
+
+        public decimal Balance { get; set; } = 10;
+        public string BalanceFormat { get; set; } = "F8";
+        public string BalanceCurrencyCode { get; set; } = "KUSD";
 
         public Brush Background => IsSelected
             ? TezosCurrencyViewModel.DefaultIconBrush

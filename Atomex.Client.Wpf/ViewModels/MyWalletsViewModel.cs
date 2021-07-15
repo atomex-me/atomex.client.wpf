@@ -6,7 +6,7 @@ using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Common;
 using Atomex.Core;
-using Atomex.Subsystems;
+using Atomex.Services;
 using Atomex.Wallet;
 using Atomex.Wallet.Abstract;
 

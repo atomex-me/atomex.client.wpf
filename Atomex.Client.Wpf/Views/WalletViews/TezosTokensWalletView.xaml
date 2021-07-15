@@ -126,7 +126,32 @@
                            VerticalAlignment="Bottom"
                            Grid.Row="1"
                            Grid.Column="3"
-                           Style="{StaticResource BaseTextBlockStyle}"/>
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Visibility="{Binding TokenContract.IsFa2, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            VerticalAlignment="Bottom"
+                            Visibility="{Binding TokenContract.IsFa12, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                    <TextBlock Foreground="{DynamicResource BalanceBackgroundBrush}"
+                               FontFamily="{DynamicResource DefaultFontFamily}"
+                               FontSize="33"
+                               Style="{StaticResource BaseTextBlockStyle}">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                                <Binding Path="Balance" Mode="OneWay"/>
+                                <Binding Path="BalanceFormat" Mode="OneWay"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Margin="5 0 0 3"
+                               Text="{Binding BalanceCurrencyCode}"
+                               Foreground="{DynamicResource BalanceBackgroundBrush}"
+                               FontFamily="{DynamicResource DefaultFontFamily}"
+                               FontSize="22"
+                               VerticalAlignment="Bottom"/>
+                </StackPanel>
 
                 <TextBlock Text="{Binding TokenContract.Contract.Address}"
                            Foreground="LightGray"
@@ -184,10 +209,12 @@
                            BasedOn="{StaticResource MetroTabItem}">
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource DefaultSubstrateBrush}"/>
+                                <Setter Property="Background"
+                                        Value="{DynamicResource DefaultSubstrateBrush}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="False">
-                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Background"
+                                        Value="Transparent"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -203,13 +230,16 @@
                         <Style TargetType="{x:Type ListBoxItem}">
                             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                             <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="Width" Value="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type ScrollContentPresenter}}}"/>
+                            <Setter Property="Width"
+                                    Value="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type ScrollContentPresenter}}}"/>
                             <Style.Triggers>
                                 <Trigger Property="ItemsControl.AlternationIndex" Value="0">
-                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Background"
+                                            Value="Transparent"/>
                                 </Trigger>
                                 <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                                    <Setter Property="Background" Value="{DynamicResource DefaultSubstrateBrush}"/>
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource DefaultSubstrateBrush}"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -235,7 +265,8 @@
                                          Grid.Row="0"
                                          Grid.RowSpan="4">
                                     <Ellipse.Fill>
-                                        <ImageBrush ImageSource="{Binding TokenPreview}" Stretch="Fill"/>
+                                        <ImageBrush ImageSource="{Binding TokenPreview}"
+                                                    Stretch="Fill"/>
                                     </Ellipse.Fill>
                                 </Ellipse>
                                 
@@ -291,31 +322,32 @@
                            BasedOn="{StaticResource MetroTabItem}">
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource DefaultSubstrateBrush}"/>
+                                <Setter Property="Background"
+                                        Value="{DynamicResource DefaultSubstrateBrush}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="False">
-                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Background"
+                                        Value="Transparent"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
                 </TabItem.Style>
 
-                <DataGrid
-                    x:Name="transfersDataGrid"
-                    MinRowHeight="35"
-                    Margin="-2"
-                    AutoGenerateColumns="False"
-                    IsReadOnly="True"
-                    SelectionMode="Single"
-                    SelectionUnit="FullRow"
-                    RowDetailsVisibilityMode="VisibleWhenSelected"
-                    EnableRowVirtualization="True"
-                    EnableColumnVirtualization="True"
-                    RowDetailsTemplateSelector="{StaticResource TransactionDetailsDataTemplateSelector}"
-                    ItemsSource="{Binding Transfers, UpdateSourceTrigger=PropertyChanged}"
-                    SelectionChanged="OnSelectionChanged"
-                    MouseLeftButtonDown="OnMouseLeftButtonDown"
-                    Style="{StaticResource CustomDataGrid}">
+                <DataGrid x:Name="transfersDataGrid"
+                          MinRowHeight="35"
+                          Margin="-2"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          RowDetailsVisibilityMode="VisibleWhenSelected"
+                          EnableRowVirtualization="True"
+                          EnableColumnVirtualization="True"
+                          RowDetailsTemplateSelector="{StaticResource TransactionDetailsDataTemplateSelector}"
+                          ItemsSource="{Binding Transfers, UpdateSourceTrigger=PropertyChanged}"
+                          SelectionChanged="OnSelectionChanged"
+                          MouseLeftButtonDown="OnMouseLeftButtonDown"
+                          Style="{StaticResource CustomDataGrid}">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
                             Header="Type"

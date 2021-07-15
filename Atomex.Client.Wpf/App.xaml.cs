@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -13,7 +14,7 @@ using Atomex.Common.Configuration;
 using Atomex.Core;
 using Atomex.MarketData.Bitfinex;
 using Atomex.Updates;
-using Atomex.Subsystems;
+using Atomex.Services;
 
 namespace Atomex.Client.Wpf
 {
@@ -35,10 +36,19 @@ namespace Atomex.Client.Wpf
             .GetAssemblies()
             .FirstOrDefault(a => a.GetName().Name == "Atomex.Client.Core");
 
-        private static IConfiguration CurrenciesConfiguration { get; } = new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddEmbeddedJsonFile(CoreAssembly, "currencies.json")
-            .Build();
+        private static string CurrenciesConfigurationJson
+        {
+            get {
+                var coreAssembly = CoreAssembly;
+                var resourceName = "currencies.json";
+                var resourceNames = coreAssembly.GetManifestResourceNames();
+                var fullFileName = resourceNames.FirstOrDefault(n => n.EndsWith(resourceName));
+                var stream = coreAssembly.GetManifestResourceStream(fullFileName!);
+
+                using StreamReader reader = new(stream!);
+                return reader.ReadToEnd();
+            }
+        }
 
         private static IConfiguration SymbolsConfiguration { get; } = new ConfigurationBuilder()
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
@@ -68,14 +78,14 @@ namespace Atomex.Client.Wpf
 
             Log.Information("Application startup");
 
-            var currenciesProvider = new CurrenciesProvider(CurrenciesConfiguration);
+            var currenciesProvider = new CurrenciesProvider(CurrenciesConfigurationJson);
             var symbolsProvider = new SymbolsProvider(SymbolsConfiguration);
 
             // init Atomex client app
             AtomexApp = new AtomexApp()
                 .UseCurrenciesProvider(currenciesProvider)
                 .UseSymbolsProvider(symbolsProvider)
-                //.UseCurrenciesUpdater(new CurrenciesUpdater(currenciesProvider))
+                .UseCurrenciesUpdater(new CurrenciesUpdater(currenciesProvider))
                 .UseSymbolsUpdater(new SymbolsUpdater(symbolsProvider))
                 .UseQuotesProvider(new BitfinexQuotesProvider(
                     currencies: currenciesProvider.GetCurrencies(Network.MainNet),
