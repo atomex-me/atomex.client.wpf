@@ -203,7 +203,8 @@
             <TabItem Header="TOKENS"
                      Padding="10"
                      mah:ControlsHelper.HeaderFontSize="15"
-                     FontFamily="{DynamicResource DefaultMediumFontFamily}">
+                     FontFamily="{DynamicResource DefaultMediumFontFamily}"
+                     Visibility="{Binding TokenContract.IsFa2, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <TabItem.Style>
                     <Style TargetType="TabItem"
                            BasedOn="{StaticResource MetroTabItem}">

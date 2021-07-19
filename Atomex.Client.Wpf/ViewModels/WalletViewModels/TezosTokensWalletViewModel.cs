@@ -173,6 +173,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
     public class TezosTokensWalletViewModel : BaseViewModel, IWalletViewModel
     {
+        private const int MaxAmountDecimals = 9;
+
         public ObservableCollection<TezosTokenContractViewModel> TokensContracts { get; set; }
         public ObservableCollection<TezosTokenViewModel> Tokens { get; set; }
         public ObservableCollection<TransactionViewModel> Transfers { get; set; }
@@ -293,8 +295,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
                 Balance = tokenAccount.GetBalance().Available;
                 BalanceFormat = tokenAddress?.TokenBalance != null
-                    ? $"F{tokenAddress.TokenBalance.Decimals}"
-                    : "F2";
+                    ? $"F{Math.Min(tokenAddress.TokenBalance.Decimals, MaxAmountDecimals)}"
+                    : $"F{MaxAmountDecimals}";
                 BalanceCurrencyCode = tokenAddress?.TokenBalance != null
                     ? tokenAddress.TokenBalance.Symbol
                     : "";
@@ -307,7 +309,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     .DataRepository
                     .GetTezosTokenTransfersAsync(tokenContract.Contract.Address);
 
-                Transfers = transfers.Select(t => TransactionViewModelCreator.CreateViewModel(t, ))
+                //Transfers = transfers.Select(t => TransactionViewModelCreator.CreateViewModel(t, ))
 
                 OnPropertyChanged(nameof(Transfers));
                 OnPropertyChanged(nameof(Tokens));
