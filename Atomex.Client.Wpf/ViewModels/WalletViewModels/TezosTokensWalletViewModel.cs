@@ -276,12 +276,50 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             OnPropertyChanged(nameof(TokensContracts));
         }
 
-        private void TokenContractChanged(TezosTokenContractViewModel tokenContractViewModel)
+        private async void TokenContractChanged(TezosTokenContractViewModel tokenContract)
         {
-            //tokenContractViewModel.
-        
-            //_app.Account.Currencies.GetByName()
-            //CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(
+            if (tokenContract.IsFa12)
+            {
+                var tokenAccount = _app.Account.GetTezosTokenAccount<Fa12Account>(
+                    currency: "FA12",
+                    tokenContract: tokenContract.Contract.Address,
+                    tokenId: 0);
+
+                var tokenAddresses = await tokenAccount
+                    .DataRepository
+                    .GetTezosTokenAddressesByContractAsync(tokenContract.Contract.Address);
+
+                var tokenAddress = tokenAddresses.FirstOrDefault();
+
+                Balance = tokenAccount.GetBalance().Available;
+                BalanceFormat = tokenAddress?.TokenBalance != null
+                    ? $"F{tokenAddress.TokenBalance.Decimals}"
+                    : "F2";
+                BalanceCurrencyCode = tokenAddress?.TokenBalance != null
+                    ? tokenAddress.TokenBalance.Symbol
+                    : "";
+
+                OnPropertyChanged(nameof(Balance));
+                OnPropertyChanged(nameof(BalanceFormat));
+                OnPropertyChanged(nameof(BalanceCurrencyCode));
+
+                var transfers = await tokenAccount
+                    .DataRepository
+                    .GetTezosTokenTransfersAsync(tokenContract.Contract.Address);
+
+                Transfers = transfers.Select(t => TransactionViewModelCreator.CreateViewModel(t, ))
+
+                OnPropertyChanged(nameof(Transfers));
+                OnPropertyChanged(nameof(Tokens));
+
+            }
+            else if (tokenContract.IsFa2)
+            {
+                //Tokens = tokenAccount.Get 
+                //Transfers = tokenAccount.Get 
+                OnPropertyChanged(nameof(Tokens));
+                OnPropertyChanged(nameof(Transfers));
+            }
         }
 
         protected void DesignerMode()
