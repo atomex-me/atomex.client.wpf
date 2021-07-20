@@ -340,6 +340,7 @@
     <Compile Include="Common\BitmapExtensions.cs" />
     <Compile Include="Common\DecimalExtensions.cs" />
     <Compile Include="Common\DesignTime.cs" />
+    <Compile Include="Common\DistinctExtensions.cs" />
     <Compile Include="Common\Environment.cs" />
     <Compile Include="Common\Msi\MsiApi.cs" />
     <Compile Include="Common\Msi\MsiPackage.cs" />
