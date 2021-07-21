@@ -413,6 +413,7 @@
     <Compile Include="ViewModels\SendViewModels\TezosSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModelCreator.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\ITransactionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\TezosTokenTransferViewModel.cs" />
     <Compile Include="ViewModels\WalletAddressViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />

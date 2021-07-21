@@ -174,10 +174,11 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
     public class TezosTokensWalletViewModel : BaseViewModel, IWalletViewModel
     {
         private const int MaxAmountDecimals = 9;
+        private const string Fa12 = "FA12";
 
         public ObservableCollection<TezosTokenContractViewModel> TokensContracts { get; set; }
         public ObservableCollection<TezosTokenViewModel> Tokens { get; set; }
-        public ObservableCollection<TransactionViewModel> Transfers { get; set; }
+        public ObservableCollection<TezosTokenTransferViewModel> Transfers { get; set; }
 
         private TezosTokenContractViewModel _tokenContract;
         public TezosTokenContractViewModel TokenContract
@@ -187,10 +188,23 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             {
                 _tokenContract = value;
                 OnPropertyChanged(nameof(TokenContract));
+                OnPropertyChanged(nameof(HasTokenContract));
+                OnPropertyChanged(nameof(IsFa12));
+                OnPropertyChanged(nameof(IsFa2));
+                OnPropertyChanged(nameof(TokenContractAddress));
+                OnPropertyChanged(nameof(TokenContractName));
+                OnPropertyChanged(nameof(TokenContractIconUrl));
 
                 TokenContractChanged(_tokenContract);
             }
         }
+
+        public bool HasTokenContract => TokenContract != null;
+        public bool IsFa12 => TokenContract?.IsFa12 ?? false;
+        public bool IsFa2 => TokenContract?.IsFa2 ?? false;
+        public string TokenContractAddress => TokenContract?.Contract?.Address ?? "";
+        public string TokenContractName => TokenContract?.Contract?.Name ?? "";
+        public string TokenContractIconUrl => TokenContract?.IconUrl;
 
         public string Header => "Tezos Tokens";
 
@@ -208,9 +222,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             }
         }
 
-        public decimal Balance { get; set; } = 10;
-        public string BalanceFormat { get; set; } = "F8";
-        public string BalanceCurrencyCode { get; set; } = "KUSD";
+        public decimal Balance { get; set; }
+        public string BalanceFormat { get; set; }
+        public string BalanceCurrencyCode { get; set; }
 
         public Brush Background => IsSelected
             ? TezosCurrencyViewModel.DefaultIconBrush
@@ -219,6 +233,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         public Brush OpacityMask => IsSelected
             ? null
             : TezosCurrencyViewModel.DefaultIconMaskBrush;
+
+        public int SelectedTabIndex { get; set; }
 
         private readonly IAtomexApp _app;
 
@@ -241,8 +257,6 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             SubscribeToUpdates();
 
             _ = LoadAsync();
-
-            DesignerMode();
         }
 
         private void SubscribeToUpdates()
@@ -250,15 +264,15 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             _app.Account.BalanceUpdated += OnBalanceUpdatedEventHandler;
         }
 
-        protected virtual async void OnBalanceUpdatedEventHandler(object sender, CurrencyEventArgs args)
+        protected virtual void OnBalanceUpdatedEventHandler(object sender, CurrencyEventArgs args)
         {
             try
             {
-                //if (Currency.Name == args.Currency)
-                //{
-                //    // update transactions list
-                //    await LoadTransactionsAsync();
-                //}
+                if (Currencies.IsTezosToken(args.Currency))
+                {
+                    // update token view
+                    TokenContractChanged(_tokenContract);
+                }
             }
             catch (Exception e)
             {
@@ -276,14 +290,31 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             TokensContracts = new ObservableCollection<TezosTokenContractViewModel>(tokensContractsViewModels);
             OnPropertyChanged(nameof(TokensContracts));
+
+            TokenContract = TokensContracts.FirstOrDefault();
         }
 
         private async void TokenContractChanged(TezosTokenContractViewModel tokenContract)
         {
+            if (tokenContract == null)
+            {
+                Tokens    = new ObservableCollection<TezosTokenViewModel>();
+                Transfers = new ObservableCollection<TezosTokenTransferViewModel>();
+
+                OnPropertyChanged(nameof(Tokens));
+                OnPropertyChanged(nameof(Transfers));
+
+                return;
+            }
+
+            var tezosConfig = _app.Account
+                .Currencies
+                .Get<TezosConfig>(TezosConfig.Xtz);
+
             if (tokenContract.IsFa12)
             {
                 var tokenAccount = _app.Account.GetTezosTokenAccount<Fa12Account>(
-                    currency: "FA12",
+                    currency: Fa12,
                     tokenContract: tokenContract.Contract.Address,
                     tokenId: 0);
 
@@ -293,10 +324,14 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
                 var tokenAddress = tokenAddresses.FirstOrDefault();
 
-                Balance = tokenAccount.GetBalance().Available;
+                Balance = tokenAccount
+                    .GetBalance()
+                    .Available;
+
                 BalanceFormat = tokenAddress?.TokenBalance != null
                     ? $"F{Math.Min(tokenAddress.TokenBalance.Decimals, MaxAmountDecimals)}"
                     : $"F{MaxAmountDecimals}";
+
                 BalanceCurrencyCode = tokenAddress?.TokenBalance != null
                     ? tokenAddress.TokenBalance.Symbol
                     : "";
@@ -305,23 +340,36 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 OnPropertyChanged(nameof(BalanceFormat));
                 OnPropertyChanged(nameof(BalanceCurrencyCode));
 
-                var transfers = await tokenAccount
+                Transfers = new ObservableCollection<TezosTokenTransferViewModel>((await tokenAccount
                     .DataRepository
-                    .GetTezosTokenTransfersAsync(tokenContract.Contract.Address);
+                    .GetTezosTokenTransfersAsync(tokenContract.Contract.Address))
+                    .Select(t => new TezosTokenTransferViewModel(t, tezosConfig)));
 
-                //Transfers = transfers.Select(t => TransactionViewModelCreator.CreateViewModel(t, ))
-
-                OnPropertyChanged(nameof(Transfers));
-                OnPropertyChanged(nameof(Tokens));
-
+                Tokens = new ObservableCollection<TezosTokenViewModel>();
             }
             else if (tokenContract.IsFa2)
             {
-                //Tokens = tokenAccount.Get 
-                //Transfers = tokenAccount.Get 
-                OnPropertyChanged(nameof(Tokens));
-                OnPropertyChanged(nameof(Transfers));
+                var tezosAccount = _app.Account
+                    .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
+
+                var tokenAddresses = await tezosAccount
+                    .DataRepository
+                    .GetTezosTokenAddressesByContractAsync(tokenContract.Contract.Address);
+
+                Transfers = new ObservableCollection<TezosTokenTransferViewModel>((await tezosAccount
+                    .DataRepository
+                    .GetTezosTokenTransfersAsync(tokenContract.Contract.Address))
+                    .Select(t => new TezosTokenTransferViewModel(t, tezosConfig)));
+
+                Tokens = new ObservableCollection<TezosTokenViewModel>(tokenAddresses
+                    .Select(a => new TezosTokenViewModel { TokenBalance = a.TokenBalance }));
             }
+
+            OnPropertyChanged(nameof(Tokens));
+            OnPropertyChanged(nameof(Transfers));
+
+            SelectedTabIndex = tokenContract.IsFa2 ? 0 : 1;
+            OnPropertyChanged(nameof(SelectedTabIndex));
         }
 
         protected void DesignerMode()
@@ -374,7 +422,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 }
             };
 
-            TokenContract = TokensContracts.First();
+            _tokenContract = null;// TokensContracts.First();
 
             var bcdApi = new BcdApi(new BcdApiSettings
             {

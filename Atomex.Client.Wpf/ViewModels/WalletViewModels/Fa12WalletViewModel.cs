@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -9,11 +8,8 @@ using System.Windows.Threading;
 using System.Windows.Input;
 using System.Windows.Media;
 
-using NBitcoin;
 using Serilog;
-using Network = NBitcoin.Network;
 
-using Atomex.Blockchain.BitcoinBased;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
@@ -33,8 +29,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
     {
         private const int ConversionViewIndex = 2;
 
-        private ObservableCollection<TransactionViewModel> _transactions;
-        public ObservableCollection<TransactionViewModel> Transactions
+        private ObservableCollection<TezosTokenTransferViewModel> _transactions;
+        public ObservableCollection<TezosTokenTransferViewModel> Transactions
         {
             get => _transactions;
             set { _transactions = value; OnPropertyChanged(nameof(Transactions)); }
@@ -153,9 +149,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
-                    Transactions = new ObservableCollection<TransactionViewModel>(
-                        transactions.Select(t => TransactionViewModelCreator
-                            .CreateViewModel(t, Currency))
+                    Transactions = new ObservableCollection<TezosTokenTransferViewModel>(
+                        transactions.Select(t => new TezosTokenTransferViewModel(t, Currency))
                             .ToList()
                             .SortList((t1, t2) => t2.Time.CompareTo(t1.Time)));
                 },
@@ -250,38 +245,6 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         protected virtual void DesignerMode()
         {
-            var currencies = DesignTime.Currencies.ToList();
-
-            CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currencies[3], subscribeToUpdates: false);
-            CurrencyViewModel.TotalAmount             = 0.01012345m;
-            CurrencyViewModel.TotalAmountInBase       = 16.51m;
-            CurrencyViewModel.AvailableAmount         = 0.01010005m;
-            CurrencyViewModel.AvailableAmountInBase   = 16.00m;
-            CurrencyViewModel.UnconfirmedAmount       = 0.00002m;
-            CurrencyViewModel.UnconfirmedAmountInBase = 0.5m;
-
-            var transactions = new List<TransactionViewModel>
-            {
-                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction("BTC", Transaction.Create(Network.TestNet)), DesignTime.Currencies.Get<BitcoinConfig>("BTC"))
-                {
-                    Description  = "Sent 0.00124 BTC",
-                    Amount       = -0.00124m,
-                    AmountFormat = CurrencyViewModel.CurrencyFormat,
-                    CurrencyCode = CurrencyViewModel.CurrencyCode,
-                    Time         = DateTime.Now,
-                },
-                new BitcoinBasedTransactionViewModel(new BitcoinBasedTransaction("BTC", Transaction.Create(Network.TestNet)), DesignTime.Currencies.Get<BitcoinConfig>("BTC"))
-                {
-                    Description  = "Received 1.00666 BTC",
-                    Amount       = 1.00666m,
-                    AmountFormat = CurrencyViewModel.CurrencyFormat,
-                    CurrencyCode = CurrencyViewModel.CurrencyCode,
-                    Time         = DateTime.Now,
-                }
-            };
-
-            Transactions = new ObservableCollection<TransactionViewModel>(
-                transactions.SortList((t1, t2) => t2.Time.CompareTo(t1.Time)));
         }
     }
 }

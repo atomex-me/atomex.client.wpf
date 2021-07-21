@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 
@@ -16,7 +17,7 @@ namespace Atomex.Client.Wpf.Controls
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (!(item is TransactionViewModel transaction))
+            if (!(item is ITransactionViewModel transaction))
                 return null;
 
             switch (transaction.State)

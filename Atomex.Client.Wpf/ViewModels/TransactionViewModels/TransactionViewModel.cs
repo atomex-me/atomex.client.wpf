@@ -8,13 +8,12 @@ using Serilog;
 using Atomex.Blockchain;
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
-using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Core;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {
-    public class TransactionViewModel : BaseViewModel, IExpandable
+    public class TransactionViewModel : BaseViewModel, ITransactionViewModel
     {
         public event EventHandler<TransactionEventArgs> UpdateClicked;
         public event EventHandler<TransactionEventArgs> RemoveClicked;
@@ -57,11 +56,11 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
             decimal fee)
         {
             Transaction = tx ?? throw new ArgumentNullException(nameof(tx));
-            Id          = Transaction.Id;
-            Currency    = currencyConfig;
-            State       = Transaction.State;
-            Type        = Transaction.Type;
-            Amount      = amount;
+            Id = Transaction.Id;
+            Currency = currencyConfig;
+            State = Transaction.State;
+            Type = Transaction.Type;
+            Amount = amount;
 
             var netAmount = amount + fee;
 
@@ -69,7 +68,7 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
             AmountFormat = currencyViewModel.CurrencyFormat;
             CurrencyCode = currencyViewModel.CurrencyCode;
-            Time         = tx.CreationTime ?? DateTime.UtcNow;
+            Time = tx.CreationTime ?? DateTime.UtcNow;
             CanBeRemoved = tx.State == BlockchainTransactionState.Unknown ||
                            tx.State == BlockchainTransactionState.Failed ||
                            tx.State == BlockchainTransactionState.Pending ||
@@ -86,8 +85,8 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
         private ICommand _openTxInExplorerCommand;
         public ICommand OpenTxInExplorerCommand => _openTxInExplorerCommand ??= new RelayCommand<string>((id) =>
         {
-            if (Uri.TryCreate($"{Currency.TxExplorerUri}{id}", UriKind.Absolute, out var uri))      
-                Process.Start(uri.ToString());        
+            if (Uri.TryCreate($"{Currency.TxExplorerUri}{id}", UriKind.Absolute, out var uri))
+                Process.Start(uri.ToString());
             else
                 Log.Error("Invalid uri for transaction explorer");
         });

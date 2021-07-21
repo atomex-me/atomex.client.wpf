@@ -4,16 +4,42 @@ using System.Numerics;
 using Atomex.Blockchain.Abstract;
 using Atomex.Blockchain.Tezos;
 using Atomex.Client.Wpf.Common;
-using Atomex.Core;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {
-    public class TezosTokenTransferViewModel : TransactionViewModel
+    public class TezosTokenTransferViewModel : BaseViewModel, ITransactionViewModel
     {
+        public const int MaxAmountDecimals = 9;
+
+        private readonly TezosConfig _tezosConfig;
+
+
+        public IBlockchainTransaction Transaction { get; }
+        public string Id { get; set; }
+        public BlockchainTransactionState State { get; set; }
+        public BlockchainTransactionType Type { get; set; }
+
         public string From { get; set; }
         public string To { get; set; }
-        public string FromExplorerUri => $"{Currency.AddressExplorerUri}{From}";
-        public string ToExplorerUri => $"{Currency.AddressExplorerUri}{To}";
+
+        public string Description { get; set; }
+        public decimal Amount { get; set; }
+        public string AmountFormat { get; set; }
+        public string CurrencyCode { get; set; }
+
+        public DateTime Time { get; set; }
+        public DateTime LocalTime => Time.ToLocalTime();
+        public string TxExplorerUri => $"{_tezosConfig.TxExplorerUri}{Id}";
+        public string FromExplorerUri => $"{_tezosConfig.AddressExplorerUri}{From}";
+        public string ToExplorerUri => $"{_tezosConfig.AddressExplorerUri}{To}";
+
+
+        private bool _isExpanded;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set { _isExpanded = value; OnPropertyChanged(nameof(IsExpanded)); }
+        }
 
         public TezosTokenTransferViewModel()
         {
@@ -23,12 +49,27 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 #endif
         }
 
-        public TezosTokenTransferViewModel(TokenTransfer tx, CurrencyConfig config)
-            : base(tx, config, GetAmount(tx), 0)
+        public TezosTokenTransferViewModel(TokenTransfer tx, TezosConfig tezosConfig)
         {
-            Id   = tx.Hash;
-            From = tx.From;
-            To   = tx.To;
+            _tezosConfig = tezosConfig;
+
+            Transaction  = tx ?? throw new ArgumentNullException(nameof(tx));
+            Id           = tx.Hash;
+            State        = Transaction.State;
+            Type         = Transaction.Type;
+            From         = tx.From;
+            To           = tx.To;
+            Amount       = GetAmount(tx);
+            AmountFormat = $"F{Math.Min(tx.Token.Decimals, MaxAmountDecimals)}";
+            CurrencyCode = tx.Token.Symbol;
+            Time         = tx.CreationTime ?? DateTime.UtcNow;
+
+            Description = TransactionViewModel.GetDescription(
+                type: tx.Type,
+                amount: Amount,
+                netAmount: Amount,
+                amountDigits: tx.Token.Decimals,
+                currencyCode: tx.Token.Symbol);
         }
 
         private static decimal GetAmount(TokenTransfer tx)

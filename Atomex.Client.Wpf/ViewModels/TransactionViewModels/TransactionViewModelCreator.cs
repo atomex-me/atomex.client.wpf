@@ -23,10 +23,6 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
                 "TBTC"  => new EthereumERC20TransactionViewModel(tx as EthereumTransaction, currencyConfig as Erc20Config),
                 "WBTC"  => new EthereumERC20TransactionViewModel(tx as EthereumTransaction, currencyConfig as Erc20Config),
                 "ETH"   => new EthereumTransactionViewModel(tx as EthereumTransaction, currencyConfig as EthereumConfig),
-                "FA2"   => new TezosTokenTransferViewModel(tx as TokenTransfer, currencyConfig),
-                "FA12"  => new TezosTokenTransferViewModel(tx as TokenTransfer, currencyConfig),
-                "TZBTC" => new TezosTokenTransferViewModel(tx as TokenTransfer, currencyConfig),
-                "KUSD"  => new TezosTokenTransferViewModel(tx as TokenTransfer, currencyConfig),
                 "XTZ"   => new TezosTransactionViewModel(tx as TezosTransaction, currencyConfig as TezosConfig),
                 _ => throw new NotSupportedException("Not supported transaction type."),
             };

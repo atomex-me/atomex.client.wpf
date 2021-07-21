@@ -285,7 +285,7 @@
                   RowDetailsVisibilityMode="VisibleWhenSelected"
                   EnableRowVirtualization="True"
                   EnableColumnVirtualization="True"
-                  RowDetailsTemplateSelector="{StaticResource TransactionDetailsDataTemplateSelector}"
+                  RowDetailsTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
                   ItemsSource="{Binding Transactions, UpdateSourceTrigger=PropertyChanged}"
                   SelectionChanged="OnSelectionChanged"
                   MouseLeftButtonDown="OnMouseLeftButtonDown"

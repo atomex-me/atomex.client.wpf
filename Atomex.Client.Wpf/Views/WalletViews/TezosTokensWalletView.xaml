@@ -101,7 +101,21 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="15"/>
+                    <RowDefinition>
+                        <RowDefinition.Style>
+                            <Style TargetType="{x:Type RowDefinition}">
+                                <Setter Property="Height"
+                                        Value="0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasTokenContract}"
+                                                 Value="True">
+                                        <Setter Property="Height"
+                                                Value="15"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </RowDefinition.Style>
+                    </RowDefinition>
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition Height="10"/>
@@ -113,13 +127,14 @@
                          Height="90"
                          Grid.Row="1"
                          Grid.RowSpan="2"
-                         Grid.Column="1">
+                         Grid.Column="1"
+                         Visibility="{Binding HasTokenContract, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding TokenContract.IconUrl}"/>
+                        <ImageBrush ImageSource="{Binding TokenContractIconUrl}"/>
                     </Ellipse.Fill>
                 </Ellipse>
 
-                <TextBlock Text="{Binding TokenContract.Contract.Name}"
+                <TextBlock Text="{Binding TokenContractName}"
                            Foreground="{DynamicResource BalanceBackgroundBrush}"
                            FontFamily="{DynamicResource DefaultFontFamily}"
                            FontSize="30"
@@ -127,13 +142,13 @@
                            Grid.Row="1"
                            Grid.Column="3"
                            Style="{StaticResource BaseTextBlockStyle}"
-                           Visibility="{Binding TokenContract.IsFa2, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                           Visibility="{Binding IsFa2, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
 
                 <StackPanel Orientation="Horizontal"
                             Grid.Row="1"
                             Grid.Column="3"
                             VerticalAlignment="Bottom"
-                            Visibility="{Binding TokenContract.IsFa12, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                            Visibility="{Binding IsFa12, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                     <TextBlock Foreground="{DynamicResource BalanceBackgroundBrush}"
                                FontFamily="{DynamicResource DefaultFontFamily}"
                                FontSize="33"
@@ -145,7 +160,7 @@
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                    <TextBlock Margin="5 0 0 3"
+                    <TextBlock Margin="5 0 0 4"
                                Text="{Binding BalanceCurrencyCode}"
                                Foreground="{DynamicResource BalanceBackgroundBrush}"
                                FontFamily="{DynamicResource DefaultFontFamily}"
@@ -153,13 +168,14 @@
                                VerticalAlignment="Bottom"/>
                 </StackPanel>
 
-                <TextBlock Text="{Binding TokenContract.Contract.Address}"
+                <TextBlock Text="{Binding TokenContractAddress}"
                            Foreground="LightGray"
                            FontFamily="{DynamicResource DefaultFontFamily}"
                            FontSize="12"
                            Grid.Row="2"
                            Grid.Column="3"
-                           Style="{StaticResource BaseTextBlockStyle}"/>
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Visibility="{Binding HasTokenContract, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
 
                 <StackPanel HorizontalAlignment="Center"
                             Orientation="Horizontal"
@@ -198,13 +214,14 @@
         
         <TabControl BorderThickness="0"
                     Background="Transparent"
+                    SelectedIndex="{Binding SelectedTabIndex, UpdateSourceTrigger=PropertyChanged}"
                     Grid.Column="2"
                     Grid.Row="2">
             <TabItem Header="TOKENS"
                      Padding="10"
                      mah:ControlsHelper.HeaderFontSize="15"
                      FontFamily="{DynamicResource DefaultMediumFontFamily}"
-                     Visibility="{Binding TokenContract.IsFa2, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                     Visibility="{Binding IsFa2, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <TabItem.Style>
                     <Style TargetType="TabItem"
                            BasedOn="{StaticResource MetroTabItem}">
@@ -344,7 +361,7 @@
                           RowDetailsVisibilityMode="VisibleWhenSelected"
                           EnableRowVirtualization="True"
                           EnableColumnVirtualization="True"
-                          RowDetailsTemplateSelector="{StaticResource TransactionDetailsDataTemplateSelector}"
+                          RowDetailsTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
                           ItemsSource="{Binding Transfers, UpdateSourceTrigger=PropertyChanged}"
                           SelectionChanged="OnSelectionChanged"
                           MouseLeftButtonDown="OnMouseLeftButtonDown"

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 
@@ -22,7 +23,7 @@ namespace Atomex.Client.Wpf.Controls
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (!(item is TransactionViewModel tx))
+            if (!(item is ITransactionViewModel tx))
                 return null;
 
             if (tx.Type.HasFlag(BlockchainTransactionType.SwapPayment))
