@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
-
+using System.Windows;
+using System.Windows.Input;
 using Atomex.Blockchain.Abstract;
 using Atomex.Blockchain.Tezos;
 using Atomex.Client.Wpf.Common;
+using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {
@@ -71,6 +74,37 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
                 amountDigits: tx.Token.Decimals,
                 currencyCode: tx.Token.Symbol);
         }
+
+        private ICommand _openTxInExplorerCommand;
+        public ICommand OpenTxInExplorerCommand => _openTxInExplorerCommand ??= new RelayCommand<string>((id) =>
+        {
+            if (Uri.TryCreate($"{_tezosConfig.TxExplorerUri}{id}", UriKind.Absolute, out var uri))
+                Process.Start(uri.ToString());
+            else
+                Log.Error("Invalid uri for transaction explorer");
+        });
+
+        private ICommand _openAddressInExplorerCommand;
+        public ICommand OpenAddressInExplorerCommand => _openAddressInExplorerCommand ??= new RelayCommand<string>((address) =>
+        {
+            if (Uri.TryCreate($"{_tezosConfig.AddressExplorerUri}{address}", UriKind.Absolute, out var uri))
+                Process.Start(uri.ToString());
+            else
+                Log.Error("Invalid uri for address explorer");
+        });
+
+        private ICommand _copyCommand;
+        public ICommand CopyCommand => _copyCommand ??= new RelayCommand<string>((s) =>
+        {
+            try
+            {
+                Clipboard.SetText(s);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Copy to clipboard error");
+            }
+        });
 
         private static decimal GetAmount(TokenTransfer tx)
         {

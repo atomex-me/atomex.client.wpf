@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.Caching;
 using System.Net;
@@ -11,6 +13,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 using Serilog;
 
@@ -77,7 +80,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         }
 
         public string Balance => TokenBalance.Balance != "1"
-            ? $"{TokenBalance.Balance}  {TokenBalance.Symbol}"
+            ? $"{TokenBalance.GetTokenBalance().ToString(CultureInfo.InvariantCulture)}  {TokenBalance.Symbol}"
             : "";
 
         private ICommand _openInBrowser;
@@ -195,7 +198,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 OnPropertyChanged(nameof(TokenContractName));
                 OnPropertyChanged(nameof(TokenContractIconUrl));
 
-                TokenContractChanged(_tokenContract);
+                TokenContractChanged(TokenContract);
             }
         }
 
@@ -238,6 +241,15 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         private readonly IAtomexApp _app;
 
+        private bool _isBalanceUpdating;
+        public bool IsBalanceUpdating
+        {
+            get => _isBalanceUpdating;
+            set { _isBalanceUpdating = value; OnPropertyChanged(nameof(IsBalanceUpdating)); }
+        }
+
+        private CancellationTokenSource Cancellation { get; set; }
+
         public TezosTokensWalletViewModel()
         {
 #if DEBUG
@@ -256,22 +268,34 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             SubscribeToUpdates();
 
-            _ = LoadAsync();
+            _ = ReloadTokenContractsAsync();
         }
 
         private void SubscribeToUpdates()
         {
+            _app.AtomexClientChanged    += OnAtomexClientChanged;
             _app.Account.BalanceUpdated += OnBalanceUpdatedEventHandler;
         }
 
-        protected virtual void OnBalanceUpdatedEventHandler(object sender, CurrencyEventArgs args)
+        private void OnAtomexClientChanged(object sender, Services.AtomexClientChangedEventArgs e)
+        {
+            Tokens?.Clear();
+            Transfers?.Clear();
+            TokensContracts?.Clear();
+            TokenContract = null;
+        }
+
+        protected virtual async void OnBalanceUpdatedEventHandler(object sender, CurrencyEventArgs args)
         {
             try
             {
                 if (Currencies.IsTezosToken(args.Currency))
                 {
-                    // update token view
-                    TokenContractChanged(_tokenContract);
+                    await Application.Current.Dispatcher.InvokeAsync(async () =>
+                    {
+                        await ReloadTokenContractsAsync();
+
+                    }, DispatcherPriority.Background);
                 }
             }
             catch (Exception e)
@@ -280,7 +304,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             }
         }
 
-        private async Task LoadAsync()
+        private async Task ReloadTokenContractsAsync()
         {
             var tokensContractsViewModels = (await _app.Account
                 .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz)
@@ -288,10 +312,37 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 .GetTezosTokenContractsAsync())
                 .Select(c => new TezosTokenContractViewModel { Contract = c });
 
-            TokensContracts = new ObservableCollection<TezosTokenContractViewModel>(tokensContractsViewModels);
-            OnPropertyChanged(nameof(TokensContracts));
+            if (TokensContracts != null)
+            {
+                // add new token contracts if exists
+                var newTokenContracts = tokensContractsViewModels.Except(
+                    second: TokensContracts,
+                    comparer: new Atomex.Common.EqualityComparer<TezosTokenContractViewModel>(
+                        (x, y) => x.Contract.Address.Equals(y.Contract.Address),
+                        x => x.Contract.Address.GetHashCode()));
 
-            TokenContract = TokensContracts.FirstOrDefault();
+                if (newTokenContracts.Any())
+                {
+                    foreach (var newTokenContract in newTokenContracts)
+                        TokensContracts.Add(newTokenContract);
+
+                    if (TokenContract == null)
+                        TokenContract = TokensContracts.FirstOrDefault();
+                }
+                else
+                {
+                    // update current token contract
+                    if (TokenContract != null)
+                        TokenContractChanged(TokenContract);
+                }
+            }
+            else
+            {
+                TokensContracts = new ObservableCollection<TezosTokenContractViewModel>(tokensContractsViewModels);
+                OnPropertyChanged(nameof(TokensContracts));
+
+                TokenContract = TokensContracts.FirstOrDefault();
+            }
         }
 
         private async void TokenContractChanged(TezosTokenContractViewModel tokenContract)
@@ -370,6 +421,48 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             SelectedTabIndex = tokenContract.IsFa2 ? 0 : 1;
             OnPropertyChanged(nameof(SelectedTabIndex));
+        }
+
+        private ICommand _updateCommand;
+        public ICommand UpdateCommand => _updateCommand ??= new Command(OnUpdateClick);
+
+        protected async void OnUpdateClick()
+        {
+            if (IsBalanceUpdating)
+                return;
+
+            IsBalanceUpdating = true;
+
+            Cancellation = new CancellationTokenSource();
+
+            try
+            {
+                var tezosAccount = _app.Account
+                    .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
+
+                var tezosTokensScanner = new TezosTokensScanner(tezosAccount);
+
+                await tezosTokensScanner.ScanAsync();
+
+                // reload balances for all tezos tokens account
+                foreach (var currency in _app.Account.Currencies)
+                    if (Currencies.IsTezosToken(currency.Name))
+                        _app.Account
+                            .GetCurrencyAccount<TezosTokenAccount>(currency.Name)
+                            .ReloadBalances();
+
+            }
+            catch (OperationCanceledException)
+            {
+                Log.Debug("Wallet update operation canceled");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "WalletViewModel.OnUpdateClick");
+                // todo: message to user!?
+            }
+
+            IsBalanceUpdating = false;
         }
 
         protected void DesignerMode()

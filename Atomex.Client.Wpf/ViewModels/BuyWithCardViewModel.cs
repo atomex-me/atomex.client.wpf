@@ -105,12 +105,12 @@ namespace Atomex.Client.Wpf.ViewModels
 
         public BuyWithCardViewModel(IAtomexApp app)
         {
-            app.TerminalChanged += TerminalChanged;
+            app.AtomexClientChanged += TerminalChanged;
         }
 
-        private void TerminalChanged(object sender, TerminalChangedEventArgs e)
+        private void TerminalChanged(object sender, AtomexClientChangedEventArgs e)
         {
-            _account = e.Terminal?.Account;
+            _account = e.AtomexClient?.Account;
 
             if (_account == null)
                 return;

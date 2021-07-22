@@ -517,7 +517,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            App.TerminalChanged += OnTerminalChangedEventHandler;
+            App.AtomexClientChanged += OnTerminalChangedEventHandler;
 
             if (App.HasQuotesProvider)
                 App.QuotesProvider.QuotesUpdated += OnBaseQuotesUpdatedEventHandler;
@@ -639,9 +639,9 @@ namespace Atomex.Client.Wpf.ViewModels
             }
         }
 
-        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs args)
+        private void OnTerminalChangedEventHandler(object sender, AtomexClientChangedEventArgs args)
         {
-            var terminal = args.Terminal;
+            var terminal = args.AtomexClient;
 
             if (terminal?.Account == null)
                 return;

@@ -287,14 +287,24 @@
                                                     Stretch="Fill"/>
                                     </Ellipse.Fill>
                                 </Ellipse>
-                                
+
                                 <TextBlock Margin="7 0 10 0"
                                            Text="{Binding TokenBalance.Name}"
                                            FontSize="16"
                                            FontFamily="{StaticResource DefaultMediumFontFamily}"
                                            VerticalAlignment="Center"
                                            Grid.Column="1"
-                                           Grid.Row="1"/>
+                                           Grid.Row="1">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding TokenBalance.HasDescription}" Value="False">
+                                                    <Setter Property="Grid.RowSpan" Value="2"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
 
                                 <TextBlock Margin="7 0 10 0"
                                            Text="{Binding TokenBalance.Description}"

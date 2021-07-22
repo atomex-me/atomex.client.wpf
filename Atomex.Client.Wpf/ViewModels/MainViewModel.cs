@@ -147,13 +147,13 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            AtomexApp.TerminalChanged += OnTerminalChangedEventHandler;
+            AtomexApp.AtomexClientChanged += OnTerminalChangedEventHandler;
             AtomexApp.QuotesProvider.AvailabilityChanged += OnQuotesProviderAvailabilityChangedEventHandler;
         }
 
-        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs args)
+        private void OnTerminalChangedEventHandler(object sender, AtomexClientChangedEventArgs args)
         {
-            var terminal = args.Terminal;
+            var terminal = args.AtomexClient;
 
             if (terminal?.Account == null)
             {
@@ -231,7 +231,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 DialogViewer.HideAllDialogs();
 
-                AtomexApp.UseTerminal(null);
+                AtomexApp.UseAtomexClient(null);
 
                 DialogViewer.ShowDialog(Dialogs.Start, new StartViewModel(AtomexApp, DialogViewer));
 

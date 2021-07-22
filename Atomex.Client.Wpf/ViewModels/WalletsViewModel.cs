@@ -68,16 +68,16 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            App.TerminalChanged += OnTerminalChangedEventHandler;
+            App.AtomexClientChanged += OnTerminalChangedEventHandler;
         }
 
-        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs e)
+        private void OnTerminalChangedEventHandler(object sender, AtomexClientChangedEventArgs e)
         {
             var walletsViewModels = new List<IWalletViewModel>();
 
-            if (e.Terminal?.Account != null)
+            if (e.AtomexClient?.Account != null)
             {
-                var currenciesViewModels = e.Terminal.Account.Currencies
+                var currenciesViewModels = e.AtomexClient.Account.Currencies
                     .Select(currency => WalletViewModelCreator.CreateViewModel(
                         app: App,
                         dialogViewer: DialogViewer,
