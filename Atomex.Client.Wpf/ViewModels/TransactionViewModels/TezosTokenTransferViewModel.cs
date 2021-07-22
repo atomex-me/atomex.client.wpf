@@ -3,10 +3,12 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Input;
+
+using Serilog;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Blockchain.Tezos;
 using Atomex.Client.Wpf.Common;
-using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 {

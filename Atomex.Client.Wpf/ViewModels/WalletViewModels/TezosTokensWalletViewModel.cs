@@ -240,15 +240,11 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         public int SelectedTabIndex { get; set; }
 
         private readonly IAtomexApp _app;
-
+        private readonly IDialogViewer _dialogViewer;
+        private readonly IMenuSelector _menuSelector;
+        private readonly IConversionViewModel _conversionViewModel;
         private bool _isBalanceUpdating;
-        public bool IsBalanceUpdating
-        {
-            get => _isBalanceUpdating;
-            set { _isBalanceUpdating = value; OnPropertyChanged(nameof(IsBalanceUpdating)); }
-        }
-
-        private CancellationTokenSource Cancellation { get; set; }
+        private CancellationTokenSource _cancellation;
 
         public TezosTokensWalletViewModel()
         {
@@ -264,7 +260,10 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             IMenuSelector menuSelector,
             IConversionViewModel conversionViewModel)
         {
-            _app = app ?? throw new ArgumentNullException(nameof(app));
+            _app                 = app ?? throw new ArgumentNullException(nameof(app));
+            _dialogViewer        = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+            _menuSelector        = menuSelector ?? throw new ArgumentNullException(nameof(menuSelector));
+            _conversionViewModel = conversionViewModel ?? throw new ArgumentNullException(nameof(conversionViewModel));
 
             SubscribeToUpdates();
 
@@ -428,12 +427,17 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         protected async void OnUpdateClick()
         {
-            if (IsBalanceUpdating)
+            if (_isBalanceUpdating)
                 return;
 
-            IsBalanceUpdating = true;
+            _isBalanceUpdating = true;
 
-            Cancellation = new CancellationTokenSource();
+            _cancellation = new CancellationTokenSource();
+
+            _dialogViewer.ShowProgress(
+                title: "Tokens balance updating...",
+                message: "Please wait!",
+                canceled: () => { _cancellation.Cancel(); });
 
             try
             {
@@ -442,7 +446,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
                 var tezosTokensScanner = new TezosTokensScanner(tezosAccount);
 
-                await tezosTokensScanner.ScanAsync();
+                await tezosTokensScanner.ScanAsync(
+                    skipUsed: false,
+                    cancellationToken: _cancellation.Token);
 
                 // reload balances for all tezos tokens account
                 foreach (var currency in _app.Account.Currencies)
@@ -462,7 +468,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 // todo: message to user!?
             }
 
-            IsBalanceUpdating = false;
+            _dialogViewer.HideProgress();
+
+            _isBalanceUpdating = false;
         }
 
         protected void DesignerMode()

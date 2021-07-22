@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+
+using MahApps.Metro.Controls.Dialogs;
+
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels;
 using Atomex.Client.Wpf.Views.SendViews;
-using MahApps.Metro.Controls.Dialogs;
 
 namespace Atomex.Client.Wpf.Views
 {
@@ -223,6 +226,31 @@ namespace Atomex.Client.Wpf.Views
                 overlayFillBehavior: ChildWindowManager.OverlayFillBehavior.FullWindow);
 
             return childView;
+        }
+
+        private ProgressDialogController _progressController;
+
+        public async void ShowProgress(
+            string title,
+            string message,
+            Action canceled = null,
+            CancellationToken cancellationToken = default)
+        {
+            _progressController = await this.ShowProgressAsync(
+                title: title,
+                message: message,
+                isCancelable: true,
+                settings: new MetroDialogSettings { CancellationToken = cancellationToken });
+
+            _progressController.Canceled += (o, e) =>
+            {
+                canceled?.Invoke();
+            };
+        }
+
+        public void HideProgress()
+        {
+            _ = _progressController.CloseAsync();
         }
     }
 }
