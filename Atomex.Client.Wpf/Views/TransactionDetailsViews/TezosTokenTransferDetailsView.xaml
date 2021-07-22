@@ -16,7 +16,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
-                <ColumnDefinition Width="60"/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
@@ -145,27 +144,6 @@
                                      ToolTip="Copy address to clipboard"
                                      Command="{Binding CopyCommand}"
                                      CommandParameter="{Binding To}"
-                                     Style="{StaticResource PathButtonStyle}"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
-                        Grid.Column="2"
-                        Grid.Row="0">
-
-                <controls:IconButton HorizontalAlignment="Center"
-                                     VerticalAlignment="Center"
-                                     Foreground="{DynamicResource IconButtonForegroundBrush}"
-                                     MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
-                                     PressedBrush="{DynamicResource IconButtonPressedBrush}"
-                                     Path="{DynamicResource FontAwesome.TrashAltSolid}"
-                                     Margin="10 0 0 0"
-                                     Width="20"
-                                     Height="20"
-                                     ToolTip="Remove transaction from local storage"
-                                     Command="{Binding RemoveCommand}"
-                                     Visibility="{Binding CanBeRemoved, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"
                                      Style="{StaticResource PathButtonStyle}"/>
             </StackPanel>
         </Grid>
