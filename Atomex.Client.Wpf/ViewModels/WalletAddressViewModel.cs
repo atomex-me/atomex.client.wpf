@@ -9,15 +9,21 @@ namespace Atomex.Client.Wpf.ViewModels
         public decimal AvailableBalance => WalletAddress.AvailableBalance();
         public string CurrencyFormat { get; }
         public bool IsFreeAddress { get; }
+        public bool HasTokens { get; }
+        public decimal TokensBalance { get; }
 
         public WalletAddressViewModel(
             WalletAddress walletAddress,
             string currencyFormat,
+            bool hasTokens = false,
+            decimal tokensBalance = 0,
             bool isFreeAddress = false)
         {
-            WalletAddress = walletAddress;
+            WalletAddress  = walletAddress;
             CurrencyFormat = currencyFormat;
-            IsFreeAddress = isFreeAddress;
+            HasTokens      = hasTokens;
+            TokensBalance  = tokensBalance;
+            IsFreeAddress  = isFreeAddress;
         }
     }
 }

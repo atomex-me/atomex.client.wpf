@@ -422,8 +422,19 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             OnPropertyChanged(nameof(SelectedTabIndex));
         }
 
+        private ICommand _receiveCommand;
+        public ICommand ReceiveCommand => _receiveCommand ??= new Command(OnReceiveClick);
+
         private ICommand _updateCommand;
         public ICommand UpdateCommand => _updateCommand ??= new Command(OnUpdateClick);
+
+        private void OnReceiveClick()
+        {
+            var tezosConfig = _app.Account.Currencies.GetByName(TezosConfig.Xtz);
+            var receiveViewModel = new ReceiveViewModel(_app, tezosConfig, TokenContract?.Contract?.Address);
+
+            _dialogViewer.ShowDialog(Dialogs.Receive, receiveViewModel);
+        }
 
         protected async void OnUpdateClick()
         {

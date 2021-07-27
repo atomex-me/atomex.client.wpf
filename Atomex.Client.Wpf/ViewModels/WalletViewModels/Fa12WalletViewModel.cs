@@ -14,7 +14,6 @@ using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
-using Atomex.Client.Wpf.ViewModels.ReceiveViewModels;
 using Atomex.Client.Wpf.ViewModels.SendViewModels;
 using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 using Atomex.Common;
@@ -197,7 +196,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         private void OnReceiveClick()
         {
-            var receiveViewModel = ReceiveViewModelCreator.CreateViewModel(App, Currency);
+            var tezosConfig = App.Account.Currencies.GetByName(TezosConfig.Xtz);
+            var receiveViewModel = new ReceiveViewModel(App, tezosConfig, Currency.TokenContractAddress);
 
             DialogViewer.ShowDialog(Dialogs.Receive, receiveViewModel);
         }

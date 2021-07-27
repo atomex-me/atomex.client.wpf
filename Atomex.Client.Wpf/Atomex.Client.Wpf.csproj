@@ -400,9 +400,6 @@
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\BakerViewModel.cs" />
     <Compile Include="ViewModels\DelegateConfirmationViewModel.cs" />
-    <Compile Include="ViewModels\ReceiveViewModels\EthereumReceiveViewModel.cs" />
-    <Compile Include="ViewModels\ReceiveViewModels\ReceiveViewModelCreator.cs" />
-    <Compile Include="ViewModels\ReceiveViewModels\TezosReceiveViewModel.cs" />
     <Compile Include="ViewModels\SendConfirmationViewModel.cs" />
     <Compile Include="ViewModels\DelegateViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\BitcoinBasedSendViewModel.cs" />
@@ -427,7 +424,7 @@
     <Compile Include="ViewModels\CreateWalletViewModels\WalletNameViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WriteDerivedKeyPasswordViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WriteMnemonicViewModel.cs" />
-    <Compile Include="ViewModels\ReceiveViewModels\ReceiveViewModel.cs" />
+    <Compile Include="ViewModels\ReceiveViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\EthereumERC20TransactionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\TransactionViewModelCreator.cs" />
     <Compile Include="ViewModels\TransactionViewModels\BitcoinBasedTransactionViewModel.cs" />
@@ -1009,6 +1006,7 @@
     <Resource Include="Resources\Images\kusd_90x90.png" />
     <Resource Include="Resources\Images\kusd_mask.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
