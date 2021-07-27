@@ -1,29 +1,17 @@
-﻿using Atomex.Core;
-
-namespace Atomex.Client.Wpf.ViewModels
+﻿namespace Atomex.Client.Wpf.ViewModels
 {
     public class WalletAddressViewModel
     {
-        public WalletAddress WalletAddress { get; }
-        public string Address => WalletAddress.Address;
-        public decimal AvailableBalance => WalletAddress.AvailableBalance();
-        public string CurrencyFormat { get; }
-        public bool IsFreeAddress { get; }
-        public bool HasTokens { get; }
-        public decimal TokensBalance { get; }
+        public string Address { get; set; }
+        public bool HasActivity { get; set; }
+        public decimal AvailableBalance { get; set; }
+        public string CurrencyFormat { get; set; }
+        public string CurrencyCode { get; set; }
+        public bool IsFreeAddress { get; set; }
+        public bool ShowTokenBalance { get; set; }
+        public decimal TokenBalance { get; set; }
+        public string TokenFormat { get; set; }
+        public string TokenCode { get; set; }
 
-        public WalletAddressViewModel(
-            WalletAddress walletAddress,
-            string currencyFormat,
-            bool hasTokens = false,
-            decimal tokensBalance = 0,
-            bool isFreeAddress = false)
-        {
-            WalletAddress  = walletAddress;
-            CurrencyFormat = currencyFormat;
-            HasTokens      = hasTokens;
-            TokensBalance  = tokensBalance;
-            IsFreeAddress  = isFreeAddress;
-        }
     }
 }

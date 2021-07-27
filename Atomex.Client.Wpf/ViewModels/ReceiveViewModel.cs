@@ -23,7 +23,7 @@ namespace Atomex.Client.Wpf.ViewModels
     {
         private const int PixelsPerModule = 20;
 
-        protected IAtomexApp App { get; }
+        private readonly IAtomexApp _app;
 
         private List<CurrencyViewModel> _fromCurrencies;
         public List<CurrencyViewModel> FromCurrencies
@@ -46,20 +46,20 @@ namespace Atomex.Client.Wpf.ViewModels
 #endif
                     // get all addresses with tokens (if exists)
                     var tokenAddresses = Currencies.HasTokens(_currency.Name)
-                        ? App.Account
+                        ? _app.Account
                             .GetCurrencyAccount<ILegacyCurrencyAccount>(_currency.Name)
                             .GetUnspentTokenAddressesAsync()
                             .WaitForResult()
                         : new List<WalletAddress>();
 
                     // get all active addresses
-                    var activeAddresses = App.Account
+                    var activeAddresses = _app.Account
                         .GetUnspentAddressesAsync(_currency.Name)
                         .WaitForResult()
                         .ToList();
 
                     // get free external address
-                    var freeAddress = App.Account
+                    var freeAddress = _app.Account
                         .GetFreeExternalAddressAsync(_currency.Name)
                         .WaitForResult();
 
@@ -71,36 +71,25 @@ namespace Atomex.Client.Wpf.ViewModels
                         {
                             var address      = g.FirstOrDefault(w => w.Currency == _currency.Name);
                             var hasTokens    = g.Any(w => w.Currency != _currency.Name);
-                            var tokenBalance = TokenContract != null
-                                ? (g.FirstOrDefault(w => w.TokenBalance?.Contract == TokenContract)?.Balance ?? 0)
-                                : 0;
+                            var tokenAddress = TokenContract != null
+                                ? g.FirstOrDefault(w => w.TokenBalance?.Contract == TokenContract)
+                                : null;
+                            var tokenBalance  = tokenAddress?.Balance ?? 0m;
                             var isFreeAddress = address.Address == freeAddress.Address;
 
-                            // if main chain address null => try to get address from db
-                            if (address == null)
+                            return new WalletAddressViewModel
                             {
-                                address = App.Account
-                                    .GetAddressAsync(_currency.Name, g.Key)
-                                    .WaitForResult();
-                            }
-
-                            // if main chain address null again => add address to db by token address key index
-                            if (address == null)
-                            {
-                                var tokenAddress = g.First();
-
-                                address = App.Account
-                                    .GetCurrencyAccount<ILegacyCurrencyAccount>(_currency.Name)
-                                    .DivideAddressAsync(tokenAddress.KeyIndex.Chain, tokenAddress.KeyIndex.Index)
-                                    .WaitForResult();
-                            }
-
-                            return new WalletAddressViewModel(
-                                walletAddress: address,
-                                currencyFormat: _currency.Format,
-                                hasTokens: hasTokens,
-                                tokensBalance: tokenBalance,
-                                isFreeAddress: isFreeAddress);
+                                Address          = g.Key,
+                                HasActivity      = address?.HasActivity ?? hasTokens,
+                                AvailableBalance = address?.AvailableBalance() ?? 0m,
+                                CurrencyFormat   = _currency.Format,
+                                CurrencyCode     = _currency.Name,
+                                IsFreeAddress    = isFreeAddress,
+                                ShowTokenBalance = TokenContract != null,
+                                TokenBalance     = tokenBalance,
+                                TokenFormat      = "F8",
+                                TokenCode        = tokenAddress?.TokenBalance?.Symbol ?? ""
+                            };
                         })
                         .ToList();
 #if DEBUG
@@ -122,8 +111,8 @@ namespace Atomex.Client.Wpf.ViewModels
             }
         }
 
-        private WalletAddress _selectedAddress;
-        public WalletAddress SelectedAddress
+        private string _selectedAddress;
+        public string SelectedAddress
         {
             get => _selectedAddress;
             set
@@ -148,7 +137,6 @@ namespace Atomex.Client.Wpf.ViewModels
         public BitmapSource QrCode { get; private set; }
 
         public string TokenContract { get; private set; }
-        public bool ShowTokenBalance => TokenContract != null;
 
         public ReceiveViewModel()
         {
@@ -160,17 +148,17 @@ namespace Atomex.Client.Wpf.ViewModels
 
         public ReceiveViewModel(IAtomexApp app, CurrencyConfig currency, string tokenContract = null)
         {
-            App = app ?? throw new ArgumentNullException(nameof(app));
+            _app = app ?? throw new ArgumentNullException(nameof(app));
 
             FromCurrencies = app.Account.Currencies
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
 
+            TokenContract = tokenContract;
+
             Currency = FromCurrencies
                 .FirstOrDefault(c => c.Currency.Name == currency.Name)
                 .Currency;
-
-            TokenContract = tokenContract;
         }
 
         private async Task CreateQrCodeAsync()
@@ -180,7 +168,7 @@ namespace Atomex.Client.Wpf.ViewModels
             await Task.Run(() =>
             {
                 using var qrGenerator = new QRCodeGenerator();
-                using var qrData = qrGenerator.CreateQrCode(_selectedAddress.Address, QRCodeGenerator.ECCLevel.Q);
+                using var qrData = qrGenerator.CreateQrCode(_selectedAddress, QRCodeGenerator.ECCLevel.Q);
                 using var qrCode = new QRCode(qrData);
                 qrCodeBitmap = qrCode.GetGraphic(PixelsPerModule);
             });
@@ -197,19 +185,19 @@ namespace Atomex.Client.Wpf.ViewModels
             }
         }
 
-        protected virtual WalletAddress GetDefaultAddress()
+        protected virtual string GetDefaultAddress()
         {
             if (Currency is TezosConfig || Currency is EthereumConfig)
             {
                 var activeAddressViewModel = FromAddressList
-                    .Where(vm => vm.WalletAddress.HasActivity && vm.WalletAddress.AvailableBalance() > 0)
-                    .MaxByOrDefault(vm => vm.WalletAddress.AvailableBalance());
+                    .Where(vm => vm.HasActivity && vm.AvailableBalance > 0)
+                    .MaxByOrDefault(vm => vm.AvailableBalance);
 
                 if (activeAddressViewModel != null)
-                    return activeAddressViewModel.WalletAddress;
+                    return activeAddressViewModel.Address;
             }
 
-            return FromAddressList.First(vm => vm.IsFreeAddress).WalletAddress;
+            return FromAddressList.First(vm => vm.IsFreeAddress).Address;
         }
 
         private ICommand _copyCommand;
@@ -217,7 +205,7 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             try
             {
-                Clipboard.SetText(SelectedAddress.Address);
+                Clipboard.SetText(SelectedAddress);
 
                 Warning = "Address successfully copied to clipboard.";
             }
@@ -239,30 +227,32 @@ namespace Atomex.Client.Wpf.ViewModels
 
             FromAddressList = new List<WalletAddressViewModel>
             {
-                new WalletAddressViewModel(
-                    walletAddress: new WalletAddress
-                    {
-                        Address     = "tz3bvNMQ95vfAYtG8193ymshqjSvmxiCUuR5",
-                        Currency    = Currency.Name,
-                        Balance     = 123.456789m,
-                        HasActivity = true
-                    },
-                    currencyFormat: Currency.Format,
-                    hasTokens: true,
-                    tokensBalance: 100.000000m,
-                    isFreeAddress: false),
-                new WalletAddressViewModel(
-                    walletAddress: new WalletAddress
-                    {
-                        Address     = "tz3bvNMQ95vfAYtG8193ymshqjSvmxiCUuR5",
-                        Currency    = Currency.Name,
-                        Balance     = 0.00000m,
-                        HasActivity = false
-                    },
-                    currencyFormat: Currency.Format,
-                    hasTokens: false,
-                    tokensBalance: 0,
-                    isFreeAddress: true)
+                new WalletAddressViewModel
+                {
+                    Address          = "tz3bvNMQ95vfAYtG8193ymshqjSvmxiCUuR5",
+                    HasActivity      = true,
+                    AvailableBalance = 123.456789m,
+                    CurrencyFormat   = Currency.Format,
+                    CurrencyCode     = Currency.Name,
+                    IsFreeAddress    = false,
+                    ShowTokenBalance        = true,
+                    TokenBalance     = 100.00000000m,
+                    TokenFormat      = "F8",
+                    TokenCode        = "HEH"
+                },
+                new WalletAddressViewModel
+                {
+                    Address          = "tz1bvntqQ43vfAYtG1233ymshqjsvmxiCUuR1",
+                    HasActivity      = true,
+                    AvailableBalance = 0m,
+                    CurrencyFormat   = Currency.Format,
+                    CurrencyCode     = Currency.Name,
+                    IsFreeAddress    = true,
+                    ShowTokenBalance = false,
+                    TokenBalance     = 0m,
+                    TokenFormat      = "F8",
+                    TokenCode        = "HEH"
+                }
             };
         }
     }
