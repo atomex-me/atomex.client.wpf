@@ -26,6 +26,7 @@ using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 using Atomex.Wallet;
 using Atomex.Wallet.Tezos;
+using Atomex.TezosTokens;
 
 namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
@@ -374,6 +375,11 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
                 var tokenAddress = tokenAddresses.FirstOrDefault();
 
+                var tezosTokenConfig = _app.Account.Currencies
+                    .FirstOrDefault(c => Currencies.IsTezosToken(c.Name) &&
+                        c is Fa12Config fa12Config &&
+                        fa12Config.TokenContractAddress == tokenContract.Contract.Address);
+
                 Balance = tokenAccount
                     .GetBalance()
                     .Available;
@@ -384,7 +390,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
                 BalanceCurrencyCode = tokenAddress?.TokenBalance != null
                     ? tokenAddress.TokenBalance.Symbol
-                    : "";
+                    : tezosTokenConfig?.Name ?? "";
 
                 OnPropertyChanged(nameof(Balance));
                 OnPropertyChanged(nameof(BalanceFormat));
@@ -551,6 +557,18 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             Tokens = new ObservableCollection<TezosTokenViewModel>(
                 tokensBalances.Value.Select(tb => new TezosTokenViewModel { TokenBalance = tb }));
+
+            var transfers = bcdApi
+                .GetTokenTransfers(
+                    address: "tz1YS2CmS5o24bDz9XNr84DSczBXuq4oGHxr",
+                    contract: "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton")
+                .WaitForResult()
+                .Value;
+
+            var tezosConfig = DesignTime.Currencies.Get<TezosConfig>(TezosConfig.Xtz);
+
+            Transfers = new ObservableCollection<TezosTokenTransferViewModel>(transfers
+                .Select(t => new TezosTokenTransferViewModel(t, tezosConfig)));
 
             //Tokens = new ObservableCollection<TezosTokenViewModel>
             //{
