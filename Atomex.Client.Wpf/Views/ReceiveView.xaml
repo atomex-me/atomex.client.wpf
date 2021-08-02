@@ -36,18 +36,19 @@
                                VerticalAlignment="Center"/>
                 </Border>
 
-                <ComboBox Width="580"
+                <ComboBox Width="570"
                           MinHeight="68"
                           Margin="0 5 0 5"
                           ItemsSource="{Binding FromCurrencies}"
                           SelectedValuePath="Currency"
                           SelectedValue="{Binding Currency}"
+                          IsHitTestVisible="False"
                           helpers:ComboBoxHelper.CornerRadius="20"
                           Style="{StaticResource CurrencyComboBox}"/>
 
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Center"
-                            Margin="37 0 0 0">
+                            Margin="32 0 0 0">
                     <Border Width="90"
                             Height="50"
                             Background="{DynamicResource FieldHeaderBackgroundBrush}"

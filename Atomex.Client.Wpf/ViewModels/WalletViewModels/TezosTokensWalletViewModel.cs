@@ -434,10 +434,19 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         private ICommand _updateCommand;
         public ICommand UpdateCommand => _updateCommand ??= new Command(OnUpdateClick);
 
+        private ICommand _addressesCommand;
+        public ICommand AddressesCommand => _addressesCommand ??= new Command(OnAddressesClick);
+
         private void OnReceiveClick()
         {
-            var tezosConfig = _app.Account.Currencies.GetByName(TezosConfig.Xtz);
-            var receiveViewModel = new ReceiveViewModel(_app, tezosConfig, TokenContract?.Contract?.Address);
+            var tezosConfig = _app.Account
+                .Currencies
+                .GetByName(TezosConfig.Xtz);
+
+            var receiveViewModel = new ReceiveViewModel(
+                app: _app,
+                currency: tezosConfig,
+                tokenContract: TokenContract?.Contract?.Address);
 
             _dialogViewer.ShowDialog(Dialogs.Receive, receiveViewModel);
         }
@@ -490,6 +499,20 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             _isBalanceUpdating = false;
         }
 
+        private void OnAddressesClick()
+        {
+            var tezosConfig = _app.Account
+                .Currencies
+                .Get<TezosConfig>(TezosConfig.Xtz);
+
+            var addressesViewModel = new AddressesViewModel(
+                app: _app,
+                dialogViewer: _dialogViewer,
+                currency: tezosConfig,
+                tokenContract: TokenContract?.Contract?.Address);
+
+            _dialogViewer.ShowDialog(Dialogs.Addresses, addressesViewModel);
+        }
         protected void DesignerMode()
         {
             TokensContracts = new ObservableCollection<TezosTokenContractViewModel>

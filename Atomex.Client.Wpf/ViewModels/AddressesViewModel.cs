@@ -24,8 +24,10 @@ namespace Atomex.Client.Wpf.ViewModels
         public string Address { get; set; }
         public string Path { get; set; }
         public string Balance { get; set; }
+        public string TokenBalance { get; set; }
         public Action<string> CopyToClipboard { get; set; }
         public Action<string> OpenInExplorer { get; set; }
+        public Action<string> Update { get; set; }
         public Action<string> ExportKey { get; set; }
 
         private ICommand _copyCommand;
@@ -38,6 +40,12 @@ namespace Atomex.Client.Wpf.ViewModels
         public ICommand OpenInExplorerCommand => _openInExplorerCommand ??= new RelayCommand<string>((s) =>
         {
             OpenInExplorer?.Invoke(Address);
+        });
+
+        private ICommand _updateCommand;
+        public ICommand UpdateCommand => _updateCommand ??= new RelayCommand<string>((s) =>
+        {
+            Update?.Invoke(Address);
         });
 
         private ICommand _exportKeyCommand;
@@ -54,6 +62,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private CurrencyConfig _currency;
 
         public IEnumerable<AddressInfo> Addresses { get; set; }
+        public bool HasTokens { get; set; }
 
         private string _warning;
         public string Warning {
@@ -75,7 +84,11 @@ namespace Atomex.Client.Wpf.ViewModels
 #endif
         }
 
-        public AddressesViewModel(IAtomexApp app, IDialogViewer dialogViewer, CurrencyConfig currency)
+        public AddressesViewModel(
+            IAtomexApp app,
+            IDialogViewer dialogViewer,
+            CurrencyConfig currency,
+            string tokenContract = null)
         {
             _app = app ?? throw new ArgumentNullException(nameof(app));
             _dialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));

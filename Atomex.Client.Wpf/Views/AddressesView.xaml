@@ -16,13 +16,15 @@
 
              UseLayoutRounding="True"
              common:ChildWindowHelper.IsOpen="True"
-             d:DesignWidth="630"
+             d:DesignWidth="950"
              d:DesignHeight="400"
              d:DataContext="{d:DesignInstance Type=viewModels:AddressesViewModel, IsDesignTimeCreatable=True}">
     
     <Border Style="{StaticResource ChildViewBorder}"
-            Width="630">
+            Width="900">
         <Grid>
+            <FrameworkElement x:Name="proxyElement" Visibility="Collapsed"/>
+
             <StackPanel Orientation="Vertical">
                 <Border Margin="0 10 0 20"
                         Height="33"
@@ -83,6 +85,32 @@
                                             Width="Auto"
                                             Foreground="Gold"
                                             FontSize="12"/>
+                        <DataGridTextColumn Header="Token Balance"
+                                            Binding="{Binding TokenBalance}"
+                                            Width="Auto"
+                                            Foreground="White"
+                                            FontSize="12"
+                                            Visibility="{Binding DataContext.HasTokens, Source={x:Reference proxyElement}, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                        <DataGridTemplateColumn Header="Update" Width="72" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <controls:IconButton
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource IconButtonForegroundBrush}"
+                                        MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
+                                        PressedBrush="{DynamicResource IconButtonPressedBrush}"                                     
+                                        Path="{DynamicResource Unicons.Sync}"
+                                        Margin="7 0 0 0"
+                                        Width="15"
+                                        Height="15"
+                                        ToolTip="Private key export dialog"
+                                        Command="{Binding UpdateCommand}"
+                                        CommandParameter="{Binding Address}"
+                                        Style="{StaticResource PathButtonStyle}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="Key" Width="60" >
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

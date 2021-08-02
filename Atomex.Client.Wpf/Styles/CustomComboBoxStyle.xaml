@@ -19,7 +19,8 @@
                   Grid.Column="1"
                   Fill="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}}"
                   HorizontalAlignment="Center"
-                  VerticalAlignment="Center">
+                  VerticalAlignment="Center"
+                  Visibility="{Binding IsHitTestVisible, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure IsClosed="True" StartPoint="0,0">
