@@ -69,13 +69,32 @@ namespace Atomex.Client.Wpf.ViewModels
                         .GroupBy(w => w.Address)
                         .Select(g =>
                         {
-                            var address      = g.FirstOrDefault(w => w.Currency == _currency.Name);
-                            var hasTokens    = g.Any(w => w.Currency != _currency.Name);
-                            var tokenAddress = TokenContract != null
-                                ? g.FirstOrDefault(w => w.TokenBalance?.Contract == TokenContract)
-                                : null;
-                            var tokenBalance  = tokenAddress?.Balance ?? 0m;
+                            // xtz address
+                            var address = g.FirstOrDefault(w => w.Currency == _currency.Name);
+
                             var isFreeAddress = address.Address == freeAddress.Address;
+
+                            var hasTokens = g.Any(w => w.Currency != _currency.Name);
+
+                            var tokenAddresses = TokenContract != null
+                                ? g.Where(w => w.TokenBalance?.Contract == TokenContract)
+                                : Enumerable.Empty<WalletAddress>();
+
+                            var hasSeveralTokens = tokenAddresses.Count() > 1;
+                            
+                            var tokenAddress = tokenAddresses.FirstOrDefault();
+
+                            var tokenBalance = hasSeveralTokens
+                                ? tokenAddresses.Count()
+                                : tokenAddress?.Balance ?? 0m;
+       
+                            var showTokenBalance = hasSeveralTokens
+                                ? tokenBalance != 0
+                                : TokenContract != null && tokenAddress?.TokenBalance?.Symbol != null;
+
+                            var tokenCode = hasSeveralTokens
+                                ? "TOKENS"
+                                : tokenAddress?.TokenBalance?.Symbol ?? "";
 
                             return new WalletAddressViewModel
                             {
@@ -85,10 +104,10 @@ namespace Atomex.Client.Wpf.ViewModels
                                 CurrencyFormat   = _currency.Format,
                                 CurrencyCode     = _currency.Name,
                                 IsFreeAddress    = isFreeAddress,
-                                ShowTokenBalance = TokenContract != null,
+                                ShowTokenBalance = showTokenBalance,
                                 TokenBalance     = tokenBalance,
                                 TokenFormat      = "F8",
-                                TokenCode        = tokenAddress?.TokenBalance?.Symbol ?? ""
+                                TokenCode        = tokenCode
                             };
                         })
                         .ToList();
