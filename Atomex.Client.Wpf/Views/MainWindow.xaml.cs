@@ -230,7 +230,7 @@ namespace Atomex.Client.Wpf.Views
 
         private ProgressDialogController _progressController;
 
-        public async void ShowProgress(
+        public async Task ShowProgressAsync(
             string title,
             string message,
             Action canceled = null,
@@ -250,6 +250,9 @@ namespace Atomex.Client.Wpf.Views
 
         public void HideProgress()
         {
+            if (_progressController == null)
+                return;
+
             _ = _progressController.CloseAsync();
         }
     }

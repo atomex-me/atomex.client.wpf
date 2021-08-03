@@ -35,7 +35,7 @@ namespace Atomex.Client.Wpf.Controls
             string message,
             MessageDialogStyle style);
 
-        void ShowProgress(
+        Task ShowProgressAsync(
             string title,
             string message,
             Action canceled = null,

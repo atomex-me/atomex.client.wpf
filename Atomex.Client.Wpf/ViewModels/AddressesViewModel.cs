@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Windows.Input;
 using System.Windows;
 
@@ -13,8 +14,8 @@ using Atomex.Core;
 using Atomex.Common;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
-using Atomex.Wallet;
 using Atomex.TezosTokens;
+using Atomex.Wallet;
 using Atomex.Wallet.Tezos;
 
 namespace Atomex.Client.Wpf.ViewModels
@@ -60,6 +61,8 @@ namespace Atomex.Client.Wpf.ViewModels
         private readonly IAtomexApp _app;
         private readonly IDialogViewer _dialogViewer;
         private CurrencyConfig _currency;
+        private bool _isBalanceUpdating;
+        private CancellationTokenSource _cancellation;
 
         public IEnumerable<AddressInfo> Addresses { get; set; }
         public bool HasTokens { get; set; }
@@ -130,6 +133,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     Balance         = a.Balance.ToString(CultureInfo.InvariantCulture),
                     CopyToClipboard = CopyToClipboard,
                     OpenInExplorer  = OpenInExplorer,
+                    Update          = Update,
                     ExportKey       = ExportKey
                 });
 
@@ -168,6 +172,58 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 Log.Error(e, "Open in explorer error");
             }
+        }
+
+        private async void Update(string address)
+        {
+            if (_isBalanceUpdating)
+                return;
+
+            _isBalanceUpdating = true;
+
+            _cancellation = new CancellationTokenSource();
+
+            await _dialogViewer.ShowProgressAsync(
+                title: "Address balance updating...",
+                message: "Please wait!",
+                canceled: () => { _cancellation.Cancel(); });
+
+            try
+            {
+                //await new HdWalletScanner(_app.Account)
+                //    .ScanAddressAsync(_currency.Name, address, _cancellation.Token)
+                //    .ConfigureAwait(false);
+
+                //var tezosAccount = _app.Account
+                //    .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
+
+                //var tezosTokensScanner = new TezosTokensScanner(tezosAccount);
+
+                //await tezosTokensScanner.ScanAsync(
+                //    skipUsed: false,
+                //    cancellationToken: _cancellation.Token);
+
+                //// reload balances for all tezos tokens account
+                //foreach (var currency in _app.Account.Currencies)
+                //    if (Currencies.IsTezosToken(currency.Name))
+                //        _app.Account
+                //            .GetCurrencyAccount<TezosTokenAccount>(currency.Name)
+                //            .ReloadBalances();
+
+            }
+            catch (OperationCanceledException)
+            {
+                Log.Debug("Address balance update operation canceled");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "AddressesViewModel.OnUpdateClick");
+                // todo: message to user!?
+            }
+
+            _dialogViewer.HideProgress();
+
+            _isBalanceUpdating = false;
         }
 
         private async void ExportKey(string address)

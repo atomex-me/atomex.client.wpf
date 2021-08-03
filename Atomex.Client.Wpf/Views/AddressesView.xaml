@@ -91,7 +91,7 @@
                                             Foreground="White"
                                             FontSize="12"
                                             Visibility="{Binding DataContext.HasTokens, Source={x:Reference proxyElement}, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
-                        <DataGridTemplateColumn Header="Update" Width="72" >
+                        <DataGridTemplateColumn Header="Update" Width="70" >
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <controls:IconButton
@@ -104,7 +104,7 @@
                                         Margin="7 0 0 0"
                                         Width="15"
                                         Height="15"
-                                        ToolTip="Private key export dialog"
+                                        ToolTip="Update balance"
                                         Command="{Binding UpdateCommand}"
                                         CommandParameter="{Binding Address}"
                                         Style="{StaticResource PathButtonStyle}"/>

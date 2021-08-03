@@ -69,7 +69,7 @@ namespace Atomex.Client.Wpf.ViewModels
                         .GroupBy(w => w.Address)
                         .Select(g =>
                         {
-                            // xtz address
+                            // main address
                             var address = g.FirstOrDefault(w => w.Currency == _currency.Name);
 
                             var isFreeAddress = address.Address == freeAddress.Address;

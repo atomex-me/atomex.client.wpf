@@ -460,7 +460,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             _cancellation = new CancellationTokenSource();
 
-            _dialogViewer.ShowProgress(
+            await _dialogViewer.ShowProgressAsync(
                 title: "Tokens balance updating...",
                 message: "Please wait!",
                 canceled: () => { _cancellation.Cancel(); });
