@@ -198,6 +198,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 OnPropertyChanged(nameof(TokenContractAddress));
                 OnPropertyChanged(nameof(TokenContractName));
                 OnPropertyChanged(nameof(TokenContractIconUrl));
+                OnPropertyChanged(nameof(IsConvertable));
 
                 TokenContractChanged(TokenContract);
             }
@@ -209,6 +210,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         public string TokenContractAddress => TokenContract?.Contract?.Address ?? "";
         public string TokenContractName => TokenContract?.Contract?.Name ?? "";
         public string TokenContractIconUrl => TokenContract?.IconUrl;
+        public bool IsConvertable => _app.Account.Currencies
+            .Any(c => c is Fa12Config fa12 && fa12.TokenContractAddress == TokenContractAddress);
 
         public string Header => "Tezos Tokens";
 
@@ -431,6 +434,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         private ICommand _receiveCommand;
         public ICommand ReceiveCommand => _receiveCommand ??= new Command(OnReceiveClick);
 
+        private ICommand _convertCommand;
+        public ICommand ConvertCommand => _convertCommand ??= new Command(OnConvertClick);
+
         private ICommand _updateCommand;
         public ICommand UpdateCommand => _updateCommand ??= new Command(OnUpdateClick);
 
@@ -449,6 +455,13 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 tokenContract: TokenContract?.Contract?.Address);
 
             _dialogViewer.ShowDialog(Dialogs.Receive, receiveViewModel);
+        }
+
+        private void OnConvertClick()
+        {
+            _menuSelector.SelectMenu(WalletViewModel.ConversionViewIndex);
+            _conversionViewModel.FromCurrency = _app.Account.Currencies
+                .FirstOrDefault(c => c is Fa12Config fa12 && fa12.TokenContractAddress == TokenContractAddress);
         }
 
         protected async void OnUpdateClick()

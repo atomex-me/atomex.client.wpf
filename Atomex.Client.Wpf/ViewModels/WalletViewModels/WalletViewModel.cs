@@ -29,7 +29,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
     public class WalletViewModel : BaseViewModel, IWalletViewModel
     {
-        private const int ConversionViewIndex = 2;
+        public const int ConversionViewIndex = 2;
 
         private ObservableCollection<TransactionViewModel> _transactions;
         public ObservableCollection<TransactionViewModel> Transactions

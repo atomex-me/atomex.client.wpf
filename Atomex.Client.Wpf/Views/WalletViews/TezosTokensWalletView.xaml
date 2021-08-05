@@ -184,28 +184,27 @@
                             Grid.ColumnSpan="5">
                     <controls:RoundedButton 
                         Content="Send"
-                        Margin="0 0 2 0"
                         Command="{Binding SendCommand}"
                         Style="{StaticResource WalletMenuButton}"/>
                     <controls:RoundedButton
                         Content="Receive"
-                        Margin="2 0 2 0"
+                        Margin="3 0 0 0"
                         Command="{Binding ReceiveCommand}"
                         Style="{StaticResource WalletMenuButton}"/>
                     <controls:RoundedButton
                         Content="Convert"
-                        Margin="1 0 1 0"
+                        Margin="3 0 0 0"
                         Command="{Binding ConvertCommand}"
-                        IsEnabled="{Binding Currency.IsSwapAvailable}"
-                        Style="{StaticResource WalletMenuButton}"/>
+                        Style="{StaticResource WalletMenuButton}"
+                        Visibility="{Binding IsConvertable, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
                     <controls:RoundedButton
                         Content="Update"
-                        Margin="2 0 1 0"
+                        Margin="3 0 0 0"
                         Command="{Binding UpdateCommand}"
                         Style="{StaticResource WalletMenuButton}"/>
                     <controls:RoundedButton
                         Content="Addresses"
-                        Margin="2 0 0 0"
+                        Margin="3 0 0 0"
                         Command="{Binding AddressesCommand}"
                         Style="{StaticResource WalletMenuButton}"/>
                 </StackPanel>

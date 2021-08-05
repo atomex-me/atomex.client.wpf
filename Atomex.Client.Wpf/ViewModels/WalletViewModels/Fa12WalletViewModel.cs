@@ -42,10 +42,10 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             set { _currencyViewModel = value; OnPropertyChanged(nameof(CurrencyViewModel)); }
         }
 
-        protected IAtomexApp App { get; }
-        protected IDialogViewer DialogViewer { get; }
-        private IMenuSelector MenuSelector { get; }
-        private IConversionViewModel ConversionViewModel { get; }
+        protected IAtomexApp _app;
+        protected IDialogViewer _dialogViewer;
+        private IMenuSelector _menuSelector;
+        private IConversionViewModel _conversionViewModel;
 
         public string Header => CurrencyViewModel.Header;
         public Fa12Config Currency => CurrencyViewModel.Currency as Fa12Config;
@@ -96,10 +96,10 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             IConversionViewModel conversionViewModel,
             CurrencyConfig currency)
         {
-            App                 = app ?? throw new ArgumentNullException(nameof(app));
-            DialogViewer        = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
-            MenuSelector        = menuSelector ?? throw new ArgumentNullException(nameof(menuSelector));
-            ConversionViewModel = conversionViewModel ?? throw new ArgumentNullException(nameof(conversionViewModel));
+            _app                 = app ?? throw new ArgumentNullException(nameof(app));
+            _dialogViewer        = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+            _menuSelector        = menuSelector ?? throw new ArgumentNullException(nameof(menuSelector));
+            _conversionViewModel = conversionViewModel ?? throw new ArgumentNullException(nameof(conversionViewModel));
 
             CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currency);
 
@@ -111,7 +111,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         private void SubscribeToServices()
         {
-            App.Account.BalanceUpdated += OnBalanceUpdatedEventHandler;
+            _app.Account.BalanceUpdated += OnBalanceUpdatedEventHandler;
         }
 
         protected virtual async void OnBalanceUpdatedEventHandler(object sender, CurrencyEventArgs args)
@@ -136,10 +136,10 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             try
             {
-                if (App.Account == null)
+                if (_app.Account == null)
                     return;
 
-                var transactions = (await App.Account
+                var transactions = (await _app.Account
                     .GetCurrencyAccount<Fa12Account>(Currency.Name)
                     .DataRepository
                     .GetTezosTokenTransfersAsync(Currency.TokenContractAddress)
@@ -188,24 +188,24 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         private void OnSendClick()
         {
-            var sendViewModel = SendViewModelCreator.CreateViewModel(App, DialogViewer, Currency);
+            var sendViewModel = SendViewModelCreator.CreateViewModel(_app, _dialogViewer, Currency);
             var sendPageId = SendViewModelCreator.GetSendPageId(Currency);
 
-            DialogViewer.ShowDialog(Dialogs.Send, sendViewModel, defaultPageId: sendPageId);
+            _dialogViewer.ShowDialog(Dialogs.Send, sendViewModel, defaultPageId: sendPageId);
         }
 
         private void OnReceiveClick()
         {
-            var tezosConfig = App.Account.Currencies.GetByName(TezosConfig.Xtz);
-            var receiveViewModel = new ReceiveViewModel(App, tezosConfig, Currency.TokenContractAddress);
+            var tezosConfig = _app.Account.Currencies.GetByName(TezosConfig.Xtz);
+            var receiveViewModel = new ReceiveViewModel(_app, tezosConfig, Currency.TokenContractAddress);
 
-            DialogViewer.ShowDialog(Dialogs.Receive, receiveViewModel);
+            _dialogViewer.ShowDialog(Dialogs.Receive, receiveViewModel);
         }
 
         private void OnConvertClick()
         {
-            MenuSelector.SelectMenu(ConversionViewIndex);
-            ConversionViewModel.FromCurrency = Currency;
+            _menuSelector.SelectMenu(ConversionViewIndex);
+            _conversionViewModel.FromCurrency = Currency;
         }
 
         protected async void OnUpdateClick()
@@ -219,7 +219,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             try
             {
-                await App.Account
+                await _app.Account
                     .GetCurrencyAccount<Fa12Account>(Currency.Name)
                     .UpdateBalanceAsync(Cancellation.Token);
             }
@@ -238,9 +238,19 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         private void OnAddressesClick()
         {
-            DialogViewer.ShowDialog(
+            var tezosConfig = _app.Account
+                .Currencies
+                .Get<TezosConfig>(TezosConfig.Xtz);
+
+            var addressesViewModel = new AddressesViewModel(
+                app: _app,
+                dialogViewer: _dialogViewer,
+                currency: tezosConfig,
+                tokenContract: Currency.TokenContractAddress);
+
+            _dialogViewer.ShowDialog(
                 dialogId: Dialogs.Addresses,
-                dataContext: new AddressesViewModel(App, DialogViewer, Currency));
+                dataContext: addressesViewModel);
         }
 
         protected virtual void DesignerMode()

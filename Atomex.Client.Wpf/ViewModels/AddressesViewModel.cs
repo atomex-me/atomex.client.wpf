@@ -63,6 +63,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private CurrencyConfig _currency;
         private bool _isBalanceUpdating;
         private CancellationTokenSource _cancellation;
+        private string _tokenContract;
 
         public IEnumerable<AddressInfo> Addresses { get; set; }
         public bool HasTokens { get; set; }
@@ -93,14 +94,15 @@ namespace Atomex.Client.Wpf.ViewModels
             CurrencyConfig currency,
             string tokenContract = null)
         {
-            _app = app ?? throw new ArgumentNullException(nameof(app));
-            _dialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
-            _currency = currency ?? throw new ArgumentNullException(nameof(currency));
+            _app           = app ?? throw new ArgumentNullException(nameof(app));
+            _dialogViewer  = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+            _currency      = currency ?? throw new ArgumentNullException(nameof(currency));
+            _tokenContract = tokenContract;
 
-            Load();
+            RealodAddresses();
         }
 
-        public async void Load()
+        public async void RealodAddresses()
         {
             try
             {
@@ -190,25 +192,27 @@ namespace Atomex.Client.Wpf.ViewModels
 
             try
             {
-                //await new HdWalletScanner(_app.Account)
-                //    .ScanAddressAsync(_currency.Name, address, _cancellation.Token)
-                //    .ConfigureAwait(false);
+                await new HdWalletScanner(_app.Account)
+                    .ScanAddressAsync(_currency.Name, address, _cancellation.Token);
 
-                //var tezosAccount = _app.Account
-                //    .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
+                if (_currency.Name == TezosConfig.Xtz && _tokenContract != null)
+                {
+                    // update tezos token balance
+                    var tezosAccount = _app.Account
+                        .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
 
-                //var tezosTokensScanner = new TezosTokensScanner(tezosAccount);
+                    await new TezosTokensScanner(tezosAccount)
+                        .ScanContractAsync(address, _tokenContract);
 
-                //await tezosTokensScanner.ScanAsync(
-                //    skipUsed: false,
-                //    cancellationToken: _cancellation.Token);
+                    // reload balances for all tezos tokens account
+                    foreach (var currency in _app.Account.Currencies)
+                        if (Currencies.IsTezosToken(currency.Name))
+                            _app.Account
+                                .GetCurrencyAccount<TezosTokenAccount>(currency.Name)
+                                .ReloadBalances();
+                }
 
-                //// reload balances for all tezos tokens account
-                //foreach (var currency in _app.Account.Currencies)
-                //    if (Currencies.IsTezosToken(currency.Name))
-                //        _app.Account
-                //            .GetCurrencyAccount<TezosTokenAccount>(currency.Name)
-                //            .ReloadBalances();
+                RealodAddresses();
 
             }
             catch (OperationCanceledException)
