@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;

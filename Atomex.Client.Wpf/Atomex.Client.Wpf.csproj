@@ -480,6 +480,9 @@
     <Compile Include="Views\SendViews\BitcoinBasedSendPage.xaml.cs">
       <DependentUpon>BitcoinBasedSendPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SendViews\TezosTokensSendPage.xaml.cs">
+      <DependentUpon>TezosTokensSendPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SendViews\SendPage.xaml.cs">
       <DependentUpon>SendPage.xaml</DependentUpon>
     </Compile>
@@ -671,6 +674,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SendViews\BitcoinBasedSendPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SendViews\TezosTokensSendPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
