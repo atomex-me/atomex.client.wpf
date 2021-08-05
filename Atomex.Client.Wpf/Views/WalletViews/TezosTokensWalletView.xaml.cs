@@ -67,5 +67,22 @@ namespace Atomex.Client.Wpf.Views.WalletViews
                 Console.WriteLine("Can download new data");
             }
         }
+
+        private void TokensSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            foreach (var addedItem in e.AddedItems)
+                if (addedItem is IExpandable expandableItem)
+                    expandableItem.IsExpanded = true;
+
+            foreach (var removedItem in e.RemovedItems)
+                if (removedItem is IExpandable expandableItem)
+                    expandableItem.IsExpanded = false;
+        }
+
+        private void TokenPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (tokensListBox.SelectedItem is IExpandable expandableItem)
+                expandableItem.IsExpanded = !expandableItem.IsExpanded;
+        }
     }
 }

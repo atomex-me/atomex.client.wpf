@@ -30,12 +30,22 @@ using Atomex.TezosTokens;
 
 namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
-    public class TezosTokenViewModel : BaseViewModel
+    public class TezosTokenViewModel : BaseViewModel, IExpandable
     {
         private bool _isPreviewDownloading = false;
 
         public TokenBalance TokenBalance { get; set; }
         public string Address { get; set; }
+
+        private bool _isExpanded;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set
+            {
+                _isExpanded = value; OnPropertyChanged(nameof(IsExpanded));
+            }
+        }
 
         public BitmapImage TokenPreview
         {
@@ -396,11 +406,11 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     .GetBalance()
                     .Available;
 
-                BalanceFormat = tokenAddress?.TokenBalance != null
+                BalanceFormat = tokenAddress?.TokenBalance != null && tokenAddress.TokenBalance.Decimals != 0
                     ? $"F{Math.Min(tokenAddress.TokenBalance.Decimals, MaxAmountDecimals)}"
                     : $"F{MaxAmountDecimals}";
 
-                BalanceCurrencyCode = tokenAddress?.TokenBalance != null
+                BalanceCurrencyCode = tokenAddress?.TokenBalance != null && tokenAddress.TokenBalance.Symbol != null
                     ? tokenAddress.TokenBalance.Symbol
                     : tezosTokenConfig?.Name ?? "";
 

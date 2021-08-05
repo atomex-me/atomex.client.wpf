@@ -237,11 +237,13 @@
                     </Style>
                 </TabItem.Style>
 
-                <ListBox Background="{DynamicResource DefaultSubstrateBrush}"
+                <ListBox x:Name="tokensListBox"
+                         Background="{DynamicResource DefaultSubstrateBrush}"
                          AlternationCount="2"
                          Margin="-2"
                          ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                          ScrollViewer.ScrollChanged="TokensScrollChanged"
+                         SelectionChanged="TokensSelectionChanged"
                          ItemsSource="{Binding Tokens}">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="{x:Type ListBoxItem}">
@@ -263,7 +265,7 @@
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type walletViewModels:TezosTokenViewModel}">
-                            <Grid Height="60">
+                            <Grid MouseDown="TokenPreviewMouseDown" Background="Transparent">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="60"/>
                                     <ColumnDefinition Width="*"/>
@@ -284,9 +286,10 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="11"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="19"/>
+                                    <RowDefinition Height="19"/>
                                     <RowDefinition Height="11"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <Ellipse Margin="2"
@@ -359,6 +362,13 @@
                                                      Visibility="{Binding IsIpfsAsset, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"
                                                      ToolTip="{Binding AssetUrl}"
                                                      Style="{StaticResource PathButtonStyle}"/>
+
+                                <Border Background="Red"
+                                        Height="50"
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="5"
+                                        Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
