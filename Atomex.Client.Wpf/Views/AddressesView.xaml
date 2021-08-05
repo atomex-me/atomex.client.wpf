@@ -84,13 +84,31 @@
                                             Binding="{Binding Balance}"
                                             Width="Auto"
                                             Foreground="Gold"
-                                            FontSize="12"/>
+                                            FontSize="12">
+                            <DataGridTextColumn.CellStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.HorizontalAlignment"
+                                            Value="Right"/>
+                                    <Setter Property="FrameworkElement.VerticalAlignment"
+                                            Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
                         <DataGridTextColumn Header="Token Balance"
                                             Binding="{Binding TokenBalance}"
                                             Width="Auto"
                                             Foreground="White"
                                             FontSize="12"
-                                            Visibility="{Binding DataContext.HasTokens, Source={x:Reference proxyElement}, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                                            Visibility="{Binding DataContext.HasTokens, Source={x:Reference proxyElement}, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.HorizontalAlignment"
+                                            Value="Right"/>
+                                    <Setter Property="FrameworkElement.VerticalAlignment"
+                                            Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
                         <DataGridTemplateColumn Header="Update" Width="70" >
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

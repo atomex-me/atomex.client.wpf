@@ -14,9 +14,9 @@ using Atomex.Core;
 using Atomex.Common;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
-using Atomex.TezosTokens;
 using Atomex.Wallet;
 using Atomex.Wallet.Tezos;
+using System.Collections.ObjectModel;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -25,7 +25,9 @@ namespace Atomex.Client.Wpf.ViewModels
         public string Address { get; set; }
         public string Path { get; set; }
         public string Balance { get; set; }
+        //public string CurrencyCode { get; set; }
         public string TokenBalance { get; set; }
+        //public string TokenCode { get; set; }
         public Action<string> CopyToClipboard { get; set; }
         public Action<string> OpenInExplorer { get; set; }
         public Action<string> Update { get; set; }
@@ -65,7 +67,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private CancellationTokenSource _cancellation;
         private string _tokenContract;
 
-        public IEnumerable<AddressInfo> Addresses { get; set; }
+        public ObservableCollection<AddressInfo> Addresses { get; set; }
         public bool HasTokens { get; set; }
 
         private string _warning;
@@ -109,15 +111,9 @@ namespace Atomex.Client.Wpf.ViewModels
                 var account = _app.Account
                     .GetCurrencyAccount(_currency.Name);
 
-                var addresses = (_currency switch
-                {
-                    Fa12Config fa12Config => await (account as Fa12Account).DataRepository
-                        .GetTezosTokenAddressesByContractAsync(fa12Config.TokenContractAddress),
-
-                    _ => await account
-                        .GetAddressesAsync()
-
-                }).ToList();
+                var addresses = (await account
+                    .GetAddressesAsync())
+                    .ToList();
 
                 addresses.Sort((a1, a2) =>
                 {
@@ -128,22 +124,62 @@ namespace Atomex.Client.Wpf.ViewModels
                         : chainResult;
                 });
 
-                Addresses = addresses.Select(a => new AddressInfo
+                Addresses = new ObservableCollection<AddressInfo>(
+                    addresses.Select(a => new AddressInfo
+                    {
+                        Address         = a.Address,
+                        Path            = $"m/44'/{_currency.Bip44Code}/0'/{a.KeyIndex.Chain}/{a.KeyIndex.Index}",
+                        Balance         = $"{a.Balance.ToString(CultureInfo.InvariantCulture)} {_currency.Name}",
+                        CopyToClipboard = CopyToClipboard,
+                        OpenInExplorer  = OpenInExplorer,
+                        Update          = Update,
+                        ExportKey       = ExportKey
+                    }));
+
+                // token balances
+                if (_currency.Name == TezosConfig.Xtz && _tokenContract != null)
                 {
-                    Address         = a.Address,
-                    Path            = $"m/44'/{_currency.Bip44Code}/0'/{a.KeyIndex.Chain}/{a.KeyIndex.Index}",
-                    Balance         = a.Balance.ToString(CultureInfo.InvariantCulture),
-                    CopyToClipboard = CopyToClipboard,
-                    OpenInExplorer  = OpenInExplorer,
-                    Update          = Update,
-                    ExportKey       = ExportKey
-                });
+                    HasTokens = true;
+
+                    var tezosAccount = account as TezosAccount;
+
+                    var addressesWithTokens = (await tezosAccount
+                        .DataRepository
+                        .GetTezosTokenAddressesByContractAsync(_tokenContract))
+                        .Where(w => w.Balance != 0)
+                        .GroupBy(w => w.Address);
+                        
+                    foreach (var addressWithTokens in addressesWithTokens)
+                    {
+                        var addressInfo = Addresses.FirstOrDefault(a => a.Address == addressWithTokens.Key);
+
+                        if (addressInfo == null)
+                            continue;
+
+                        if (addressWithTokens.Count() == 1)
+                        {
+                            var tokenAddress = addressWithTokens.First();
+
+                            addressInfo.TokenBalance = tokenAddress.Balance.ToString("F8", CultureInfo.InvariantCulture);
+
+                            var tokenCode = tokenAddress?.TokenBalance?.Symbol;
+
+                            if (tokenCode != null)
+                                addressInfo.TokenBalance += $" {tokenCode}";
+                        }
+                        else
+                        {
+                            addressInfo.TokenBalance = $"{addressWithTokens.Count()} TOKENS";
+                        }
+                    }
+                }
 
                 OnPropertyChanged(nameof(Addresses));
+                OnPropertyChanged(nameof(HasTokens));
             }
             catch (Exception e)
             {
-                Log.Error(e, "Error while load addresses.");
+                Log.Error(e, "Error while reload addresses list.");
             }
         }
 
@@ -268,7 +304,7 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             _currency = DesignTime.Currencies.First();
 
-            Addresses = new List<AddressInfo>
+            Addresses = new ObservableCollection<AddressInfo>(new List<AddressInfo>
             {
                 new AddressInfo
                 {
@@ -288,7 +324,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     Path    = "m/44'/0'/0'/0/0",
                     Balance = 16.0000001.ToString(CultureInfo.InvariantCulture),
                 }
-            };
+            });
         }
     }
 }
