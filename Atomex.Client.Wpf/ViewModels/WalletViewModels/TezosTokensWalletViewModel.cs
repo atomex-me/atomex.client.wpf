@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Runtime.Caching;
 using System.Net;
 using System.Windows;
 using System.Windows.Media;
@@ -23,11 +22,11 @@ using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
+using Atomex.Client.Wpf.ViewModels.SendViewModels;
 using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 using Atomex.Wallet;
 using Atomex.Wallet.Tezos;
 using Atomex.TezosTokens;
-using Atomex.Client.Wpf.ViewModels.SendViewModels;
 
 namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
@@ -47,7 +46,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
                 foreach (var url in GetTokenPreviewUrls())
                 {
-                    var previewBytesFromCache = MemoryCache.Default.Get(url) as byte[];
+                    var previewBytesFromCache = FileCache.Get(url, TimeSpan.FromHours(48));
 
                     if (previewBytesFromCache == null)
                     {
@@ -119,23 +118,23 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                         .ReadAsByteArrayAsync()
                         .ConfigureAwait(false);
 
-                    MemoryCache.Default.Set(url, previewBytes, DateTimeOffset.MaxValue);
+                    FileCache.Set(url, previewBytes);
                 }
                 else if (response.StatusCode == HttpStatusCode.BadGateway ||
                          response.StatusCode == HttpStatusCode.GatewayTimeout ||
                          response.StatusCode == HttpStatusCode.InternalServerError ||
                          response.StatusCode == HttpStatusCode.ServiceUnavailable)
                 {
-                    MemoryCache.Default.Set(url, new byte[0], DateTimeOffset.Now.AddMinutes(10));
+                    FileCache.Set(url, new byte[0]);
                 }
                 else
                 {
-                    MemoryCache.Default.Set(url, new byte[0], DateTimeOffset.MaxValue);
+                    FileCache.Set(url, new byte[0]);
                 }
             }
             catch
             {
-                MemoryCache.Default.Set(url, new byte[0], DateTimeOffset.Now.AddMinutes(10));
+                FileCache.Set(url, new byte[0]);
             }
 
             _isPreviewDownloading = false;
@@ -167,6 +166,14 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         public static bool HasIpfsPrefix(string url) =>
             url?.StartsWith("ipfs://") ?? false;
+
+        public Action<TezosTokenViewModel> SendCallback;
+
+        private ICommand _send;
+        public ICommand Send => _send ??= new Command(() =>
+        {
+            SendCallback?.Invoke(this);
+        });
     }
 
     public class TezosTokenContractViewModel : BaseViewModel
@@ -426,7 +433,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     .Select(a => new TezosTokenViewModel
                     {
                         TokenBalance = a.TokenBalance,
-                        Address      = a.Address
+                        Address      = a.Address,
+                        SendCallback = SendCallback
                     }));
             }
 
@@ -460,6 +468,21 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 from: null,
                 tokenContract: TokenContract?.Contract?.Address,
                 tokenId: 0);
+
+            _dialogViewer.ShowDialog(
+                dialogId: Dialogs.Send,
+                dataContext: sendViewModel,
+                defaultPageId: Pages.SendTezosTokens);
+        }
+
+        private void SendCallback(TezosTokenViewModel tokenViewModel)
+        {
+            var sendViewModel = new TezosTokensSendViewModel(
+                app: _app,
+                dialogViewer: _dialogViewer,
+                from: tokenViewModel.Address,
+                tokenContract: tokenViewModel.TokenBalance?.Contract,
+                tokenId: tokenViewModel.TokenBalance?.TokenId ?? 0);
 
             _dialogViewer.ShowDialog(
                 dialogId: Dialogs.Send,

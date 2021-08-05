@@ -268,7 +268,19 @@
                                     <ColumnDefinition Width="60"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition>
+                                        <ColumnDefinition.Style>
+                                            <Style TargetType="{x:Type ColumnDefinition}">
+                                                <Setter Property="Width" Value="30"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsIpfsAsset}" Value="False">
+                                                        <Setter Property="Width" Value="0"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ColumnDefinition.Style>
+                                    </ColumnDefinition>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="11"/>
@@ -323,13 +335,25 @@
                                            Grid.Row="1"
                                            Grid.RowSpan="2"/>
 
+                                <controls:IconButton Path="{DynamicResource FontAwesome.PaperPlaneSolid}"
+                                                     Width="17"
+                                                     Foreground="{DynamicResource IconButtonForegroundBrush}"
+                                                     MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
+                                                     PressedBrush="{DynamicResource IconButtonPressedBrush}"
+                                                     Command="{Binding Send}"
+                                                     Grid.Column="3"
+                                                     Grid.Row="1"
+                                                     Grid.RowSpan="2"
+                                                     ToolTip="Send token"
+                                                     Style="{StaticResource PathButtonStyle}"/>
+
                                 <controls:IconButton Path="{DynamicResource Material.FileEyeOutline}"
-                                                     Width="20"
+                                                     Width="17"
                                                      Foreground="{DynamicResource IconButtonForegroundBrush}"
                                                      MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
                                                      PressedBrush="{DynamicResource IconButtonPressedBrush}"
                                                      Command="{Binding OpenInBrowser}"
-                                                     Grid.Column="5"
+                                                     Grid.Column="4"
                                                      Grid.Row="1"
                                                      Grid.RowSpan="2"
                                                      Visibility="{Binding IsIpfsAsset, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"

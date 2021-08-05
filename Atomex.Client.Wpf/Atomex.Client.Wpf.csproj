@@ -275,7 +275,6 @@
     <Reference Include="System.Reflection.TypeExtensions, Version=4.1.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reflection.TypeExtensions.4.7.0\lib\net461\System.Reflection.TypeExtensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -342,6 +341,7 @@
     <Compile Include="Common\DecimalExtensions.cs" />
     <Compile Include="Common\DesignTime.cs" />
     <Compile Include="Common\Environment.cs" />
+    <Compile Include="Common\FileCache.cs" />
     <Compile Include="Common\Msi\MsiApi.cs" />
     <Compile Include="Common\Msi\MsiPackage.cs" />
     <Compile Include="Common\Msi\MsiProduct.cs" />
