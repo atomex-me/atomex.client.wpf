@@ -558,12 +558,12 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 .Select(c => CurrencyViewModelCreator.CreateViewModel(c, subscribeToUpdates: false))
                 .ToList();
 
-            _currency = FromCurrencies[0].Currency;
-            _to = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
-            _amount = 0.00001234m;
+            _currency     = FromCurrencies[0].Currency;
+            _to           = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
+            _amount       = 0.00001234m;
             _amountInBase = 10.23m;
-            _fee = 0.0001m;
-            _feeInBase = 8.43m;
+            _fee          = 0.0001m;
+            _feeInBase    = 8.43m;
         }
     }
 }

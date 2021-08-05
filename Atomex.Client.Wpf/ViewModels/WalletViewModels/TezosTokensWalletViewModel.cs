@@ -27,6 +27,7 @@ using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
 using Atomex.Wallet;
 using Atomex.Wallet.Tezos;
 using Atomex.TezosTokens;
+using Atomex.Client.Wpf.ViewModels.SendViewModels;
 
 namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
@@ -35,6 +36,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         private bool _isPreviewDownloading = false;
 
         public TokenBalance TokenBalance { get; set; }
+        public string Address { get; set; }
 
         public BitmapImage TokenPreview
         {
@@ -421,7 +423,11 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     .Select(t => new TezosTokenTransferViewModel(t, tezosConfig)));
 
                 Tokens = new ObservableCollection<TezosTokenViewModel>(tokenAddresses
-                    .Select(a => new TezosTokenViewModel { TokenBalance = a.TokenBalance }));
+                    .Select(a => new TezosTokenViewModel
+                    {
+                        TokenBalance = a.TokenBalance,
+                        Address      = a.Address
+                    }));
             }
 
             OnPropertyChanged(nameof(Tokens));
@@ -430,6 +436,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             SelectedTabIndex = tokenContract.IsFa2 ? 0 : 1;
             OnPropertyChanged(nameof(SelectedTabIndex));
         }
+
+        private ICommand _sendCommand;
+        public ICommand SendCommand => _sendCommand ??= new Command(OnSendClick);
 
         private ICommand _receiveCommand;
         public ICommand ReceiveCommand => _receiveCommand ??= new Command(OnReceiveClick);
@@ -442,6 +451,21 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         private ICommand _addressesCommand;
         public ICommand AddressesCommand => _addressesCommand ??= new Command(OnAddressesClick);
+
+        private void OnSendClick()
+        {
+            var sendViewModel = new TezosTokensSendViewModel(
+                app: _app,
+                dialogViewer: _dialogViewer,
+                from: null,
+                tokenContract: TokenContract?.Contract?.Address,
+                tokenId: 0);
+
+            _dialogViewer.ShowDialog(
+                dialogId: Dialogs.Send,
+                dataContext: sendViewModel,
+                defaultPageId: Pages.SendTezosTokens);
+        }
 
         private void OnReceiveClick()
         {
@@ -585,18 +609,24 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 Uri     = "https://api.better-call.dev/v1/"
             });
 
+            var address = "tz1YS2CmS5o24bDz9XNr84DSczBXuq4oGHxr";
+
             var tokensBalances = bcdApi
                 .GetTokenBalancesAsync(
-                    address: "tz1YS2CmS5o24bDz9XNr84DSczBXuq4oGHxr",
+                    address: address,
                     count: 36)
                 .WaitForResult();
 
             Tokens = new ObservableCollection<TezosTokenViewModel>(
-                tokensBalances.Value.Select(tb => new TezosTokenViewModel { TokenBalance = tb }));
+                tokensBalances.Value.Select(tb => new TezosTokenViewModel
+                {
+                    TokenBalance = tb,
+                    Address = address
+                }));
 
             var transfers = bcdApi
                 .GetTokenTransfers(
-                    address: "tz1YS2CmS5o24bDz9XNr84DSczBXuq4oGHxr",
+                    address: address,
                     contract: "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton")
                 .WaitForResult()
                 .Value;

@@ -12,10 +12,10 @@ using Serilog;
 
 using Atomex.Core;
 using Atomex.Client.Wpf.Common;
-using Atomex.Client.Wpf.ViewModels.Abstract;
-using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Common;
 using Atomex.Wallet.Abstract;
+using Atomex.Client.Wpf.ViewModels.Abstract;
+using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -25,15 +25,8 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private readonly IAtomexApp _app;
 
-        private List<CurrencyViewModel> _fromCurrencies;
-        public List<CurrencyViewModel> FromCurrencies
-        {
-            get => _fromCurrencies;
-            private set { _fromCurrencies = value; OnPropertyChanged(nameof(FromCurrencies)); }
-        }
-
         protected CurrencyConfig _currency;
-        public virtual CurrencyConfig Currency
+        public CurrencyConfig Currency
         {
             get => _currency;
             set
@@ -116,6 +109,7 @@ namespace Atomex.Client.Wpf.ViewModels
 #endif
             }
         }
+        public CurrencyViewModel CurrencyViewModel { get; set; }
 
         private List<WalletAddressViewModel> _fromAddressList;
         public List<WalletAddressViewModel> FromAddressList
@@ -165,19 +159,16 @@ namespace Atomex.Client.Wpf.ViewModels
 #endif
         }
 
-        public ReceiveViewModel(IAtomexApp app, CurrencyConfig currency, string tokenContract = null)
+        public ReceiveViewModel(
+            IAtomexApp app,
+            CurrencyConfig currency,
+            string tokenContract = null)
         {
             _app = app ?? throw new ArgumentNullException(nameof(app));
 
-            FromCurrencies = app.Account.Currencies
-                .Select(CurrencyViewModelCreator.CreateViewModel)
-                .ToList();
-
             TokenContract = tokenContract;
-
-            Currency = FromCurrencies
-                .FirstOrDefault(c => c.Currency.Name == currency.Name)
-                .Currency;
+            Currency = currency;
+            CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(currency);
         }
 
         private async Task CreateQrCodeAsync()
@@ -236,13 +227,8 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            FromCurrencies = DesignTime.Currencies
-                .Select(c => CurrencyViewModelCreator.CreateViewModel(c, subscribeToUpdates: false))
-                .ToList();
-
-            Currency = FromCurrencies
-                .First()
-                .Currency;
+            Currency = DesignTime.Currencies.First();
+            CurrencyViewModel = CurrencyViewModelCreator.CreateViewModel(Currency, subscribeToUpdates: false);
 
             FromAddressList = new List<WalletAddressViewModel>
             {
@@ -254,7 +240,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     CurrencyFormat   = Currency.Format,
                     CurrencyCode     = Currency.Name,
                     IsFreeAddress    = false,
-                    ShowTokenBalance        = true,
+                    ShowTokenBalance = true,
                     TokenBalance     = 100.00000000m,
                     TokenFormat      = "F8",
                     TokenCode        = "HEH"
