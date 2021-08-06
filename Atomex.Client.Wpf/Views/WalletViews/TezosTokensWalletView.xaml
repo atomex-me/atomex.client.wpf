@@ -363,12 +363,76 @@
                                                      ToolTip="{Binding AssetUrl}"
                                                      Style="{StaticResource PathButtonStyle}"/>
 
-                                <Border Background="Red"
-                                        Height="50"
-                                        Grid.Row="4"
-                                        Grid.Column="0"
-                                        Grid.ColumnSpan="5"
-                                        Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                                <Grid Height="50"
+                                      Grid.Row="4"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="5"
+                                      Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="5"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="5"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="Address:"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
+                                               Foreground="{DynamicResource TransactionDetailsLineHeaderBrush}"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="0"
+                                               Grid.Row="1"/>
+
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="10 0 0 0"
+                                                Grid.Column="1"
+                                                Grid.Row="1">
+
+                                        <Button Content="{Binding Address}"
+                                                ToolTip="{Binding AddressExplorerUri}"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding OpenAddressInExplorerCommand}"
+                                                CommandParameter="{Binding Address}"
+                                                Style="{StaticResource ExplorerLinkButton}"/>
+
+                                        <controls:IconButton HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"
+                                             Foreground="{DynamicResource IconButtonForegroundBrush}"
+                                             MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
+                                             PressedBrush="{DynamicResource IconButtonPressedBrush}"
+                                             Path="{DynamicResource Octicons.Clippy}"
+                                             Margin="7 0 0 0"
+                                             Width="15"
+                                             Height="15"
+                                             ToolTip="Copy address to clipboard"
+                                             Command="{Binding CopyAddressCommand}"
+                                             CommandParameter="{Binding Address}"
+                                             Style="{StaticResource PathButtonStyle}"/>
+                                    </StackPanel>
+
+                                    <TextBlock Text="Token Id:"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
+                                               Foreground="{DynamicResource TransactionDetailsLineHeaderBrush}"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="0"
+                                               Grid.Row="2"/>
+
+                                    <TextBlock Text="{Binding TokenBalance.TokenId}"
+                                               Margin="10 0 0 0"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
+                                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="1"
+                                               Grid.Row="2"/>
+
+                                </Grid>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

@@ -24,15 +24,16 @@ using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Client.Wpf.ViewModels.SendViewModels;
 using Atomex.Client.Wpf.ViewModels.TransactionViewModels;
+using Atomex.TezosTokens;
 using Atomex.Wallet;
 using Atomex.Wallet.Tezos;
-using Atomex.TezosTokens;
 
 namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
     public class TezosTokenViewModel : BaseViewModel, IExpandable
     {
         private bool _isPreviewDownloading = false;
+        public TezosConfig TezosConfig { get; set; }
 
         public TokenBalance TokenBalance { get; set; }
         public string Address { get; set; }
@@ -183,6 +184,35 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         public ICommand Send => _send ??= new Command(() =>
         {
             SendCallback?.Invoke(this);
+        });
+
+        public string AddressExplorerUri => TezosConfig != null
+            ? $"{TezosConfig.AddressExplorerUri}{Address}"
+            : "";
+
+        private ICommand _openAddressInExplorerCommand;
+        public ICommand OpenAddressInExplorerCommand => _openAddressInExplorerCommand ??= new RelayCommand<string>((address) =>
+        {
+            if (TezosConfig == null)
+                return;
+
+            if (Uri.TryCreate($"{TezosConfig.AddressExplorerUri}{address}", UriKind.Absolute, out var uri))
+                Process.Start(uri.ToString());
+            else
+                Log.Error("Invalid uri for address explorer");
+        });
+
+        private ICommand _copyAddressCommand;
+        public ICommand CopyAddressCommand => _copyAddressCommand ??= new RelayCommand<string>((s) =>
+        {
+            try
+            {
+                Clipboard.SetText(s);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Copy to clipboard error");
+            }
         });
     }
 
@@ -442,6 +472,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 Tokens = new ObservableCollection<TezosTokenViewModel>(tokenAddresses
                     .Select(a => new TezosTokenViewModel
                     {
+                        TezosConfig  = tezosConfig,
                         TokenBalance = a.TokenBalance,
                         Address      = a.Address,
                         SendCallback = SendCallback
