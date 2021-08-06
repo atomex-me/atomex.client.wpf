@@ -9,6 +9,8 @@ using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.WalletViewModels;
+using Atomex.Wallet.Tezos;
+using Helpers;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
@@ -21,6 +23,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public TezosTokenViewModel Token { get; set; }
         public ObservableCollection<string> FromAddresses { get; set; }
         public string From { get; set; }
+        public string FromBalance { get; set; }
         public string TokenContract { get; set; }
         public decimal TokenId { get; set; }
         public string To { get; set; }
@@ -43,6 +46,15 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             _app = app ?? throw new ArgumentNullException(nameof(app));
             _dialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
+            var tezosAccount = _app.Account
+                .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
+
+            var tezosAddresses = tezosAccount
+                .GetAddressesAsync()
+                .WaitForResult()
+                .Select(w => w.Address);
+
+            FromAddresses = new ObservableCollection<string>(tezosAddresses);
             From          = from;
             TokenContract = tokenContract;
             TokenId       = tokenId;
