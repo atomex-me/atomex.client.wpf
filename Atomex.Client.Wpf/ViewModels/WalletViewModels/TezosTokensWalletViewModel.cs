@@ -504,7 +504,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 Transfers = new ObservableCollection<TezosTokenTransferViewModel>((await tokenAccount
                     .DataRepository
                     .GetTezosTokenTransfersAsync(tokenContract.Contract.Address))
-                    .Select(t => new TezosTokenTransferViewModel(t, tezosConfig)));
+                    .Select(t => new TezosTokenTransferViewModel(t, tezosConfig))
+                    .ToList()
+                    .SortList((t1, t2) => t2.Time.CompareTo(t1.Time)));
 
                 Tokens = new ObservableCollection<TezosTokenViewModel>();
             }
@@ -520,7 +522,9 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 Transfers = new ObservableCollection<TezosTokenTransferViewModel>((await tezosAccount
                     .DataRepository
                     .GetTezosTokenTransfersAsync(tokenContract.Contract.Address))
-                    .Select(t => new TezosTokenTransferViewModel(t, tezosConfig)));
+                    .Select(t => new TezosTokenTransferViewModel(t, tezosConfig))
+                    .ToList()
+                    .SortList((t1, t2) => t2.Time.CompareTo(t1.Time)));
 
                 Tokens = new ObservableCollection<TezosTokenViewModel>(tokenAddresses
                     .Where(a => a.Balance != 0)

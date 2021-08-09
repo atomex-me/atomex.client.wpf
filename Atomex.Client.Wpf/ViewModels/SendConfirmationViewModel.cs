@@ -10,6 +10,8 @@ using Atomex.Core;
 using Atomex.Wallet.Abstract;
 using Atomex.Wallet.Tezos;
 using Atomex.Client.Wpf.ViewModels.SendViewModels;
+using System.Linq;
+using Atomex.TezosTokens;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -82,8 +84,12 @@ namespace Atomex.Client.Wpf.ViewModels
 
                     if (tokenAddress.Currency == "FA12")
                     {
+                        var currencyName = App.AtomexApp.Account.Currencies
+                            .FirstOrDefault(c => c is Fa12Config fa12 && fa12.TokenContractAddress == TokenContract)
+                            ?.Name ?? "FA12";
+
                         var tokenAccount = App.AtomexApp.Account
-                            .GetTezosTokenAccount<Fa12Account>("FA12", TokenContract, TokenId);
+                            .GetTezosTokenAccount<Fa12Account>(currencyName, TokenContract, TokenId);
 
                         error = await tokenAccount
                             .SendAsync(new WalletAddress[] { tokenAddress }, To, Amount, Fee, FeePrice, UseDeafultFee);

@@ -114,6 +114,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         private void SubscribeToServices()
         {
             App.Account.BalanceUpdated += OnBalanceUpdatedEventHandler;
+            App.Account.UnconfirmedTransactionAdded += OnUnconfirmedTransactionAdded;
         }
 
         protected virtual async void OnBalanceUpdatedEventHandler(object sender, CurrencyEventArgs args)
@@ -129,6 +130,22 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             catch (Exception e)
             {
                 Log.Error(e, "Account balance updated event handler error");
+            }
+        }
+
+        private async void OnUnconfirmedTransactionAdded(object sender, TransactionEventArgs args)
+        {
+            try
+            {
+                if (Currency.Name == args.Transaction.Currency)
+                {
+                    // update transactions list
+                    await LoadTransactionsAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Account unconfirmed transaction added event handler error");
             }
         }
 
