@@ -139,7 +139,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="10"/>
                                     </Grid.ColumnDefinitions>
-                                    
+
                                     <StackPanel Orientation="Horizontal"
                                                 Grid.Row="0"
                                                 Grid.RowSpan="4"
@@ -220,10 +220,8 @@
                                             VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Grid>
-
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-                        
                     </ComboBox>
 
                     <controls:IconButton 

@@ -62,10 +62,10 @@ namespace Atomex.Client.Wpf.Views.WalletViews
 
         private void TokensScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (e.VerticalOffset + e.ViewportHeight == e.ExtentHeight)
-            {
-                Console.WriteLine("Can download new data");
-            }
+            //if (e.VerticalOffset + e.ViewportHeight == e.ExtentHeight)
+            //{
+            //    Console.WriteLine($"VerticalOffset: {e.VerticalOffset}, ViewportHeight: {e.ViewportHeight}, ExtentHeight: {e.ExtentHeight}");
+            //}
         }
 
         private void TokensSelectionChanged(object sender, SelectionChangedEventArgs e)

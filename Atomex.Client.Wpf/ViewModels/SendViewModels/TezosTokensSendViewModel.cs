@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-using Helpers;
-
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.WalletViewModels;
 using Atomex.Client.Wpf.Properties;
 using Atomex.Core;
+using Atomex.Common;
 using Atomex.MarketData.Abstract;
 using Atomex.Wallet.Tezos;
 using Atomex.Wallet.Abstract;
@@ -31,7 +31,17 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
         public ObservableCollection<TezosTokenViewModel> Tokens { get; set; }
         public TezosTokenViewModel Token { get; set; }
-        public ObservableCollection<string> FromAddresses { get; set; }
+
+        private ObservableCollection<WalletAddressViewModel> _fromAddresses;
+        public ObservableCollection<WalletAddressViewModel> FromAddresses
+        {
+            get => _fromAddresses;
+            set
+            {
+                _fromAddresses = value;
+                OnPropertyChanged(nameof(FromAddresses));
+            }
+        }
 
         private string _from;
         public string From
@@ -65,6 +75,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 Amount = _amount;
                 Fee = _fee;
 
+                UpdateFromAddressList(_from, _tokenContract, _tokenId);
                 UpdateCurrencyCode();
             }
         }
@@ -82,6 +93,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 Amount = _amount;
                 Fee = _fee;
 
+                UpdateFromAddressList(_from, _tokenContract, _tokenId);
                 UpdateCurrencyCode();
             }
         }
@@ -239,14 +251,6 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 .Currencies
                 .Get<TezosConfig>(TezosConfig.Xtz);
 
-            var tezosAccount = _app.Account
-                .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
-
-            var tezosAddresses = tezosAccount
-                .GetAddressesAsync()
-                .WaitForResult()
-                .Select(w => w.Address);
-
             CurrencyCode     = "";
             FeeCurrencyCode  = TezosConfig.Xtz;
             BaseCurrencyCode = DefaultBaseCurrencyCode;
@@ -255,11 +259,10 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             FeeCurrencyFormat  = tezosConfig.FeeFormat;
             BaseCurrencyFormat = DefaultBaseCurrencyFormat;
 
-            FromAddresses = new ObservableCollection<string>(tezosAddresses);
-            _from          = from;
             _tokenContract = tokenContract;
             _tokenId       = tokenId;
 
+            UpdateFromAddressList(from, tokenContract, tokenId);
             UpdateCurrencyCode();
 
             SubscribeToServices();
@@ -602,6 +605,26 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             return fa2Address;
         }
 
+        private void UpdateFromAddressList(string from, string tokenContract, decimal tokenId)
+        {
+            _fromAddresses = new ObservableCollection<WalletAddressViewModel>(GetFromAddressList(tokenContract, tokenId));
+
+            var tempFrom = from;
+
+            if (tempFrom == null)
+            {
+                var unspentAddresses = _fromAddresses.Where(w => w.AvailableBalance > 0);
+                var unspentTokenAddresses = _fromAddresses.Where(w => w.TokenBalance > 0);
+
+                tempFrom = unspentTokenAddresses.MaxByOrDefault(w => w.TokenBalance)?.Address ??
+                    unspentAddresses.MaxByOrDefault(w => w.AvailableBalance)?.Address;
+            }
+
+            OnPropertyChanged(nameof(FromAddresses));
+
+            From = tempFrom;
+        }
+
         private async void UpdateCurrencyCode()
         {
             if (TokenContract == null || From == null)
@@ -623,6 +646,57 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 CurrencyFormat = DefaultCurrencyFormat;
                 OnPropertyChanged(nameof(AmountString));
             }
+        }
+
+        private IEnumerable<WalletAddressViewModel> GetFromAddressList(string tokenContract, decimal tokenId)
+        {
+            var tezosConfig = _app.Account
+                .Currencies
+                .Get<TezosConfig>(TezosConfig.Xtz);
+
+            var tezosAccount = _app.Account
+                .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
+
+            var tezosAddresses = tezosAccount
+                .GetAddressesAsync()
+                .WaitForResult();
+
+            var tokenAddresses = tokenContract != null
+                ? tezosAccount.DataRepository
+                    .GetTezosTokenAddressesByContractAsync(tokenContract)
+                    .WaitForResult()
+                : new List<WalletAddress>();
+
+            return tezosAddresses
+                .Concat(tokenAddresses)
+                .GroupBy(w => w.Address)
+                .Select(g =>
+                {
+                    // main address
+                    var address = g.FirstOrDefault(w => w.Currency == tezosConfig.Name);
+
+                    var tokenAddress = g.FirstOrDefault(w => w.Currency != tezosConfig.Name && w.TokenBalance?.TokenId == TokenId);
+
+                    var tokenBalance = tokenAddress?.Balance ?? 0m;
+
+                    var showTokenBalance = tokenBalance != 0;
+
+                    var tokenCode = tokenAddress?.TokenBalance?.Symbol ?? "TOKENS";
+
+                    return new WalletAddressViewModel
+                    {
+                        Address          = g.Key,
+                        AvailableBalance = address?.AvailableBalance() ?? 0m,
+                        CurrencyFormat   = tezosConfig.Format,
+                        CurrencyCode     = tezosConfig.Name,
+                        IsFreeAddress    = false,
+                        ShowTokenBalance = showTokenBalance,
+                        TokenBalance     = tokenBalance,
+                        TokenFormat      = "F8",
+                        TokenCode        = tokenCode
+                    };
+                })
+                .ToList();
         }
 
         private void DesignerMode()

@@ -15,6 +15,8 @@ using System.Windows.Input;
 using System.Windows.Threading;
 
 using Serilog;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using Atomex.Blockchain.Tezos;
 using Atomex.Common;
@@ -222,6 +224,57 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         public string IconUrl => $"https://services.tzkt.io/v1/avatars/{Contract.Address}";
         public bool IsFa12 => Contract.GetContractType() == "FA12";
         public bool IsFa2 => Contract.GetContractType() == "FA2";
+
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                if (_name != null)
+                    return _name;
+
+                _ = TryGetAliasAsync();
+
+                _name = Contract.Name;
+                return _name;
+            }
+        }
+
+        private async Task TryGetAliasAsync()
+        {
+            try
+            {
+                var response = await HttpHelper.HttpClient
+                    .GetAsync($"https://api.tzkt.io/v1/accounts/{Contract.Address}")
+                    .ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                    return;
+
+                var stringResponse = await response.Content
+                    .ReadAsStringAsync()
+                    .ConfigureAwait(false);
+
+                var alias = JsonConvert.DeserializeObject<JObject>(stringResponse)
+                    ?["alias"]
+                    ?.Value<string>();
+
+                if (alias != null)
+                    _name = alias;
+
+                await Application
+                    .Current
+                    .Dispatcher
+                    .InvokeAsync(() =>
+                    {
+                        OnPropertyChanged(nameof(Name));
+                    });
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Alias getting error.");
+            }
+        }
     }
 
     public class TezosTokensWalletViewModel : BaseViewModel, IWalletViewModel
@@ -257,7 +310,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         public bool IsFa12 => TokenContract?.IsFa12 ?? false;
         public bool IsFa2 => TokenContract?.IsFa2 ?? false;
         public string TokenContractAddress => TokenContract?.Contract?.Address ?? "";
-        public string TokenContractName => TokenContract?.Contract?.Name ?? "";
+        public string TokenContractName => TokenContract?.Name ?? "";
         public string TokenContractIconUrl => TokenContract?.IconUrl;
         public bool IsConvertable => _app.Account.Currencies
             .Any(c => c is Fa12Config fa12 && fa12.TokenContractAddress == TokenContractAddress);
@@ -615,6 +668,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             _dialogViewer.ShowDialog(Dialogs.Addresses, addressesViewModel);
         }
+
         protected void DesignerMode()
         {
             TokensContracts = new ObservableCollection<TezosTokenContractViewModel>
