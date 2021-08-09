@@ -9,11 +9,12 @@ using Helpers;
 
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
-using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.WalletViewModels;
+using Atomex.Client.Wpf.Properties;
 using Atomex.Core;
 using Atomex.MarketData.Abstract;
 using Atomex.Wallet.Tezos;
+using Atomex.Wallet.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
@@ -25,10 +26,53 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public ObservableCollection<TezosTokenViewModel> Tokens { get; set; }
         public TezosTokenViewModel Token { get; set; }
         public ObservableCollection<string> FromAddresses { get; set; }
-        public string From { get; set; }
+
+        private string _from;
+        public string From
+        {
+            get => _from;
+            set
+            {
+                _from = value;
+                OnPropertyChanged(nameof(From));
+
+                Warning = string.Empty;
+                Amount = _amount;
+                Fee = _fee;
+            }
+        }
+
         public string FromBalance { get; set; }
-        public string TokenContract { get; set; }
-        public decimal TokenId { get; set; }
+
+        private string _tokenContract;
+        public string TokenContract
+        {
+            get => _tokenContract;
+            set
+            {
+                _tokenContract = value;
+                OnPropertyChanged(nameof(TokenContract));
+
+                Warning = string.Empty;
+                Amount = _amount;
+                Fee = _fee;
+            }
+        }
+
+        private decimal _tokenId;
+        public decimal TokenId
+        {
+            get => _tokenId;
+            set
+            {
+                _tokenId = value;
+                OnPropertyChanged(nameof(TokenId));
+
+                Warning = string.Empty;
+                Amount = _amount;
+                Fee = _fee;
+            }
+        }
 
         protected string _to;
         public virtual string To
@@ -115,7 +159,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 OnPropertyChanged(nameof(UseDefaultFee));
 
                 if (_useDefaultFee)
-                    Amount = _amount; // recalculate amount and fee using default fee
+                    Fee = _fee;
             }
         }
 
@@ -191,18 +235,18 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 .WaitForResult()
                 .Select(w => w.Address);
 
-            CurrencyCode     = null;
+            CurrencyCode     = null; // todo
             FeeCurrencyCode  = TezosConfig.Xtz;
             BaseCurrencyCode = "USD";
 
-            CurrencyFormat     = "F8";
+            CurrencyFormat     = "F8"; // todo
             FeeCurrencyFormat  = tezosConfig.FeeFormat;
             BaseCurrencyFormat = "$0.00";
 
             FromAddresses = new ObservableCollection<string>(tezosAddresses);
-            From          = from;
-            TokenContract = tokenContract;
-            TokenId       = tokenId;
+            _from          = from;
+            _tokenContract = tokenContract;
+            _tokenId       = tokenId;
 
             SubscribeToServices();
 
@@ -227,61 +271,100 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         protected ICommand _maxCommand;
         public ICommand MaxCommand => _maxCommand ??= new Command(OnMaxClick);
 
-        protected virtual void OnNextCommand()
+        protected async virtual void OnNextCommand()
         {
-            //if (string.IsNullOrEmpty(To))
-            //{
-            //    Warning = Resources.SvEmptyAddressError;
-            //    return;
-            //}
+            var tezosConfig = _app.Account
+                .Currencies
+                .Get<TezosConfig>(TezosConfig.Xtz);
 
-            //if (!Currency.IsValidAddress(To))
-            //{
-            //    Warning = Resources.SvInvalidAddressError;
-            //    return;
-            //}
+            if (string.IsNullOrEmpty(To))
+            {
+                Warning = Resources.SvEmptyAddressError;
+                return;
+            }
 
-            //if (Amount <= 0)
-            //{
-            //    Warning = Resources.SvAmountLessThanZeroError;
-            //    return;
-            //}
+            if (!tezosConfig.IsValidAddress(To))
+            {
+                Warning = Resources.SvInvalidAddressError;
+                return;
+            }
 
-            //if (Fee <= 0)
-            //{
-            //    Warning = Resources.SvCommissionLessThanZeroError;
-            //    return;
-            //}
+            if (Amount <= 0)
+            {
+                Warning = Resources.SvAmountLessThanZeroError;
+                return;
+            }
 
-            //var isToken = Currency.FeeCurrencyName != Currency.Name;
+            if (Fee <= 0)
+            {
+                Warning = Resources.SvCommissionLessThanZeroError;
+                return;
+            }
 
-            //var feeAmount = !isToken ? Fee : 0;
+            if (TokenContract == null || From == null)
+            {
+                Warning = "Invalid 'From' address or token contract address!";
+                return;
+            }
 
-            //if (Amount + feeAmount > CurrencyViewModel.AvailableAmount)
-            //{
-            //    Warning = Resources.SvAvailableFundsError;
-            //    return;
-            //}
+            if (!tezosConfig.IsValidAddress(TokenContract))
+            {
+                Warning = "Invalid token contract address!";
+                return;
+            }
 
-            //var confirmationViewModel = new SendConfirmationViewModel(DialogViewer, Dialogs.Send)
-            //{
-            //    Currency = Currency,
-            //    To = To,
-            //    Amount = Amount,
-            //    AmountInBase = AmountInBase,
-            //    BaseCurrencyCode = BaseCurrencyCode,
-            //    BaseCurrencyFormat = BaseCurrencyFormat,
-            //    Fee = Fee,
-            //    UseDeafultFee = UseDefaultFee,
-            //    FeeInBase = FeeInBase,
-            //    CurrencyCode = CurrencyCode,
-            //    CurrencyFormat = CurrencyFormat,
+            var fromTokenAddress = await GetTokenAddressAsync(_app.Account, From, TokenContract, TokenId);
 
-            //    FeeCurrencyCode = FeeCurrencyCode,
-            //    FeeCurrencyFormat = FeeCurrencyFormat
-            //};
+            if (fromTokenAddress == null)
+            {
+                Warning = $"Insufficient token funds on address {From}! Please update your balance!";
+                return;
+            }
 
-            //_dialogViewer.PushPage(Dialogs.Send, Pages.SendConfirmation, confirmationViewModel);
+            if (_amount > fromTokenAddress.Balance)
+            {
+                Warning = $"Insufficient token funds on address {fromTokenAddress.Address}! Please use Max button to find out how many tokens you can send!";
+                return;
+            }
+
+            var xtzAddress = await _app.Account
+                .GetAddressAsync(TezosConfig.Xtz, From);
+
+            if (xtzAddress == null)
+            {
+                Warning = $"Insufficient funds for fee. Please update your balance for address {From}!";
+                return;
+            }
+
+            if (xtzAddress.AvailableBalance() < _fee)
+            {
+                Warning = $"Insufficient funds for fee!";
+                return;
+            }
+
+            var confirmationViewModel = new SendConfirmationViewModel(_dialogViewer, Dialogs.Send)
+            {
+                Currency           = tezosConfig,
+                From               = From,
+                To                 = To,
+                Amount             = Amount,
+                AmountInBase       = AmountInBase,
+                BaseCurrencyCode   = BaseCurrencyCode,
+                BaseCurrencyFormat = BaseCurrencyFormat,
+                Fee                = Fee,
+                UseDeafultFee      = UseDefaultFee,
+                FeeInBase          = FeeInBase,
+                CurrencyCode       = CurrencyCode,
+                CurrencyFormat     = CurrencyFormat,
+
+                FeeCurrencyCode    = FeeCurrencyCode,
+                FeeCurrencyFormat  = FeeCurrencyFormat,
+
+                TokenContract      = TokenContract,
+                TokenId            = TokenId
+            };
+
+            _dialogViewer.PushPage(Dialogs.Send, Pages.SendConfirmation, confirmationViewModel);
         }
 
         protected virtual async void UpdateAmount(decimal amount)
@@ -301,11 +384,11 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     .Currencies
                     .Get<TezosConfig>(TezosConfig.Xtz);
 
-                var tezosAccount = _app.Account
-                    .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
-
                 if (TokenContract == null || From == null)
+                {
+                    Warning = "Invalid 'From' address or token contract address!";
                     return;
+                }
 
                 if (!tezosConfig.IsValidAddress(TokenContract))
                 {
@@ -313,7 +396,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     return;
                 }
 
-                var fromTokenAddress = await GetTokenAddressAsync(From, TokenContract, TokenId);
+                var fromTokenAddress = await GetTokenAddressAsync(_app.Account, From, TokenContract, TokenId);
 
                 if (fromTokenAddress == null)
                 {
@@ -337,70 +420,81 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
         protected virtual async void UpdateFee(decimal fee)
         {
-            //if (IsFeeUpdating)
-            //    return;
+            if (IsFeeUpdating)
+                return;
 
-            //IsFeeUpdating = true;
+            IsFeeUpdating = true;
 
-            //_fee = Math.Min(fee, Currency.GetMaximumFee());
+            try
+            {
+                var tezosConfig = _app.Account
+                    .Currencies
+                    .Get<TezosConfig>(TezosConfig.Xtz);
 
-            //Warning = string.Empty;
+                if (TokenContract == null || From == null)
+                {
+                    Warning = "Invalid 'From' address or token contract address!";
+                    return;
+                }
 
-            //try
-            //{
-            //    var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+                if (!tezosConfig.IsValidAddress(TokenContract))
+                {
+                    Warning = "Invalid token contract address!";
+                    return;
+                }
 
-            //    if (_amount == 0)
-            //    {
-            //        if (Currency.GetFeeAmount(_fee, defaultFeePrice) > CurrencyViewModel.AvailableAmount)
-            //            Warning = Resources.CvInsufficientFunds;
+                if (UseDefaultFee)
+                {
+                    var fromTokenAddress = await GetTokenAddressAsync(_app.Account, From, TokenContract, TokenId);
 
-            //        return;
-            //    }
+                    if (fromTokenAddress == null)
+                    {
+                        Warning = $"Insufficient token funds on address {From}! Please update your balance!";
+                        return;
+                    }
 
-            //    if (!UseDefaultFee)
-            //    {
-            //        var account = App.Account
-            //            .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
+                    var tokenAccount = _app.Account
+                        .GetTezosTokenAccount<TezosTokenAccount>(fromTokenAddress.Currency, TokenContract, TokenId);
 
-            //        var estimatedFeeAmount = _amount != 0
-            //            ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output)
-            //            : 0;
+                    var (estimatedFee, isEnougth) = await tokenAccount
+                        .EstimateTransferFeeAsync(From);
 
-            //        var (maxAmount, maxFeeAmount, _) = await account
-            //            .EstimateMaxAmountToSendAsync(
-            //                to: To,
-            //                type: BlockchainTransactionType.Output,
-            //                fee: 0,
-            //                feePrice: 0,
-            //                reserve: false);
+                    if (!isEnougth)
+                    {
+                        Warning = $"Insufficient funds for fee. Minimum {estimatedFee} XTZ is required!";
+                        return;
+                    }
 
-            //        var availableAmount = Currency is BitcoinBasedConfig
-            //            ? CurrencyViewModel.AvailableAmount
-            //            : maxAmount + maxFeeAmount;
+                    _fee = estimatedFee;
+                }
+                else
+                {
+                    var xtzAddress = await _app.Account
+                        .GetAddressAsync(TezosConfig.Xtz, From);
 
-            //        var feeAmount = Currency.GetFeeAmount(_fee, defaultFeePrice);
+                    if (xtzAddress == null)
+                    {
+                        Warning = $"Insufficient funds for fee. Please update your balance for address {From}!";
+                        return;
+                    }
 
-            //        if (_amount + feeAmount > availableAmount)
-            //        {
-            //            Warning = Resources.CvInsufficientFunds;
-            //            IsAmountUpdating = false;
-            //            return;
-            //        }
-            //        else if (estimatedFeeAmount == null || feeAmount < estimatedFeeAmount.Value)
-            //        {
-            //            Warning = Resources.CvLowFees;
-            //        }
+                    _fee = Math.Min(fee, tezosConfig.GetMaximumFee());
 
-            //        OnPropertyChanged(nameof(FeeString));
-            //    }
+                    if (xtzAddress.AvailableBalance() < _fee)
+                    {
+                        Warning = $"Insufficient funds for fee!";
+                        return;
+                    }
+                }
 
-            //    OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
-            //}
-            //finally
-            //{
-            //    IsFeeUpdating = false;
-            //}
+                OnPropertyChanged(nameof(FeeString));
+
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
+            }
+            finally
+            {
+                IsFeeUpdating = false;
+            }
         }
 
         protected virtual async void OnMaxClick()
@@ -435,7 +529,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     return;
                 }
 
-                var fromTokenAddress = await GetTokenAddressAsync(From, TokenContract, TokenId);
+                var fromTokenAddress = await GetTokenAddressAsync(_app.Account, From, TokenContract, TokenId);
 
                 if (fromTokenAddress == null)
                 {
@@ -475,12 +569,13 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             FeeInBase    = Fee * (quote?.Bid ?? 0m);
         }
 
-        private async Task<WalletAddress> GetTokenAddressAsync(
+        public static async Task<WalletAddress> GetTokenAddressAsync(
+            IAccount account,
             string address,
             string tokenContract,
             decimal tokenId)
         {
-            var tezosAccount = _app.Account
+            var tezosAccount = account
                 .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
 
             var fa12Address = await tezosAccount
