@@ -15,11 +15,17 @@ using Atomex.Core;
 using Atomex.MarketData.Abstract;
 using Atomex.Wallet.Tezos;
 using Atomex.Wallet.Abstract;
+using Atomex.TezosTokens;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
     public class TezosTokensSendViewModel : BaseViewModel 
     {
+        public const string DefaultCurrencyFormat = "F8";
+        public const string DefaultBaseCurrencyCode = "USD";
+        public const string DefaultBaseCurrencyFormat = "$0.00";
+        public const int MaxCurrencyDecimals = 9;
+
         private readonly IAtomexApp _app;
         private readonly IDialogViewer _dialogViewer;
 
@@ -39,6 +45,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 Warning = string.Empty;
                 Amount = _amount;
                 Fee = _fee;
+
+                UpdateCurrencyCode();
             }
         }
 
@@ -56,6 +64,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 Warning = string.Empty;
                 Amount = _amount;
                 Fee = _fee;
+
+                UpdateCurrencyCode();
             }
         }
 
@@ -71,6 +81,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 Warning = string.Empty;
                 Amount = _amount;
                 Fee = _fee;
+
+                UpdateCurrencyCode();
             }
         }
 
@@ -235,18 +247,20 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 .WaitForResult()
                 .Select(w => w.Address);
 
-            CurrencyCode     = null; // todo
+            CurrencyCode     = "";
             FeeCurrencyCode  = TezosConfig.Xtz;
-            BaseCurrencyCode = "USD";
+            BaseCurrencyCode = DefaultBaseCurrencyCode;
 
-            CurrencyFormat     = "F8"; // todo
+            CurrencyFormat     = DefaultCurrencyFormat;
             FeeCurrencyFormat  = tezosConfig.FeeFormat;
-            BaseCurrencyFormat = "$0.00";
+            BaseCurrencyFormat = DefaultBaseCurrencyFormat;
 
             FromAddresses = new ObservableCollection<string>(tezosAddresses);
             _from          = from;
             _tokenContract = tokenContract;
             _tokenId       = tokenId;
+
+            UpdateCurrencyCode();
 
             SubscribeToServices();
 
@@ -556,17 +570,13 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             if (!(sender is ICurrencyQuotesProvider quotesProvider))
                 return;
 
-            if (string.IsNullOrEmpty(CurrencyCode))
-            {
-                AmountInBase = 0;
-                FeeInBase    = 0;
-                return;
-            }
+            AmountInBase = !string.IsNullOrEmpty(CurrencyCode)
+                ? Amount * (quotesProvider.GetQuote(CurrencyCode, BaseCurrencyCode)?.Bid ?? 0m)
+                : 0;
 
-            var quote = quotesProvider.GetQuote(CurrencyCode, BaseCurrencyCode);
-
-            AmountInBase = Amount * (quote?.Bid ?? 0m);
-            FeeInBase    = Fee * (quote?.Bid ?? 0m);
+            FeeInBase = !string.IsNullOrEmpty(FeeCurrencyCode)
+                ? Fee * (quotesProvider.GetQuote(FeeCurrencyCode, BaseCurrencyCode)?.Bid ?? 0m)
+                : 0;
         }
 
         public static async Task<WalletAddress> GetTokenAddressAsync(
@@ -590,6 +600,29 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 .GetTezosTokenAddressAsync("FA2", tokenContract, tokenId, address);
 
             return fa2Address;
+        }
+
+        private async void UpdateCurrencyCode()
+        {
+            if (TokenContract == null || From == null)
+                return;
+
+            var tokenAddress = await GetTokenAddressAsync(_app.Account, From, TokenContract, TokenId);
+
+            if (tokenAddress?.TokenBalance?.Symbol != null)
+            {
+                CurrencyCode = tokenAddress.TokenBalance.Symbol;
+                CurrencyFormat = $"F{Math.Min(tokenAddress.TokenBalance.Decimals, MaxCurrencyDecimals)}";
+                OnPropertyChanged(nameof(AmountString));
+            }
+            else
+            {
+                CurrencyCode = _app.Account.Currencies
+                    .FirstOrDefault(c => c is Fa12Config fa12 && fa12.TokenContractAddress == TokenContract)
+                    ?.Name ?? "TOKENS";
+                CurrencyFormat = DefaultCurrencyFormat;
+                OnPropertyChanged(nameof(AmountString));
+            }
         }
 
         private void DesignerMode()

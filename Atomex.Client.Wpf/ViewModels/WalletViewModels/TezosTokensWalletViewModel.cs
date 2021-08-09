@@ -470,6 +470,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     .Select(t => new TezosTokenTransferViewModel(t, tezosConfig)));
 
                 Tokens = new ObservableCollection<TezosTokenViewModel>(tokenAddresses
+                    .Where(a => a.Balance != 0)
                     .Select(a => new TezosTokenViewModel
                     {
                         TezosConfig  = tezosConfig,
