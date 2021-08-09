@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 using CefSharp;
+using CefSharp.Wpf;
 
 namespace Atomex.Client.Wpf.Controls
 {
@@ -84,6 +85,11 @@ namespace Atomex.Client.Wpf.Controls
 
         public WebBrowserWrapper()
         {
+            var inited = Cef.Initialize(
+                settings: new CefSettings(),
+                performDependencyCheck: false,
+                browserProcessHandler: null);
+
             InitializeComponent();
 
             webBrowser.LoadingStateChanged += WebBrowserLoadingStateChanged;
