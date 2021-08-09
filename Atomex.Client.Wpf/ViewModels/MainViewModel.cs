@@ -16,11 +16,11 @@ using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Common;
 using Atomex.MarketData;
 using Atomex.MarketData.Abstract;
-using Atomex.Services;
-using Atomex.Services.Abstract;
 using Atomex.Updates;
 using Atomex.Wallet;
 using Atomex.Wallet.Abstract;
+using Atomex.Services.Abstract;
+using Atomex.Services;
 
 namespace Atomex.Client.Wpf.ViewModels
 {

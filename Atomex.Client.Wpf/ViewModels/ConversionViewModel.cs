@@ -14,7 +14,6 @@ using Atomex.Common;
 using Atomex.Core;
 using Atomex.MarketData;
 using Atomex.MarketData.Abstract;
-using Atomex.Services;
 using Atomex.Swaps;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
@@ -23,6 +22,7 @@ using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Swaps.Helpers;
 using Atomex.Wallet.Abstract;
+using Atomex.Services;
 
 namespace Atomex.Client.Wpf.ViewModels
 {

@@ -38,12 +38,13 @@ namespace Atomex.Client.Wpf
 
         private static string CurrenciesConfigurationJson
         {
-            get {
-                var coreAssembly = CoreAssembly;
-                var resourceName = "currencies.json";
+            get
+            {
+                var coreAssembly  = CoreAssembly;
+                var resourceName  = "currencies.json";
                 var resourceNames = coreAssembly.GetManifestResourceNames();
-                var fullFileName = resourceNames.FirstOrDefault(n => n.EndsWith(resourceName));
-                var stream = coreAssembly.GetManifestResourceStream(fullFileName!);
+                var fullFileName  = resourceNames.FirstOrDefault(n => n.EndsWith(resourceName));
+                var stream        = coreAssembly.GetManifestResourceStream(fullFileName!);
 
                 using StreamReader reader = new(stream!);
                 return reader.ReadToEnd();
