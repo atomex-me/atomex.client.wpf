@@ -94,7 +94,7 @@ namespace Atomex.Client.Wpf.ViewModels
                             .GetTezosTokenAccount<Fa2Account>("FA2", TokenContract, TokenId);
 
                         var decimals = tokenAddress.TokenBalance.Decimals;
-                        var amount = (int)(Amount * (decimal)Math.Pow(10, decimals));
+                        var amount = Amount * (decimal)Math.Pow(10, decimals);
                         var fee = (int)Fee.ToMicroTez();
 
                         error = await tokenAccount.SendAsync(
