@@ -96,12 +96,12 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            To = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
-            Amount = 0.00001234m;
-            AmountInBase = 10.23m;
-            Fee = 0.0001m;
-            FeePrice = 1m;
-            FeeInBase = 8.43m;
+            To            = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
+            Amount        = 0.00001234m;
+            AmountInBase  = 10.23m;
+            Fee           = 0.0001m;
+            FeePrice      = 1m;
+            FeeInBase     = 8.43m;
             UseDeafultFee = true;
         }
     }
