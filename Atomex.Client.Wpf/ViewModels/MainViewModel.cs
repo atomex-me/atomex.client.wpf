@@ -33,7 +33,6 @@ namespace Atomex.Client.Wpf.ViewModels
         public WalletsViewModel WalletsViewModel { get; set; }
         public ConversionViewModel ConversionViewModel { get; set; }
         public SettingsViewModel SettingsViewModel { get; set; }
-        public BuyWithCardViewModel BuyWithCardViewModel { get; set; }
 
         private int _selectedMenuIndex;
         public int SelectedMenuIndex
@@ -115,7 +114,6 @@ namespace Atomex.Client.Wpf.ViewModels
             ConversionViewModel  = new ConversionViewModel(AtomexApp, DialogViewer);
             WalletsViewModel     = new WalletsViewModel(AtomexApp, DialogViewer, this, ConversionViewModel);
             SettingsViewModel    = new SettingsViewModel(AtomexApp, DialogViewer);
-            BuyWithCardViewModel = new BuyWithCardViewModel(AtomexApp);
 
             InstalledVersion = App.Updater.InstalledVersion.ToString();
 
