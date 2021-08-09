@@ -21,6 +21,7 @@ using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Swaps.Helpers;
+using Atomex.Wallet.Abstract;
 using Atomex.Services;
 
 namespace Atomex.Client.Wpf.ViewModels
@@ -71,8 +72,8 @@ namespace Atomex.Client.Wpf.ViewModels
             private set { _toCurrencies = value; OnPropertyChanged(nameof(ToCurrencies)); }
         }
 
-        protected Currency _fromCurrency;
-        public virtual Currency FromCurrency
+        protected CurrencyConfig _fromCurrency;
+        public virtual CurrencyConfig FromCurrency
         {
             get => _fromCurrency;
             set
@@ -115,8 +116,8 @@ namespace Atomex.Client.Wpf.ViewModels
             }
         }
 
-        private Currency _toCurrency;
-        public Currency ToCurrency
+        private CurrencyConfig _toCurrency;
+        public CurrencyConfig ToCurrency
         {
             get => _toCurrency;
             set
@@ -516,7 +517,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            App.TerminalChanged += OnTerminalChangedEventHandler;
+            App.AtomexClientChanged += OnTerminalChangedEventHandler;
 
             if (App.HasQuotesProvider)
                 App.QuotesProvider.QuotesUpdated += OnBaseQuotesUpdatedEventHandler;
@@ -611,7 +612,8 @@ namespace Atomex.Client.Wpf.ViewModels
                 return;
 #endif
             var walletAddress = await App.Account
-                .GetRedeemAddressAsync(ToCurrency.Name);
+                .GetCurrencyAccount<ILegacyCurrencyAccount>(ToCurrency.Name)
+                .GetRedeemAddressAsync();
 
             _estimatedRedeemFee = await ToCurrency
                 .GetEstimatedRedeemFeeAsync(walletAddress, withRewardForRedeem: false);
@@ -637,9 +639,9 @@ namespace Atomex.Client.Wpf.ViewModels
             }
         }
 
-        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs args)
+        private void OnTerminalChangedEventHandler(object sender, AtomexClientChangedEventArgs args)
         {
-            var terminal = args.Terminal;
+            var terminal = args.AtomexClient;
 
             if (terminal?.Account == null)
                 return;
@@ -903,8 +905,8 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void DesignerMode()
         {
-            var btc = DesignTime.Currencies.Get<Bitcoin>("BTC");
-            var ltc = DesignTime.Currencies.Get<Litecoin>("LTC");
+            var btc = DesignTime.Currencies.Get<BitcoinConfig>("BTC");
+            var ltc = DesignTime.Currencies.Get<LitecoinConfig>("LTC");
 
             _currencyViewModels = new List<CurrencyViewModel>
             {

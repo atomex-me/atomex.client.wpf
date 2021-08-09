@@ -10,38 +10,40 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
     public static class WalletViewModelCreator
     {
-        public static WalletViewModel CreateViewModel(
+        public static IWalletViewModel CreateViewModel(
             IAtomexApp app,
             IDialogViewer dialogViewer,
             IMenuSelector menuSelector,
             IConversionViewModel conversionViewModel,
-            Currency currency)
+            CurrencyConfig currency)
         {
-            switch (currency)
+            return currency switch
             {
-                case BitcoinBasedCurrency _:
-                case ERC20 _:
-                case Ethereum _:
-                case NYX _:
-                case FA2 _:
-                case FA12 _:
-                    return new WalletViewModel(
-                        app: app,
-                        dialogViewer: dialogViewer,
-                        menuSelector: menuSelector,
-                        conversionViewModel: conversionViewModel,
-                        currency: currency);
-                case Tezos _:
-                    return new TezosWalletViewModel(
-                        app: app,
-                        dialogViewer: dialogViewer,
-                        menuSelector: menuSelector,
-                        conversionViewModel: conversionViewModel,
-                        currency: currency);
-                default:
-                    throw new NotSupportedException($"Can't create wallet view model for {currency.Name}. This currency is not supported.");
+                BitcoinBasedConfig _ or
+                Erc20Config _ or
+                EthereumConfig _ => new WalletViewModel(
+                    app: app,
+                    dialogViewer: dialogViewer,
+                    menuSelector: menuSelector,
+                    conversionViewModel: conversionViewModel,
+                    currency: currency),
 
-            }
+                Fa12Config _ => new Fa12WalletViewModel(
+                    app: app,
+                    dialogViewer: dialogViewer,
+                    menuSelector: menuSelector,
+                    conversionViewModel: conversionViewModel,
+                    currency: currency),
+
+                TezosConfig _ => new TezosWalletViewModel(
+                    app: app,
+                    dialogViewer: dialogViewer,
+                    menuSelector: menuSelector,
+                    conversionViewModel: conversionViewModel,
+                    currency: currency),
+
+                _ => throw new NotSupportedException($"Can't create wallet view model for {currency.Name}. This currency is not supported."),
+            };
         }
     }
 }

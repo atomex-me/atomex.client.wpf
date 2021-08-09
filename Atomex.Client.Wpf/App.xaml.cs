@@ -44,7 +44,7 @@ namespace Atomex.Client.Wpf
                 var resourceName  = "currencies.json";
                 var resourceNames = coreAssembly.GetManifestResourceNames();
                 var fullFileName  = resourceNames.FirstOrDefault(n => n.EndsWith(resourceName));
-                var stream = coreAssembly.GetManifestResourceStream(fullFileName!);
+                var stream        = coreAssembly.GetManifestResourceStream(fullFileName!);
 
                 using StreamReader reader = new(stream!);
                 return reader.ReadToEnd();

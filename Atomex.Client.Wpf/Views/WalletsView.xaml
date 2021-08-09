@@ -20,10 +20,20 @@
         <DataTemplate x:Key="TezosWalletTemplate">
             <walletViews:TezosWalletView/>
         </DataTemplate>
+        <DataTemplate x:Key="Fa12WalletTemplate">
+            <walletViews:Fa12WalletView/>
+        </DataTemplate>
+        <DataTemplate x:Key="TezosTokensWalletTemplate">
+            <walletViews:TezosTokensWalletView/>
+        </DataTemplate>
+
         <controls:WalletDataTemplateSelector x:Key="WalletDataTemplateSelector"
             DefaultTemplate="{StaticResource DefaultWalletTemplate}"
-            TezosTemplate="{StaticResource TezosWalletTemplate}"/>
+            TezosTemplate="{StaticResource TezosWalletTemplate}"
+            TezosTokensTemplate="{StaticResource TezosTokensWalletTemplate}"
+            Fa12Template="{StaticResource Fa12WalletTemplate}"/>
     </UserControl.Resources>
+
     <Grid>
         <TabControl Style="{StaticResource WalletTabControl}"
                     ItemsSource="{Binding Wallets}"
@@ -32,7 +42,9 @@
                     ContentTemplateSelector="{StaticResource WalletDataTemplateSelector}">
             <TabControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type walletViewModels:WalletViewModel}">
-                    <StackPanel x:Name="walletTabItem" Orientation="Vertical" Background="Transparent" >
+                    <StackPanel x:Name="walletTabItem"
+                                Orientation="Vertical"
+                                Background="Transparent" >
                         <ContentControl x:Name="ContentControl"
                                         HorizontalAlignment="Center"
                                         VerticalContentAlignment="Center"
@@ -47,7 +59,8 @@
                                     OpacityMask="{Binding OpacityMask}"/>
                         </ContentControl>
 
-                        <TextBlock x:Name="HeaderTextBlock" Text="{Binding Header}"
+                        <TextBlock x:Name="HeaderTextBlock"
+                                   Text="{Binding Header}"
                                    Foreground="{DynamicResource DefaultForegroundBrush}"
                                    FontFamily="{StaticResource AgencyFb}"
                                    FontSize="20"

@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+
+using MahApps.Metro.Controls.Dialogs;
+
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels;
 using Atomex.Client.Wpf.Views.SendViews;
-using MahApps.Metro.Controls.Dialogs;
 
 namespace Atomex.Client.Wpf.Views
 {
@@ -75,32 +78,31 @@ namespace Atomex.Client.Wpf.Views
 
             _dialogsFactory = new Dictionary<int, DialogConstructor>
             {
-                { Dialogs.Start, ShowDialogAsync<StartView> },
+                { Dialogs.Start,        ShowDialogAsync<StartView> },
                 { Dialogs.CreateWallet, ShowDialogAsync<CreateWalletView> },
-                { Dialogs.MyWallets, ShowDialogAsync<MyWalletsView> },
-                { Dialogs.Receive, ShowDialogAsync<ReceiveView> },
-                { Dialogs.Unlock, ShowDialogAsync<UnlockView> },
-                { Dialogs.Send, ShowDialogAsync<FrameView> },
-                { Dialogs.Delegate, ShowDialogAsync<FrameView> },
-                { Dialogs.Convert, ShowDialogAsync<FrameView> },
-                { Dialogs.Addresses, ShowDialogAsync<AddressesView> }
+                { Dialogs.MyWallets,    ShowDialogAsync<MyWalletsView> },
+                { Dialogs.Receive,      ShowDialogAsync<ReceiveView> },
+                { Dialogs.Unlock,       ShowDialogAsync<UnlockView> },
+                { Dialogs.Send,         ShowDialogAsync<FrameView> },
+                { Dialogs.Delegate,     ShowDialogAsync<FrameView> },
+                { Dialogs.Convert,      ShowDialogAsync<FrameView> },
+                { Dialogs.Addresses,    ShowDialogAsync<AddressesView> }
             };
 
             _pagesFactory = new Dictionary<int, PageConstructor>
             {
-                { Pages.Message, () => new MessagePage() },
-                { Pages.SendBitcoinBased, () => new BitcoinBasedSendPage() },
-                { Pages.SendEthereum, () => new EthereumSendPage() },
-                { Pages.SendTezos, () => new SendPage() },
-                { Pages.SendErc20, () => new EthereumSendPage() },
-                { Pages.SendFa12, () => new SendPage() },
-                { Pages.SendNYX, () => new SendPage() },
-                { Pages.SendFA2, () => new SendPage() },
-                { Pages.SendConfirmation, () => new SendConfirmationPage() },
-                { Pages.Sending, () => new SendingPage() },
-                { Pages.Delegate, () => new DelegatePage() },
-                { Pages.DelegateConfirmation, () => new DelegateConfirmationPage() },
-                { Pages.Delegating, () => new DelegatingPage() },
+                { Pages.Message,                () => new MessagePage() },
+                { Pages.SendBitcoinBased,       () => new BitcoinBasedSendPage() },
+                { Pages.SendEthereum,           () => new EthereumSendPage() },
+                { Pages.SendTezos,              () => new SendPage() },
+                { Pages.SendErc20,              () => new EthereumSendPage() },
+                { Pages.SendFa12,               () => new SendPage() },
+                { Pages.SendTezosTokens,        () => new TezosTokensSendPage() },
+                { Pages.SendConfirmation,       () => new SendConfirmationPage() },
+                { Pages.Sending,                () => new SendingPage() },
+                { Pages.Delegate,               () => new DelegatePage() },
+                { Pages.DelegateConfirmation,   () => new DelegateConfirmationPage() },
+                { Pages.Delegating,             () => new DelegatingPage() },
                 { Pages.ConversionConfirmation, () => new ConversionConfirmationPage() }
             };
         }
@@ -224,6 +226,34 @@ namespace Atomex.Client.Wpf.Views
                 overlayFillBehavior: ChildWindowManager.OverlayFillBehavior.FullWindow);
 
             return childView;
+        }
+
+        private ProgressDialogController _progressController;
+
+        public async Task ShowProgressAsync(
+            string title,
+            string message,
+            Action canceled = null,
+            CancellationToken cancellationToken = default)
+        {
+            _progressController = await this.ShowProgressAsync(
+                title: title,
+                message: message,
+                isCancelable: true,
+                settings: new MetroDialogSettings { CancellationToken = cancellationToken });
+
+            _progressController.Canceled += (o, e) =>
+            {
+                canceled?.Invoke();
+            };
+        }
+
+        public void HideProgress()
+        {
+            if (_progressController == null)
+                return;
+
+            _ = _progressController.CloseAsync();
         }
     }
 }

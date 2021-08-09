@@ -1,0 +1,536 @@
+﻿<UserControl x:Class="Atomex.Client.Wpf.Views.WalletViews.TezosTokensWalletView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:Atomex.Client.Wpf.Controls"
+             xmlns:walletViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.WalletViewModels"
+             xmlns:txViewModels="clr-namespace:Atomex.Client.Wpf.ViewModels.TransactionViewModels"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="600"
+             d:DesignWidth="900"
+             d:DataContext="{d:DesignInstance Type=walletViewModels:TezosTokensWalletViewModel, IsDesignTimeCreatable=True}"
+             UseLayoutRounding="True">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Background="{StaticResource DefaultSubstrateBrush}"
+                Grid.Row="0"
+                Grid.RowSpan="3"
+                Grid.Column="0">
+            <ListBox Width="300"
+                     Margin="5"
+                     ItemsSource="{Binding TokensContracts}"
+                     SelectedItem="{Binding TokenContract}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Hidden"    
+                     SelectionMode="Single"
+                     FocusVisualStyle="{x:Null}"
+                     Background="Transparent">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type walletViewModels:TezosTokenContractViewModel}">
+                        <Grid Height="60">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="11"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="11"/>
+                            </Grid.RowDefinitions>
+
+                            <Ellipse Margin="2"
+                                     Grid.Column="0"
+                                     Grid.Row="0"
+                                     Grid.RowSpan="4">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{Binding IconUrl}"
+                                                Stretch="Fill"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+
+                            <TextBlock Margin="7 0 10 0"
+                                       Text="{Binding Name}"
+                                       FontSize="16"
+                                       FontFamily="{StaticResource DefaultMediumFontFamily}"
+                                       VerticalAlignment="Center"
+                                       Grid.Column="1"
+                                       Grid.Row="1"/>
+
+                            <TextBlock Margin="7 0 10 0"
+                                       Text="{Binding Contract.Address}"
+                                       FontSize="10"
+                                       FontFamily="{StaticResource DefaultLightFontFamily}"
+                                       VerticalAlignment="Center"
+                                       Grid.Column="1"
+                                       Grid.Row="2"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+        <Border Background="{StaticResource DefaultSubstrateBrush}"
+                Grid.Row="0"
+                Grid.Column="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition>
+                        <RowDefinition.Style>
+                            <Style TargetType="{x:Type RowDefinition}">
+                                <Setter Property="Height"
+                                        Value="0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasTokenContract}"
+                                                 Value="True">
+                                        <Setter Property="Height"
+                                                Value="15"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </RowDefinition.Style>
+                    </RowDefinition>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="10"/>
+                </Grid.RowDefinitions>
+
+                <Ellipse Width="90"
+                         Height="90"
+                         Grid.Row="1"
+                         Grid.RowSpan="2"
+                         Grid.Column="1"
+                         Visibility="{Binding HasTokenContract, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{Binding TokenContractIconUrl}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+
+                <TextBlock Text="{Binding TokenContractName}"
+                           Foreground="{DynamicResource BalanceBackgroundBrush}"
+                           FontFamily="{DynamicResource DefaultFontFamily}"
+                           FontSize="30"
+                           VerticalAlignment="Bottom"
+                           Grid.Row="1"
+                           Grid.Column="3"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Visibility="{Binding IsFa2, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            VerticalAlignment="Bottom"
+                            Visibility="{Binding IsFa12, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                    <TextBlock Foreground="{DynamicResource BalanceBackgroundBrush}"
+                               FontFamily="{DynamicResource DefaultFontFamily}"
+                               FontSize="33"
+                               Style="{StaticResource BaseTextBlockStyle}">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                                <Binding Path="Balance" Mode="OneWay"/>
+                                <Binding Path="BalanceFormat" Mode="OneWay"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Margin="5 0 0 4"
+                               Text="{Binding BalanceCurrencyCode}"
+                               Foreground="{DynamicResource BalanceBackgroundBrush}"
+                               FontFamily="{DynamicResource DefaultFontFamily}"
+                               FontSize="22"
+                               VerticalAlignment="Bottom"/>
+                </StackPanel>
+
+                <TextBlock Text="{Binding TokenContractAddress}"
+                           Foreground="LightGray"
+                           FontFamily="{DynamicResource DefaultFontFamily}"
+                           FontSize="12"
+                           Grid.Row="2"
+                           Grid.Column="3"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Visibility="{Binding HasTokenContract, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+
+                <StackPanel HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="5">
+                    <controls:RoundedButton 
+                        Content="Send"
+                        Command="{Binding SendCommand}"
+                        Style="{StaticResource WalletMenuButton}"/>
+                    <controls:RoundedButton
+                        Content="Receive"
+                        Margin="3 0 0 0"
+                        Command="{Binding ReceiveCommand}"
+                        Style="{StaticResource WalletMenuButton}"/>
+                    <controls:RoundedButton
+                        Content="Convert"
+                        Margin="3 0 0 0"
+                        Command="{Binding ConvertCommand}"
+                        Style="{StaticResource WalletMenuButton}"
+                        Visibility="{Binding IsConvertable, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                    <controls:RoundedButton
+                        Content="Update"
+                        Margin="3 0 0 0"
+                        Command="{Binding UpdateCommand}"
+                        Style="{StaticResource WalletMenuButton}"/>
+                    <controls:RoundedButton
+                        Content="Addresses"
+                        Margin="3 0 0 0"
+                        Command="{Binding AddressesCommand}"
+                        Style="{StaticResource WalletMenuButton}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <TabControl BorderThickness="0"
+                    Background="Transparent"
+                    SelectedIndex="{Binding SelectedTabIndex, UpdateSourceTrigger=PropertyChanged}"
+                    Grid.Column="2"
+                    Grid.Row="2">
+            <TabItem Header="TOKENS"
+                     Padding="10"
+                     mah:ControlsHelper.HeaderFontSize="15"
+                     FontFamily="{DynamicResource DefaultMediumFontFamily}"
+                     Visibility="{Binding IsFa2, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                <TabItem.Style>
+                    <Style TargetType="TabItem"
+                           BasedOn="{StaticResource MetroTabItem}">
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background"
+                                        Value="{DynamicResource DefaultSubstrateBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter Property="Background"
+                                        Value="Transparent"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabItem.Style>
+
+                <ListBox x:Name="tokensListBox"
+                         Background="{DynamicResource DefaultSubstrateBrush}"
+                         AlternationCount="2"
+                         Margin="-2"
+                         VerticalAlignment="Stretch"
+                         ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                         ScrollViewer.ScrollChanged="TokensScrollChanged"
+                         SelectionChanged="TokensSelectionChanged"
+                         ItemsSource="{Binding Tokens}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Width"
+                                    Value="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type ScrollContentPresenter}}}"/>
+                            <Style.Triggers>
+                                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                    <Setter Property="Background"
+                                            Value="Transparent"/>
+                                </Trigger>
+                                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource DefaultSubstrateBrush}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type walletViewModels:TezosTokenViewModel}">
+                            <Grid MouseDown="TokenPreviewMouseDown" Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition>
+                                        <ColumnDefinition.Style>
+                                            <Style TargetType="{x:Type ColumnDefinition}">
+                                                <Setter Property="Width" Value="30"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsIpfsAsset}" Value="False">
+                                                        <Setter Property="Width" Value="0"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ColumnDefinition.Style>
+                                    </ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="11"/>
+                                    <RowDefinition Height="19"/>
+                                    <RowDefinition Height="19"/>
+                                    <RowDefinition Height="11"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Ellipse Margin="2"
+                                         Grid.Column="0"
+                                         Grid.Row="0"
+                                         Grid.RowSpan="4">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{Binding TokenPreview}"
+                                                    Stretch="Fill"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+
+                                <TextBlock Margin="7 0 10 0"
+                                           Text="{Binding TokenBalance.Name}"
+                                           FontSize="16"
+                                           FontFamily="{StaticResource DefaultMediumFontFamily}"
+                                           VerticalAlignment="Center"
+                                           Grid.Column="1"
+                                           Grid.Row="1">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding TokenBalance.HasDescription}" Value="False">
+                                                    <Setter Property="Grid.RowSpan" Value="2"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <TextBlock Margin="7 0 10 0"
+                                           Text="{Binding TokenBalance.Description}"
+                                           FontSize="10"
+                                           FontFamily="{StaticResource DefaultLightFontFamily}"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="NoWrap"
+                                           Grid.Column="1"
+                                           Grid.Row="2"/>
+
+                                <TextBlock Margin="0 0 7 0"
+                                           Text="{Binding Balance}"
+                                           VerticalAlignment="Center"
+                                           FontSize="13"
+                                           FontFamily="{StaticResource DefaultFontFamily}"
+                                           Grid.Column="2"
+                                           Grid.Row="1"
+                                           Grid.RowSpan="2"/>
+
+                                <controls:IconButton Path="{DynamicResource FontAwesome.PaperPlaneSolid}"
+                                                     Width="17"
+                                                     Foreground="{DynamicResource IconButtonForegroundBrush}"
+                                                     MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
+                                                     PressedBrush="{DynamicResource IconButtonPressedBrush}"
+                                                     Command="{Binding Send}"
+                                                     Grid.Column="3"
+                                                     Grid.Row="1"
+                                                     Grid.RowSpan="2"
+                                                     ToolTip="Send token"
+                                                     Style="{StaticResource PathButtonStyle}"/>
+
+                                <controls:IconButton Path="{DynamicResource Material.FileEyeOutline}"
+                                                     Width="17"
+                                                     Foreground="{DynamicResource IconButtonForegroundBrush}"
+                                                     MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
+                                                     PressedBrush="{DynamicResource IconButtonPressedBrush}"
+                                                     Command="{Binding OpenInBrowser}"
+                                                     Grid.Column="4"
+                                                     Grid.Row="1"
+                                                     Grid.RowSpan="2"
+                                                     Visibility="{Binding IsIpfsAsset, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"
+                                                     ToolTip="{Binding AssetUrl}"
+                                                     Style="{StaticResource PathButtonStyle}"/>
+
+                                <Grid Height="50"
+                                      Grid.Row="4"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="5"
+                                      Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="5"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="5"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="Address:"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
+                                               Foreground="{DynamicResource TransactionDetailsLineHeaderBrush}"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="0"
+                                               Grid.Row="1"/>
+
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="10 0 0 0"
+                                                Grid.Column="1"
+                                                Grid.Row="1">
+
+                                        <Button Content="{Binding Address}"
+                                                ToolTip="{Binding AddressExplorerUri}"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding OpenAddressInExplorerCommand}"
+                                                CommandParameter="{Binding Address}"
+                                                Style="{StaticResource ExplorerLinkButton}"/>
+
+                                        <controls:IconButton HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"
+                                             Foreground="{DynamicResource IconButtonForegroundBrush}"
+                                             MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
+                                             PressedBrush="{DynamicResource IconButtonPressedBrush}"
+                                             Path="{DynamicResource Octicons.Clippy}"
+                                             Margin="7 0 0 0"
+                                             Width="15"
+                                             Height="15"
+                                             ToolTip="Copy address to clipboard"
+                                             Command="{Binding CopyAddressCommand}"
+                                             CommandParameter="{Binding Address}"
+                                             Style="{StaticResource PathButtonStyle}"/>
+                                    </StackPanel>
+
+                                    <TextBlock Text="Token Id:"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
+                                               Foreground="{DynamicResource TransactionDetailsLineHeaderBrush}"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="0"
+                                               Grid.Row="2"/>
+
+                                    <TextBlock Text="{Binding TokenBalance.TokenId}"
+                                               Margin="10 0 0 0"
+                                               FontFamily="{DynamicResource DefaultFontFamily}"
+                                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="1"
+                                               Grid.Row="2"/>
+
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+            <TabItem Header="TRANSFERS"
+                     Padding="10"
+                     mah:ControlsHelper.HeaderFontSize="15"
+                     FontFamily="{DynamicResource DefaultMediumFontFamily}">
+                <TabItem.Style>
+                    <Style TargetType="TabItem"
+                           BasedOn="{StaticResource MetroTabItem}">
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background"
+                                        Value="{DynamicResource DefaultSubstrateBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter Property="Background"
+                                        Value="Transparent"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabItem.Style>
+
+                <DataGrid x:Name="transfersDataGrid"
+                          MinRowHeight="35"
+                          Margin="-2"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          RowDetailsVisibilityMode="VisibleWhenSelected"
+                          EnableRowVirtualization="True"
+                          EnableColumnVirtualization="True"
+                          RowDetailsTemplate="{StaticResource TezosTokenTransferDetailsTemplate}"
+                          ItemsSource="{Binding Transfers, UpdateSourceTrigger=PropertyChanged}"
+                          SelectionChanged="OnSelectionChanged"
+                          MouseLeftButtonDown="OnMouseLeftButtonDown"
+                          Style="{StaticResource CustomDataGrid}">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn
+                            Header="Type"
+                            CellTemplateSelector="{StaticResource TransactionTypeDataTemplateSelector}"/>
+                        <DataGridTextColumn
+                            Header="Description"
+                            Binding="{Binding Description}" Width="*"/>
+                        <DataGridTemplateColumn Header="Amount" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type txViewModels:TransactionViewModel}">
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="3 0 3 0">
+                                        <TextBlock FontFamily="{DynamicResource DefaultFontFamily}"
+                                                   FontSize="13">
+                                            <TextBlock.Text>
+                                                <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                                                    <Binding Path="Amount" Mode="OneWay"/>
+                                                    <Binding Path="AmountFormat" Mode="OneWay"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Amount, Converter={StaticResource IsPositiveValueConverter}}"
+                                                                     Value="False">
+                                                            <Setter Property="Foreground"
+                                                                    Value="{DynamicResource NegativeAmountBrush}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Amount, Converter={StaticResource IsPositiveValueConverter}}"
+                                                                     Value="True">
+                                                            <Setter Property="Foreground"
+                                                                    Value="{DynamicResource PositiveAmountBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBlock
+                                            Text="{Binding CurrencyCode}"
+                                            FontFamily="{DynamicResource DefaultFontFamily}"
+                                            FontSize="8"
+                                            VerticalAlignment="Bottom"
+                                            Margin="3 0 0 2"
+                                            Visibility="Collapsed"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn
+                            Header="State"
+                            CellTemplateSelector="{StaticResource TransactionStateDataTemplateSelector}"/>
+                        <DataGridTextColumn
+                            Header="Time"
+                            Binding="{Binding LocalTime, StringFormat=dd MMM yyyy\, HH:mm}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

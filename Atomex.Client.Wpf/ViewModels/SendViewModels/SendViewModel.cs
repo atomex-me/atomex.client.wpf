@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
+
 using Atomex.Blockchain.Abstract;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
@@ -11,6 +12,7 @@ using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Core;
 using Atomex.MarketData.Abstract;
+using Atomex.Wallet.Abstract;
 
 namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
@@ -26,8 +28,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             set { _fromCurrencies = value; OnPropertyChanged(nameof(FromCurrencies)); }
         }
 
-        protected Currency _currency;
-        public virtual Currency Currency
+        protected CurrencyConfig _currency;
+        public virtual CurrencyConfig Currency
         {
             get => _currency;
             set
@@ -206,13 +208,13 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         }
 
         private ICommand _backCommand;
-        public ICommand BackCommand => _backCommand ?? (_backCommand = new Command(() =>
+        public ICommand BackCommand => _backCommand ??= new Command(() =>
         {
             DialogViewer.HideDialog(Dialogs.Send);
-        }));
+        });
 
         private ICommand _nextCommand;
-        public ICommand NextCommand => _nextCommand ?? (_nextCommand = new Command(OnNextCommand));
+        public ICommand NextCommand => _nextCommand ??= new Command(OnNextCommand);
 
         protected virtual void OnNextCommand()
         {
@@ -252,19 +254,19 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             var confirmationViewModel = new SendConfirmationViewModel(DialogViewer, Dialogs.Send)
             {
-                Currency = Currency,
-                To = To,
-                Amount = Amount,
-                AmountInBase = AmountInBase,
-                BaseCurrencyCode = BaseCurrencyCode,
+                Currency           = Currency,
+                To                 = To,
+                Amount             = Amount,
+                AmountInBase       = AmountInBase,
+                BaseCurrencyCode   = BaseCurrencyCode,
                 BaseCurrencyFormat = BaseCurrencyFormat,
-                Fee = Fee,
-                UseDeafultFee = UseDefaultFee,
-                FeeInBase = FeeInBase,
-                CurrencyCode = CurrencyCode,
-                CurrencyFormat = CurrencyFormat,
+                Fee                = Fee,
+                UseDeafultFee      = UseDefaultFee,
+                FeeInBase          = FeeInBase,
+                CurrencyCode       = CurrencyCode,
+                CurrencyFormat     = CurrencyFormat,
 
-                FeeCurrencyCode = FeeCurrencyCode,
+                FeeCurrencyCode   = FeeCurrencyCode,
                 FeeCurrencyFormat = FeeCurrencyFormat
             };
 
@@ -282,13 +284,12 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public SendViewModel(
             IAtomexApp app,
             IDialogViewer dialogViewer,
-            Currency currency)
+            CurrencyConfig currency)
         {
             App = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
             FromCurrencies = App.Account.Currencies
-                .Where(c => c.IsTransactionsAvailable)
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
 
@@ -321,10 +322,18 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
 
+                var account = App.Account
+                    .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
+
                 if (UseDefaultFee)
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, true);
+                    var (maxAmount, _, _) = await account
+                        .EstimateMaxAmountToSendAsync(
+                            to: To,
+                            type: BlockchainTransactionType.Output,
+                            fee: 0,
+                            feePrice: 0,
+                            reserve: true);
 
                     if (_amount > maxAmount)
                     {
@@ -334,7 +343,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     }
 
                     var estimatedFeeAmount = _amount != 0
-                        ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
+                        ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output)
                         : 0;
 
                     OnPropertyChanged(nameof(AmountString));
@@ -344,10 +353,15 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 }
                 else
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
+                    var (maxAmount, maxFeeAmount, _) = await account
+                        .EstimateMaxAmountToSendAsync(
+                            to: To,
+                            type: BlockchainTransactionType.Output,
+                            fee: 0,
+                            feePrice: 0,
+                            reserve: false);
 
-                    var availableAmount = Currency is BitcoinBasedCurrency
+                    var availableAmount = Currency is BitcoinBasedConfig
                         ? CurrencyViewModel.AvailableAmount
                         : maxAmount + maxFeeAmount;
 
@@ -398,14 +412,22 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 if (!UseDefaultFee)
                 {
+                    var account = App.Account
+                        .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
+
                     var estimatedFeeAmount = _amount != 0
-                        ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
+                        ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output)
                         : 0;
 
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
+                    var (maxAmount, maxFeeAmount, _) = await account
+                        .EstimateMaxAmountToSendAsync(
+                            to: To,
+                            type: BlockchainTransactionType.Output,
+                            fee: 0,
+                            feePrice: 0,
+                            reserve: false);
 
-                    var availableAmount = Currency is BitcoinBasedCurrency
+                    var availableAmount = Currency is BitcoinBasedConfig
                         ? CurrencyViewModel.AvailableAmount
                         : maxAmount + maxFeeAmount;
 
@@ -434,7 +456,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         }
 
         protected ICommand _maxCommand;
-        public ICommand MaxCommand => _maxCommand ?? (_maxCommand = new Command(OnMaxClick));
+        public ICommand MaxCommand => _maxCommand ??= new Command(OnMaxClick);
 
         protected virtual async void OnMaxClick()
         {
@@ -450,12 +472,16 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 if (CurrencyViewModel.AvailableAmount == 0)
                     return;
 
-                var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
+                var defaultFeePrice = await Currency
+                    .GetDefaultFeePriceAsync();
+
+                var account = App.Account
+                    .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                 if (UseDefaultFee)
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, true);
+                    var (maxAmount, maxFeeAmount, _) = await account
+                        .EstimateMaxAmountToSendAsync(To, BlockchainTransactionType.Output, 0, 0, true);
 
                     if (maxAmount > 0)
                         _amount = maxAmount;
@@ -467,10 +493,10 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 }
                 else
                 {
-                    var (maxAmount, maxFeeAmount, _) = await App.Account
-                        .EstimateMaxAmountToSendAsync(Currency.Name, To, BlockchainTransactionType.Output, 0, 0, false);
+                    var (maxAmount, maxFeeAmount, _) = await account
+                        .EstimateMaxAmountToSendAsync( To, BlockchainTransactionType.Output, 0, 0, false);
 
-                    var availableAmount = Currency is BitcoinBasedCurrency
+                    var availableAmount = Currency is BitcoinBasedConfig
                         ? CurrencyViewModel.AvailableAmount
                         : maxAmount + maxFeeAmount;
 
@@ -481,7 +507,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         _amount = availableAmount - feeAmount;
 
                         var estimatedFeeAmount = _amount != 0
-                            ? await App.Account.EstimateFeeAsync(Currency.Name, To, _amount, BlockchainTransactionType.Output)
+                            ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output)
                             : 0;
 
                         if (estimatedFeeAmount == null || feeAmount < estimatedFeeAmount.Value)
@@ -532,12 +558,12 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 .Select(c => CurrencyViewModelCreator.CreateViewModel(c, subscribeToUpdates: false))
                 .ToList();
 
-            _currency = FromCurrencies[0].Currency;
-            _to = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
-            _amount = 0.00001234m;
+            _currency     = FromCurrencies[0].Currency;
+            _to           = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
+            _amount       = 0.00001234m;
             _amountInBase = 10.23m;
-            _fee = 0.0001m;
-            _feeInBase = 8.43m;
+            _fee          = 0.0001m;
+            _feeInBase    = 8.43m;
         }
     }
 }

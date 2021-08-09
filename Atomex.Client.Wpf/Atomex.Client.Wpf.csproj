@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\CefSharp.Common.90.6.50\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.90.6.50\build\CefSharp.Common.props')" />
-  <Import Project="..\packages\cef.redist.x86.90.6.5\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.90.6.5\build\cef.redist.x86.props')" />
-  <Import Project="..\packages\cef.redist.x64.90.6.5\build\cef.redist.x64.props" Condition="Exists('..\packages\cef.redist.x64.90.6.5\build\cef.redist.x64.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -69,15 +66,6 @@
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.10.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
       <HintPath>..\packages\Portable.BouncyCastle.1.8.10\lib\net40\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="CefSharp, Version=90.6.50.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>..\packages\CefSharp.Common.90.6.50\lib\net452\CefSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="CefSharp.Core, Version=90.6.50.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>..\packages\CefSharp.Common.90.6.50\lib\net452\CefSharp.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="CefSharp.Wpf, Version=90.6.50.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>..\packages\CefSharp.Wpf.90.6.50\lib\net452\CefSharp.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
@@ -341,6 +329,7 @@
     <Compile Include="Common\DecimalExtensions.cs" />
     <Compile Include="Common\DesignTime.cs" />
     <Compile Include="Common\Environment.cs" />
+    <Compile Include="Common\FileCache.cs" />
     <Compile Include="Common\Msi\MsiApi.cs" />
     <Compile Include="Common\Msi\MsiPackage.cs" />
     <Compile Include="Common\Msi\MsiProduct.cs" />
@@ -362,9 +351,6 @@
     <Compile Include="Controls\TransactionStateDataTemplateSelector.cs" />
     <Compile Include="Controls\TransactionDataTemplateSelector.cs" />
     <Compile Include="Controls\WalletDataTemplateSelector.cs" />
-    <Compile Include="Controls\WebBrowserWrapper.xaml.cs">
-      <DependentUpon>WebBrowserWrapper.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Converters\AmountToStringConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityCollapsedConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
@@ -376,7 +362,6 @@
     <Compile Include="Helpers\AmountTextBoxHelper.cs" />
     <Compile Include="Helpers\ComboBoxHelper.cs" />
     <Compile Include="ViewModels\AddressesViewModel.cs" />
-    <Compile Include="ViewModels\BuyWithCardViewModel.cs" />
     <Compile Include="ViewModels\ConversionConfirmationViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WalletTypeViewModel.cs" />
     <Compile Include="ViewModels\CurrencyViewModels\FA2CurrencyViewModel.cs" />
@@ -399,9 +384,6 @@
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\BakerViewModel.cs" />
     <Compile Include="ViewModels\DelegateConfirmationViewModel.cs" />
-    <Compile Include="ViewModels\ReceiveViewModels\EthereumReceiveViewModel.cs" />
-    <Compile Include="ViewModels\ReceiveViewModels\ReceiveViewModelCreator.cs" />
-    <Compile Include="ViewModels\ReceiveViewModels\TezosReceiveViewModel.cs" />
     <Compile Include="ViewModels\SendConfirmationViewModel.cs" />
     <Compile Include="ViewModels\DelegateViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\BitcoinBasedSendViewModel.cs" />
@@ -409,13 +391,12 @@
     <Compile Include="ViewModels\SendViewModels\EthereumSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\Fa12SendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\FA2SendViewModel.cs" />
-    <Compile Include="ViewModels\SendViewModels\NYXSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\TezosSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModelCreator.cs" />
-    <Compile Include="ViewModels\TransactionViewModels\TezosFA12TransactionViewModel.cs" />
-    <Compile Include="ViewModels\TransactionViewModels\TezosFA2TransactionViewModel.cs" />
-    <Compile Include="ViewModels\TransactionViewModels\TezosNYXTransactionViewModel.cs" />
+    <Compile Include="ViewModels\SendViewModels\TezosTokensSendViewModel.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\ITransactionViewModel.cs" />
+    <Compile Include="ViewModels\TransactionViewModels\TezosTokenTransferViewModel.cs" />
     <Compile Include="ViewModels\WalletAddressViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SwapViewModel.cs" />
@@ -428,7 +409,7 @@
     <Compile Include="ViewModels\CreateWalletViewModels\WalletNameViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WriteDerivedKeyPasswordViewModel.cs" />
     <Compile Include="ViewModels\CreateWalletViewModels\WriteMnemonicViewModel.cs" />
-    <Compile Include="ViewModels\ReceiveViewModels\ReceiveViewModel.cs" />
+    <Compile Include="ViewModels\ReceiveViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\EthereumERC20TransactionViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModels\TransactionViewModelCreator.cs" />
     <Compile Include="ViewModels\TransactionViewModels\BitcoinBasedTransactionViewModel.cs" />
@@ -436,11 +417,11 @@
     <Compile Include="ViewModels\TransactionViewModels\TezosTransactionViewModel.cs" />
     <Compile Include="ViewModels\UnlockViewModel.cs" />
     <Compile Include="Common\WalletInfo.cs" />
+    <Compile Include="ViewModels\WalletViewModels\IWalletViewModel.cs" />
+    <Compile Include="ViewModels\WalletViewModels\TezosTokensWalletViewModel.cs" />
     <Compile Include="ViewModels\WalletViewModels\TezosWalletViewModel.cs" />
+    <Compile Include="ViewModels\WalletViewModels\Fa12WalletViewModel.cs" />
     <Compile Include="ViewModels\WalletViewModels\WalletViewModelCreator.cs" />
-    <Compile Include="Views\BuyWithCardView.xaml.cs">
-      <DependentUpon>BuyWithCardView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\ConversionView.xaml.cs">
       <DependentUpon>ConversionView.xaml</DependentUpon>
     </Compile>
@@ -480,6 +461,9 @@
     </Compile>
     <Compile Include="Views\SendViews\BitcoinBasedSendPage.xaml.cs">
       <DependentUpon>BitcoinBasedSendPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SendViews\TezosTokensSendPage.xaml.cs">
+      <DependentUpon>TezosTokensSendPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SendViews\SendPage.xaml.cs">
       <DependentUpon>SendPage.xaml</DependentUpon>
@@ -533,6 +517,9 @@
     <Compile Include="Views\TransactionDetailsViews\EthereumERC20TransactionDetailsView.xaml.cs">
       <DependentUpon>EthereumERC20TransactionDetailsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TransactionDetailsViews\TezosTokenTransferDetailsView.xaml.cs">
+      <DependentUpon>TezosTokenTransferDetailsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TransactionDetailsViews\TezosTransactionDetailsView.xaml.cs">
       <DependentUpon>TezosTransactionDetailsView.xaml</DependentUpon>
     </Compile>
@@ -548,16 +535,18 @@
     <Compile Include="Views\WalletsView.xaml.cs">
       <DependentUpon>WalletsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\WalletViews\TezosTokensWalletView.xaml.cs">
+      <DependentUpon>TezosTokensWalletView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\WalletViews\TezosWalletView.xaml.cs">
       <DependentUpon>TezosWalletView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WalletViews\Fa12WalletView.xaml.cs">
+      <DependentUpon>Fa12WalletView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WalletViews\WalletView.xaml.cs">
       <DependentUpon>WalletView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Controls\WebBrowserWrapper.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Resources\Icons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -610,10 +599,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\BuyWithCardView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\ConversionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -663,6 +648,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SendViews\BitcoinBasedSendPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SendViews\TezosTokensSendPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -799,6 +788,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\TransactionDetailsViews\TezosTokenTransferDetailsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\TransactionDetailsViews\TezosTransactionDetailsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -819,7 +812,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\WalletViews\TezosTokensWalletView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\WalletViews\TezosWalletView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\WalletViews\Fa12WalletView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -986,6 +987,7 @@
     <Resource Include="Resources\Images\kusd_90x90.png" />
     <Resource Include="Resources\Images\kusd_mask.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -993,14 +995,9 @@
       <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
-    <Error Condition="!Exists('..\packages\cef.redist.x64.90.6.5\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.90.6.5\build\cef.redist.x64.props'))" />
-    <Error Condition="!Exists('..\packages\cef.redist.x86.90.6.5\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.90.6.5\build\cef.redist.x86.props'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Common.90.6.50\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.90.6.50\build\CefSharp.Common.props'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Common.90.6.50\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.90.6.50\build\CefSharp.Common.targets'))" />
   </Target>
   <ProjectExtensions />
   <PropertyGroup>
     <PostBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file $(SolutionDir)\reduce_output.ps1 $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\CefSharp.Common.90.6.50\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.90.6.50\build\CefSharp.Common.targets')" />
 </Project>

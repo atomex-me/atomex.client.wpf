@@ -17,7 +17,7 @@ namespace Atomex.Client.Wpf.ViewModels
     {
         private IAtomexApp App { get; }
         public IDialogViewer DialogViewer { get; }
-        public Tezos Currency { get; set; }
+        public TezosConfig Currency { get; set; }
         
         public WalletAddress WalletAddress { get; set; }
         public bool UseDefaultFee { get; set; }
@@ -83,7 +83,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     From              = WalletAddress.Address,
                     To                = To,
                     Fee               = Fee.ToMicroTez(),
-                    Currency          = Currency,
+                    Currency          = Currency.Name,
                     CreationTime      = DateTime.UtcNow,
 
                     UseRun            = true,
@@ -96,7 +96,8 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 await tx.FillOperationsAsync(
                     securePublicKey: securePublicKey,
-                    headOffset: Tezos.HeadOffset);
+                    tezosConfig: Currency,
+                    headOffset: TezosConfig.HeadOffset);
 
                 var signResult = await tx
                     .SignAsync(keyStorage, WalletAddress, default);

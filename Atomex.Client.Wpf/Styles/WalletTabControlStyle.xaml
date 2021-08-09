@@ -112,7 +112,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabControl}">
-                    <Grid ClipToBounds="True" SnapsToDevicePixels="True" KeyboardNavigation.TabNavigation="Local">
+                    <Grid ClipToBounds="True"
+                          SnapsToDevicePixels="True"
+                          KeyboardNavigation.TabNavigation="Local">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" Name="RowDefinition0" />
                             <RowDefinition Height="*" Name="RowDefinition1" />

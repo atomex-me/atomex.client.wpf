@@ -43,9 +43,9 @@ namespace Atomex.Client.Wpf.ViewModels
             AtomexApp = app ?? throw new ArgumentNullException(nameof(app));
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
-            AtomexApp.TerminalChanged += (sender, args) =>
+            AtomexApp.AtomexClientChanged += (sender, args) =>
             {
-                _account = args.Terminal?.Account;
+                _account = args.AtomexClient?.Account;
 
                 if (_account == null)
                     return;

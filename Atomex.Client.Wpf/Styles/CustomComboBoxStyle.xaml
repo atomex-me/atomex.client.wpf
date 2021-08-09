@@ -19,7 +19,8 @@
                   Grid.Column="1"
                   Fill="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}}"
                   HorizontalAlignment="Center"
-                  VerticalAlignment="Center">
+                  VerticalAlignment="Center"
+                  Visibility="{Binding IsHitTestVisible, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure IsClosed="True" StartPoint="0,0">
@@ -66,9 +67,9 @@
                                           Content="{TemplateBinding SelectionBoxItem}"
                                           ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                           ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                          Margin="14 3 23 3"
+                                          Margin="14 3 35 3"
                                           VerticalAlignment="Center"
-                                          HorizontalAlignment="Left" />
+                                          HorizontalAlignment="Stretch" />
 
                         <TextBox x:Name="PART_EditableTextBox"
                                  Style="{x:Null}" 

@@ -4,15 +4,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+
+using Serilog;
+
 using Atomex.Blockchain.Tezos;
 using Atomex.Blockchain.Tezos.Internal;
 using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels.Abstract;
-using Atomex.Common;
 using Atomex.Core;
 using Atomex.Wallet;
-using Serilog;
 
 namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 {
@@ -58,7 +59,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             IDialogViewer dialogViewer,
             IMenuSelector menuSelector,
             IConversionViewModel conversionViewModel,
-            Currency currency)
+            CurrencyConfig currency)
             : base(app, dialogViewer, menuSelector, conversionViewModel, currency)
         {
             Delegations = new List<Delegation>();
@@ -90,7 +91,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         {
             try
             {
-                var tezos = Currency as Tezos;
+                var tezos = Currency as TezosConfig;
 
                 var balance = await App.Account
                     .GetBalanceAsync(tezos.Name)
@@ -115,26 +116,26 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     if (string.IsNullOrEmpty(@delegate))
                         continue;
 
-
                     var baker = await BbApi
                         .GetBaker(@delegate, App.Account.Network)
                         .ConfigureAwait(false);
 
                     delegations.Add(new Delegation
                     {
-                        Baker = baker,
+                        Baker   = baker,
                         Address = wa.Address,
                         Balance = wa.Balance
                     });
                 }
 
-                await Application.Current.Dispatcher.InvokeAsync(() =>
-                {
-                    CanDelegate = balance.Available > 0;
-                    Delegations = delegations;
-                    HasDelegations = delegations.Count > 0;
-                },
-                DispatcherPriority.Background);
+                await Application.Current.Dispatcher
+                    .InvokeAsync(() =>
+                    {
+                        CanDelegate    = balance.Available > 0;
+                        Delegations    = delegations;
+                        HasDelegations = delegations.Count > 0;
+                    },
+                    DispatcherPriority.Background);
             }
             catch (OperationCanceledException)
             {
@@ -147,10 +148,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         }
 
         private ICommand _delegateCommand;
-        public ICommand DelegateCommand => _delegateCommand ?? (_delegateCommand = new Command(OnDelegateClick));
-
-        //private ICommand _undelegateCommand;
-        //public ICommand UndelegateCommand => _undelegateCommand ?? (_undelegateCommand = new Command(OnUndelegateClick));
+        public ICommand DelegateCommand => _delegateCommand ??= new Command(OnDelegateClick);
 
         private void OnDelegateClick()
         {
@@ -159,15 +157,15 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 await Task.Delay(TimeSpan.FromSeconds(DelegationCheckIntervalInSec))
                     .ConfigureAwait(false);
 
-                await Application.Current.Dispatcher.InvokeAsync(OnUpdateClick);
+                await Application.Current.Dispatcher
+                    .InvokeAsync(OnUpdateClick);
             });
 
-            DialogViewer.ShowDialog(Dialogs.Delegate, viewModel, defaultPageId: Pages.Delegate);
+            DialogViewer.ShowDialog(
+                Dialogs.Delegate,
+                viewModel,
+                defaultPageId: Pages.Delegate);
         }
-
-        //private void OnUndelegateClick()
-        //{
-        //}
 
         protected override void DesignerMode()
         {

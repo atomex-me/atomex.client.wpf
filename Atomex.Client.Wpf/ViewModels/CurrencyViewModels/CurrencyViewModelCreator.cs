@@ -1,38 +1,34 @@
 ﻿using System;
+
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Core;
-using Atomex.EthereumTokens;
-using Atomex.TezosTokens;
 
 namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
 {
     public static class CurrencyViewModelCreator
     {
-        public static CurrencyViewModel CreateViewModel(Currency currency)
+        public static CurrencyViewModel CreateViewModel(CurrencyConfig currency)
         {
             return CreateViewModel(currency, subscribeToUpdates: true);
         }
 
         public static CurrencyViewModel CreateViewModel(
-            Currency currency,
+            CurrencyConfig currencyConfig,
             bool subscribeToUpdates)
         {
-            var result = currency.Name switch
+            var result = currencyConfig.Name switch
             {
-                "BTC"   => (CurrencyViewModel)new BitcoinCurrencyViewModel(currency),
-                "LTC"   => new LitecoinCurrencyViewModel(currency),
-                "USDT"  => new TetherCurrencyViewModel(currency),
-                "TBTC"  => new TbtcCurrencyViewModel(currency),
-                "WBTC"  => new WbtcCurrencyViewModel(currency),
-                "ETH"   => new EthereumCurrencyViewModel(currency),
-                "NYX"   => new NYXCurrencyViewModel(currency),
-                "FA2"   => new FA2CurrencyViewModel(currency),
-                "TZBTC" => new TzbtcCurrencyViewModel(currency),
-                "KUSD"  => new KusdCurrencyViewModel(currency),
-                "XTZ"   => new TezosCurrencyViewModel(currency),
-                "FA12"  => new TzbtcCurrencyViewModel(currency),
+                "BTC"   => (CurrencyViewModel)new BitcoinCurrencyViewModel(currencyConfig),
+                "LTC"   => new LitecoinCurrencyViewModel(currencyConfig),
+                "USDT"  => new TetherCurrencyViewModel(currencyConfig),
+                "TBTC"  => new TbtcCurrencyViewModel(currencyConfig),
+                "WBTC"  => new WbtcCurrencyViewModel(currencyConfig),
+                "ETH"   => new EthereumCurrencyViewModel(currencyConfig),
+                "TZBTC" => new TzbtcCurrencyViewModel(currencyConfig),
+                "KUSD"  => new KusdCurrencyViewModel(currencyConfig),
+                "XTZ"   => new TezosCurrencyViewModel(currencyConfig),
                 _ => throw new NotSupportedException(
-                    $"Can't create currency view model for {currency.Name}. This currency is not supported.")
+                    $"Can't create currency view model for {currencyConfig.Name}. This currency is not supported.")
             };
 
             if (!subscribeToUpdates)

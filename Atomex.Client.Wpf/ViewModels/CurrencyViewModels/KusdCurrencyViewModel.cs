@@ -10,7 +10,7 @@ namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
 {
     public class KusdCurrencyViewModel : CurrencyViewModel
     {
-        public KusdCurrencyViewModel(Currency currency)
+        public KusdCurrencyViewModel(CurrencyConfig currency)
             : base(currency)
         {
             Header              = Currency.Description;

@@ -97,7 +97,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 symbolsProvider: AtomexApp.SymbolsProvider,
                 quotesProvider: AtomexApp.QuotesProvider);
 
-            AtomexApp.UseTerminal(atomexClient, restart: true);
+            AtomexApp.UseAtomexClient(atomexClient, restart: true);
 
             DialogViewer?.HideDialog(Dialogs.CreateWallet);
             DialogViewer?.HideDialog(Dialogs.Start);

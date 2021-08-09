@@ -33,7 +33,6 @@ namespace Atomex.Client.Wpf.ViewModels
         public WalletsViewModel WalletsViewModel { get; set; }
         public ConversionViewModel ConversionViewModel { get; set; }
         public SettingsViewModel SettingsViewModel { get; set; }
-        public BuyWithCardViewModel BuyWithCardViewModel { get; set; }
 
         private int _selectedMenuIndex;
         public int SelectedMenuIndex
@@ -115,7 +114,6 @@ namespace Atomex.Client.Wpf.ViewModels
             ConversionViewModel  = new ConversionViewModel(AtomexApp, DialogViewer);
             WalletsViewModel     = new WalletsViewModel(AtomexApp, DialogViewer, this, ConversionViewModel);
             SettingsViewModel    = new SettingsViewModel(AtomexApp, DialogViewer);
-            BuyWithCardViewModel = new BuyWithCardViewModel(AtomexApp);
 
             InstalledVersion = App.Updater.InstalledVersion.ToString();
 
@@ -147,13 +145,13 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            AtomexApp.TerminalChanged += OnTerminalChangedEventHandler;
+            AtomexApp.AtomexClientChanged += OnTerminalChangedEventHandler;
             AtomexApp.QuotesProvider.AvailabilityChanged += OnQuotesProviderAvailabilityChangedEventHandler;
         }
 
-        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs args)
+        private void OnTerminalChangedEventHandler(object sender, AtomexClientChangedEventArgs args)
         {
-            var terminal = args.Terminal;
+            var terminal = args.AtomexClient;
 
             if (terminal?.Account == null)
             {
@@ -231,7 +229,7 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 DialogViewer.HideAllDialogs();
 
-                AtomexApp.UseTerminal(null);
+                AtomexApp.UseAtomexClient(null);
 
                 DialogViewer.ShowDialog(Dialogs.Start, new StartViewModel(AtomexApp, DialogViewer));
 

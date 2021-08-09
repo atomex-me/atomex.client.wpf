@@ -10,7 +10,7 @@ namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
 {
     public class BitcoinCurrencyViewModel : CurrencyViewModel
     {
-        public BitcoinCurrencyViewModel(Currency currency)
+        public BitcoinCurrencyViewModel(CurrencyConfig currency)
             : base(currency)
         {
             Header              = Currency.Description;

@@ -2,9 +2,9 @@
 
 namespace Atomex.Client.Wpf.Views
 {
-    public partial class BuyWithCardView : UserControl
+    public partial class TezosTokenTransferDetailsView : UserControl
     {
-        public BuyWithCardView()
+        public TezosTokenTransferDetailsView()
         {
             InitializeComponent();
         }

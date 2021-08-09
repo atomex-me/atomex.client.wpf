@@ -27,16 +27,16 @@ namespace Atomex.Client.Wpf.ViewModels
         private IAtomexApp App { get; }
         private IDialogViewer DialogViewer { get; }
         
-        private readonly Tezos _tezos;
-        private WalletAddress _walletAddress;
+        private readonly TezosConfig _tezosConfig;
+        private WalletAddressViewModel _selectedAddress;
 
-        public WalletAddress WalletAddress
+        public WalletAddressViewModel SelectedAddress
         {
-            get => _walletAddress;
+            get => _selectedAddress;
             set 
             {
-                _walletAddress = value;
-                OnPropertyChanged(nameof(WalletAddress));
+                _selectedAddress = value;
+                OnPropertyChanged(nameof(SelectedAddress));
             }
         }
 
@@ -62,7 +62,7 @@ namespace Atomex.Client.Wpf.ViewModels
                 _fromAddressList = value;
                 OnPropertyChanged(nameof(FromAddressList));
                 
-                WalletAddress = FromAddressList.FirstOrDefault().WalletAddress;
+                SelectedAddress = FromAddressList.FirstOrDefault();
             }
         }
 
@@ -82,13 +82,13 @@ namespace Atomex.Client.Wpf.ViewModels
         
         public string FeeString
         {
-            get => Fee.ToString(_tezos.FeeFormat, CultureInfo.InvariantCulture);
+            get => Fee.ToString(_tezosConfig.FeeFormat, CultureInfo.InvariantCulture);
             set
             {
                 if (!decimal.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var fee))
                     return;
                 
-                Fee = fee.TruncateByFormat(_tezos.FeeFormat);
+                Fee = fee.TruncateByFormat(_tezosConfig.FeeFormat);
             }
         }
 
@@ -104,8 +104,8 @@ namespace Atomex.Client.Wpf.ViewModels
                 {
                     var feeAmount = _fee;
 
-                    if (feeAmount > _walletAddress.Balance)
-                        feeAmount = _walletAddress.Balance;
+                    if (feeAmount > _selectedAddress.AvailableBalance)
+                        feeAmount = _selectedAddress.AvailableBalance;
 
                     _fee = feeAmount;
 
@@ -210,7 +210,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     return;
                 }
 
-                if (!_tezos.IsValidAddress(Address))
+                if (!_tezosConfig.IsValidAddress(Address))
                 {
                     Warning = Resources.SvInvalidAddressError;
                     return;
@@ -236,20 +236,25 @@ namespace Atomex.Client.Wpf.ViewModels
                 }
                 else
                 {
+                    var walletAddress = App.Account
+                        .GetCurrencyAccount(TezosConfig.Xtz)
+                        .GetAddressAsync(_selectedAddress.Address)
+                        .WaitForResult();
+
                     var confirmationViewModel = new DelegateConfirmationViewModel(App, DialogViewer, _onDelegate)
                     {
-                        Currency            = _tezos,
-                        WalletAddress       = WalletAddress,
+                        Currency            = _tezosConfig,
+                        WalletAddress       = walletAddress,
                         UseDefaultFee       = UseDefaultFee,
-                        From                = WalletAddress.Address,
+                        From                = SelectedAddress.Address,
                         To                  = Address,
-                        IsAmountLessThanMin = WalletAddress.Balance < (BakerViewModel?.MinDelegation ?? 0), 
+                        IsAmountLessThanMin = SelectedAddress.AvailableBalance < (BakerViewModel?.MinDelegation ?? 0), 
                         BaseCurrencyCode    = BaseCurrencyCode,
                         BaseCurrencyFormat  = BaseCurrencyFormat,
                         Fee                 = Fee,
                         FeeInBase           = FeeInBase,
-                        CurrencyCode        = _tezos.FeeCode,
-                        CurrencyFormat      = _tezos.FeeFormat
+                        CurrencyCode        = _tezosConfig.FeeCode,
+                        CurrencyFormat      = _tezosConfig.FeeFormat
                     };
 
                     DialogViewer.PushPage(Dialogs.Delegate, Pages.DelegateConfirmation, confirmationViewModel);
@@ -280,9 +285,9 @@ namespace Atomex.Client.Wpf.ViewModels
             DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
             _onDelegate = onDelegate;
-            _tezos      = App.Account.Currencies.Get<Tezos>("XTZ");
+            _tezosConfig      = App.Account.Currencies.Get<TezosConfig>("XTZ");
 
-            FeeCurrencyCode    = _tezos.FeeCode;
+            FeeCurrencyCode    = _tezosConfig.FeeCode;
             BaseCurrencyCode   = "USD";
             BaseCurrencyFormat = "$0.00";
             UseDefaultFee      = true;
@@ -332,9 +337,14 @@ namespace Atomex.Client.Wpf.ViewModels
         private async Task PrepareWallet(CancellationToken cancellationToken = default)
         {   
             FromAddressList = (await App.Account
-                .GetUnspentAddressesAsync(_tezos.Name, cancellationToken).ConfigureAwait(false))
+                .GetUnspentAddressesAsync(_tezosConfig.Name, cancellationToken).ConfigureAwait(false))
                 .OrderByDescending(x => x.Balance)
-                .Select(w => new WalletAddressViewModel(w, _tezos.Format))
+                .Select(w => new WalletAddressViewModel
+                {
+                    Address          = w.Address,
+                    AvailableBalance = w.AvailableBalance(),
+                    CurrencyFormat   = _tezosConfig.Format
+                })
                 .ToList();
 
             if (!FromAddressList?.Any() ?? false)
@@ -343,20 +353,20 @@ namespace Atomex.Client.Wpf.ViewModels
                 return;
             }
 
-            WalletAddress = FromAddressList.FirstOrDefault().WalletAddress;
+            SelectedAddress = FromAddressList.FirstOrDefault();
         }
 
         private async Task<Result<string>> GetDelegate(
             CancellationToken cancellationToken = default)
         {
-            if (_walletAddress == null)
+            if (_selectedAddress == null)
                 return new Error(Errors.InvalidWallets, "You don't have non-empty accounts");
             
             JObject delegateData;
 
             try
             {
-                var rpc = new Rpc(_tezos.RpcNodeUri);
+                var rpc = new Rpc(_tezosConfig.RpcNodeUri);
 
                 delegateData = await rpc
                     .GetDelegate(_address)
@@ -372,19 +382,19 @@ namespace Atomex.Client.Wpf.ViewModels
 
             var delegators = delegateData["delegated_contracts"]?.Values<string>();
 
-            if (delegators.Contains(_walletAddress.Address))
-                return new Error(Errors.AlreadyDelegated, $"Already delegated from {_walletAddress.Address} to {_address}");
+            if (delegators.Contains(_selectedAddress.Address))
+                return new Error(Errors.AlreadyDelegated, $"Already delegated from {_selectedAddress.Address} to {_address}");
 
             try
             {
                 var tx = new TezosTransaction
                 {
-                    StorageLimit      = _tezos.StorageLimit,
-                    GasLimit          = _tezos.GasLimit,
-                    From              = _walletAddress.Address,
+                    StorageLimit      = _tezosConfig.StorageLimit,
+                    GasLimit          = _tezosConfig.GasLimit,
+                    From              = _selectedAddress.Address,
                     To                = _address,
                     Fee               = Fee.ToMicroTez(),
-                    Currency          = _tezos,
+                    Currency          = _tezosConfig.Name,
                     CreationTime      = DateTime.UtcNow,
 
                     UseRun            = true,
@@ -392,12 +402,18 @@ namespace Atomex.Client.Wpf.ViewModels
                     OperationType     = OperationType.Delegation
                 };
 
+                var walletAddress = App.Account
+                    .GetCurrencyAccount(TezosConfig.Xtz)
+                    .GetAddressAsync(_selectedAddress.Address)
+                    .WaitForResult();
+
                 using var securePublicKey = App.Account.Wallet
-                    .GetPublicKey(_tezos, _walletAddress.KeyIndex);
+                    .GetPublicKey(_tezosConfig, walletAddress.KeyIndex);
 
                 var isSuccess = await tx.FillOperationsAsync(
                     securePublicKey: securePublicKey,
-                    headOffset: Tezos.HeadOffset,
+                    tezosConfig: _tezosConfig,
+                    headOffset: TezosConfig.HeadOffset,
                     cancellationToken: cancellationToken);
 
                 if (!isSuccess)

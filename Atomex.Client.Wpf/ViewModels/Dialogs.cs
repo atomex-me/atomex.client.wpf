@@ -23,8 +23,7 @@
         public const int SendTezos = 13;
         public const int SendErc20 = 14;
         public const int SendFa12 = 15;
-        public const int SendNYX = 16;
-        public const int SendFA2 = 17;
+        public const int SendTezosTokens = 16;
         public const int SendConfirmation = 18;
         public const int Sending = 19;
 

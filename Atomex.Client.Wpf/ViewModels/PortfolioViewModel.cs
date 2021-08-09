@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Media;
-using Atomex.Common;
-using Atomex.Client.Wpf.Common;
-using Atomex.Client.Wpf.ViewModels.Abstract;
+
 using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.Wpf;
 using PieSeries = OxyPlot.Series.PieSeries;
-using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
+
+using Atomex.Common;
 using Atomex.Services;
+using Atomex.Client.Wpf.Common;
+using Atomex.Client.Wpf.ViewModels.Abstract;
+using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -46,12 +48,12 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private void SubscribeToServices()
         {
-            App.TerminalChanged += OnTerminalChangedEventHandler;
+            App.AtomexClientChanged += OnTerminalChangedEventHandler;
         }
 
-        private void OnTerminalChangedEventHandler(object sender, TerminalChangedEventArgs e)
+        private void OnTerminalChangedEventHandler(object sender, AtomexClientChangedEventArgs e)
         {
-            AllCurrencies = e.Terminal?.Account?.Currencies
+            AllCurrencies = e.AtomexClient?.Account?.Currencies
                 .Select(c =>
                 {
                     var vm = CurrencyViewModelCreator.CreateViewModel(c);
@@ -81,16 +83,16 @@ namespace Atomex.Client.Wpf.ViewModels
         {
             var series = new PieSeries
             {
-                StrokeThickness = 0,
-                StartAngle = 0,
-                AngleSpan = 360,
+                StrokeThickness      = 0,
+                StartAngle           = 0,
+                AngleSpan            = 360,
                 //ExplodedDistance = 0.1,
-                InnerDiameter = 0.6,
+                InnerDiameter        = 0.6,
                 TickHorizontalLength = 0,
-                TickRadialLength = 0,
-                OutsideLabelFormat = string.Empty,
-                InsideLabelFormat = string.Empty,
-                TrackerFormatString = "{1}: ${2:0.00} ({3:P2})"
+                TickRadialLength     = 0,
+                OutsideLabelFormat   = string.Empty,
+                InsideLabelFormat    = string.Empty,
+                TrackerFormatString  = "{1}: ${2:0.00} ({3:P2})"
             };
 
             foreach (var currency in AllCurrencies)

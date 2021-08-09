@@ -9,7 +9,7 @@ namespace Atomex.Client.Wpf.ViewModels.CurrencyViewModels
 {
     public class FA2CurrencyViewModel : CurrencyViewModel
     {
-        public FA2CurrencyViewModel(Currency currency)
+        public FA2CurrencyViewModel(CurrencyConfig currency)
             : base(currency)
         {
             Header = Currency.Description;
