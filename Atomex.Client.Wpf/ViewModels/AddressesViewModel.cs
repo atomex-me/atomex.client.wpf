@@ -282,8 +282,10 @@ namespace Atomex.Client.Wpf.ViewModels
 
                     var hdWallet = _app.Account.Wallet as HdWallet;
 
-                    using var privateKey = hdWallet.KeyStorage
-                        .GetPrivateKey(_currency, walletAddress.KeyIndex);
+                    using var privateKey = hdWallet.KeyStorage.GetPrivateKey(
+                        currency: _currency,
+                        keyIndex: walletAddress.KeyIndex,
+                        keyType: walletAddress.KeyType);
 
                     using var unsecuredPrivateKey = privateKey.ToUnsecuredBytes();
 
