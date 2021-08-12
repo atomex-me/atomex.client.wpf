@@ -17,6 +17,8 @@ using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Wallet;
 using Atomex.Wallet.Tezos;
+using Atomex.Cryptography;
+using Atomex.Blockchain.Tezos.Internal;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
@@ -122,6 +124,11 @@ namespace Atomex.Client.Wpf.ViewModels
                     if (typeResult != 0)
                         return typeResult;
 
+                    var accountResult = a1.KeyIndex.Account.CompareTo(a2.KeyIndex.Account);
+
+                    if (accountResult != 0)
+                        return accountResult;
+
                     var chainResult = a1.KeyIndex.Chain.CompareTo(a2.KeyIndex.Chain);
 
                     return chainResult != 0
@@ -130,16 +137,23 @@ namespace Atomex.Client.Wpf.ViewModels
                 });
 
                 Addresses = new ObservableCollection<AddressInfo>(
-                    addresses.Select(a => new AddressInfo
+                    addresses.Select(a =>
                     {
-                        Address         = a.Address,
-                        Type            = KeyTypeToString(a.KeyType),
-                        Path            = $"m/44'/{_currency.Bip44Code}/0'/{a.KeyIndex.Chain}/{a.KeyIndex.Index}",
-                        Balance         = $"{a.Balance.ToString(CultureInfo.InvariantCulture)} {_currency.Name}",
-                        CopyToClipboard = CopyToClipboard,
-                        OpenInExplorer  = OpenInExplorer,
-                        Update          = Update,
-                        ExportKey       = ExportKey
+                        var path = a.KeyType == CurrencyConfig.StandardKey && Currencies.IsTezosBased(_currency.Name)
+                            ? $"m/44'/{_currency.Bip44Code}'/{a.KeyIndex.Account}'/{a.KeyIndex.Chain}'"
+                            : $"m/44'/{_currency.Bip44Code}'/{a.KeyIndex.Account}'/{a.KeyIndex.Chain}/{a.KeyIndex.Index}";
+
+                        return new AddressInfo
+                        {
+                            Address         = a.Address,
+                            Type            = KeyTypeToString(a.KeyType),
+                            Path            = path,
+                            Balance         = $"{a.Balance.ToString(CultureInfo.InvariantCulture)} {_currency.Name}",
+                            CopyToClipboard = CopyToClipboard,
+                            OpenInExplorer  = OpenInExplorer,
+                            Update          = Update,
+                            ExportKey       = ExportKey
+                        };
                     }));
 
                 // token balances
@@ -303,9 +317,30 @@ namespace Atomex.Client.Wpf.ViewModels
 
                     using var unsecuredPrivateKey = privateKey.ToUnsecuredBytes();
 
-                    var hex = Hex.ToHexString(unsecuredPrivateKey.Data);
+                    if (Currencies.IsBitcoinBased(_currency.Name))
+                    {
+                        var btcBasedConfig = _currency as BitcoinBasedConfig;
 
-                    Clipboard.SetText(hex);
+                        var wif = new NBitcoin.Key(unsecuredPrivateKey)
+                            .GetWif(btcBasedConfig.Network)
+                            .ToWif();
+
+                        Clipboard.SetText(wif);
+                    }
+                    else if (Currencies.IsTezosBased(_currency.Name))
+                    {
+                        var base58 = unsecuredPrivateKey.Length == 32
+                            ? Base58Check.Encode(unsecuredPrivateKey, Prefix.Edsk)
+                            : Base58Check.Encode(unsecuredPrivateKey, Prefix.EdskSecretKey);
+
+                        Clipboard.SetText(base58);
+                    }
+                    else
+                    {
+                        var hex = Hex.ToHexString(unsecuredPrivateKey.Data);
+
+                        Clipboard.SetText(hex);
+                    }
 
                     Warning = "Private key successfully copied to clipboard.";
                 }
