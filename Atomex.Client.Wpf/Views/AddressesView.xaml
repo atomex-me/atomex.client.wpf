@@ -76,6 +76,10 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Type"
+                                            Binding="{Binding Type}"
+                                            Width="Auto"
+                                            FontSize="12"/>
                         <DataGridTextColumn Header="Path"
                                             Binding="{Binding Path}"
                                             Width="Auto"
