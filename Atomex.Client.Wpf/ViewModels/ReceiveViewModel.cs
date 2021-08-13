@@ -65,7 +65,7 @@ namespace Atomex.Client.Wpf.ViewModels
                             // main address
                             var address = g.FirstOrDefault(w => w.Currency == _currency.Name);
 
-                            var isFreeAddress = address.Address == freeAddress.Address;
+                            var isFreeAddress = address?.Address == freeAddress.Address;
 
                             var hasTokens = g.Any(w => w.Currency != _currency.Name);
 
