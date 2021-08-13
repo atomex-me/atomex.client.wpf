@@ -37,6 +37,9 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 _selectedAddress = value;
                 OnPropertyChanged(nameof(SelectedAddress));
+
+                if (_selectedAddress != null && _bakerViewModel != null)
+                    CheckDelegateAsync();
             }
         }
 
@@ -74,9 +77,14 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 _bakerViewModel = value;
                 OnPropertyChanged(nameof(BakerViewModel));
-                
+
                 if (_bakerViewModel != null)
+                {
                     Address = _bakerViewModel.Address;
+
+                    if (_selectedAddress != null)
+                        CheckDelegateAsync();
+                }
             }
         }
         
@@ -100,18 +108,17 @@ namespace Atomex.Client.Wpf.ViewModels
             {
                 _fee = value;
 
-                if (!UseDefaultFee)
-                {
-                    var feeAmount = _fee;
+                //if (!UseDefaultFee)
+                //{
+                //    var feeAmount = _fee;
 
-                    if (feeAmount > _selectedAddress.AvailableBalance)
-                        feeAmount = _selectedAddress.AvailableBalance;
+                //    if (feeAmount > _selectedAddress.AvailableBalance)
+                //        feeAmount = _selectedAddress.AvailableBalance;
 
-                    _fee = feeAmount;
+                //    _fee = feeAmount;
+                //}
 
-                    OnPropertyChanged(nameof(FeeString));
-                    Warning = string.Empty;
-                }
+                OnPropertyChanged(nameof(FeeString));
 
                 OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
             }
@@ -334,10 +341,10 @@ namespace Atomex.Client.Wpf.ViewModels
             }, DispatcherPriority.Background);
         }
 
-        private async Task PrepareWallet(CancellationToken cancellationToken = default)
+        private async Task PrepareWallet()
         {   
             FromAddressList = (await App.Account
-                .GetUnspentAddressesAsync(_tezosConfig.Name, cancellationToken).ConfigureAwait(false))
+                .GetUnspentAddressesAsync(_tezosConfig.Name).ConfigureAwait(false))
                 .OrderByDescending(x => x.Balance)
                 .Select(w => new WalletAddressViewModel
                 {
@@ -356,11 +363,32 @@ namespace Atomex.Client.Wpf.ViewModels
             SelectedAddress = FromAddressList.FirstOrDefault();
         }
 
-        private async Task<Result<string>> GetDelegate(
+        private async void CheckDelegateAsync()
+        {
+            try
+            {
+                if (DelegationCheck)
+                    return;
+
+                DelegationCheck = true;
+                Warning = string.Empty;
+
+                var result = await GetDelegate();
+
+                if (result.HasError)
+                    Warning = result.Error.Description;
+            }
+            finally
+            {
+                DelegationCheck = false;
+            }
+        }
+
+        private async Task<Result<bool>> GetDelegate(
             CancellationToken cancellationToken = default)
         {
             if (_selectedAddress == null)
-                return new Error(Errors.InvalidWallets, "You don't have non-empty accounts");
+                return new Error(Errors.InvalidWallets, "You don't have non-empty accounts.");
             
             JObject delegateData;
 
@@ -374,16 +402,16 @@ namespace Atomex.Client.Wpf.ViewModels
             }
             catch
             {
-                return new Error(Errors.WrongDelegationAddress, "Wrong delegation address");
+                return new Error(Errors.WrongDelegationAddress, "Wrong delegation address.");
             }
             
             if (delegateData["deactivated"].Value<bool>())
-                return new Error(Errors.WrongDelegationAddress, "Baker is deactivated. Pick another one");
+                return new Error(Errors.WrongDelegationAddress, "Baker is deactivated. Pick another one.");
 
             var delegators = delegateData["delegated_contracts"]?.Values<string>();
 
             if (delegators.Contains(_selectedAddress.Address))
-                return new Error(Errors.AlreadyDelegated, $"Already delegated from {_selectedAddress.Address} to {_address}");
+                return new Error(Errors.AlreadyDelegated, $"Already delegated from {_selectedAddress.Address} to {_address}.");
 
             try
             {
@@ -393,7 +421,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     GasLimit          = _tezosConfig.GasLimit,
                     From              = _selectedAddress.Address,
                     To                = _address,
-                    Fee               = Fee.ToMicroTez(),
+                    Fee               = 0,
                     Currency          = _tezosConfig.Name,
                     CreationTime      = DateTime.UtcNow,
 
@@ -412,25 +440,40 @@ namespace Atomex.Client.Wpf.ViewModels
                     keyIndex: walletAddress.KeyIndex,
                     keyType: walletAddress.KeyType);
 
-                var isSuccess = await tx.FillOperationsAsync(
+                var (isSuccess, isRunSuccess) = await tx.FillOperationsAsync(
                     securePublicKey: securePublicKey,
                     tezosConfig: _tezosConfig,
                     headOffset: TezosConfig.HeadOffset,
                     cancellationToken: cancellationToken);
 
                 if (!isSuccess)
-                    return new Error(Errors.TransactionCreationError, $"Autofill transaction failed");
+                    return new Error(Errors.TransactionCreationError, $"Autofill transaction failed.");
 
-                Fee = tx.Fee;
+                if (UseDefaultFee)
+                {
+                    if (isRunSuccess) {
+                        Fee = tx.Fee;
+                    } else {
+                        return new Error(Errors.TransactionCreationError, $"Autofill transaction failed.");
+                    }
+
+                    if (Fee > _selectedAddress.AvailableBalance)
+                        return new Error(Errors.TransactionCreationError, $"Insufficient funds at the address {_selectedAddress.Address}.");
+                }
+                else
+                {
+                    if (isRunSuccess && Fee < tx.Fee)
+                        return new Error(Errors.TransactionCreationError, $"Fee less than minimum {tx.Fee.ToString(CultureInfo.InvariantCulture)}.");
+                }
             }
             catch (Exception e)
             {
-                Log.Error(e, "Autofill delegation error");
+                Log.Error(e, "Autofill delegation error.");
 
-                return new Error(Errors.TransactionCreationError, $"Autofill delegation error. Try again later");
+                return new Error(Errors.TransactionCreationError, $"Autofill delegation error. Try again later.");
             }
             
-            return "Successful check";
+            return true;
         }
                 
         private void SubscribeToServices()

@@ -96,13 +96,13 @@ namespace Atomex.Client.Wpf.ViewModels
                     keyIndex: WalletAddress.KeyIndex,
                     keyType: WalletAddress.KeyType);
 
-                await tx.FillOperationsAsync(
+                var _ = await tx.FillOperationsAsync(
                     securePublicKey: securePublicKey,
                     tezosConfig: Currency,
                     headOffset: TezosConfig.HeadOffset);
 
                 var signResult = await tx
-                    .SignAsync(keyStorage, WalletAddress, default);
+                    .SignAsync(keyStorage, WalletAddress, Currency);
 
                 if (!signResult)
                 {
