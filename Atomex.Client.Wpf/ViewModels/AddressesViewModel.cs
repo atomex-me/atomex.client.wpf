@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -16,18 +17,19 @@ using Atomex.Client.Wpf.Common;
 using Atomex.Client.Wpf.Controls;
 using Atomex.Wallet;
 using Atomex.Wallet.Tezos;
-using System.Collections.ObjectModel;
+using Atomex.Cryptography;
+using Atomex.Blockchain.Tezos.Internal;
 
 namespace Atomex.Client.Wpf.ViewModels
 {
     public class AddressInfo
     {
         public string Address { get; set; }
+        public string Type { get; set; }
         public string Path { get; set; }
         public string Balance { get; set; }
-        //public string CurrencyCode { get; set; }
         public string TokenBalance { get; set; }
-        //public string TokenCode { get; set; }
+
         public Action<string> CopyToClipboard { get; set; }
         public Action<string> OpenInExplorer { get; set; }
         public Action<string> Update { get; set; }
@@ -65,7 +67,7 @@ namespace Atomex.Client.Wpf.ViewModels
         private CurrencyConfig _currency;
         private bool _isBalanceUpdating;
         private CancellationTokenSource _cancellation;
-        private string _tokenContract;
+        private readonly string _tokenContract;
 
         public ObservableCollection<AddressInfo> Addresses { get; set; }
         public bool HasTokens { get; set; }
@@ -117,23 +119,41 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 addresses.Sort((a1, a2) =>
                 {
+                    var typeResult = a1.KeyType.CompareTo(a2.KeyType);
+
+                    if (typeResult != 0)
+                        return typeResult;
+
+                    var accountResult = a1.KeyIndex.Account.CompareTo(a2.KeyIndex.Account);
+
+                    if (accountResult != 0)
+                        return accountResult;
+
                     var chainResult = a1.KeyIndex.Chain.CompareTo(a2.KeyIndex.Chain);
 
-                    return chainResult == 0
-                        ? a1.KeyIndex.Index.CompareTo(a2.KeyIndex.Index)
-                        : chainResult;
+                    return chainResult != 0
+                        ? chainResult
+                        : a1.KeyIndex.Index.CompareTo(a2.KeyIndex.Index);
                 });
 
                 Addresses = new ObservableCollection<AddressInfo>(
-                    addresses.Select(a => new AddressInfo
+                    addresses.Select(a =>
                     {
-                        Address         = a.Address,
-                        Path            = $"m/44'/{_currency.Bip44Code}/0'/{a.KeyIndex.Chain}/{a.KeyIndex.Index}",
-                        Balance         = $"{a.Balance.ToString(CultureInfo.InvariantCulture)} {_currency.Name}",
-                        CopyToClipboard = CopyToClipboard,
-                        OpenInExplorer  = OpenInExplorer,
-                        Update          = Update,
-                        ExportKey       = ExportKey
+                        var path = a.KeyType == CurrencyConfig.StandardKey && Currencies.IsTezosBased(_currency.Name)
+                            ? $"m/44'/{_currency.Bip44Code}'/{a.KeyIndex.Account}'/{a.KeyIndex.Chain}'"
+                            : $"m/44'/{_currency.Bip44Code}'/{a.KeyIndex.Account}'/{a.KeyIndex.Chain}/{a.KeyIndex.Index}";
+
+                        return new AddressInfo
+                        {
+                            Address         = a.Address,
+                            Type            = KeyTypeToString(a.KeyType),
+                            Path            = path,
+                            Balance         = $"{a.Balance.ToString(CultureInfo.InvariantCulture)} {_currency.Name}",
+                            CopyToClipboard = CopyToClipboard,
+                            OpenInExplorer  = OpenInExplorer,
+                            Update          = Update,
+                            ExportKey       = ExportKey
+                        };
                     }));
 
                 // token balances
@@ -182,6 +202,14 @@ namespace Atomex.Client.Wpf.ViewModels
                 Log.Error(e, "Error while reload addresses list.");
             }
         }
+
+        private string KeyTypeToString(int keyType) =>
+            keyType switch
+            {
+                CurrencyConfig.StandardKey  => "Standard",
+                TezosConfig.Bip32Ed25519Key => "Atomex",
+                _ => throw new NotSupportedException($"Key type {keyType} not supported.")
+            };
 
         private void CopyToClipboard(string address)
         {
@@ -282,14 +310,37 @@ namespace Atomex.Client.Wpf.ViewModels
 
                     var hdWallet = _app.Account.Wallet as HdWallet;
 
-                    using var privateKey = hdWallet.KeyStorage
-                        .GetPrivateKey(_currency, walletAddress.KeyIndex);
+                    using var privateKey = hdWallet.KeyStorage.GetPrivateKey(
+                        currency: _currency,
+                        keyIndex: walletAddress.KeyIndex,
+                        keyType: walletAddress.KeyType);
 
                     using var unsecuredPrivateKey = privateKey.ToUnsecuredBytes();
 
-                    var hex = Hex.ToHexString(unsecuredPrivateKey.Data);
+                    if (Currencies.IsBitcoinBased(_currency.Name))
+                    {
+                        var btcBasedConfig = _currency as BitcoinBasedConfig;
 
-                    Clipboard.SetText(hex);
+                        var wif = new NBitcoin.Key(unsecuredPrivateKey)
+                            .GetWif(btcBasedConfig.Network)
+                            .ToWif();
+
+                        Clipboard.SetText(wif);
+                    }
+                    else if (Currencies.IsTezosBased(_currency.Name))
+                    {
+                        var base58 = unsecuredPrivateKey.Length == 32
+                            ? Base58Check.Encode(unsecuredPrivateKey, Prefix.Edsk)
+                            : Base58Check.Encode(unsecuredPrivateKey, Prefix.EdskSecretKey);
+
+                        Clipboard.SetText(base58);
+                    }
+                    else
+                    {
+                        var hex = Hex.ToHexString(unsecuredPrivateKey.Data);
+
+                        Clipboard.SetText(hex);
+                    }
 
                     Warning = "Private key successfully copied to clipboard.";
                 }

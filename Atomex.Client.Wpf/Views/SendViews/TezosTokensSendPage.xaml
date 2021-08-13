@@ -12,7 +12,7 @@
       mc:Ignorable="d"
       UseLayoutRounding="True"
       Focusable="False"
-      d:DesignHeight="500"
+      d:DesignHeight="550"
       d:DesignWidth="640"   
       d:DataContext="{d:DesignInstance Type=viewModels:TezosTokensSendViewModel, IsDesignTimeCreatable=True}">
 

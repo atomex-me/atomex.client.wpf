@@ -407,8 +407,10 @@ namespace Atomex.Client.Wpf.ViewModels
                     .GetAddressAsync(_selectedAddress.Address)
                     .WaitForResult();
 
-                using var securePublicKey = App.Account.Wallet
-                    .GetPublicKey(_tezosConfig, walletAddress.KeyIndex);
+                using var securePublicKey = App.Account.Wallet.GetPublicKey(
+                    currency: _tezosConfig,
+                    keyIndex: walletAddress.KeyIndex,
+                    keyType: walletAddress.KeyType);
 
                 var isSuccess = await tx.FillOperationsAsync(
                     securePublicKey: securePublicKey,

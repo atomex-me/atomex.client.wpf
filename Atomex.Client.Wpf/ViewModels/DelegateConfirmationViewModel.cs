@@ -91,8 +91,10 @@ namespace Atomex.Client.Wpf.ViewModels
                     OperationType     = OperationType.Delegation
                 };
 
-                using var securePublicKey = App.Account.Wallet
-                    .GetPublicKey(Currency, WalletAddress.KeyIndex);
+                using var securePublicKey = App.Account.Wallet.GetPublicKey(
+                    currency: Currency,
+                    keyIndex: WalletAddress.KeyIndex,
+                    keyType: WalletAddress.KeyType);
 
                 await tx.FillOperationsAsync(
                     securePublicKey: securePublicKey,
