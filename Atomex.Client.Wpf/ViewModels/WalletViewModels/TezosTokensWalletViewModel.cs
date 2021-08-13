@@ -561,12 +561,16 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         private void OnSendClick()
         {
+            if (TokenContract?.Contract?.Address == null)
+                return;
+
             var sendViewModel = new TezosTokensSendViewModel(
                 app: _app,
                 dialogViewer: _dialogViewer,
-                from: null,
-                tokenContract: TokenContract?.Contract?.Address,
-                tokenId: 0);
+                tokenContract: TokenContract.Contract.Address,
+                tokenId: 0,
+                tokenType: TokenContract.Contract.GetContractType(),
+                from: null);
 
             _dialogViewer.ShowDialog(
                 dialogId: Dialogs.Send,
@@ -576,12 +580,16 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
         private void SendCallback(TezosTokenViewModel tokenViewModel)
         {
+            if (tokenViewModel?.TokenBalance == null)
+                return;
+
             var sendViewModel = new TezosTokensSendViewModel(
                 app: _app,
                 dialogViewer: _dialogViewer,
-                from: tokenViewModel.Address,
-                tokenContract: tokenViewModel.TokenBalance?.Contract,
-                tokenId: tokenViewModel.TokenBalance?.TokenId ?? 0);
+                tokenContract: tokenViewModel.TokenBalance.Contract,
+                tokenId: tokenViewModel.TokenBalance.TokenId,
+                tokenType: TokenContract.Contract.GetContractType(),
+                from: tokenViewModel.Address);
 
             _dialogViewer.ShowDialog(
                 dialogId: Dialogs.Send,

@@ -169,7 +169,9 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
+                        HorizontalAlignment="Center"
+                        IsEnabled="false"
+                        Style="{StaticResource BaseDisabledStyle}">
                 <Border Width="120"
                         Style="{StaticResource FieldHeader}">
                     <TextBlock Text="Token contract:"
@@ -191,7 +193,10 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
+                        HorizontalAlignment="Center"
+                        IsEnabled="false"
+                        Style="{StaticResource BaseDisabledStyle}"
+                        Visibility="{Binding IsFa2, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <Border Width="120"
                         Style="{StaticResource FieldHeader}">
                     <TextBlock Text="Token Id:"

@@ -184,11 +184,12 @@
                             Grid.ColumnSpan="5">
                     <controls:RoundedButton 
                         Content="Send"
+                        Margin="0 0 3 0"
                         Command="{Binding SendCommand}"
-                        Style="{StaticResource WalletMenuButton}"/>
+                        Style="{StaticResource WalletMenuButton}"
+                        Visibility="{Binding IsFa12, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
                     <controls:RoundedButton
                         Content="Receive"
-                        Margin="3 0 0 0"
                         Command="{Binding ReceiveCommand}"
                         Style="{StaticResource WalletMenuButton}"/>
                     <controls:RoundedButton
@@ -271,7 +272,6 @@
                                     <ColumnDefinition Width="60"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="30"/>
                                     <ColumnDefinition>
                                         <ColumnDefinition.Style>
                                             <Style TargetType="{x:Type ColumnDefinition}">
@@ -284,6 +284,8 @@
                                             </Style>
                                         </ColumnDefinition.Style>
                                     </ColumnDefinition>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="10"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="11"/>
@@ -339,7 +341,7 @@
                                            Grid.Row="1"
                                            Grid.RowSpan="2"/>
 
-                                <controls:IconButton Path="{DynamicResource FontAwesome.PaperPlaneSolid}"
+                                <!--<controls:IconButton Path="{DynamicResource FontAwesome.PaperPlaneSolid}"
                                                      Width="17"
                                                      Foreground="{DynamicResource IconButtonForegroundBrush}"
                                                      MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
@@ -349,7 +351,18 @@
                                                      Grid.Row="1"
                                                      Grid.RowSpan="2"
                                                      ToolTip="Send token"
-                                                     Style="{StaticResource PathButtonStyle}"/>
+                                                     Style="{StaticResource PathButtonStyle}"/>-->
+                                <controls:RoundedButton
+                                    Width="50"
+                                    Height="24"
+                                    CornerRadius="10"
+                                    Content="Send"
+                                    Command="{Binding Send}"
+                                    ToolTip="Send token"
+                                    Grid.Column="4"
+                                    Grid.Row="1"
+                                    Grid.RowSpan="2"
+                                    Style="{DynamicResource WalletMenuButton}"/>
 
                                 <controls:IconButton Path="{DynamicResource Material.FileEyeOutline}"
                                                      Width="17"
@@ -357,7 +370,7 @@
                                                      MouseOverBrush="{DynamicResource IconButtonMouseOverBrush}"
                                                      PressedBrush="{DynamicResource IconButtonPressedBrush}"
                                                      Command="{Binding OpenInBrowser}"
-                                                     Grid.Column="4"
+                                                     Grid.Column="3"
                                                      Grid.Row="1"
                                                      Grid.RowSpan="2"
                                                      Visibility="{Binding IsIpfsAsset, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"

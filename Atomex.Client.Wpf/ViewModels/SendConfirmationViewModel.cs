@@ -38,6 +38,7 @@ namespace Atomex.Client.Wpf.ViewModels
         public string FeeCurrencyFormat { get; set; }
         public string TokenContract { get; set; }
         public decimal TokenId { get; set; }
+        public string TokenType { get; set; }
 
         private ICommand _backCommand;
         public ICommand BackCommand => _backCommand ??= new Command(() =>
@@ -63,8 +64,6 @@ namespace Atomex.Client.Wpf.ViewModels
 
         private async void Send()
         {
-
-
             try
             {
                 _dialogViewer.PushPage(_dialogId, Pages.Sending);
@@ -73,14 +72,12 @@ namespace Atomex.Client.Wpf.ViewModels
 
                 if (From != null && TokenContract != null) // tezos token sending
                 {
-                    var tezosAccount = App.AtomexApp.Account
-                        .GetCurrencyAccount<TezosAccount>(TezosConfig.Xtz);
-
                     var tokenAddress = await TezosTokensSendViewModel.GetTokenAddressAsync(
-                        App.AtomexApp.Account,
-                        From,
-                        TokenContract,
-                        TokenId);
+                        account: App.AtomexApp.Account,
+                        address: From,
+                        tokenContract: TokenContract,
+                        tokenId: TokenId,
+                        tokenType: TokenType);
 
                     if (tokenAddress.Currency == "FA12")
                     {
