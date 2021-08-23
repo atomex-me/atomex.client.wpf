@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Numerics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -8,6 +7,7 @@ using Serilog;
 
 using Atomex.Blockchain.Abstract;
 using Atomex.Blockchain.Tezos;
+using Atomex.Common;
 using Atomex.Client.Wpf.Common;
 
 namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
@@ -17,7 +17,6 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
         public const int MaxAmountDecimals = 9;
 
         private readonly TezosConfig _tezosConfig;
-
 
         public IBlockchainTransaction Transaction { get; }
         public string Id { get; set; }
@@ -110,14 +109,16 @@ namespace Atomex.Client.Wpf.ViewModels.TransactionViewModels
 
         private static decimal GetAmount(TokenTransfer tx)
         {
-            if (!decimal.TryParse(tx.Amount, out var amount))
-                return 0;
+            if (tx.Amount.TryParseWithRound(tx.Token.Decimals, out var amount))
+            {
+                var sign = tx.Type.HasFlag(BlockchainTransactionType.Input)
+                    ? 1
+                    : -1;
 
-            var sign = tx.Type.HasFlag(BlockchainTransactionType.Input)
-                ? 1
-                : -1;
+                return sign * amount;
+            }
 
-            return sign * amount / (decimal)BigInteger.Pow(10, tx.Token.Decimals);
+            return 0;
         }
 
         private void DesignerMode()
