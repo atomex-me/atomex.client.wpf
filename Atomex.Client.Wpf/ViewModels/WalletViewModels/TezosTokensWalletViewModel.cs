@@ -735,9 +735,10 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
 
             var bcdApi = new BcdApi(new BcdApiSettings
             {
-                MaxSize = 10,
-                Network = "mainnet",
-                Uri     = "https://api.better-call.dev/v1/"
+                MaxSize       = 10,
+                MaxTokensSize = 50,
+                Network       = "mainnet",
+                Uri           = "https://api.better-call.dev/v1/"
             });
 
             var address = "tz1YS2CmS5o24bDz9XNr84DSczBXuq4oGHxr";
