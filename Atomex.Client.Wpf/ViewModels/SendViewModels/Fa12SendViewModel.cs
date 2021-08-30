@@ -51,7 +51,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
-                var account = App.Account
+                var account = _app.Account
                     .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                 if (UseDefaultFee)
@@ -102,7 +102,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     Fee = _fee;
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -137,7 +137,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 {
                     var availableAmount = CurrencyViewModel.AvailableAmount;
 
-                    var account = App.Account
+                    var account = _app.Account
                         .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                     var (maxAmount, maxAvailableFee, _) = await account
@@ -171,7 +171,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     OnPropertyChanged(nameof(FeeString));
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -197,7 +197,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
 
-                var account = App.Account
+                var account = _app.Account
                     .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                 if (UseDefaultFee)
@@ -246,7 +246,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     OnPropertyChanged(nameof(FeeString));
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {

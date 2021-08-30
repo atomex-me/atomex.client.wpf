@@ -51,7 +51,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 if (UseDefaultFee)
                 {
-                    var account = App.Account
+                    var account = _app.Account
                         .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                     var (maxAmount, _, _) = await account
@@ -91,7 +91,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     Fee = _fee;
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -153,7 +153,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 OnPropertyChanged(nameof(AmountString));
                 OnPropertyChanged(nameof(FeeString));
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -176,7 +176,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 if (UseDefaultFee) // auto fee
                 {
-                    var account = App.Account
+                    var account = _app.Account
                         .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                     var (maxAmount, maxFeeAmount, _) = await account
@@ -228,7 +228,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 OnPropertyChanged(nameof(AmountString));
                 OnPropertyChanged(nameof(FeeString));
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -241,7 +241,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             decimal fee,
             CancellationToken cancellationToken = default)
         {
-            return await App.Account
+            return await _app.Account
                 .GetCurrencyAccount<BitcoinBasedAccount>(Currency.Name)
                 .EstimateTxSizeAsync(amount, fee, cancellationToken);
         }

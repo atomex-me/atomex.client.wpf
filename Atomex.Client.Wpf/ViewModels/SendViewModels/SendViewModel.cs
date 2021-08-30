@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
@@ -11,6 +12,7 @@ using Atomex.Client.Wpf.Properties;
 using Atomex.Client.Wpf.ViewModels.Abstract;
 using Atomex.Client.Wpf.ViewModels.CurrencyViewModels;
 using Atomex.Core;
+using Atomex.Common;
 using Atomex.MarketData.Abstract;
 using Atomex.Wallet.Abstract;
 
@@ -18,8 +20,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 {
     public class SendViewModel : BaseViewModel
     {
-        protected IAtomexApp App { get; set; }
-        protected IDialogViewer DialogViewer { get; set; }
+        protected IAtomexApp _app;
+        protected IDialogViewer _dialogViewer;
 
         private List<CurrencyViewModel> _fromCurrencies;
         public virtual List<CurrencyViewModel> FromCurrencies
@@ -36,12 +38,12 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 if (_currency != null && _currency != value)
                 {
-                    DialogViewer.HideDialog(Dialogs.Send);
+                    _dialogViewer.HideDialog(Dialogs.Send);
 
-                    var sendViewModel = SendViewModelCreator.CreateViewModel(App, DialogViewer, value);
+                    var sendViewModel = SendViewModelCreator.CreateViewModel(_app, _dialogViewer, value);
                     var sendPageId = SendViewModelCreator.GetSendPageId(value);
 
-                    DialogViewer.ShowDialog(Dialogs.Send, sendViewModel, defaultPageId: sendPageId);
+                    _dialogViewer.ShowDialog(Dialogs.Send, sendViewModel, defaultPageId: sendPageId);
                     return;
                 }
 
@@ -68,13 +70,37 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 _currencyViewModel = value;
 
-                CurrencyCode = _currencyViewModel?.CurrencyCode;
-                FeeCurrencyCode = _currencyViewModel?.FeeCurrencyCode;
+                CurrencyCode     = _currencyViewModel?.CurrencyCode;
+                FeeCurrencyCode  = _currencyViewModel?.FeeCurrencyCode;
                 BaseCurrencyCode = _currencyViewModel?.BaseCurrencyCode;
 
-                CurrencyFormat = _currencyViewModel?.CurrencyFormat;
-                FeeCurrencyFormat = CurrencyViewModel?.FeeCurrencyFormat;
+                CurrencyFormat     = _currencyViewModel?.CurrencyFormat;
+                FeeCurrencyFormat  = CurrencyViewModel?.FeeCurrencyFormat;
                 BaseCurrencyFormat = _currencyViewModel?.BaseCurrencyFormat;
+            }
+        }
+
+        private ObservableCollection<WalletAddressViewModel> _fromAddresses;
+        public ObservableCollection<WalletAddressViewModel> FromAddresses
+        {
+            get => _fromAddresses;
+            set
+            {
+                _fromAddresses = value;
+                OnPropertyChanged(nameof(FromAddresses));
+            }
+        }
+
+        private string _from;
+        public string From
+        {
+            get => _from;
+            set
+            {
+                _from = value;
+                OnPropertyChanged(nameof(From));
+
+                Warning = string.Empty;
             }
         }
 
@@ -86,6 +112,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 _to = value;
                 OnPropertyChanged(nameof(To));
+
                 Warning = string.Empty;
             }
         }
@@ -143,7 +170,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         public virtual string FeeString
         {
             get => Fee.ToString(FeeCurrencyFormat, CultureInfo.InvariantCulture);
-            set {
+            set
+            {
                 if (!decimal.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var fee))
                     return;
 
@@ -210,7 +238,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
         private ICommand _backCommand;
         public ICommand BackCommand => _backCommand ??= new Command(() =>
         {
-            DialogViewer.HideDialog(Dialogs.Send);
+            _dialogViewer.HideDialog(Dialogs.Send);
         });
 
         private ICommand _nextCommand;
@@ -230,15 +258,21 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 return;
             }
 
-            if (Amount <= 0)
+            if (_amount <= 0)
             {
                 Warning = Resources.SvAmountLessThanZeroError;
                 return;
             }
 
-            if (Fee <= 0)
+            if (_fee <= 0)
             {
                 Warning = Resources.SvCommissionLessThanZeroError;
+                return;
+            }
+
+            if (string.IsNullOrEmpty(From))
+            {
+                Warning = "Invalid 'From' address!";
                 return;
             }
 
@@ -246,31 +280,35 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             var feeAmount = !isToken ? Fee : 0;
 
-            if (Amount + feeAmount > CurrencyViewModel.AvailableAmount)
+            var fromAddress = _app.Account
+                .GetAddressAsync(Currency.Name, From)
+                .WaitForResult();
+
+            if (fromAddress.AvailableBalance() < _amount + feeAmount)
             {
                 Warning = Resources.SvAvailableFundsError;
                 return;
             }
 
-            var confirmationViewModel = new SendConfirmationViewModel(DialogViewer, Dialogs.Send)
+            var confirmationViewModel = new SendConfirmationViewModel(_dialogViewer, Dialogs.Send)
             {
                 Currency           = Currency,
-                To                 = To,
-                Amount             = Amount,
-                AmountInBase       = AmountInBase,
-                BaseCurrencyCode   = BaseCurrencyCode,
-                BaseCurrencyFormat = BaseCurrencyFormat,
-                Fee                = Fee,
-                UseDeafultFee      = UseDefaultFee,
-                FeeInBase          = FeeInBase,
-                CurrencyCode       = CurrencyCode,
+                From               = _from,
+                To                 = _to,
+                Amount             = _amount,
+                AmountInBase       = _amountInBase,
+                BaseCurrencyCode   = _baseCurrencyCode,
+                BaseCurrencyFormat = _baseCurrencyFormat,
+                Fee                = _fee,
+                UseDeafultFee      = _useDefaultFee,
+                FeeInBase          = _feeInBase,
+                CurrencyCode       = _currencyCode,
                 CurrencyFormat     = CurrencyFormat,
-
-                FeeCurrencyCode   = FeeCurrencyCode,
-                FeeCurrencyFormat = FeeCurrencyFormat
+                FeeCurrencyCode    = _feeCurrencyCode,
+                FeeCurrencyFormat  = FeeCurrencyFormat
             };
 
-            DialogViewer.PushPage(Dialogs.Send, Pages.SendConfirmation, confirmationViewModel);
+            _dialogViewer.PushPage(Dialogs.Send, Pages.SendConfirmation, confirmationViewModel);
         }
 
         public SendViewModel()
@@ -286,10 +324,10 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             IDialogViewer dialogViewer,
             CurrencyConfig currency)
         {
-            App = app ?? throw new ArgumentNullException(nameof(app));
-            DialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
+            _app = app ?? throw new ArgumentNullException(nameof(app));
+            _dialogViewer = dialogViewer ?? throw new ArgumentNullException(nameof(dialogViewer));
 
-            FromCurrencies = App.Account.Currencies
+            FromCurrencies = _app.Account.Currencies
                 .Select(CurrencyViewModelCreator.CreateViewModel)
                 .ToList();
 
@@ -297,14 +335,17 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 .FirstOrDefault(c => c.Currency.Name == currency.Name)
                 .Currency;
 
+            FromAddresses = new ObservableCollection<WalletAddressViewModel>(GetFromAddressList());
+            From = FromAddresses.MaxByOrDefault(w => w.AvailableBalance)?.Address;
+
             UseDefaultFee = true; // use default fee by default
 
             SubscribeToServices();
         }
         private void SubscribeToServices()
         {
-            if (App.HasQuotesProvider)
-                App.QuotesProvider.QuotesUpdated += OnQuotesUpdatedEventHandler;
+            if (_app.HasQuotesProvider)
+                _app.QuotesProvider.QuotesUpdated += OnQuotesUpdatedEventHandler;
         }
 
         protected virtual async void UpdateAmount(decimal amount)
@@ -322,14 +363,15 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 var defaultFeePrice = await Currency.GetDefaultFeePriceAsync();
 
-                var account = App.Account
+                var account = _app.Account
                     .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                 if (UseDefaultFee)
                 {
                     var (maxAmount, _, _) = await account
                         .EstimateMaxAmountToSendAsync(
-                            to: To,
+                            from: _from,
+                            to: _to,
                             type: BlockchainTransactionType.Output,
                             fee: 0,
                             feePrice: 0,
@@ -343,7 +385,11 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     }
 
                     var estimatedFeeAmount = _amount != 0
-                        ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output)
+                        ? await account.EstimateFeeAsync(
+                            from: _from,
+                            to: _to,
+                            amount: _amount,
+                            type: BlockchainTransactionType.Output)
                         : 0;
 
                     OnPropertyChanged(nameof(AmountString));
@@ -355,7 +401,8 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 {
                     var (maxAmount, maxFeeAmount, _) = await account
                         .EstimateMaxAmountToSendAsync(
-                            to: To,
+                            from: _from,
+                            to: _to,
                             type: BlockchainTransactionType.Output,
                             fee: 0,
                             feePrice: 0,
@@ -379,7 +426,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     Fee = _fee;
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -412,16 +459,21 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 if (!UseDefaultFee)
                 {
-                    var account = App.Account
+                    var account = _app.Account
                         .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                     var estimatedFeeAmount = _amount != 0
-                        ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output)
+                        ? await account.EstimateFeeAsync(
+                            from: _from,
+                            to: _to,
+                            amount: _amount,
+                            type: BlockchainTransactionType.Output)
                         : 0;
 
                     var (maxAmount, maxFeeAmount, _) = await account
                         .EstimateMaxAmountToSendAsync(
-                            to: To,
+                            from: _from,
+                            to: _to,
                             type: BlockchainTransactionType.Output,
                             fee: 0,
                             feePrice: 0,
@@ -447,7 +499,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     OnPropertyChanged(nameof(FeeString));
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -475,13 +527,19 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 var defaultFeePrice = await Currency
                     .GetDefaultFeePriceAsync();
 
-                var account = App.Account
+                var account = _app.Account
                     .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                 if (UseDefaultFee)
                 {
                     var (maxAmount, maxFeeAmount, _) = await account
-                        .EstimateMaxAmountToSendAsync(To, BlockchainTransactionType.Output, 0, 0, true);
+                        .EstimateMaxAmountToSendAsync(
+                            from: _from,
+                            to: _to,
+                            type: BlockchainTransactionType.Output,
+                            fee: 0,
+                            feePrice: 0,
+                            reserve: true);
 
                     if (maxAmount > 0)
                         _amount = maxAmount;
@@ -494,7 +552,13 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 else
                 {
                     var (maxAmount, maxFeeAmount, _) = await account
-                        .EstimateMaxAmountToSendAsync( To, BlockchainTransactionType.Output, 0, 0, false);
+                        .EstimateMaxAmountToSendAsync(
+                            from: _from,
+                            to: _to,
+                            type: BlockchainTransactionType.Output,
+                            fee: 0,
+                            feePrice: 0,
+                            reserve: false);
 
                     var availableAmount = Currency is BitcoinBasedConfig
                         ? CurrencyViewModel.AvailableAmount
@@ -507,12 +571,17 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         _amount = availableAmount - feeAmount;
 
                         var estimatedFeeAmount = _amount != 0
-                            ? await account.EstimateFeeAsync(To, _amount, BlockchainTransactionType.Output)
+                            ? await account.EstimateFeeAsync(
+                                from: _from,
+                                to: _to,
+                                amount: _amount,
+                                type: BlockchainTransactionType.Output)
                             : 0;
 
                         if (estimatedFeeAmount == null || feeAmount < estimatedFeeAmount.Value)
                         {
                             Warning = Resources.CvLowFees;
+
                             if (_fee == 0)
                             {
                                 _amount = 0;
@@ -533,7 +602,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     OnPropertyChanged(nameof(FeeString));
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -549,7 +618,25 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             var quote = quotesProvider.GetQuote(CurrencyCode, BaseCurrencyCode);
 
             AmountInBase = Amount * (quote?.Bid ?? 0m);
-            FeeInBase = Fee * (quote?.Bid ?? 0m);
+            FeeInBase    = Fee * (quote?.Bid ?? 0m);
+        }
+
+        private IEnumerable<WalletAddressViewModel> GetFromAddressList()
+        {
+            var addresses = _app.Account
+                .GetUnspentAddressesAsync(Currency.Name)
+                .WaitForResult();
+
+            return addresses
+                .Where(w => w.Balance != 0)
+                .Select(w => new WalletAddressViewModel
+                {
+                    Address          = w.Address,
+                    AvailableBalance = w.AvailableBalance(),
+                    CurrencyFormat   = CurrencyFormat,
+                    CurrencyCode     = CurrencyCode,
+                })
+                .ToList();
         }
 
         private void DesignerMode()

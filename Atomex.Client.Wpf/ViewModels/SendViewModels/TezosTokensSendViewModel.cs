@@ -250,7 +250,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             _tokenId       = tokenId;
             _tokenType     = tokenType;
 
-            UpdateFromAddressList(from, tokenContract, tokenId);
+            UpdateFromAddressList(from, tokenContract);
             UpdateCurrencyCode();
 
             SubscribeToServices();
@@ -606,9 +606,9 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 .GetTezosTokenAddressAsync(tokenType, tokenContract, tokenId, address);
         }
 
-        private void UpdateFromAddressList(string from, string tokenContract, decimal tokenId)
+        private void UpdateFromAddressList(string from, string tokenContract)
         {
-            _fromAddresses = new ObservableCollection<WalletAddressViewModel>(GetFromAddressList(tokenContract, tokenId));
+            _fromAddresses = new ObservableCollection<WalletAddressViewModel>(GetFromAddressList(tokenContract));
 
             var tempFrom = from;
 
@@ -654,7 +654,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             }
         }
 
-        private IEnumerable<WalletAddressViewModel> GetFromAddressList(string tokenContract, decimal tokenId)
+        private IEnumerable<WalletAddressViewModel> GetFromAddressList(string tokenContract)
         {
             if (tokenContract == null)
                 return Enumerable.Empty<WalletAddressViewModel>();

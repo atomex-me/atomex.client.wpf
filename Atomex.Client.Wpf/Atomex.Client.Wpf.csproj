@@ -390,7 +390,6 @@
     <Compile Include="ViewModels\SendViewModels\Erc20SendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\EthereumSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\Fa12SendViewModel.cs" />
-    <Compile Include="ViewModels\SendViewModels\FA2SendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\TezosSendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModel.cs" />
     <Compile Include="ViewModels\SendViewModels\SendViewModelCreator.cs" />

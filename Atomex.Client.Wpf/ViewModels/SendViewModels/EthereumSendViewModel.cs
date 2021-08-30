@@ -21,12 +21,12 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
             {
                 if (_currency != null && _currency != value)
                 {
-                    DialogViewer.HideDialog(Dialogs.Send);
+                    _dialogViewer.HideDialog(Dialogs.Send);
 
-                    var sendViewModel = SendViewModelCreator.CreateViewModel(App, DialogViewer, value);
+                    var sendViewModel = SendViewModelCreator.CreateViewModel(_app, _dialogViewer, value);
                     var sendPageId = SendViewModelCreator.GetSendPageId(value);
 
-                    DialogViewer.ShowDialog(Dialogs.Send, sendViewModel, defaultPageId: sendPageId);
+                    _dialogViewer.ShowDialog(Dialogs.Send, sendViewModel, defaultPageId: sendPageId);
                     return;
                 }
 
@@ -161,7 +161,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
-                var account = App.Account
+                var account = _app.Account
                     .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                 if (UseDefaultFee)
@@ -205,7 +205,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                         Warning = Resources.CvLowFees;
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -243,7 +243,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 if (!UseDefaultFee)
                 {
-                    var account = App.Account
+                    var account = _app.Account
                         .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                     var (maxAmount, _, _) = await account
@@ -261,7 +261,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     OnPropertyChanged(nameof(TotalFeeString));
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -302,7 +302,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
                 if (!UseDefaultFee)
                 {
-                    var account = App.Account
+                    var account = _app.Account
                         .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                     var (maxAmount, _, _) = await account
@@ -320,7 +320,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     OnPropertyChanged(nameof(GasString));
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -334,7 +334,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
 
             try
             {
-                var account = App.Account
+                var account = _app.Account
                     .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                 var feeAmount = totalFeeAmount > 0
@@ -368,7 +368,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 if (availableAmount == 0)
                     return;
 
-                var account = App.Account
+                var account = _app.Account
                     .GetCurrencyAccount<ILegacyCurrencyAccount>(Currency.Name);
 
                 if (UseDefaultFee)
@@ -417,7 +417,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                     OnPropertyChanged(nameof(TotalFeeString));
                 }
 
-                OnQuotesUpdatedEventHandler(App.QuotesProvider, EventArgs.Empty);
+                OnQuotesUpdatedEventHandler(_app.QuotesProvider, EventArgs.Empty);
             }
             finally
             {
@@ -461,7 +461,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 return;
             }
 
-            var confirmationViewModel = new SendConfirmationViewModel(DialogViewer, Dialogs.Send)
+            var confirmationViewModel = new SendConfirmationViewModel(_dialogViewer, Dialogs.Send)
             {
                 Currency           = Currency,
                 To                 = To,
@@ -480,7 +480,7 @@ namespace Atomex.Client.Wpf.ViewModels.SendViewModels
                 FeeCurrencyFormat  = FeeCurrencyFormat
             };
 
-            DialogViewer.PushPage(Dialogs.Send, Pages.SendConfirmation, confirmationViewModel);
+            _dialogViewer.PushPage(Dialogs.Send, Pages.SendConfirmation, confirmationViewModel);
         }
 
         protected override void OnQuotesUpdatedEventHandler(object sender, EventArgs args)

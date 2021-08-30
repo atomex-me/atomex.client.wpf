@@ -12,13 +12,12 @@
       mc:Ignorable="d"
       UseLayoutRounding="True"
       Focusable="False"
-      d:DesignHeight="500"
-      d:DesignWidth="560"   
+      d:DesignHeight="600"
+      d:DesignWidth="600"   
       d:DataContext="{d:DesignInstance Type=viewModels:SendViewModel, IsDesignTimeCreatable=True}">
 
-    <Grid Width="560">
+    <Grid Width="600">
         <StackPanel Orientation="Vertical">
-
             <Border Margin="0 10 0 10"
                     Height="33"
                     VerticalAlignment="Top"
@@ -40,7 +39,7 @@
                        TextWrapping="Wrap"
                        HorizontalAlignment="Center"/>
 
-            <ComboBox Width="480"
+            <ComboBox Width="520"
                       MinHeight="68"
                       Margin="0 5 0 5"
                       ItemsSource="{Binding FromCurrencies}"
@@ -48,6 +47,133 @@
                       SelectedValue="{Binding Currency}"
                       helpers:ComboBoxHelper.CornerRadius="20"
                       Style="{StaticResource CurrencyComboBox}"/>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <Border Height="50"
+                        Style="{StaticResource FieldHeader}">
+                    <TextBlock Text="From address:"
+                               Margin="0 0 7 0"
+                               Foreground="{DynamicResource DefaultForegroundBrush}"
+                               FontFamily="{DynamicResource DefaultMediumFontFamily}"
+                               FontSize="13"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                </Border>
+                <ComboBox Width="420"
+                         Height="50"
+                         Margin="0 5 0 5"
+                         ItemsSource="{Binding FromAddresses}"
+                         SelectedValuePath="Address"
+                         SelectedValue="{Binding From, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Background="{DynamicResource DefaultSubstrateBrush}"
+                         Foreground="{DynamicResource DefaultForegroundBrush}"
+                         helpers:ComboBoxHelper.CornerRadius="0 20 20 0"
+                         Style="{StaticResource CustomComboBox}">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource MetroComboBoxItem}">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type ComboBoxItem}">
+                            <Grid Height="40">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Horizontal"
+                                                Grid.Row="0"
+                                                Grid.RowSpan="4"
+                                                Grid.Column="0">
+                                    <TextBlock
+                                            Text="(new)"
+                                            Foreground="{DynamicResource NewAddressBrush}"
+                                            FontSize="12"
+                                            FontFamily="{DynamicResource DefaultFontFamily}"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Visibility="{Binding IsFreeAddress, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                                    <TextBlock
+                                            Margin="3 0 0 0"
+                                            Text="{Binding Address}"
+                                            Foreground="{DynamicResource DefaultForegroundBrush}"
+                                            FontSize="12"
+                                            FontFamily="{DynamicResource DefaultFontFamily}"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                                Grid.Row="1"
+                                                Grid.Column="1">
+                                    <TextBlock
+                                            Foreground="{DynamicResource AmountBrush}"
+                                            FontSize="11"
+                                            FontFamily="{DynamicResource DefaultFontFamily}"
+                                            VerticalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                                                <Binding Path="AvailableBalance" Mode="OneWay"/>
+                                                <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock
+                                            Margin="3 0 0 0"
+                                            Text="{Binding CurrencyCode}"
+                                            Foreground="{DynamicResource AmountBrush}"
+                                            FontSize="11"
+                                            FontFamily="{DynamicResource DefaultFontFamily}"
+                                            VerticalAlignment="Center"/>
+                                    <StackPanel.Style>
+                                        <Style TargetType="{x:Type StackPanel}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ShowTokenBalance}" Value="False">
+                                                    <Setter Property="Grid.RowSpan" Value="2"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                                Grid.Row="2"
+                                                Grid.Column="1"
+                                                Visibility="{Binding ShowTokenBalance, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                                    <TextBlock
+                                            Foreground="{DynamicResource DefaultForegroundBrush}"
+                                            FontSize="11"
+                                            FontFamily="{DynamicResource DefaultFontFamily}"
+                                            VerticalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource AmountToStringConverter}">
+                                                <Binding Path="TokenBalance" Mode="OneWay"/>
+                                                <Binding Path="CurrencyFormat" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock
+                                            Margin="3 0 0 0"
+                                            Text="{Binding TokenCode}"
+                                            Foreground="{DynamicResource DefaultForegroundBrush}"
+                                            FontSize="11"
+                                            FontFamily="{DynamicResource DefaultFontFamily}"
+                                            VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
 
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center">
@@ -60,7 +186,7 @@
                                VerticalAlignment="Center"
                                HorizontalAlignment="Right"/>
                 </Border>
-                <TextBox Width="380"
+                <TextBox Width="420"
                          Height="40"
                          Margin="0 5 0 5"
                          Text="{Binding To, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -82,7 +208,7 @@
                                HorizontalAlignment="Right"/>
                 </Border>
 
-                <TextBox Width="318"
+                <TextBox Width="358"
                          Height="40"
                          Margin="0 5 0 5"
                          FontSize="18"
@@ -133,7 +259,7 @@
                                HorizontalAlignment="Right"/>
                 </Border>
 
-                <TextBox Width="380"
+                <TextBox Width="420"
                          Height="40"
                          Margin="0 5 0 5"
                          FontSize="18"
