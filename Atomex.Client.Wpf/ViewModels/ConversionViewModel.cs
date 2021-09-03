@@ -497,7 +497,7 @@ namespace Atomex.Client.Wpf.ViewModels
                         atomexClient: App.Terminal,
                         symbolsProvider: App.SymbolsProvider);
 
-                _amount = Math.Min(swapParams.Amount, EstimatedMaxAmount);
+                _amount = Math.Min(swapParams.Amount.TruncateByFormat(CurrencyFormat), EstimatedMaxAmount);
                 _ = UpdateAmountAsync(_amount, updateUi: true);
             }
             catch (Exception e)
