@@ -789,6 +789,7 @@ namespace Atomex.Client.Wpf.ViewModels
                     {
                         var swapViewModels = swaps
                             .Select(s => SwapViewModelFactory.CreateSwapViewModel(s, Currencies))
+                            .Where(s => s != null)
                             .ToList()
                             .SortList((s1, s2) => s2.Time.ToUniversalTime()
                                 .CompareTo(s1.Time.ToUniversalTime()));

@@ -246,6 +246,8 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
             }
         }
 
+        public bool HasName => !string.IsNullOrEmpty(_name);
+
         private async Task TryGetAliasAsync()
         {
             try
@@ -274,6 +276,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                     .InvokeAsync(() =>
                     {
                         OnPropertyChanged(nameof(Name));
+                        OnPropertyChanged(nameof(HasName));
                     });
             }
             catch (Exception e)
@@ -303,6 +306,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                 OnPropertyChanged(nameof(HasTokenContract));
                 OnPropertyChanged(nameof(IsFa12));
                 OnPropertyChanged(nameof(IsFa2));
+                OnPropertyChanged(nameof(HasName));
                 OnPropertyChanged(nameof(TokenContractAddress));
                 OnPropertyChanged(nameof(TokenContractName));
                 OnPropertyChanged(nameof(TokenContractIconUrl));
@@ -315,6 +319,7 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
         public bool HasTokenContract => TokenContract != null;
         public bool IsFa12 => TokenContract?.IsFa12 ?? false;
         public bool IsFa2 => TokenContract?.IsFa2 ?? false;
+        public bool HasName => TokenContract?.HasName ?? false;
         public string TokenContractAddress => TokenContract?.Contract?.Address ?? "";
         public string TokenContractName => TokenContract?.Name ?? "";
         public string TokenContractIconUrl => TokenContract?.IconUrl;
@@ -732,12 +737,13 @@ namespace Atomex.Client.Wpf.ViewModels.WalletViewModels
                         Network     = "mainent",
                         Name        = "hic et nunc NFTs",
                         Description = "NFT token for digital assets.",
-                        Interfaces  = new List<string> { "TZIP-12" }
+                        Interfaces  = new List<string> { "TZIP-12" },
+                        ContractTags = new List<string> { "fa2" }
                     }
                 }
             };
 
-            _tokenContract = null;// TokensContracts.First();
+            _tokenContract = TokensContracts.First();
 
             var bcdApi = new BcdApi(new BcdApiSettings
             {

@@ -81,8 +81,22 @@
                                        FontSize="10"
                                        FontFamily="{StaticResource DefaultLightFontFamily}"
                                        VerticalAlignment="Center"
-                                       Grid.Column="1"
-                                       Grid.Row="2"/>
+                                       Grid.Column="1">
+                                <TextBlock.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasName}" Value="True">
+                                                <Setter Property="Grid.Row" Value="2"/>
+                                                <Setter Property="Grid.RowSpan" Value="1"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding HasName}" Value="False">
+                                                <Setter Property="Grid.Row" Value="1"/>
+                                                <Setter Property="Grid.RowSpan" Value="2"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -138,6 +152,7 @@
                            Foreground="{DynamicResource BalanceBackgroundBrush}"
                            FontFamily="{DynamicResource DefaultFontFamily}"
                            FontSize="30"
+                           Margin="0 0 0 2"
                            VerticalAlignment="Bottom"
                            Grid.Row="1"
                            Grid.Column="3"
@@ -172,10 +187,26 @@
                            Foreground="LightGray"
                            FontFamily="{DynamicResource DefaultFontFamily}"
                            FontSize="12"
-                           Grid.Row="2"
                            Grid.Column="3"
-                           Style="{StaticResource BaseTextBlockStyle}"
-                           Visibility="{Binding HasTokenContract, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
+                           Visibility="{Binding HasTokenContract, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Grid.Row" Value="2"/>
+                            <Setter Property="Grid.RowSpan" Value="1"/>
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsFa2}" Value="True"/>
+                                        <Condition Binding="{Binding HasName}" Value="False"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Grid.Row" Value="1"/>
+                                    <Setter Property="Grid.RowSpan" Value="2"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
 
                 <StackPanel HorizontalAlignment="Center"
                             Orientation="Horizontal"
