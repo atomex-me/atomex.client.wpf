@@ -989,7 +989,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="Atomex.Client-1.1.47.0-x64.msi">
+    <Content Include="Atomex.Client-1.1.48.0-x64.msi">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
