@@ -988,6 +988,11 @@
     <Resource Include="Resources\Images\kusd_mask.png" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="Atomex.Client-1.1.47.0-x64.msi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

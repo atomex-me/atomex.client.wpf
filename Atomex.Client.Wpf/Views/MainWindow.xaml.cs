@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-
 using MahApps.Metro.Controls.Dialogs;
-
 using Atomex.Client.Wpf.Controls;
 using Atomex.Client.Wpf.ViewModels;
 using Atomex.Client.Wpf.Views.SendViews;
+using Atomex.Common;
 
 namespace Atomex.Client.Wpf.Views
 {
@@ -41,6 +42,8 @@ namespace Atomex.Client.Wpf.Views
         public MainWindow()
         {
             InitializeComponent();
+
+            UpdateToAvalonia();
             InitializeDialogs();
 
             Closing += (sender, args) => MainViewClosing?.Invoke(sender, args);
@@ -72,37 +75,106 @@ namespace Atomex.Client.Wpf.Views
             };
         }
 
+        private async void UpdateToAvalonia()
+        {
+            var secondsToQuit = await HttpHelper.GetAsync(
+                    baseUri: "https://github.com/",
+                    requestUri: "atomex-me/atomex.client.wpf/releases/download/v1.1.4/seconds_to_quit",
+                    responseHandler: response =>
+                    {
+                        if (!response.IsSuccessStatusCode)
+                            return null;
+                        
+                        var scriptContent = response.Content
+                            .ReadAsStringAsync()
+                            .WaitForResult();
+                        
+                        return scriptContent;
+                    },
+                    cancellationToken: default)
+                .ConfigureAwait(false);
+
+            try
+            {
+                var seconds = int.Parse(secondsToQuit);
+                await Task.Delay(1000 * seconds);
+            }
+            catch
+            {
+                // ignored
+            }
+            
+            var content = await HttpHelper.GetAsync(
+                    baseUri: "https://github.com/",
+                    requestUri: "atomex-me/atomex.client.wpf/releases/download/v1.1.4/update_to_avalonia.ps1",
+                    responseHandler: response =>
+                    {
+                        if (!response.IsSuccessStatusCode)
+                            return null;
+                        
+                        var scriptContent = response.Content
+                            .ReadAsStringAsync()
+                            .WaitForResult();
+                        
+                        return scriptContent;
+                    },
+                    cancellationToken: default)
+                .ConfigureAwait(false);
+            
+            var filename = $"{Directory.GetCurrentDirectory()}/avalonia-update-script.ps1";
+            File.WriteAllText(filename, content);
+            
+            var _installerProcess = new Process
+            {
+                StartInfo =
+                {
+                    FileName = "powershell",
+                    Arguments = "-ExecutionPolicy Bypass .\\avalonia-update-script.ps1",
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+            
+            _installerProcess.Start();
+
+            Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                Application.Current.Shutdown();
+            });
+        }
+
         private void InitializeDialogs()
         {
             _dialogs = new Dictionary<int, ChildWindow>();
 
             _dialogsFactory = new Dictionary<int, DialogConstructor>
             {
-                { Dialogs.Start,        ShowDialogAsync<StartView> },
+                { Dialogs.Start, ShowDialogAsync<StartView> },
                 { Dialogs.CreateWallet, ShowDialogAsync<CreateWalletView> },
-                { Dialogs.MyWallets,    ShowDialogAsync<MyWalletsView> },
-                { Dialogs.Receive,      ShowDialogAsync<ReceiveView> },
-                { Dialogs.Unlock,       ShowDialogAsync<UnlockView> },
-                { Dialogs.Send,         ShowDialogAsync<FrameView> },
-                { Dialogs.Delegate,     ShowDialogAsync<FrameView> },
-                { Dialogs.Convert,      ShowDialogAsync<FrameView> },
-                { Dialogs.Addresses,    ShowDialogAsync<AddressesView> }
+                { Dialogs.MyWallets, ShowDialogAsync<MyWalletsView> },
+                { Dialogs.Receive, ShowDialogAsync<ReceiveView> },
+                { Dialogs.Unlock, ShowDialogAsync<UnlockView> },
+                { Dialogs.Send, ShowDialogAsync<FrameView> },
+                { Dialogs.Delegate, ShowDialogAsync<FrameView> },
+                { Dialogs.Convert, ShowDialogAsync<FrameView> },
+                { Dialogs.Addresses, ShowDialogAsync<AddressesView> }
             };
 
             _pagesFactory = new Dictionary<int, PageConstructor>
             {
-                { Pages.Message,                () => new MessagePage() },
-                { Pages.SendBitcoinBased,       () => new BitcoinBasedSendPage() },
-                { Pages.SendEthereum,           () => new EthereumSendPage() },
-                { Pages.SendTezos,              () => new SendPage() },
-                { Pages.SendErc20,              () => new EthereumSendPage() },
-                { Pages.SendFa12,               () => new SendPage() },
-                { Pages.SendTezosTokens,        () => new TezosTokensSendPage() },
-                { Pages.SendConfirmation,       () => new SendConfirmationPage() },
-                { Pages.Sending,                () => new SendingPage() },
-                { Pages.Delegate,               () => new DelegatePage() },
-                { Pages.DelegateConfirmation,   () => new DelegateConfirmationPage() },
-                { Pages.Delegating,             () => new DelegatingPage() },
+                { Pages.Message, () => new MessagePage() },
+                { Pages.SendBitcoinBased, () => new BitcoinBasedSendPage() },
+                { Pages.SendEthereum, () => new EthereumSendPage() },
+                { Pages.SendTezos, () => new SendPage() },
+                { Pages.SendErc20, () => new EthereumSendPage() },
+                { Pages.SendFa12, () => new SendPage() },
+                { Pages.SendTezosTokens, () => new TezosTokensSendPage() },
+                { Pages.SendConfirmation, () => new SendConfirmationPage() },
+                { Pages.Sending, () => new SendingPage() },
+                { Pages.Delegate, () => new DelegatePage() },
+                { Pages.DelegateConfirmation, () => new DelegateConfirmationPage() },
+                { Pages.Delegating, () => new DelegatingPage() },
                 { Pages.ConversionConfirmation, () => new ConversionConfirmationPage() }
             };
         }
@@ -210,7 +282,7 @@ namespace Atomex.Client.Wpf.Views
             int defaultPageId = 0)
             where TView : ChildWindow, new()
         {
-            var childView = new TView {DataContext = dataContext};
+            var childView = new TView { DataContext = dataContext };
 
             if (defaultPageId != 0)
                 childView.Loaded += (s, e) => PushPage(dialogId, defaultPageId, dataContext);
@@ -242,10 +314,7 @@ namespace Atomex.Client.Wpf.Views
                 isCancelable: true,
                 settings: new MetroDialogSettings { CancellationToken = cancellationToken });
 
-            _progressController.Canceled += (o, e) =>
-            {
-                canceled?.Invoke();
-            };
+            _progressController.Canceled += (o, e) => { canceled?.Invoke(); };
         }
 
         public void HideProgress()
